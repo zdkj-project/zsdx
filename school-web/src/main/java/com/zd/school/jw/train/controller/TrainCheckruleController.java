@@ -156,12 +156,12 @@ public class TrainCheckruleController extends FrameWorkController<TrainCheckrule
 		// 获取当前的操作用户
 		SysUser currentUser = getCurrentSysUser();
 		try {
-			String ruleName = entity.getRuleName();
+/*			String ruleName = entity.getRuleName();
 			String hql1 = " o.isDelete='0' ";
 			if (thisService.IsFieldExist("ruleName", ruleName, entity.getUuid(), hql1)) {
 				writeJSON(response, jsonBuilder.returnFailureJson("\"考勤规则名称不能重复！\""));
 				return;
-			}
+			}*/
 
 			entity = thisService.doUpdateEntity(entity, currentUser);// 执行修改方法
 			if (ModelUtil.isNotNull(entity))
