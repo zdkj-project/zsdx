@@ -1,0 +1,76 @@
+﻿.Equals
+{
+    background-image: url(/Content/16Operation/Equals.png) !important;
+}
+.NotEqual
+{
+    background-image: url(/Content/16Operation/NotEqual.png) !important;
+}
+.Greater
+{
+    background-image: url(/Content/16Operation/Greater.png) !important;
+}
+.GreaterOrEqual
+{
+    background-image: url(/Content/16Operation/GreaterOrEqual.png) !important;
+}
+.Less
+{
+    background-image: url(/Content/16Operation/Less.png) !important;
+}
+.LessOrEqual
+{
+    background-image: url(/Content/16Operation/LessOrEqual.png) !important;
+}
+.Between
+{
+    background-image: url(/Content/16Operation/Between.png) !important;
+}
+.NotBetween
+{
+    background-image: url(/Content/16Operation/NotBetween.png) !important;
+}
+.Contains
+{
+    background-image: url(/Content/16Operation/Contains.png) !important;
+}
+.DoesNotContain
+{
+    background-image: url(/Content/16Operation/DoesNotContain.png) !important;
+}
+.BeginsWith
+{
+    background-image: url(/Content/16Operation/BeginsWith.png) !important;
+}
+.EndsWith
+{
+    background-image: url(/Content/16Operation/EndsWith.png) !important;
+}
+.Like
+{
+    background-image: url(/Content/16Operation/Like.png) !important;
+}
+.NotLike
+{
+    background-image: url(/Content/16Operation/NotLike.png) !important;
+}
+.IsNull
+{
+    background-image: url(/Content/16Operation/IsNull.png) !important;
+}
+.IsNotNull
+{
+    background-image: url(/Content/16Operation/IsNotNull.png) !important;
+}
+.AnyOf
+{
+    background-image: url(/Content/16Operation/AnyOf.png) !important;
+}
+.NoneOf
+{
+    background-image: url(/Content/16Operation/NoneOf.png) !important;
+}
+.DateAndTime
+{
+    background-image: url(/Content/16Operation/DateAndTime.png) !important;
+}

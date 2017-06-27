@@ -1,0 +1,166 @@
+﻿
+.readOnlyFiled
+{
+    border: 3px;
+    border-color: Red;
+}
+
+#title-logo .x-plain-body
+{
+    background: #f0edce url('../titleLogo.jpg') no-repeat;
+}
+
+.application_side_tree
+{
+    background-image: url(/Content/16Icons/application_side_tree.png) !important;
+}
+
+.textfield_rename
+{
+    background-image: url(/Content/16Icons/textfield_rename.png) !important;
+}
+
+.textfield
+{
+    background-image: url(/Content/16Icons/textfield.png) !important;
+}
+.new
+{
+    background-image: url(/Content/16Icons/new.png) !important;
+}
+.accept
+{
+    background-image: url(/Content/16Icons/accept.png) !important;
+}
+.eye
+{
+    background-image: url(/Content/16Icons/eye.png) !important;
+}
+.plugin
+{
+    background-image: url(/Content/16Icons/plugin.png) !important;
+}
+
+.database_gear
+{
+    background-image: url(/Content/16Icons/database_gear.png) !important;
+}
+
+.database_lightning
+{
+    background-image: url(/Content/16Icons/database_lightning.png) !important;
+}
+
+.house
+{
+    background-image: url(/Content/16Icons/house.png) !important;
+}
+
+.application_side_tree
+{
+    background-image: url(/Content/16Icons/application_side_tree.png) !important;
+}
+
+.asterisk_orange
+{
+    background-image: url(/Content/16Icons/asterisk_orange.png) !important;
+}
+
+.application_form
+{
+    background-image: url(/Content/16Icons/application_form.png) !important;
+}
+
+.new-view-refresh
+{
+    background-image: url(/Content/24Icons/new-view-refresh.png) !important;
+}
+
+.kcoloredit
+{
+    background-image: url(/Content/24Icons/kcoloredit.png) !important;
+}
+
+.zoom
+{
+    background-image: url(/Content/16Icons/zoom.png) !important;
+}
+
+
+.folder_add16
+{
+    background-image: url(/Content/16Icons/folder_add.png) !important;
+}
+
+.group_add1
+{
+    background: url(/Content/GroupImages.png) no-repeat 0px 0px;
+    width: 13px;
+}
+
+.group_add2
+{
+    background: url(/Content/GroupImages.png) no-repeat -13px 0px;
+    width: 13px;
+}
+
+
+.group_add3
+{
+    background: url(/Content/GroupImages.png) no-repeat -52px 0px;
+    width: 13px;
+}
+
+
+.group_add4
+{
+    background: url(/Content/GroupImages.png) no-repeat -65px 0px;
+    width: 13px;
+}
+
+.group_add5
+{
+    background: url(/Content/GroupImages.png) no-repeat -91px 0px;
+    width: 13px;
+}
+
+.resultset_next
+{
+    background-image: url(/Content/16Icons/disconnect.png) !important;
+}
+
+.ItemSum
+{
+    background-image: url(/Content/16Icons/ItemSum.png) !important;
+}
+
+.ItemMax
+{
+    background-image: url(/Content/16Icons/ItemMax.png) !important;
+}
+
+.exclamation
+{
+    background-image: url(/Content/16Icons/exclamation.png) !important;
+}
+
+.arrow_refresh
+{
+    background-image: url(/Content/16Icons/arrow_refresh.png) !important;
+}
+
+.upload_add
+{
+    background-image: url(/Content/uploadicons/add.png) !important;
+}
+
+.upload_upload
+{
+    background-image: url(/Content/uploadicons/up.png) !important;
+}
+
+.upload_del
+{
+    background-image: url(/Content/uploadicons/delete.png) !important;
+}
+
