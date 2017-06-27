@@ -1,0 +1,103 @@
+*{
+	box-sizing:border-box;
+	-webkit-box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+    font-family: '微软雅黑';
+}
+.fl{ float: left;}
+.fr{ float: right;}
+.body_bg{ width: 100%; height: 100%; min-width: 1000px;}
+.mg{ width: 950px; margin: 0 auto; padding: 4% 0;}
+.top_title{ width: 100%; overflow: hidden;
+}
+.top_title .logo{ margin-right:10px;}
+.top_title .img2{ margin-top: 8px;}
+.contian_box{  width: 100%; height: 248px; background: url(../images/login/login_bg.png) no-repeat center top; background-color: #c81e14;
+}
+.contian_box .login_box{width:590px; height: 300px; margin: 0 auto; 
+ position: relative;}
+.contian_box .login_bg{width:590px; height: 300px; margin: 0 auto; 
+background: url(../images/login/login_chuangkou.png) no-repeat center top;
+padding: 28px; position: absolute; top: 50px;
+    top: 60px;
+    /*left: 100px;*/
+    }
+.login_box .box_lefet{}
+.login_box .box_lefet img{}
+.login_box .box_right{ background: #fff; width: 54%; height:245px; padding:20px 20px 0 20px;}
+.box_right .input_top { position: relative;}
+.box_right .input_top input{ border: 1px solid #c9c9c9; margin-bottom: 12px; width: 180px; padding:5px;height:38px; border-radius: 4px;}
+
+.lable_box{ overflow: hidden; width: 100%; margin: 0px 0 12px 0;}
+.lable_box label{ 
+    color: red;
+    padding: 0px 5px;
+    position: relative;
+    top: -2px;
+    font-size: 13px;
+    cursor: pointer;
+    z-index:999;
+}
+.lable_box label .check{background: none; border: 1px solid red; margin-right: 6px;}
+.lable_box label input[type="checkbox"] {
+  /*-webkit-appearance: none;*/
+
+}
+
+.but_box{ width:100%; height: 43px; 
+    /*background: url(../images/login/login_button.png) no-repeat center center;*/
+    color:#fff; line-height: 43px; font-size: 16px; font-weight: bold; text-align: center;
+    background: #d02423;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.but{
+	display: block;
+    color: #fff;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: 400;
+}
+
+.but_box:hover{
+	background-color: #b60f06;
+    transition: background-color 0.3s;
+}
+
+#yzz{
+    width: 95px;
+    height: 37px;
+    border-radius: 4px;
+}
+.yzm-m {
+    /*
+    display: block;
+    float: right;
+    width:80px;*/
+    position: absolute;
+    top: 100px;
+    left: 155px;
+    height: 38px;
+}
+
+label.textName{
+    color:#666;
+    width:68px;
+    font-size: 15px;
+    display: inline-block;
+}
+
+.bottom_box {
+    width: 100%;
+    /* height: 300px; */
+    top: 200px;
+    /* margin: 10px; */
+    text-align: center;
+    font-family: 微软雅黑;
+    font-size: 12px;
+    color: #666;
+    margin: 0 auto;
+    position: relative;
+}
