@@ -1,0 +1,62 @@
+/**
+ * Created by luoyibo on 2017-05-26.
+ */
+Ext.define("core.train.course.view.IsSelectTeacherGrid", {
+    extend: "Ext.grid.Panel",
+    alias: "widget.course.isselectedteachergrid",
+    ref:'isselectedteachergrid',
+    title: "<font color='#ffeb00'>已选教师(选中后向左拖动或双击移除）</font>",
+    columnLines: true,
+    loadMask: true,
+    multiSelect: true,
+    selModel: {
+        selType: "checkboxmodel",
+        width:10
+    },
+    viewConfig: {
+        stripeRows: true
+    },
+    store:{
+        type:"course.isselectedteacherStore"
+    },
+    columns: [
+        { text: '教师ID',  dataIndex: 'uuid', hidden:true },
+        { text: '电话号码',  dataIndex: 'mobilePhone', hidden:false },
+        { text: '身份证号码',  dataIndex: 'sfzjh', hidden:true },
+        { text: '姓名', dataIndex: 'xm', flex: 1 },
+        { text: '性别',  dataIndex: 'xbm', flex: 1,
+            renderer:function(value){
+                if(value=="1")
+                    return "男";
+                else if(value=="2")
+                    return "女";
+                else
+                    return "";
+            }
+        },
+        { text: '工作单位', dataIndex: 'workUnit', flex: 2 },
+    ],
+    viewConfig: {
+        plugins: {
+            ptype: 'gridviewdragdrop',
+            dragGroup: 'secondGridDDGroup',
+            dropGroup: 'firstGridDDGroup'
+        },
+        listeners: {
+            drop: function(node, data, dropRec, dropPosition) {
+                var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
+                //Ext.example.msg("Drag from right to left", 'Dropped ' + data.records[0].get('name') + dropOn);
+            },
+            beforeitemdblclick: function(grid, record, item, index, e, eOpts) {
+                selectStore = grid.getStore();
+                selectStore.removeAt(index);
+
+                var basePanel = grid.up("panel[xtype=course.selectteacher.mainlayout]");
+                var isSelectGrid = basePanel.down("panel[xtype=course.selectteachergrid]");
+                var isSelectStore = isSelectGrid.getStore();
+                isSelectStore.insert(0, [record]);
+                return false;
+            }
+        }
+    },
+});
