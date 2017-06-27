@@ -180,7 +180,7 @@ Ext.define("core.train.alleval.view.MainGrid", {
                         cmd: 'startEval'
                     });
                 }
-            }, {
+            }, /*{
                 text: '关闭评价',
                 style: 'font-size:12px;',
                 tooltip: '关闭评价',
@@ -199,7 +199,7 @@ Ext.define("core.train.alleval.view.MainGrid", {
                         cmd: 'startEval'
                     });
                 }
-            },{
+            },*/{
                 text: '评价汇总',
                 style: 'font-size:12px;',
                 tooltip: '评价汇总',
