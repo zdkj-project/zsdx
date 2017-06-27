@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="dangxiao.css">
+	</head>
+
+	<body>
+
+		<div class="container" id="evalStandForm">
+			<!--表头-->
+			<ul>
+				<li class="t1" id="classCategory">&nbsp;</li>
+				<li class="t2">教学评估表</li>
+			</ul>
+			<!--评估基本信息-->
+			<ul class="itemUl">
+				<li class="itemLi">评估基本信息</li>
+			</ul>
+			<div class="itemInfo">
+				<ul>
+					<li>课程名称：
+						<a id="courseName">&nbsp;</a>
+					</li>
+					<li>课程类型：
+						<a id="teachTypeName">&nbsp;</a>
+					</li>
+					<li>授课老师：
+						<a id="teacherName">&nbsp;</a>
+					</li>
+				</ul>
+			</div>
+			<!--评估内容-->
+			<ul class="itemUl">
+				<li class="itemLi">评估内容</li>
+			</ul>
+
+			<!--'教學內容'-->
+			<!--<ul class="s1">
+					<li class="s2">教学内容:</li>
+				</ul>
+				
+				<div>
+					<li class="s3">1、紧密联系实际，针对性、实用性、系统性强;内容丰富，前瞻性、新颖性、时效性强。</li>
+					<ul class="radioUl">
+						<li class="radioLi"><a class="radioA" data-val="henmanyi">很满意</a></li>
+						<li class="radioLi"><a class="radioA" data-val="manyi">满意</a></li>
+						<li class="radioLi"><a class="radioA" data-val="jibenmanyi">基本满意</a></li>
+						<li class="radioLi"><a class="radioA" data-val="bumanyi">不满意</a></li>
+						<div style="clear: both;"></div>
+					</ul>
+				</div>				
+				
+				
+				<ul class="b1">
+					<li class="b2">教学效果:</li>
+				</ul>
+				<div>
+						<li class="b3">2、激发学习兴趣，启发思维，课堂气氛活跃；开阔视野、拓宽思路、增长知识，实用性强。</li>
+						<ul class="radioUl">
+						<li class="radioLi"><a class="radioA" data-val="henmanyi">很满意</a></li>
+						<li class="radioLi"><a class="radioA" data-val="manyi">满意</a></li>
+						<li class="radioLi"><a class="radioA" data-val="jibenmanyi">基本满意</a></li>
+						<li class="radioLi"><a class="radioA" data-val="bumanyi">不满意</a></li>
+						<div style="clear: both;"></div>
+						</ul>
+				</div>
+				
+				<ul class="x1">
+					<li class="x2">教学水平：</li>
+				</ul>
+				<div>
+						<li class="x3">3、运用新的教学理念、手段；教学方法多样化；教学态度认真，思路清晰、表达生动。</li>
+						<ul class="radioUl">
+						<li class="radioLi"><a class="radioA" data-val="henmanyi">很满意</a></li>
+						<li class="radioLi"><a class="radioA" data-val="manyi">满意</a></li>
+						<li class="radioLi"><a class="radioA" data-val="jibenmanyi">基本满意</a></li>
+						<li class="radioLi"><a class="radioA" data-val="bumanyi">不满意</a></li>
+						<div style="clear: both;"></div>
+						</ul>
+				</div>
+				<ul class="yj">
+					<li class="y1">意见建议：</li>
+				</ul>
+				<textarea class="shuru" name="" placeholder="请输入您的意见建议..."></textarea>
+				<input type="button" id="submit" value="提交" />-->
+		</div>
+	</body>
+
+	<script src="flexible.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="jquery-3.2.1.js"></script>
+	<script type="text/javascript">
+		$(function() {
+
+			var datas = {};
+			// var courseId="${param.courseId}";
+   //      	console.log(courseId);
+   /*
+			datas = {
+				"success": true,
+				"message": "获取评价标准成功",
+				"evalCourse": {
+					"classId": "ba9076d4-9169-4971-8f63-ad0124820fe7",
+					"classCategory": "党校系列班",
+					"className": "tttttt",
+					"courseDate": "2017-06-18",
+					"courseTime": "12:10-15:20",
+					"verySatisfaction": "90",
+					"satisfaction": "100",
+					"ranking": 1,
+					"teacherId": "402880f9523f6c5301523f99f3220581",
+					"teacherName": "梁艳霞",
+					"courseId": "e0dfa647-3ebb-4e2c-9e0c-5f3312c83174",
+					"courseName": "行政决策能力",
+					"classScheduleId": "2a52e332-0284-48cc-bffb-8bdb762c5ada",
+					"teachTypeName": "现场教学"
+				},
+				"evalStand": [{
+						"uuid": "BF19099C-578B-4672-8D2B-D7CB7AB772D1",
+						"createTime": "2017-06-19 22:17:00",
+						"createUser": "学校管理员",
+						"updateTime": "2017-06-19 22:17:00",
+						"updateUser": "",
+						"version": 0,
+						"extField01": "",
+						"extField02": "",
+						"extField03": "",
+						"extField04": "",
+						"extField05": "",
+						"isDelete": 0,
+						"orderIndex": 0,
+						"indicatorId": "5c7d80b3-95ef-4c24-9c76-079f55e50c30",
+						"indicatorStand": "紧密联系实际，针对性、实用性、系统性强;内容丰富，前瞻性、新颖性、时效性强。",
+						"indicatorName": "教学内容",
+						"indicatorObject": 1
+					},
+					{
+						"uuid": "6F58C09C-1756-4FA7-AFF5-132A6ED20367",
+						"createTime": "2017-06-19 22:20:56",
+						"createUser": "学校管理员",
+						"updateTime": "2017-06-19 22:20:56",
+						"updateUser": "",
+						"version": 0,
+						"extField01": "",
+						"extField02": "",
+						"extField03": "",
+						"extField04": "",
+						"extField05": "",
+						"isDelete": 0,
+						"orderIndex": 0,
+						"indicatorId": "98375FEC-E1C4-4E99-B635-648F2C1B2FDB",
+						"indicatorStand": "激发学习兴趣，启发思维，课堂气氛活跃；开阔视野、拓宽思路、增长知识，实用性强。",
+						"indicatorName": "教学效果",
+						"indicatorObject": 1
+					},
+					{
+						"uuid": "AFED488E-BAAD-4D0C-B82B-0A13FE1CF6DF",
+						"createTime": "2017-06-19 22:19:47",
+						"createUser": "学校管理员",
+						"updateTime": "2017-06-19 22:19:47",
+						"updateUser": "",
+						"version": 0,
+						"extField01": "",
+						"extField02": "",
+						"extField03": "",
+						"extField04": "",
+						"extField05": "",
+						"isDelete": 0,
+						"orderIndex": 0,
+						"indicatorId": "E8FCB0B6-FCBC-4697-B911-E570FA73B733",
+						"indicatorStand": "运用新的教学理念、手段；教学方法多样化；教学态度认真，思路清晰、表达生动。",
+						"indicatorName": "教学水平",
+						"indicatorObject": 1
+					}
+				]
+			};
+	*/
+
+			//显示界面数据
+			$.ajax({
+		        type: 'GET',
+		        url: 'http://192.168.125.103:9003/app/traineval/getCourseEvalStand?courseId=2a52e332-0284-48cc-bffb-8bdb762c5ada',
+		        data: '',
+		        //dataType: 'jsonp',//如果是异步使用jsonp
+		        success: function(result){
+
+		       		datas=result;
+			        if(datas.success) {
+				        var courseInfo = datas.evalCourse;
+				        var evalStands = datas.evalStand;
+
+				        $("#classCategory").html(courseInfo.classCategory);
+				        $("#courseName").html(courseInfo.courseName);
+				        $("#teachTypeName").html(courseInfo.teachTypeName);
+				        $("#teacherName").html(courseInfo.teacherName);
+
+
+				        var html = "";
+						for(i = 0; i < evalStands.length; i++) {
+							var es = evalStands[i];
+
+							html += '<ul class="s1">' +
+								'<li class="s2">' + es.indicatorName + '</li>' +
+								'</ul>' + '<div>' +
+								'<li class="s3">'+ es.indicatorStand + '</li>' +
+								'<ul class="radioUl">' +
+								'<li class="radioLi">' + '<a class="radioA radio' + i + ' selected" data-val="verySatisfactioncount">很满意</a></li>' +
+								'<li class="radioLi">' + '<a class="radioA radio' + i + '" data-val="satisfactioncount">满意</a></li>' +
+								'<li class="radioLi">' + '<a class="radioA radio' + i + '" data-val="basSatisfactioncount">基本满意</a></li>' +
+								'<li class="radioLi">' + '<a class="radioA radio' + i + '" data-val="noSatisfactioncount">不满意</a></li>' +
+								'<div style="clear: both;"></div>' +
+								'</ul>' +
+								'</div>'
+						}
+						html += '<ul class="itemUl">' +
+							'<li class="y1">意见建议：</li>' +
+							'</ul>';
+						html += '<div class="bottomDiv"><textarea class="shuru" name="" placeholder="请输入您的意见建议..."></textarea>' +
+							'<input type="button" id="submit" value="提交" /> </div>';
+						$("#evalStandForm").append(html);
+				 
+			        }
+		        
+		        }
+        	});
+
+
+			// if(datas.success) {
+
+			// 	var courseInfo = datas.evalCourse;
+			// 	var evalStadns = datas.evalStand;
+			// 	$("#classCategory").html(courseInfo.classCategory);
+			// 	$("#courseName").html(courseInfo.courseName);
+			// 	$("#teachTypeName").html(courseInfo.teachTypeName);
+			// 	$("#teacherName").html(courseInfo.teacherName);
+
+			// 	var html = "";
+			// 	for(i = 0; i < evalStadns.length; i++) {
+			// 		var es = evalStadns[i];
+
+			// 		html += '<ul class="s1">' +
+			// 			'<li class="s2">' + es.indicatorName + '</li>' +
+			// 			'</ul>' + '<div>' +
+			// 			'<li class="s3">'+ es.indicatorStand + '</li>' +
+			// 			'<ul class="radioUl">' +
+			// 			'<li class="radioLi">' + '<a class="radioA radio' + i + ' selected" data-val="verySatisfactioncount">很满意</a></li>' +
+			// 			'<li class="radioLi">' + '<a class="radioA radio' + i + '" data-val="satisfactioncount">满意</a></li>' +
+			// 			'<li class="radioLi">' + '<a class="radioA radio' + i + '" data-val="basSatisfactioncount">基本满意</a></li>' +
+			// 			'<li class="radioLi">' + '<a class="radioA radio' + i + '" data-val="noSatisfactioncount">不满意</a></li>' +
+			// 			'<div style="clear: both;"></div>' +
+			// 			'</ul>' +
+			// 			'</div>'
+			// 	}
+			// 	html += '<ul class="itemUl">' +
+			// 		'<li class="y1">意见建议：</li>' +
+			// 		'</ul>';
+			// 	html += '<div class="bottomDiv"><textarea class="shuru" name="" placeholder="请输入您的意见建议..."></textarea>' +
+			// 		'<input type="button" id="submit" value="提交" /> </div>';
+			// 	$("#evalStandForm").append(html);
+			// }
+
+			$("a.radioA").click(function() {
+				var ul = $(this).parent("li.radioLi").parent("ul.radioUl")[0];
+				$(ul).find("a.radioA").removeClass("selected");
+				$(this).addClass("selected");
+			})
+
+			$("#submit").click(function() {
+				var courseInfo = datas.evalCourse;
+				var evalStands = datas.evalStand;
+
+				var storage = window.localStorage;
+				var uuid = courseInfo.classScheduleId;
+
+				if(!storage.getItem(uuid) || storage.getItem(uuid) != 1) {
+
+					var paramter = []; //声明数组的方式
+
+					for(var i = 0; i < evalStands.length; i++) {
+						var obj = {};
+						var es = evalStadns[i];
+
+						obj.classScheduleId = uuid;
+						obj.courseId = courseInfo.courseId;
+						obj.courseName = courseInfo.courseName;
+						obj.indicatorId = es.indicatorId;
+						obj.indicatorName = es.indicatorName;
+						obj.standId = es.standId;
+						obj.indicatorStand = es.indicatorStand;
+						obj.verySatisfactioncount = 0;
+						obj.satisfactioncount = 0;
+						obj.basSatisfactioncount = 0;
+						obj.noSatisfactioncount = 0;
+
+						var value = $($(".radio"+i+".selected")[0]).attr("data-val");
+						obj[value] = 1;
+
+						obj.advise = $(".shuru").val();
+						paramter.push(obj);
+					}
+					console.log(paramter);
+					console.log(JSON.stringify(paramter));
+
+					storage.setItem(uuid, 1);
+					alert("评价成功");
+					//			$.ajax({
+					//				type:"post",
+					//				url:"",
+					//				async:false;
+					//				data:{eval:JSON.stringify(paramter)}
+					//				success:function(data){
+					//					console.log(data);
+					//					if(data.success==true){
+					//						storage.setItem(uuid,1);
+					//						alert("评价成功");
+					//					}else{
+					//	alert("评价失败！");
+					//}
+					//				}，
+					//				error:function(){
+					//					alert("请求失败，请稍后重试！");		
+					//				}
+					//			});
+
+				} else {
+					alert("不能重复评价");
+				}
+			});
+
+		})
+	</script>
