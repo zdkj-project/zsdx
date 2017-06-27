@@ -14,11 +14,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
-import com.zd.core.util.StringUtils;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.jw.train.model.TrainCourseattend ;
 import com.zd.school.jw.train.dao.TrainCourseattendDao ;
-import com.zd.school.jw.train.service.TrainCourseattendService ;
 
 /**
  * 

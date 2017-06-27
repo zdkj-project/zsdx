@@ -1,30 +1,23 @@
 
 package com.zd.school.jw.train.controller;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zd.core.constant.Constant;
+import com.zd.core.controller.core.FrameWorkController;
+import com.zd.core.model.extjs.QueryResult;
+import com.zd.core.util.ModelUtil;
+import com.zd.core.util.StringUtils;
+import com.zd.school.jw.train.model.TrainCourseattend;
+import com.zd.school.jw.train.service.TrainCourseattendService;
+import com.zd.school.plartform.system.model.SysUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.zd.core.constant.Constant;
-import com.zd.core.constant.StatuVeriable;
-import com.zd.core.controller.core.FrameWorkController;
-import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.util.ModelUtil;
-import com.zd.core.util.BeanUtils;
-import com.zd.core.util.StringUtils;
-import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.jw.train.model.TrainCourseattend ;
-import com.zd.school.jw.train.dao.TrainCourseattendDao ;
-import com.zd.school.jw.train.service.TrainCourseattendService ;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * 
@@ -69,14 +62,13 @@ public class TrainCourseattendController extends FrameWorkController<TrainCourse
     }
 
     /**
-     * 
-      * @Title: doadd
-      * @Description: 增加新实体信息至数据库
-      * @param TrainCourseattend 实体类
-      * @param request
-      * @param response
-      * @return void    返回类型
-      * @throws IOException    抛出异常
+     *
+     * @param entity
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
      */
     @RequestMapping("/doadd")
     public void doAdd(TrainCourseattend entity, HttpServletRequest request, HttpServletResponse response)
@@ -126,15 +118,16 @@ public class TrainCourseattendController extends FrameWorkController<TrainCourse
 			}
         }
     }
+
     /**
-     * @Title: doUpdate
-     * @Description: 编辑指定记录
-     * @param TrainCourseattend
+     *
+     * @param entity
      * @param request
      * @param response
-     * @return void    返回类型
-     * @throws IOException  抛出异常
-    */
+     * @throws IOException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
     @RequestMapping("/doupdate")
     public void doUpdates(TrainCourseattend entity, HttpServletRequest request, HttpServletResponse response)
             throws IOException, IllegalAccessException, InvocationTargetException {

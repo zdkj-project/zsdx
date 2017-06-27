@@ -12,7 +12,6 @@ import com.zd.school.jw.train.model.TrainCreditsrule;
 import com.zd.school.jw.train.model.vo.VoTrainClasstrainee;
 import com.zd.school.jw.train.service.TrainClassscheduleService;
 import com.zd.school.jw.train.service.TrainClasstraineeService;
-import com.zd.school.jw.train.service.TrainCourseattendService;
 import com.zd.school.jw.train.service.TrainCreditsruleService;
 import com.zd.school.oa.terminal.model.OaInfoterm;
 import com.zd.school.oa.terminal.service.OaInfotermService;
