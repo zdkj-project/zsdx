@@ -1,0 +1,32 @@
+/*
+ * This is is imported by virtue of "sass.var" in "app.json".
+ */
+
+$enable-font-awesome: dynamic(true);
+
+
+//$base-color: lighten(red, 10%);
+
+$base-color: #de3a2e;
+
+//$font-weight:400;
+
+//$panel-body-font-weight:400 !important;
+
+
+
+$button-toolbar-color : #fff;
+
+$button-toolbar-color-over : #fff;
+
+$button-toolbar-glyph-color: #fff;
+
+$button-toolbar-background-color : #de3a2e;
+
+$button-toolbar-background-color-over : #cc352a;
+
+$grid-paging-toolbar-glyph-color:#bbb;
+
+
+$font-family: dynamic('微软雅黑', helvetica, arial, sans-serif);
+//$font-weight: dynamic(400);

@@ -1,0 +1,54 @@
+#app-header-small{
+    background-color:#c3190c;
+    border-bottom:1px solid #c44444 !important;
+    background-color: #c3190c;
+}
+
+.toolbar-btn-shadow {
+    box-shadow: 0 1px 2px rgba(13, 18, 24, 0.2);
+}
+
+#app-header-small-title {
+    color: #fff;
+    font-size: 18px;
+    margin:0;
+    padding:0;
+    top:10px !important;
+}
+#app-header-small-title .index_logo{
+	margin:0px 10px;
+	float:left;
+    height:33px
+}
+#app-header-small-title .index_title{
+	margin-top:2px;
+	float:left;
+    height:30px
+}
+
+.core-header-button
+{
+    border:none;
+    background:none;
+}
+.core-header-button-over
+{   
+    color:#c3190c;
+    background-color: #fff;
+    border-color: #f43c2f;
+}
+.core-header-button-focus
+{
+    color:#c3190c;
+    background-color: #fff;
+    border-color: #f43c2f;
+}
+
+.header-button-color{
+    color:#fff;
+}
+
+
+.core-header-menu{
+	background-color: #b51509;
+}

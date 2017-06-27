@@ -1,0 +1,352 @@
+/*
+ * This is is imported by virtue of "sass.etc" in "app.json".
+ */
+//如果你的样式，混合或变量没有指定到对应的视图，那么你可以放置到 /sass/etc/all.scss 。
+
+/*修复treepanel没有虚线的bug*/
+.x-tree-lines .x-tree-elbow-line {
+    background-image: url(/static/core/resources/images/tree/elbow-line.gif);
+    background-size: 100% 100%;
+}
+.x-tree-lines .x-tree-elbow {
+    background-image: url(/static/core/resources/images/tree/elbow.gif);
+    background-size: 100% 100%;
+}
+.x-tree-lines .x-tree-elbow-end {
+    background-image: url(/static/core/resources/images/tree/elbow-end.gif);
+    background-size: 100% 100%;
+}
+
+
+/*更改滚动条样式*/
+::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+    background-color: #F5F5F5;
+}
+::-webkit-scrollbar-corner {
+    background: rgb(245, 245, 245);
+}
+::-webkit-scrollbar-thumb {    
+    border-radius: 10px; 
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+    background-color: #ddd;
+
+}
+::-webkit-scrollbar-track {   
+    border: 1px #e5e5e5 solid;
+    background-color: #fff;
+}
+
+
+/*改变BaseQuery波浪线的样式*/
+.BaseQuery_DisplayField{
+	
+}
+.BaseQuery_DisplayField .x-form-display-field{
+	margin-top:0px;
+	padding-top: 8px;
+}
+
+
+
+
+/*teacherDetailPanel教师简介 幻灯片DIV样式*/
+.teacherDetailSlideDiv{
+	width: 850px;
+    height: 440px;
+    padding: 0 30px;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+}
+.teacherDetailSlideDiv i.fa{
+    font-size: 50px;
+    color: #ff564a;
+    position: absolute;
+    cursor: pointer;
+    z-index: 999;
+    background: rgba(16, 16, 16, 0.1);
+    padding: 10px 0px 5px 0px;
+}
+.teacherDetailSlideDiv i.fa:hover{
+    color: #d02619;
+}
+.teacherDetailSlideDiv .teacherDetailPanelMaxing{
+	width:auto;		//此width在js中会进行计算 基本宽度*数据个数
+	height:440px;
+    position: relative;
+    transition: margin-left 0.5s;
+}
+.teacherDetailSlideDiv .teacherDetailPanel{
+	float: left; 
+    margin: 0 20px 0px 0px;
+    overflow: auto;
+    position: relative;
+    width:800px;
+    height:440px;
+}
+
+/*teacherDetailPanel教师个人简介样式*/
+.teacherDetailPanel{
+	 padding: 5px 10px;
+	 color: #666666;
+	 font-size:16px;
+	 font-family: '微软雅黑';
+	 line-height: 22px;  
+	 font-weight: 400;
+	 position: relative;
+}
+.teacherDetailPanel img{
+	width: 300px;
+	height:400px;
+	float: right;
+	margin:10px;
+	background-color:#f5f5f5
+}
+.teacherDetailPanel p{
+	padding: 20px 0px 10px 0px;
+    margin: 0px;
+}
+.teacherDetailPanel p strong{
+	padding-left: 2em;
+}
+
+/*********教师详情界面样式***********/
+.trainTeacher_teacherInfo{
+    margin:0;
+    padding: 5px 50px 5px 10px;
+    width:100%;
+    position: relative;
+    font-family: '微软雅黑';
+    font-size:16px;
+    font-weight: 400;
+    height:400px;
+    margin-top: 10px;
+    display:flex;
+}
+/*左边*/
+.trainTeacher_teacherInfo .trainTeacher_left{
+    float:left;
+    width:210px;
+    height: 100%;
+    background-color: #f3f3f3;
+    margin-right: 20px;
+}
+.trainTeacher_teacherInfo .trainTeacher_left span{
+    display: block;
+    width: 100%;
+    color: #000;
+    font-size: 16px;
+    padding: 0px 20px 20px 24px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.trainTeacher_teacherInfo .trainTeacher_left span.zp{
+    display: block;
+    height: 126px;
+    width: 126px;
+    margin: 15px auto;
+    padding:0px;
+    background-color: #e5e5e5;
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+}
+.trainTeacher_teacherInfo .trainTeacher_left span.xm{
+    width: 100%;
+    display: block;
+    text-align: center;
+    margin: 15px 0px;
+    padding:0px;
+    font-size: 22px;
+    color: #B51509;
+    line-height: 30px;
+}
+/*右边*/
+.trainTeacher_teacherInfo .trainTeacher_right{
+    float:left;
+    //width: 80%;
+    height: 100%;
+    flex: 1;
+    -ms-flex: 1;
+    -webkit-flex: 1;
+}
+.trainTeacher_teacherInfo .trainTeacher_right ul{
+    margin:0;
+    padding:0;
+    width:100%;
+} 
+.trainTeacher_teacherInfo .trainTeacher_right ul li{
+    margin:0;
+    padding: 0px 20px 15px 0px;
+    float: left;
+    list-style: none;
+    width:30%;
+    color:#000;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+} 
+.trainTeacher_teacherInfo .trainTeacher_desc {
+    height:320px;
+    overflow: auto;
+}
+.trainTeacher_teacherInfo .trainTeacher_desc .wrap{
+    margin-bottom: 12px;
+    min-height: 50px;
+}
+.trainTeacher_teacherInfo .trainTeacher_desc strong{
+    
+}
+.trainTeacher_teacherInfo .trainTeacher_desc .wrap:first-child strong{
+    padding-left: 28px;
+    background-repeat: no-repeat;
+    background-position: left center;
+    //background-size: contain;
+    background-image: url(/static/core/resources/images/biaoqian.png);
+}
+.trainTeacher_teacherInfo .trainTeacher_desc span{
+    display: block;
+    margin-top:10px;
+    font-size:14px;
+    color:#696969;
+    text-indent: 2em;
+
+}
+
+/**************班级详情界面样式*************/
+/*班级基本信息样式*/
+.trainClass_classInfo{
+    margin:0;
+    padding: 5px 50px 5px 10px;
+    width:100%;
+    position: relative;
+    font-family: '微软雅黑';
+    font-size:13px;
+    font-weight: 400;
+}
+.trainClass_classInfo .trainClass_title{
+    margin: 0;
+    padding: 10px 0px 10px 0px;
+    color: #b51509;
+    font-size: 13px;
+}
+.trainClass_classInfo ul{
+    font-size: 12px;
+    margin:0;
+    padding:0;
+    width:100%;
+    padding: 10px 20px;
+    border: 1px #ECECEC solid;
+    background-color: #F5f5f5;
+} 
+.trainClass_classInfo ul li{
+    margin:0;
+    padding: 7px 20px 8px 0px;
+    float: left;
+    list-style: none;
+    width:20%;
+    color:#000;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+} 
+
+/*班级学员、课程列表样式*/
+.trainClass_classTraineeInfo{
+    margin:0;
+    padding: 5px 50px 5px 10px;
+    width:100%;
+    position: relative;
+    font-family: '微软雅黑';
+    font-size:13px;
+    font-weight: 400;
+}
+.trainClass_classTraineeInfo .trainClass_title{
+    margin: 0;
+    padding: 10px 0px 10px 0px;
+    color: #b51509;
+    font-size: 13px;
+}
+.trainClass_classTraineeInfo ul.trainClass_gridUl{
+    font-size: 12px;
+    margin:0;
+    padding:0;
+    width:100%;    
+    border: 1px #cecece  solid;
+    max-height: 228px;
+    overflow: auto;
+}
+.trainClass_classTraineeInfo ul.trainClass_gridUl li{
+    margin:0;   
+    float: left;
+    list-style: none;
+    width:100%;
+    color:#696969;
+    border-bottom: 1px solid #cecece ;
+}
+.trainClass_classTraineeInfo ul.trainClass_gridUl li:first-of-type{
+    color:#000;
+    background-color: #f6e8e8;
+    font-size: 13px;
+}
+.trainClass_classTraineeInfo ul.trainClass_gridUl li:first-of-type span{
+    line-height:46px;
+    height: 46px;
+}
+.trainClass_classTraineeInfo.multiHead ul.trainClass_gridUl li:first-of-type span{
+    line-height:52px;
+    height: 52px;
+}
+
+.trainClass_classTraineeInfo ul.trainClass_gridUl li:last-of-type{
+    border-bottom:none;
+}
+.trainClass_classTraineeInfo ul.trainClass_gridUl li span{
+    padding: 0px 5px;
+    border-right: 1px #cecece solid;
+    width: 15%;
+    display: block;
+    float: left;
+    line-height: 35px;
+    height: 35px;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.trainClass_classTraineeInfo ul.trainClass_gridUl li span:last-child{
+    border-right: none;
+} 
+/*班级就餐信息*/
+.trainClass_classTraineeInfo .trainClass_classFoodInfo{
+    margin:0;
+    padding: 0;
+    width:100%;
+    position: relative;
+    font-family: '微软雅黑';
+    font-size:12px;
+    font-weight: 400;
+}
+.trainClass_classTraineeInfo .trainClass_classFoodInfo ul{
+    margin:0;
+    padding:0;
+    width:100%;
+    padding: 10px 20px;
+    border: 1px #cecece solid;
+    background-color: #F5f5f5;
+} 
+.trainClass_classTraineeInfo .trainClass_classFoodInfo ul li{
+    margin:0;
+    padding: 7px 20px 8px 0px;
+    float: left;
+    list-style: none;
+    width:16.6%;
+    color:#000;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+} 

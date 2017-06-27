@@ -1,0 +1,70 @@
+.main-mainmenu-button{
+    padding:10px;
+}
+
+.mainmenu-button-icon-color{
+    color:red;
+    font-size: 18px;
+    height: 18px;
+}
+
+.mainMenu-wrap{
+    padding: 10px 10px 10px 20px;
+    cursor: pointer;
+    color:#333;
+    height: 60px;
+}
+
+.mainMenu-img{
+    border-radius: 15px;
+    width: 40px;
+    height: 40px;
+    float:left;
+}
+
+.mainMenu-icon{
+    font-size: 40px;
+}
+
+.mainMenu-text{
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding-top: 10px;
+    padding-left: 10px;
+    font-size: 16px;
+    font-family: '微软雅黑'
+}
+
+.mainMenu-wrap:hover{
+    background-color: #ff4b4b;
+    color: #fff;
+}
+.mainMenu-wrap.x-view-item-focused{
+    background-color: #ff4b4b;
+    color: #fff;
+}
+
+
+.mainMenu-iconCls{
+    width:35px;
+    height:35px;
+    top:15px;
+}
+.mainMenuCls .x-menu-item-arrow{
+    top:17px;
+}
+.mainMenuItemCls span{
+    font-size:15px;
+    font-family: '微软雅黑';    
+    font-weight: 400;
+    color:#404040;
+}
+.mainMenuPanel-img{
+    border-radius: 15px;
+    width: 35px;
+    height: 35px;
+    float:left;
+    margin-right: 5px;
+}

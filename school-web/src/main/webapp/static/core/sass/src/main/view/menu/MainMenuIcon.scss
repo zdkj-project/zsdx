@@ -1,0 +1,59 @@
+.mainMenuIcon-wrap{
+    float: left;
+    margin: 0px 10px;
+    padding: 20px 0px;
+    text-align:center;
+    width: 130px;
+    cursor: pointer;
+    border-radius: 20px;
+    position: relative;
+
+    /*暂时这样强行移除focus的样式*/
+    outline: none !important;
+    outline-offset: 0px !important;
+}
+
+.mainMenuIcon-wrap .mainMenuIcon-tag{
+    width: 24px;
+    height: 24px;
+    background-color: #F80000;
+    display: block;
+    position: absolute;
+    color: #fff;
+    font-weight: 800;
+    border-radius: 15px;
+    line-height: 24px;
+    right: 20px;
+    top: 15px;
+    font-size:14px;
+}
+
+.mainMenuIcon-wrap .mainMenuIcon-img{
+    border-radius: 15px;
+    width: 80px;
+    height: 80px;
+    //box-shadow: 0px 0px 5px #dedede
+}
+
+.mainMenuIcon-icon{
+    font-size: 84px;
+}
+
+.mainMenuIcon-wrap .mainMenuIcon-text{
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding-top: 10px;
+    font-family: '微软雅黑';
+    font-weight: 400;
+}
+
+.mainMenuIcon-wrap:hover{
+    /*
+    background-color: #ff4b4b;
+    color: #fff;
+    */
+
+    color: #b51509;  
+}

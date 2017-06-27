@@ -1,0 +1,220 @@
+/**
+ * Generates a set of style rules for the "navigation" tab UI.
+ */
+@include extjs-tab-panel-ui(
+    $ui: 'navigation',
+    $ui-tab-background-color: #c44444,
+    $ui-tab-background-color-over: #a50606,
+    $ui-tab-background-color-active: #fff,
+    $ui-tab-background-gradient: 'none',
+    $ui-tab-background-gradient-over: 'none',
+    $ui-tab-background-gradient-active: 'none',
+    $ui-tab-color: #f0f0f0,
+    $ui-tab-color-over: #f5f5f5,
+    $ui-tab-color-active: #c61b1b,
+    $ui-tab-glyph-color: #f0f0f0,
+    $ui-tab-glyph-color-over: #f5f5f5,
+    $ui-tab-glyph-color-active:#c61b1b,
+    $ui-tab-glyph-opacity: 1,
+    $ui-tab-border-radius: 0,
+    $ui-tab-border-width: 0px,
+    $ui-tab-border-color :#c61b1b,
+    $ui-tab-border-color-over :#c61b1b,
+    $ui-tab-border-color-active : #c61b1b,
+    $ui-tab-inner-border-width: 0,
+    $ui-tab-padding: 10px,
+    $ui-tab-margin:0px 5px 0px 0px,
+    $ui-tab-font-size: 13px,
+    $ui-tab-font-size-over: 13px,
+    $ui-tab-font-size-active: 13px,
+    $ui-tab-line-height: 19px,
+    $ui-tab-font-weight: bold,
+    $ui-tab-font-weight-over: bold,
+    $ui-tab-font-weight-active: bold,
+    $ui-tab-icon-width: 20px,
+    $ui-tab-icon-height: 20px,
+    $ui-tab-icon-spacing: 5px,
+    $ui-bar-background-color: #b51509,
+    $ui-bar-background-gradient: 'none',
+    $ui-bar-padding: 0,
+    $ui-strip-height: 0
+);
+
+/**
+ * Generates a set of style rules for the "navigation" panel UI.
+ */
+@include extjs-panel-ui(
+    $ui: 'navigation',
+    $ui-header-color: #fff,
+    $ui-header-glyph-color: #fff,
+    $ui-header-glyph-opacity: 1,
+    $ui-header-font-size: 20px,
+    $ui-header-line-height: 24px,
+    $ui-header-font-weight: bold,
+    $ui-header-icon-height: 24px,
+    $ui-header-icon-width: 24px,
+    $ui-header-icon-spacing: 15px,
+    $ui-header-background-color: $base-color,
+    $ui-header-padding: 0,
+    $ui-header-text-margin: 36px,
+    $ui-header-noborder-adjust: false
+);
+
+
+
+.x-title-icon-navigation {
+    font-family: FontAwesome;
+    color: #fff;
+    font-size: 24px;
+    line-height: 24px;
+}
+
+.x-tab-icon-el-navigation {
+    font-family: FontAwesome;
+    color: #f0f0f0;
+
+    .x-tab-over & {
+        color: #c4c4c4;
+    }
+
+    .x-tab-active & {
+        color: #a50606;
+    }
+}
+
+.x-panel-header-title-navigation > .x-title-text-navigation:after {
+    top: 30px;
+    right: -24px;
+}
+
+/*tab导航条，非活动tab，隐藏关闭按钮*/
+.x-tab-navigation .x-tab-close-btn{
+    display:none;
+    top: 10px;
+    right: 2px;
+}
+/*tab导航条，活动tab，显示关闭按钮*/
+.x-tab-navigation.x-tab-active .x-tab-close-btn{
+    display: block;
+}
+
+
+/*表格的操作列 按钮样式*/
+.x-action-col-icon {
+    color: #c73c3c;
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+    margin:0px 4px;
+    cursor: pointer;
+}
+.x-action-col-icon {
+    display: inline-block;
+    line-height: 1;
+}
+
+/*表单的文本框输入文字后的样式*/
+.x-form-field {
+    color: black;
+    font-family: '微软雅黑';
+    font-size: 14px;
+    font-weight: 400;
+    padding: 2px 5px;
+}
+.x-form-display-field{
+    font-weight: 400;
+}
+.x-form-trigger-default {
+    width: 20px;
+}
+.x-form-checkbox{
+    color:#717171;
+    font: 18px/1 ExtJS;
+    padding: 0px;
+}
+.x-form-radio {
+    font: 18px/1 FontAwesome;
+    color: #919191;
+    padding: 1px;
+}
+
+/*表格列表文字样式*/
+.x-grid-item {
+    color: #404040;
+    font: 400 12px/18px '微软雅黑';   
+}
+/*表格单元格*/
+.x-grid-td{
+    vertical-align: middle
+}
+
+
+/*操作列文字样式*/
+.x-action-col-mytext {
+    color: #c3190c;
+    font-size: 14px;
+    /*height: 18px;*/
+    /*width: 18px;*/
+    margin:0px 4px;
+    cursor: pointer;
+    display: inline-block; 
+    line-height: 1;
+}
+
+
+
+
+/*只改变checkboxGrid下面的样式*/
+.checkboxGrid .x-column-header-checkbox .x-column-header-text {
+    margin-bottom: 0em; 
+}
+.checkboxGrid .x-column-header-checkbox {
+    border-color: #fff;
+    position: relative;
+    top: 0.2em;
+    right: 0.2em;
+}
+
+
+/*改变basegrid中的分页栏目的样式*/
+.basegridPagingToolbar{
+    padding: 2px 0 2px 3px
+}
+
+
+
+/*加入表格group的样式*/
+.x-grid-group-hd {
+    border-width: 0 0 1px 0;
+    border-style: solid;
+    border-color: #d0d0d0;
+    padding: 8px 10px;
+    background: #fff;
+    cursor: pointer;
+    white-space: nowrap;
+    outline: none;
+}
+.x-grid-group-title {
+    color: #606060;
+    font: 400 13px/15px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    position: relative;
+}
+.x-grid-group-hd-collapsible .x-grid-group-title {
+    padding: 0 0 0 24px;
+}
+.x-grid-group-title:before {
+    position: absolute;
+    left: 0;
+}  
+.x-grid-group-hd-collapsible .x-grid-group-title:before {
+    content: "\f146";
+    font-size: 14px;
+    font-family: FontAwesome;
+    color: #919191;
+}
+.x-grid-group-hd-collapsed .x-grid-group-title:before {
+    content: "\f0fe";
+    font-size: 14px;
+    font-family: FontAwesome;
+    color: #919191;
+}

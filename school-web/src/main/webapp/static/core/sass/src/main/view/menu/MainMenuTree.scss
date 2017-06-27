@@ -1,0 +1,17 @@
+/*zzk：2017-6-2，替换extjs-all包即可，不使用rtl包
+.x-grid-cell-inner-treecolumn {		//解决树形组件向右对其的bug
+    padding: 5px 5px 5px 15px;
+     text-align: left !important;
+}
+*/
+.mainmenutree-cls{
+	font-size:20px;
+}
+
+.MainMenuTreeIconStyle{
+	background-size: contain !important; 
+}
+
+.mainmenutree-cls .x-tree-view {		/*此样式只在mainmenutree-cls的样式容器之下的treeview生效，解决树组件底部拖动条不出来的bug*/
+	overflow:auto !important;
+}

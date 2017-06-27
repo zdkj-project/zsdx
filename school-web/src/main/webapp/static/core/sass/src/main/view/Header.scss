@@ -1,0 +1,79 @@
+#app-header{
+    background-color:#c3190c;
+    border-bottom:1px solid #c44444 !important;
+    background-color: #c3190c;
+}
+
+.toolbar-btn-shadow {
+    box-shadow: 0 1px 2px rgba(13, 18, 24, 0.2);
+}
+
+#app-header-title {
+    color: #fff;
+    font-size: 18px;
+    margin:0;
+    padding:0;
+    top:17px !important;
+}
+#app-header-title .index_logo{
+	margin: 0px 10px;
+	float:left;
+}
+#app-header-title .index_title{
+	margin-top: 8px;
+	float:left;
+}
+
+.appHeader-btnTbar{
+    left:8px !important;
+}
+
+
+.core-header-button
+{
+    border:none;
+    background:none;
+}
+.core-header-button-over
+{   
+    color:#c3190c;
+    background-color: #fff;
+    border-color: #f43c2f;
+}
+.core-header-button-focus
+{
+    color:#c3190c;
+    background-color: #fff;
+    border-color: #f43c2f;
+}
+
+.header-button-color{
+    color:#fff;
+}
+
+.index_welcome{
+	font-size:20px;
+	color:#fff;
+	line-height:40px;
+	//margin-top:5px;
+	font-family: '微软雅黑';
+    font-weight:400;
+}
+.index_welcome img{
+	margin-top: 10px;
+    margin-right: 5px;
+    float: left;
+    width:20px;
+}
+.index_welcome span{
+	color:#fff;
+	font-size:14px;
+	float: left;
+}
+
+
+.core-header-menu{
+	background-color: #b51509;
+    font-family: '微软雅黑';
+    font-weight:400;
+}
