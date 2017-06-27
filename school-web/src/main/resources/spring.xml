@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+
+	<!-- 配置自动检测  -->
+	<!-- Enable annotation util configuration -->
+	<context:annotation-config />
+	<!-- Scan packages for Spring annotations -->
+	<context:component-scan base-package="com.zd" />
+	<context:component-scan base-package="org.activiti.rest.editor" />
+	<context:component-scan base-package="org.activiti.rest.diagram" />
+	<context:component-scan base-package="com.orcl" />
+
+	<!-- 配置数据源,这里采用的是阿里巴巴的 durid -->
+	<!-- 引入 sql server 属性配置文件 -->
+	<bean id="propertyConfigure"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:sqlserver.properties</value>
+				<!--暂时不加入redis <value>classpath:jedis.properties</value>	 -->
+			</list>
+		</property>
+	</bean>
+	<bean id="dataSourceOne" class="com.alibaba.druid.pool.DruidDataSource"
+		destroy-method="close">
+		<!-- sql server 数据库连接配置 -->
+		<property name="driverClassName" value="${driverClass}" />
+		<property name="url" value="${jdbcUrl}" />
+		<property name="username" value="${username}" />
+		<property name="password" value="${password}" />
+
+		<!-- 配置初始化大小、最小、最大 -->
+		<property name="initialSize" value="1" />
+		<property name="minIdle" value="1" />
+		<property name="maxActive" value="20" />
+		<!-- 配置获取连接等待超时的时间 -->
+		<property name="maxWait" value="60000" />
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+		<!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+		<property name="poolPreparedStatements" value="true" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+			value="20" />
+		<!-- 配置监控统计拦截的filters -->
+		<property name="filters" value="stat,log4j" />
+		
+		<property name="validationQuery"><value>SELECT 'x'</value></property>
+		
+	</bean>
+
+	<bean id="dataSourceFour" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+        <property name="url" value="jdbc:oracle:thin:@121.35.251.53:1521:orcl"/>
+        <property name="username" value="zsdxtest"/>
+        <property name="password" value="zsdxtest"/>
+        <!-- 连接池启动时的初始值 -->
+        <property name="initialSize" value="3" />
+        <!-- 连接池的最大值 -->
+        <property name="maxActive" value="300" />
+        <!-- 最大空闲值.当经过一个高峰时间后，连接池可以慢慢将已经用不到的连接慢慢释放一部分，一直减少到maxIdle为止 -->
+        <property name="maxIdle" value="2" />
+        <!-- 最小空闲值.当空闲的连接数少于阀值时，连接池就会预申请去一些连接，以免洪峰来时来不及申请 -->
+        <property name="minIdle" value="1" />
+        <!-- end -->
+	</bean>
+	
+	<bean id="dataSourceFive" class="com.alibaba.druid.pool.DruidDataSource"
+		destroy-method="close">
+		<!-- sql server 数据库连接配置 -->
+		<property name="driverClassName" value="${driverClass5}" />
+		<property name="url" value="${jdbcUrl5}" />
+		<property name="username" value="${username5}" />
+		<property name="password" value="${password5}" />
+
+		<!-- 配置初始化大小、最小、最大 -->
+		<property name="initialSize" value="1" />
+		<property name="minIdle" value="1" />
+		<property name="maxActive" value="20" />
+		<!-- 配置获取连接等待超时的时间 -->
+		<property name="maxWait" value="60000" />
+		<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+		<!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+		<property name="poolPreparedStatements" value="true" />
+		<property name="maxPoolPreparedStatementPerConnectionSize"
+			value="20" />
+		<!-- 配置监控统计拦截的filters -->
+		<property name="filters" value="stat,log4j" />
+		
+		<property name="validationQuery"><value>SELECT 'x'</value></property>
+		
+	</bean>
+	
+<!-- 	<bean id="dataSource"     
+      class="org.springframework.jdbc.datasource.DriverManagerDataSource">     
+    <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />  
+    <property name="url" value="jdbc:oracle:thin:@172.19.34.6:1521:ORCL" />  
+    <property name="username" value="orclight" />     
+    <property name="password" value="123456" />  
+</bean>   -->
+	
+	
+ 	<bean id="dynamicDataSource" class="com.zd.core.util.DynamicDataSource" >  
+	    <!-- 通过key-value的形式来关联数据源 -->  
+	    <property name="targetDataSources">  
+	        <map>  
+	            <entry value-ref="dataSourceOne" key="dataSourceOne"></entry>  	           
+	            <entry value-ref="dataSourceFive" key="dataSourceFive"></entry>    
+	        </map>  
+	    </property>  
+	    <property name="defaultTargetDataSource" ref="dataSourceOne" />  
+	</bean>  
+	<!-- 配置SessionFactory，由spring提供 -->
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<!-- 配置数据 源 -->
+		<property name="dataSource" ref="dynamicDataSource"></property>
+		<!-- 配置hibernate配置文件所在的位置 -->
+		<property name="configLocation" value="classpath:spring-hibernate.cfg.xml"></property>
+		<!-- 扫描的数据包 -->
+		<property name="packagesToScan" value="com.zd"></property>
+	</bean>
+	
+		<!-- 配置SessionFactory，由spring提供 -->
+	<bean id="oraclesessionFactory"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<!-- 配置数据 源 -->
+		<property name="dataSource" ref="dataSourceFour"></property>
+		<!-- 配置hibernate配置文件所在的位置 -->
+		<property name="configLocation" value="classpath:orcl-hibernate.cfg.xml"></property>
+		<!-- 扫描的数据包 -->
+		<property name="packagesToScan" value="com.orcl"></property>
+	</bean>
+	
+
+    <!-- Activiti处理引擎的配置，交由Spring管理 -->
+    <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+        <!-- 配置数据源,和系统使用同一个数据源 -->
+        <property name="dataSource" ref="dynamicDataSource" />
+        <property name="databaseSchemaUpdate" value="false" />
+        <property name="jobExecutorActivate" value="false" />
+        <property name="dbIdentityUsed" value="false" />
+        <!-- 统一的事务管理 -->
+        <property name="transactionManager" ref="transactionManager" />
+        <property name="activityFontName" value="宋体" />
+        <property name="labelFontName" value="宋体" />
+    </bean>
+    
+	<bean id="objectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
+    <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean">
+        <property name="processEngineConfiguration" ref="processEngineConfiguration" />
+    </bean>
+    
+
+    <!-- activiti的各种服务接口 -->
+    <bean id="repositoryService" factory-bean="processEngine"  factory-method="getRepositoryService" />
+    <bean id="runtimeService" factory-bean="processEngine"   factory-method="getRuntimeService" />
+    <bean id="taskService" factory-bean="processEngine"        factory-method="getTaskService" />
+    <bean id="historyService" factory-bean="processEngine"        factory-method="getHistoryService" />
+    <bean id="managementService" factory-bean="processEngine"        factory-method="getManagementService" />
+    <bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService"/>
+      
+    <bean id="sssssss" class="com.zd.core.util.DynamicSessionFactoryImpl">
+        <property name="defaultTargetSessionFactory" ref="sessionFactory"/>
+        <property name="targetSessionFactorys">
+            <map>     
+                <entry value-ref="oraclesessionFactory" key="oracle"/>
+                <entry value-ref="sessionFactory" key="mysql"/>
+            </map> 
+        </property>
+    </bean>  
+    
+	<!-- 配置声明式事务管理器(采用注解的方式 ),由spring提供HibernateTransactionManager -->
+ 	<!-- 
+ 	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sssssss"></property>
+	</bean>
+	-->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"></property>
+	</bean> 
+	 
+
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	
+
+	<!-- 定义 Autowired 自动注入 bean -->
+	<bean
+		class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor" />
+    
+    <!-- kaptcha 验证码配置 -->
+    <bean id="captchaProducer" class="com.google.code.kaptcha.impl.DefaultKaptcha">  
+        <property name="config">  
+            <bean class="com.google.code.kaptcha.util.Config">  
+                <constructor-arg>  
+                    <props>  
+                        <prop key="kaptcha.border">no</prop>  
+                        <prop key="kaptcha.border.color">105,179,90</prop>  
+                        <prop key="kaptcha.textproducer.font.color">red</prop>  
+                        <prop key="kaptcha.image.width">120</prop>  
+                        <prop key="kaptcha.textproducer.font.size">38</prop>  
+                        <prop key="kaptcha.image.height">40</prop>  
+                        <prop key="kaptcha.session.key">code</prop>  
+                        <prop key="kaptcha.textproducer.char.length">4</prop>  
+                        <prop key="kaptcha.textproducer.font.names">宋体,楷体,微软雅黑</prop>  
+                        <prop key="kaptcha.textproducer.char.string">ABCDEFGHJKLMNPQRSTUVWXYZ2345679</prop>
+                        <prop key="kaptcha.noise.impl">com.google.code.kaptcha.impl.NoNoise</prop>  
+                    </props>  
+                </constructor-arg>  
+            </bean>  
+        </property>  
+    </bean>
+    
+    <aop:aspectj-autoproxy proxy-target-class="true"/> 
+    	
+      <!--  <aop:config>  
+        <aop:aspect ref="testBean">  
+            配置com.zd.school.control.device.service包下所有类或接口的所有方法  
+             <aop:pointcut id="businessService"  
+                expression="execution(* com.zd.school.control.device.service.*.*(..))" />  
+            <aop:before pointcut-ref="businessService" method="doBefore"/>  
+            <aop:after pointcut-ref="businessService" method="doAfter"/>   
+        </aop:aspect>  
+    </aop:config> 
+    <bean id="testBean"  class="com.zd.core.util.TestAopImpl"></bean>   -->
+    
+    
+    <!-- 暂时不加入redis
+  		<import resource="redis-config.xml"/>
+  	 -->
+</beans>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+     "WEB-INF/dtd/hibernate-configuration-3.0.dtd">
+    <!-- "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd"> -->
+<hibernate-configuration>
+    <session-factory>
+        <!-- 配置连接数据库的基本信息 -->
+        <!-- 1.数据源配置到IOC容器中，所以此处不再需要配置数据源 2.关联的.hbm.xml也在IOC容器配置SessionFactory实例时再进行配置 
+            3.配置Hibernate的基本属性：方言、SQL显式及格式化、生成数据表的策略以及二级缓存等 -->
+
+
+        <!-- 配置hibernate基本信息 -->
+        <!-- hibernate所使用的数据库方言 -->
+        <!-- mysql的Dialect方言配置 -->
+        <!-- <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop> -->
+        <!-- SQL Server的Dialect方言配置 -->
+        <property name="dialect">org.hibernate.dialect.SQLServer2008Dialect</property>
+        <!-- Oracle的Dialect方言配置 -->
+        <!-- <prop key="hibernate.dialect">org.hibernate.dialect.OracleDialect</prop> -->
+<!--         <property name="dialect">org.hibernate.dialect.OracleDialect</property>  -->
+
+        <!-- 执行操作时是否在控制台打印sql -->
+        <property name="show_sql">false</property>
+
+        <!-- 是否对SQL进行格式化 -->
+        <property name="format_sql">true</property>
+
+        <!-- 指定自动生成数据表的策略 -->
+        <property name="hbm2ddl.auto">update</property>
+
+        <!-- 是否使用注释 -->
+        <property name="use_sql_comments">false</property>
+        <!-- 一次读的数据库记录数 -->
+        <property name="jdbc.fetch_size">30</property>
+        <!-- 设定对数据库进行批量删除 -->
+        <property name="jdbc.batch_size">30</property>
+
+        <property name="cache.use_second_level_cache">true</property>
+        <property name="cache.use_query_cache">true</property>
+        <property name="cache.provider_class">net.sf.ehcache.hibernate.SingletonEhCacheProvider</property>
+        <property name="cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</property>
+        <property name="current_session_context_class">org.springframework.orm.hibernate5.SpringSessionContext</property>
+        <property name="javax.persistence.validation.mode">none</property>
+    </session-factory>
+</hibernate-configuration>
