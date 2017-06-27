@@ -199,7 +199,7 @@ Ext.define("core.train.alleval.view.MainGrid", {
                         cmd: 'startEval'
                     });
                 }
-            },*/{
+            },{
                 text: '评价汇总',
                 style: 'font-size:12px;',
                 tooltip: '评价汇总',
@@ -219,7 +219,7 @@ Ext.define("core.train.alleval.view.MainGrid", {
                         cmd: 'sumEval'
                     });
                 }
-            },{
+            }*/,{
                 text: '排名',
                 style: 'font-size:12px;',
                 tooltip: '排名',
