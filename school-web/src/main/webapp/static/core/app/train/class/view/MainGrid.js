@@ -314,12 +314,12 @@ Ext.define("core.train.class.view.MainGrid", {
                 style:'font-size:12px;',
                 tooltip: '编辑',
                 ref: 'gridEdit',
-                getClass :function(v,metadata,record){
-                    if(record.get("isuse")==1||record.get("isuse")==3)
-                        return 'x-hidden-display';
-                    else
-                        return null;
-                }, 
+                // getClass :function(v,metadata,record){
+                //     if(record.get("isuse")!=null&&record.get("isuse")!=0)
+                //         return 'x-hidden-display';
+                //     else
+                //         return null;
+                // }, 
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
                     this.fireEvent('editClick_Tab', {

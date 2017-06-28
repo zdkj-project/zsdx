@@ -165,6 +165,11 @@ Ext.define("core.train.class.controller.OtherController", {
 
                             loading.hide();
 
+                            var grid = basetab.funData.grid; //窗体是否有grid参数
+                            if (!Ext.isEmpty(grid)) {
+                                grid.getStore().load(); //刷新父窗体的grid
+                            }  
+                            
                             //关闭tab
                             tabPanel.remove(tabItem);  
                         }else{

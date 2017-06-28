@@ -346,11 +346,22 @@ Ext.define("core.train.class.controller.MainController", {
                             if (btnImportCourse)
                                 btnImportCourse.setDisabled(true);
                             if (btnUse)
-                                btnUse.setDisabled(true);
-                            if(btnEdit)
-                                btnEdit.setDisabled(true);
+                                btnUse.setDisabled(true);                    
                             if(btnDelete)
                                 btnDelete.setDisabled(true);
+                            if(btnEdit)
+                                btnEdit.setDisabled(false);
+                        }else if(record.get("isuse")==2){
+                            if (btnImportTrainee)
+                                btnImportTrainee.setDisabled(true);
+                            if (btnImportCourse)
+                                btnImportCourse.setDisabled(true);                                                
+                            if(btnDelete)
+                                btnDelete.setDisabled(true);
+                            if (btnUse)
+                                btnUse.setDisabled(false);
+                              if(btnEdit)
+                                btnEdit.setDisabled(false);
                         }else{
                             if (btnImportTrainee)
                                 btnImportTrainee.setDisabled(false);

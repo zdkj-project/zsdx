@@ -220,19 +220,6 @@ Ext.define("core.train.arrange.view.MainGrid", {
                     });
                 }
             }, {
-                text: '绑定卡片',
-                style: 'font-size:12px;',
-                tooltip: '绑定卡片',
-                ref: 'gridBindCard',
-                handler: function (view, rowIndex,colIndex, item) {
-                    var rec = view.getStore().getAt(
-                        rowIndex);
-                    this.fireEvent('gridBindCardClick_Tab', {
-                        view: view.grid,
-                        record: rec
-                    });
-                }
-            }, {
                 text:'详情',  
                 style:'font-size:12px;',  
                 tooltip: '详情',
