@@ -23,7 +23,7 @@
 	<!-- webApp的根，用来区分部署到同一tomcat的不同应用程序 -->
 	<context-param>
 		<param-name>webAppRootKey</param-name>
-		<param-value>sdfz</param-value>
+		<param-value>zsdx</param-value>
 	</context-param>
 	<!-- Spring配置 -->
 	<listener>
