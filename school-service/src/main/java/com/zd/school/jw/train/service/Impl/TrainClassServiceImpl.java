@@ -42,71 +42,75 @@ import java.util.*;
 @Transactional
 public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implements TrainClassService {
 
-    @Resource
-    public void setTrainClassDao(TrainClassDao dao) {
-        this.dao = dao;
-    }
+	@Resource
+	public void setTrainClassDao(TrainClassDao dao) {
+		this.dao = dao;
+	}
 
-    @Resource
-    private TrainTeacherService teacherService;
+	@Resource
+	private TrainTeacherService teacherService;
 
-    @Resource
-    private TrainClasstraineeService trainClasstraineeService;
+	@Resource
+	private TrainClasstraineeService trainClasstraineeService;
 
-    @Resource
-    private TrainClassscheduleService trainClassscheduleService;
+	@Resource
+	private TrainClassscheduleService trainClassscheduleService;
 
-    @Resource
-    BaseOrgService baseOrgService;
+	@Resource
+	BaseOrgService baseOrgService;
 
-    @Resource
-    SysUserService sysUserService;
+	@Resource
+	SysUserService sysUserService;
 
-    @Resource
-    private TrainIndicatorStandService standService;
+	@Resource
+	private TrainIndicatorStandService standService;
 
-    private static Logger logger = Logger.getLogger(TrainClassServiceImpl.class);
+	private static Logger logger = Logger.getLogger(TrainClassServiceImpl.class);
 
-    @Override
-    public QueryResult<TrainClass> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-        QueryResult<TrainClass> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
-        return qResult;
-    }
+	@Override
+	public QueryResult<TrainClass> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
+		QueryResult<TrainClass> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+		return qResult;
+	}
 
-    /**
-     * 根据主键逻辑删除数据
-     *
-     * @param ids         要删除数据的主键
-     * @param currentUser 当前操作的用户
-     * @return 操作成功返回true，否则返回false
-     */
-    @Override
-    public Boolean doLogicDeleteByIds(String ids, SysUser currentUser) {
-        Boolean delResult = false;
-        try {
-            Object[] conditionValue = ids.split(",");
-            String[] propertyName = {"isDelete", "updateUser", "updateTime"};
-            Object[] propertyValue = {1, currentUser.getXm(), new Date()};
-            this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
-            delResult = true;
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            delResult = false;
-        }
-        return delResult;
-    }
+	/**
+	 * 根据主键逻辑删除数据
+	 * 
+	 * @param ids
+	 *            要删除数据的主键
+	 * @param currentUser
+	 *            当前操作的用户
+	 * @return 操作成功返回true，否则返回false
+	 */
+	@Override
+	public Boolean doLogicDeleteByIds(String ids, SysUser currentUser) {
+		Boolean delResult = false;
+		try {
+			Object[] conditionValue = ids.split(",");
+			String[] propertyName = { "isDelete", "updateUser", "updateTime" };
+			Object[] propertyValue = { 1, currentUser.getXm(), new Date() };
+			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+			delResult = true;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			delResult = false;
+		}
+		return delResult;
+	}
 
-    /**
-     * 根据传入的实体对象更新数据库中相应的数据
-     *
-     * @param entity      传入的要更新的实体对象
-     * @param currentUser 当前操作用户
-     * @return
-     */
-    @Override
-    public TrainClass doUpdateEntity(TrainClass entity, SysUser currentUser) {
-        // 先拿到已持久化的实体
-        TrainClass saveEntity = this.get(entity.getUuid());
+	/**
+	 * 根据传入的实体对象更新数据库中相应的数据
+	 * 
+	 * @param entity
+	 *            传入的要更新的实体对象
+	 * @param currentUser
+	 *            当前操作用户
+	 * @return
+	 */
+	@Override
+	public TrainClass doUpdateEntity(TrainClass entity, SysUser currentUser) {
+		// 先拿到已持久化的实体
+		TrainClass saveEntity = this.get(entity.getUuid());
 		// SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		try {
@@ -131,169 +135,173 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 			Integer isuse = saveEntity.getIsuse();
 			if (isuse != null && isuse != 0) // 当班级已经提交过一次之后，每次修改都设置为2
 				saveEntity.setIsuse(2);
-            // 设置班级编号
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(saveEntity.getBeginDate());
-            // 1.生成年
-            int classYear = calendar.get(calendar.YEAR); // 2017
-            // 2.拼接：年+类型
-            String classNumbStr = classYear + saveEntity.getClassCategory();
 
-            // 年份、类型变化后，编号也变化
-            if (saveEntity.getClassNumb() == null || saveEntity.getClassNumb().length() < classNumbStr.length()) {
-                String codeAndOrder = this.getClassCodeAndOrderIndex(classNumbStr);
-                String[] temp = codeAndOrder.split(",");
-                saveEntity.setClassNumb(temp[0]);
-                saveEntity.setOrderIndex(Integer.valueOf(temp[1]));
-            } else {
-                String oldClassNumbStr = saveEntity.getClassNumb().substring(0, classNumbStr.length());
-                if (!oldClassNumbStr.equals(classNumbStr)) {
-                    String codeAndOrder = this.getClassCodeAndOrderIndex(classNumbStr);
-                    String[] temp = codeAndOrder.split(",");
-                    saveEntity.setClassNumb(temp[0]);
-                    saveEntity.setOrderIndex(Integer.valueOf(temp[1]));
-                }
-            }
+			// 设置班级编号(问题很严峻）
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(saveEntity.getBeginDate());
+			// 1.生成年
+			int classYear = calendar.get(calendar.YEAR); // 2017
+			// 2.拼接：年+类型
+			String classNumbStr = classYear + saveEntity.getClassCategory();
 
-            entity = this.merge(saveEntity);// 执行修改方法
+			// 年份、类型变化后，编号也变化
+			if (saveEntity.getClassNumb() == null || saveEntity.getClassNumb().length() < classNumbStr.length()) {
+				String codeAndOrder = this.getClassCodeAndOrderIndex(classNumbStr);
+				String[] temp = codeAndOrder.split(",");
+				saveEntity.setClassNumb(temp[0]);
+				saveEntity.setOrderIndex(Integer.valueOf(temp[1]));
+			} else {
+				String oldClassNumbStr = saveEntity.getClassNumb().substring(0, classNumbStr.length());
+				if (!oldClassNumbStr.equals(classNumbStr)) {
+					String codeAndOrder = this.getClassCodeAndOrderIndex(classNumbStr);
+					String[] temp = codeAndOrder.split(",");
+					saveEntity.setClassNumb(temp[0]);
+					saveEntity.setOrderIndex(Integer.valueOf(temp[1]));
+				}
+			}
 
-            return entity;
-        } catch (IllegalAccessException e) {
-            logger.error(e.getMessage());
-            return null;
-        } catch (InvocationTargetException e) {
-            logger.error(e.getMessage());
-            return null;
-        }
-    }
+			entity = this.merge(saveEntity);// 执行修改方法
 
-    /**
-     * 将传入的实体对象持久化到数据
-     *
-     * @param entity      传入的要更新的实体对象
-     * @param currentUser 当前操作用户
-     * @return
-     */
-    @Override
-    public TrainClass doAddEntity(TrainClass entity, SysUser currentUser) {
-        TrainClass saveEntity = new TrainClass();
-        try {
-            List<String> excludedProp = new ArrayList<>();
-            excludedProp.add("uuid");
-            BeanUtils.copyPropertiesExceptNull(saveEntity, entity, excludedProp);
-            // saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
-            saveEntity.setCreateUser(currentUser.getUuid());
+			return entity;
+		} catch (IllegalAccessException e) {
+			logger.error(e.getMessage());
+			return null;
+		} catch (InvocationTargetException e) {
+			logger.error(e.getMessage());
+			return null;
+		}
+	}
 
-            // 设置班级编号
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(saveEntity.getBeginDate());
-            // 1.生成年
-            int classYear = calendar.get(calendar.YEAR); // 2017
-            // 2.拼接：年+类型
-            String classNumbStr = classYear + saveEntity.getClassCategory();
+	/**
+	 * 将传入的实体对象持久化到数据
+	 * 
+	 * @param entity
+	 *            传入的要更新的实体对象
+	 * @param currentUser
+	 *            当前操作用户
+	 * @return
+	 */
+	@Override
+	public TrainClass doAddEntity(TrainClass entity, SysUser currentUser) {
+		TrainClass saveEntity = new TrainClass();
+		try {
+			List<String> excludedProp = new ArrayList<>();
+			excludedProp.add("uuid");
+			BeanUtils.copyPropertiesExceptNull(saveEntity, entity, excludedProp);
+			// saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
+			saveEntity.setCreateUser(currentUser.getUuid());
 
-            String codeAndOrder = this.getClassCodeAndOrderIndex(classNumbStr);
-            String[] temp = codeAndOrder.split(",");
-            saveEntity.setClassNumb(temp[0]);
-            saveEntity.setOrderIndex(Integer.valueOf(temp[1]));
+			// 设置班级编号
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(saveEntity.getBeginDate());
+			// 1.生成年
+			int classYear = calendar.get(calendar.YEAR); // 2017
+			// 2.拼接：年+类型
+			String classNumbStr = classYear + saveEntity.getClassCategory();
 
-            entity = this.merge(saveEntity);// 执行修改方法
+			String codeAndOrder = this.getClassCodeAndOrderIndex(classNumbStr);
+			String[] temp = codeAndOrder.split(",");
+			saveEntity.setClassNumb(temp[0]);
+			saveEntity.setOrderIndex(Integer.valueOf(temp[1]));
 
-            // if(traineeId != null ){
-            // String[] traineeIds = traineeId.split(",");
-            // String[] traineeXbms = traineeXbm.split(",");
-            // String[] traineeNames = traineeName.split(",");
-            // String[] traineePhones = traineePhone.split(",");
-            // String[] traineeSfzjhs = traineeSfzjh.split(",");
-            // for (int i = 0; i < traineeIds.length; i++) {
-            // if (!traineeIds[i].trim().equals("")) {
-            // TrainClasstrainee tct = new TrainClasstrainee();
-            // tct.setClassId(entity.getUuid());
-            // tct.setTraineeId(traineeIds[i]);
-            // tct.setXm(traineeNames[i]);
-            // tct.setXbm(traineeXbms[i]);
-            // tct.setMobilePhone(traineePhones[i]);
-            // tct.setSfzjh(traineeSfzjhs[i]);
-            // trainClasstraineeService.merge(tct);
-            // }
-            // }
-            // }
+			entity = this.merge(saveEntity);// 执行修改方法
 
-            return entity;
-        } catch (IllegalAccessException e) {
-            logger.error(e.getMessage());
-            return null;
-        } catch (InvocationTargetException e) {
-            logger.error(e.getMessage());
-            return null;
-        }
-    }
+			// if(traineeId != null ){
+			// String[] traineeIds = traineeId.split(",");
+			// String[] traineeXbms = traineeXbm.split(",");
+			// String[] traineeNames = traineeName.split(",");
+			// String[] traineePhones = traineePhone.split(",");
+			// String[] traineeSfzjhs = traineeSfzjh.split(",");
+			// for (int i = 0; i < traineeIds.length; i++) {
+			// if (!traineeIds[i].trim().equals("")) {
+			// TrainClasstrainee tct = new TrainClasstrainee();
+			// tct.setClassId(entity.getUuid());
+			// tct.setTraineeId(traineeIds[i]);
+			// tct.setXm(traineeNames[i]);
+			// tct.setXbm(traineeXbms[i]);
+			// tct.setMobilePhone(traineePhones[i]);
+			// tct.setSfzjh(traineeSfzjhs[i]);
+			// trainClasstraineeService.merge(tct);
+			// }
+			// }
+			// }
 
-    @Override
-    public HashMap<String, String> getClassInfo(String id) {
-        // TODO Auto-generated method stub
-        HashMap<String, String> returnDate = new HashMap<>();
+			return entity;
+		} catch (IllegalAccessException e) {
+			logger.error(e.getMessage());
+			return null;
+		} catch (InvocationTargetException e) {
+			logger.error(e.getMessage());
+			return null;
+		}
+	}
 
-        StringBuffer classTraineeIds = new StringBuffer();
-        StringBuffer traineeIds = new StringBuffer();
-        StringBuffer traineeNames = new StringBuffer();
-        StringBuffer traineeXbms = new StringBuffer();
-        StringBuffer traineeSfzjhs = new StringBuffer();
-        StringBuffer traineeMobilePhones = new StringBuffer();
-        StringBuffer courseIds = new StringBuffer();
-        StringBuffer courseNames = new StringBuffer();
+	@Override
+	public HashMap<String, String> getClassInfo(String id) {
+		// TODO Auto-generated method stub
+		HashMap<String, String> returnDate = new HashMap<>();
 
-        // 班级学员信息
-        List<TrainClasstrainee> trainees = trainClasstraineeService
-                .queryByProerties(new String[]{"classId", "isDelete"}, new Object[]{id, 0});
-        for (TrainClasstrainee trainee : trainees) {
-            classTraineeIds.append(trainee.getUuid() + ",");
-            traineeIds.append(trainee.getTraineeId() + ",");
-            traineeNames.append(trainee.getXm() + ",");
-            traineeXbms.append(trainee.getXbm() + ",");
-            traineeSfzjhs.append(trainee.getSfzjh() + ",");
-            traineeMobilePhones.append(trainee.getMobilePhone() + ",");
-        }
-        if (traineeIds.length() > 0) {
-            classTraineeIds.deleteCharAt(classTraineeIds.length() - 1);
-            traineeIds.deleteCharAt(traineeIds.length() - 1);
-            traineeNames.deleteCharAt(traineeNames.length() - 1);
-            traineeXbms.deleteCharAt(traineeXbms.length() - 1);
-            traineeSfzjhs.deleteCharAt(traineeSfzjhs.length() - 1);
-            traineeMobilePhones.deleteCharAt(traineeMobilePhones.length() - 1);
-        }
+		StringBuffer classTraineeIds = new StringBuffer();
+		StringBuffer traineeIds = new StringBuffer();
+		StringBuffer traineeNames = new StringBuffer();
+		StringBuffer traineeXbms = new StringBuffer();
+		StringBuffer traineeSfzjhs = new StringBuffer();
+		StringBuffer traineeMobilePhones = new StringBuffer();
+		StringBuffer courseIds = new StringBuffer();
+		StringBuffer courseNames = new StringBuffer();
 
-        // 班级课程信息
-        List<TrainClassschedule> courses = trainClassscheduleService
-                .queryByProerties(new String[]{"classId", "isDelete"}, new Object[]{id, 0});
-        for (TrainClassschedule course : courses) {
-            courseIds.append(course.getUuid() + ",");
-            courseNames.append(course.getCourseName() + ",");
-        }
-        if (courseIds.length() > 0) {
-            courseIds.deleteCharAt(courseIds.length() - 1);
-            courseNames.deleteCharAt(courseNames.length() - 1);
-        }
+		// 班级学员信息
+		List<TrainClasstrainee> trainees = trainClasstraineeService
+				.queryByProerties(new String[] { "classId", "isDelete" }, new Object[] { id, 0 });
+		for (TrainClasstrainee trainee : trainees) {
+			classTraineeIds.append(trainee.getUuid() + ",");
+			traineeIds.append(trainee.getTraineeId() + ",");
+			traineeNames.append(trainee.getXm() + ",");
+			traineeXbms.append(trainee.getXbm() + ",");
+			traineeSfzjhs.append(trainee.getSfzjh() + ",");
+			traineeMobilePhones.append(trainee.getMobilePhone() + ",");
+		}
+		if (traineeIds.length() > 0) {
+			classTraineeIds.deleteCharAt(classTraineeIds.length() - 1);
+			traineeIds.deleteCharAt(traineeIds.length() - 1);
+			traineeNames.deleteCharAt(traineeNames.length() - 1);
+			traineeXbms.deleteCharAt(traineeXbms.length() - 1);
+			traineeSfzjhs.deleteCharAt(traineeSfzjhs.length() - 1);
+			traineeMobilePhones.deleteCharAt(traineeMobilePhones.length() - 1);
+		}
 
-        returnDate.put("classTraineeId", classTraineeIds.toString());
-        returnDate.put("traineeId", traineeIds.toString());
-        returnDate.put("traineeName", traineeNames.toString());
-        returnDate.put("traineeXbm", traineeXbms.toString());
-        returnDate.put("traineeSfzjh", traineeSfzjhs.toString());
-        returnDate.put("traineeMobilePhone", traineeMobilePhones.toString());
-        returnDate.put("courseId", courseIds.toString());
-        returnDate.put("courseName", courseNames.toString());
+		// 班级课程信息
+		List<TrainClassschedule> courses = trainClassscheduleService
+				.queryByProerties(new String[] { "classId", "isDelete" }, new Object[] { id, 0 });
+		for (TrainClassschedule course : courses) {
+			courseIds.append(course.getUuid() + ",");
+			courseNames.append(course.getCourseName() + ",");
+		}
+		if (courseIds.length() > 0) {
+			courseIds.deleteCharAt(courseIds.length() - 1);
+			courseNames.deleteCharAt(courseNames.length() - 1);
+		}
 
-        return returnDate;
-    }
+		returnDate.put("classTraineeId", classTraineeIds.toString());
+		returnDate.put("traineeId", traineeIds.toString());
+		returnDate.put("traineeName", traineeNames.toString());
+		returnDate.put("traineeXbm", traineeXbms.toString());
+		returnDate.put("traineeSfzjh", traineeSfzjhs.toString());
+		returnDate.put("traineeMobilePhone", traineeMobilePhones.toString());
+		returnDate.put("courseId", courseIds.toString());
+		returnDate.put("courseName", courseNames.toString());
 
-    @Override
-    public int doEditClassFood(TrainClass entity, String classFoodInfo, SysUser currentUser) {
-        int result = 0;
+		return returnDate;
+	}
 
-        try {
-            // 先拿到已持久化的实体
-            TrainClass saveEntity = this.get(entity.getUuid());
+	@Override
+	public int doEditClassFood(TrainClass entity, String classFoodInfo, SysUser currentUser) {
+		int result = 0;
+
+		try {
+			// 先拿到已持久化的实体
+			TrainClass saveEntity = this.get(entity.getUuid());
+
 			saveEntity.setDinnerType(entity.getDinnerType());
 			saveEntity.setAvgNumber(entity.getAvgNumber());
 			saveEntity.setBreakfastStand(entity.getBreakfastStand());
@@ -309,54 +317,54 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 			if (isuse != null && isuse != 0) // 当班级已经提交过一次之后，每次修改都设置为2
 				saveEntity.setIsuse(2);
 
-            saveEntity.setUpdateTime(new Date()); // 设置修改时间
-            saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-            this.update(saveEntity);
+			saveEntity.setUpdateTime(new Date()); // 设置修改时间
+			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
+			this.update(saveEntity);
 
-            if (saveEntity.getDinnerType() == 3) {
-                // 把班级学员的数据，还原为json对象
-                @SuppressWarnings("unchecked")
-                List<TrainClasstrainee> classTraineeFoodInfos = (List<TrainClasstrainee>) JsonBuilder.getInstance()
-                        .fromJsonArray(classFoodInfo, TrainClasstrainee.class);
+			if (saveEntity.getDinnerType() == 3) {
+				// 把班级学员的数据，还原为json对象
+				@SuppressWarnings("unchecked")
+				List<TrainClasstrainee> classTraineeFoodInfos = (List<TrainClasstrainee>) JsonBuilder.getInstance()
+						.fromJsonArray(classFoodInfo, TrainClasstrainee.class);
 
-                for (TrainClasstrainee stp : classTraineeFoodInfos) {
-                    // 先拿到已持久化的实体
-                    TrainClasstrainee saveTraineeEntity = trainClasstraineeService.get(stp.getUuid());
+				for (TrainClasstrainee stp : classTraineeFoodInfos) {
+					// 先拿到已持久化的实体
+					TrainClasstrainee saveTraineeEntity = trainClasstraineeService.get(stp.getUuid());
 
-                    BeanUtils.copyPropertiesExceptNull(saveTraineeEntity, stp);
-                    saveTraineeEntity.setUpdateTime(new Date()); // 设置修改时间
-                    saveTraineeEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-                    trainClasstraineeService.update(saveTraineeEntity);// 执行修改方法
+					BeanUtils.copyPropertiesExceptNull(saveTraineeEntity, stp);
+					saveTraineeEntity.setUpdateTime(new Date()); // 设置修改时间
+					saveTraineeEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
+					trainClasstraineeService.update(saveTraineeEntity);// 执行修改方法
 
-                }
-            } else {
-                // 清除班级学员的早 中 晚餐的数据
-                String hql = "update TrainClasstrainee set breakfast=0,lunch=0,dinner=0 where classId='"
-                        + saveEntity.getUuid() + "'";
-                this.executeHql(hql);
-            }
-            result = 1;
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+				}
+			} else {
+				// 清除班级学员的早 中 晚餐的数据
+				String hql = "update TrainClasstrainee set breakfast=0,lunch=0,dinner=0 where classId='"
+						+ saveEntity.getUuid() + "'";
+				this.executeHql(hql);
+			}
+			result = 1;
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		/*
 		 * 不应该捕获unchecked异常，否则不会自动回滚； 若要捕获只能手动回滚 或 抛出运行时异常 catch (Exception e) {
 		 * // TODO: handle exception logger.error(e.getMessage()); result = 0; }
 		 */
 
-        return result;
-    }
+		return result;
+	}
 
-    @Override
-    public int doEditClassRoom(TrainClass entity, String classRoomInfo, SysUser currentUser) {
-        int result = 0;
+	@Override
+	public int doEditClassRoom(TrainClass entity, String classRoomInfo, SysUser currentUser) {
+		int result = 0;
 
-        try {
-            // 先拿到已持久化的实体
+		try {
+			// 先拿到已持久化的实体
 			TrainClass saveEntity = this.get(entity.getUuid());
 			Integer isuse = saveEntity.getIsuse();
 			if (isuse != null && isuse != 0) // 当班级已经提交过一次之后，每次修改都设置为2
@@ -366,194 +374,199 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 			this.update(saveEntity);
 
-            @SuppressWarnings("unchecked")
-            List<TrainClasstrainee> classTraineeRoomInfos = (List<TrainClasstrainee>) JsonBuilder.getInstance()
-                    .fromJsonArray(classRoomInfo, TrainClasstrainee.class);
+			@SuppressWarnings("unchecked")
+			List<TrainClasstrainee> classTraineeRoomInfos = (List<TrainClasstrainee>) JsonBuilder.getInstance()
+					.fromJsonArray(classRoomInfo, TrainClasstrainee.class);
 
-            for (TrainClasstrainee stp : classTraineeRoomInfos) {
-                // 先拿到已持久化的实体
-                TrainClasstrainee saveTraineeEntity = trainClasstraineeService.get(stp.getUuid());
+			for (TrainClasstrainee stp : classTraineeRoomInfos) {
+				// 先拿到已持久化的实体
+				TrainClasstrainee saveTraineeEntity = trainClasstraineeService.get(stp.getUuid());
 
-                BeanUtils.copyPropertiesExceptNull(saveTraineeEntity, stp);
-                saveTraineeEntity.setUpdateTime(new Date()); // 设置修改时间
-                saveTraineeEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-                trainClasstraineeService.update(saveTraineeEntity);// 执行修改方法
-            }
+				BeanUtils.copyPropertiesExceptNull(saveTraineeEntity, stp);
+				saveTraineeEntity.setUpdateTime(new Date()); // 设置修改时间
+				saveTraineeEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
+				trainClasstraineeService.update(saveTraineeEntity);// 执行修改方法
+			}
 
-            result = 1;
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+			result = 1;
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		/*
 		 * 不应该捕获unchecked异常，否则不会自动回滚； 若要捕获只能手动回滚 或 抛出运行时异常 catch (Exception e) {
 		 * // TODO: handle exception logger.error(e.getMessage()); result = 0; }
 		 */
 
-        return result;
-    }
+		return result;
+	}
 
-    @Override
-    public int syncTraineeClassInfoToAllUP(String departmentId, TrainClass trainClass, List<SysUserToUP> userInfos) {
+	/**
+	 * 同步某个班级部门下的所有学员数据 若班级部门不存在，则创建
+	 */
+	@Override
+	public int syncTraineeClassInfoToAllUP(String departmentId, TrainClass trainClass, List<SysUserToUP> userInfos) {
 
-        int result = 0;
+		int result = 0;
 
-        try {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(trainClass.getBeginDate());
+		try {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(trainClass.getBeginDate());
 
-            // 1.生成父部门
-            String firstDeptId = "Train" + calendar.get(calendar.YEAR); // Train2017
-            String SecondDeptId = "Train" + calendar.get(calendar.YEAR) + "-" + (calendar.get(calendar.MONTH) + 1); // Train2017-5
+			// 1.生成父部门
+			String firstDeptId = "Train" + calendar.get(calendar.YEAR); // Train2017
+			String SecondDeptId = "Train" + calendar.get(calendar.YEAR) + "-" + (calendar.get(calendar.MONTH) + 1); // Train2017-5
 
-            // 2.年度部门
-            // 查询年度部门是否存在
-            String sql = "select COUNT(1) from TC_Department where DepartmentID='" + firstDeptId + "'";
-            int count = this.getForValueToSql(sql);
-            if (count == 0) {
-                String sql1 = "select MAX(layerorder) from TC_Department where ParentDepartmentID='001'";
-                String firstLayerorder = this.getForValueToSql(sql1);
-                firstLayerorder = firstLayerorder == null ? "0" : firstLayerorder;
+			// 2.年度部门
+			// 查询年度部门是否存在
+			String sql = "select COUNT(1) from TC_Department where DepartmentID='" + firstDeptId + "'";
+			int count = this.getForValueToSql(sql);
+			if (count == 0) {
+				String sql1 = "select MAX(layerorder) from TC_Department where ParentDepartmentID='001'";
+				String firstLayerorder = this.getForValueToSql(sql1);
+				firstLayerorder = firstLayerorder == null ? "0" : firstLayerorder;
 
-                BaseOrgToUP firstDeptToUP = new BaseOrgToUP();
-                firstDeptToUP.setDepartmentId(firstDeptId);
-                firstDeptToUP.setParentDepartmentId("001");
-                firstDeptToUP.setDepartmentName(calendar.get(calendar.YEAR) + "年度");
-                firstDeptToUP.setLayer("1"); // 第1+1个层级
-                firstDeptToUP.setLayerorder(String.valueOf(Integer.parseInt(firstLayerorder) + 1));
+				BaseOrgToUP firstDeptToUP = new BaseOrgToUP();
+				firstDeptToUP.setDepartmentId(firstDeptId);
+				firstDeptToUP.setParentDepartmentId("001");
+				firstDeptToUP.setDepartmentName(calendar.get(calendar.YEAR) + "年度");
+				firstDeptToUP.setLayer("1"); // 第1+1个层级
+				firstDeptToUP.setLayerorder(String.valueOf(Integer.parseInt(firstLayerorder) + 1));
 
-                baseOrgService.syncDeptInfoToUP(firstDeptToUP, firstDeptId);
-            }
+				baseOrgService.syncDeptInfoToUP(firstDeptToUP, firstDeptId);
+			}
 
-            // 3.月度部门
-            // 查询月度部门是否存在
-            sql = "select COUNT(1) from TC_Department where DepartmentID='" + SecondDeptId + "'";
-            count = this.getForValueToSql(sql);
-            if (count == 0) {
-                String sql1 = "select MAX(layerorder) from TC_Department where ParentDepartmentID='" + firstDeptId
-                        + "'";
-                String secondLayerorder = this.getForValueToSql(sql1);
-                secondLayerorder = secondLayerorder == null ? "0" : secondLayerorder;
+			// 3.月度部门
+			// 查询月度部门是否存在
+			sql = "select COUNT(1) from TC_Department where DepartmentID='" + SecondDeptId + "'";
+			count = this.getForValueToSql(sql);
+			if (count == 0) {
+				String sql1 = "select MAX(layerorder) from TC_Department where ParentDepartmentID='" + firstDeptId
+						+ "'";
+				String secondLayerorder = this.getForValueToSql(sql1);
+				secondLayerorder = secondLayerorder == null ? "0" : secondLayerorder;
 
-                BaseOrgToUP secondDeptToUP = new BaseOrgToUP();
-                secondDeptToUP.setDepartmentId(SecondDeptId);
-                secondDeptToUP.setParentDepartmentId(firstDeptId);
-                secondDeptToUP.setDepartmentName(
-                        calendar.get(calendar.YEAR) + "年" + (calendar.get(calendar.MONTH) + 1) + "月");
-                secondDeptToUP.setLayer("2"); // 第2+1个层级
-                secondDeptToUP.setLayerorder(String.valueOf(Integer.parseInt(secondLayerorder) + 1));
+				BaseOrgToUP secondDeptToUP = new BaseOrgToUP();
+				secondDeptToUP.setDepartmentId(SecondDeptId);
+				secondDeptToUP.setParentDepartmentId(firstDeptId);
+				secondDeptToUP.setDepartmentName(
+						calendar.get(calendar.YEAR) + "年" + (calendar.get(calendar.MONTH) + 1) + "月");
+				secondDeptToUP.setLayer("2"); // 第2+1个层级
+				secondDeptToUP.setLayerorder(String.valueOf(Integer.parseInt(secondLayerorder) + 1));
 
-                baseOrgService.syncDeptInfoToUP(secondDeptToUP, SecondDeptId);
-            }
+				baseOrgService.syncDeptInfoToUP(secondDeptToUP, SecondDeptId);
+			}
 
-            // 4.班级部门
-            // 查询班级部门是否存在
-            sql = "select COUNT(1) from TC_Department where DepartmentID='" + departmentId + "'";
-            count = this.getForValueToSql(sql);
+			// 4.班级部门
+			// 查询班级部门是否存在
+			sql = "select COUNT(1) from TC_Department where DepartmentID='" + departmentId + "'";
+			count = this.getForValueToSql(sql);
 			// if (count == 0) {
 			// 现在每次同步，都要更新一下班级信息【当班级信息被修改时也要进行同步】
 			String sql1 = "select MAX(layerorder) from TC_Department where ParentDepartmentID='" + SecondDeptId + "'";
-                String classLayerorder = this.getForValueToSql(sql1);
-                classLayerorder = classLayerorder == null ? "0" : classLayerorder;
+			String classLayerorder = this.getForValueToSql(sql1);
+			classLayerorder = classLayerorder == null ? "0" : classLayerorder;
 
-                BaseOrgToUP classDeptToUP = new BaseOrgToUP();
-                classDeptToUP.setDepartmentId(departmentId);
-                classDeptToUP.setParentDepartmentId(SecondDeptId);
-                classDeptToUP.setDepartmentName(trainClass.getClassName());
-                classDeptToUP.setLayer("3"); // 第3+1个层级
-                classDeptToUP.setLayerorder(String.valueOf(Integer.parseInt(classLayerorder) + 1));
+			BaseOrgToUP classDeptToUP = new BaseOrgToUP();
+			classDeptToUP.setDepartmentId(departmentId);
+			classDeptToUP.setParentDepartmentId(SecondDeptId);
+			classDeptToUP.setDepartmentName(trainClass.getClassName());
+			classDeptToUP.setLayer("3"); // 第3+1个层级
+			classDeptToUP.setLayerorder(String.valueOf(Integer.parseInt(classLayerorder) + 1));
 
-                baseOrgService.syncDeptInfoToUP(classDeptToUP, departmentId);
+			baseOrgService.syncDeptInfoToUP(classDeptToUP, departmentId);
 
 			// }
 
-            // 5.同步班级学员
-            result = sysUserService.syncUserInfoToAllUP(userInfos);
+			// 5.同步班级学员
+			result = sysUserService.syncUserInfoToAllUP(userInfos,departmentId);
 
-        } catch (Exception e) {
-            // TODO: handle exception
-            // 捕获了异常后，要手动进行回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            result = -1;
-        }
+		} catch (Exception e) {
+			// TODO: handle exception
+			// 捕获了异常后，要手动进行回滚
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			result = -1;
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    @Override
-    public List<TrainTeacher> getClassBzrList(String classId) {
-        TrainClass classinfo = this.get(classId);
-        Object[] propValue = classinfo.getBzrId().split(",");
-        List<TrainTeacher> list = teacherService.queryByProerties("uuid", propValue);
+	@Override
+	public List<TrainTeacher> getClassBzrList(String classId) {
+		TrainClass classinfo = this.get(classId);
+		Object[] propValue = classinfo.getBzrId().split(",");
+		List<TrainTeacher> list = teacherService.queryByProerties("uuid", propValue);
 
-        return list;
-    }
+		return list;
+	}
 
-    private String getClassCodeAndOrderIndex(String classNumbStr) {
-        Integer orderIndex = Integer.valueOf(1);
-        String courseCode = "";
+	private String getClassCodeAndOrderIndex(String classNumbStr) {
+		Integer orderIndex = Integer.valueOf(1);
+		String courseCode = "";
 
-        // 得到排序号
-        String hql = "select max(orderIndex) from TrainClass where classNumb like '" + classNumbStr + "%' ";
-        // if (!uuid.equals("-1"))
-        // hql += " and uuid!='" + uuid + "'";
-        Object index = this.getForValue(hql);
-        if (index != null) {
-            orderIndex = (Integer) index + 1;
-        } else
-            orderIndex = 1;
+		// 得到排序号
+		String hql = "select max(orderIndex) from TrainClass where classNumb like '" + classNumbStr + "%' ";
+		// if (!uuid.equals("-1"))
+		// hql += " and uuid!='" + uuid + "'";
+		Object index = this.getForValue(hql);
+		if (index != null) {
+			orderIndex = (Integer) index + 1;
+		} else
+			orderIndex = 1;
 
-        // 生成编号
-        courseCode = classNumbStr + StringUtils.addString(orderIndex.toString(), "0", 3, "L");
+		// 生成编号
+		courseCode = classNumbStr + StringUtils.addString(orderIndex.toString(), "0", 3, "L");
 
-        return courseCode + "," + orderIndex.toString();
-    }
+		return courseCode + "," + orderIndex.toString();
+	}
 
-    @Override
-    public ClassEvalApp getClassEvalStand(String classId) {
+	@Override
+	public ClassEvalApp getClassEvalStand(String classId) {
 
-        ClassEvalApp entity = new ClassEvalApp();
+		ClassEvalApp entity = new ClassEvalApp();
 
-        try {
-            String sql = "SELECT  classId,classCategory,className,beginDate,endDate,trainDays,holdUnit,undertaker,trainees,convert(varchar(10),verySatisfaction) as verySatisfaction"
-                    + ",convert(varchar(10),satisfaction) as satisfaction,bzr,mobile FROM TRAIN_V_CLASSEVAL where classId=''{0}''";
-            sql = MessageFormat.format(sql, classId);
-            List<TrainClassEval> list = this.doQuerySqlObject(sql, TrainClassEval.class);
-            List<TrainIndicatorStand> stand = standService.getClassEvalStand();
-            entity.setEvalClass(list.get(0));
-            entity.setEvalStand(stand);
-            entity.setMessage("获取班级评价标准成功");
-            entity.setSuccess(true);
+		try {
+			String sql = "SELECT  classId,classCategory,className,beginDate,endDate,trainDays,holdUnit,undertaker,trainees,convert(varchar(10),verySatisfaction) as verySatisfaction"
+					+ ",convert(varchar(10),satisfaction) as satisfaction,bzr,mobile FROM TRAIN_V_CLASSEVAL where classId=''{0}''";
+			sql = MessageFormat.format(sql, classId);
+			List<TrainClassEval> list = this.doQuerySqlObject(sql, TrainClassEval.class);
+			List<TrainIndicatorStand> stand = standService.getClassEvalStand();
+			entity.setEvalClass(list.get(0));
+			entity.setEvalStand(stand);
+			entity.setMessage("获取班级评价标准成功");
+			entity.setSuccess(true);
 
-            return entity;
-        } catch (Exception e) {
-            entity.setEvalClass(null);
-            entity.setEvalStand(null);
-            entity.setMessage(MessageFormat.format("获取班级评价标准失败，失败原因:{0}", e.getMessage()));
-            entity.setSuccess(false);
+			return entity;
+		} catch (Exception e) {
+			entity.setEvalClass(null);
+			entity.setEvalStand(null);
+			entity.setMessage(MessageFormat.format("获取班级评价标准失败，失败原因:{0}", e.getMessage()));
+			entity.setSuccess(false);
 
-            return entity;
-        }
-    }
+			return entity;
+		}
+	}
 
-    @Override
-    public int syncClassTraineeFoodsToUP(TrainClass trainClass, List<TrainClasstrainee> traineeFoods) {
-        int result = 0;
+	@Override
+	public int syncClassTraineeFoodsToUP(TrainClass trainClass, List<TrainClasstrainee> traineeFoods) {
+		int result = 0;
 
-        try {
-            String beginDate = DateUtil.formatDate(trainClass.getBeginDate());
-            String endDate = DateUtil.formatDate(trainClass.getEndDate());
-            String currentDate = DateUtil.formatDateTime(new Date());
+		try {
+			String beginDate = DateUtil.formatDate(trainClass.getBeginDate());
+			String endDate = DateUtil.formatDate(trainClass.getEndDate());
+			String currentDate = DateUtil.formatDateTime(new Date());
 
-            // 1.创建就餐类型（早餐类、午餐类、晚餐类、早午餐类、早晚餐类、午晚餐类、早午晚餐类）
-            String[] MealIds = createMealType(trainClass);
+			// 1.创建就餐类型（早餐类、午餐类、晚餐类、早午餐类、早晚餐类、午晚餐类、早午晚餐类）
+			String[] MealIds = createMealType(trainClass);
 
-            // 2.遍历学员，查询学员
-            Integer breakFast = 0, lunch = 0, dinner = 0;
-            String MealId = null;
+			// 2.遍历学员，查询学员
+
+			Integer breakFast = 0, lunch = 0, dinner = 0;
+			String MealId = null;
+			
 			StringBuffer executeSb = new StringBuffer();
 			
 			String insertSql = "insert into XF_MealCouponSet(MealCouponTypeID,EmployeeID,StartDate,EndDate,CreateDate,MealId)"
@@ -590,22 +603,22 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 				} else {
 
 					if (breakFast == 1 && lunch == 1 && dinner == 1) { // 早午晚餐类
-                    MealId = MealIds[6];
-                } else if (lunch == 1 && dinner == 1) { // 午晚餐类
-                    MealId = MealIds[5];
-                } else if (breakFast == 1 && dinner == 1) { // 早晚餐类
-                    MealId = MealIds[4];
-                } else if (breakFast == 1 && lunch == 1) { // 早午餐类
-                    MealId = MealIds[3];
-                } else if (dinner == 1) { // 晚餐类
-                    MealId = MealIds[2];
-                } else if (lunch == 1) { // 午餐类
-                    MealId = MealIds[1];
-                } else if (breakFast == 1) { // 早餐类
-                    MealId = MealIds[0];
-                }
+						MealId = MealIds[6];
+					} else if (lunch == 1 && dinner == 1) { // 午晚餐类
+						MealId = MealIds[5];
+					} else if (breakFast == 1 && dinner == 1) { // 早晚餐类
+						MealId = MealIds[4];
+					} else if (breakFast == 1 && lunch == 1) { // 早午餐类
+						MealId = MealIds[3];
+					} else if (dinner == 1) { // 晚餐类
+						MealId = MealIds[2];
+					} else if (lunch == 1) { // 午餐类
+						MealId = MealIds[1];
+					} else if (breakFast == 1) { // 早餐类
+						MealId = MealIds[0];
+					}
 
-                if (MealId != null) {
+					if (MealId != null) { // 有订餐
 						if (MealInfo.size() > 0) {
 							if (!MealInfo.get(0).get("MealId").equals(MealId)) { // 若前后的订餐不一致，则更新
 								executeSb.append(String.format(updateSql, MealId , MealInfo.get(0).get("EmployeeID")));
@@ -643,27 +656,27 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 			// 更新餐券类型（若直接在上边的语句中直接使用子查询去查询类型ID，会报错，因为事物原因，类型并未提交入库，所以查询不到）
 			// 继而，在插入了学员就餐数据之后，使用下面这个语句进行一次性的更新就餐id。
 			updateSql = "update XF_MealCouponSet set MealCouponTypeID =" + " isnull((select top 1 MealCouponTypeID from"
-                    + "		XF_MealCouponType where MealId=XF_MealCouponSet.MealId),0) "
-                    + " where MealCouponTypeID=0 and MealId is not null";
-            this.executeSql(updateSql);
-        } catch (Exception e) {
-            result = -1;
-            // TODO: handle exception
-            // 捕获了异常后，要手动进行回滚
-            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-            //或者抛出运行时异常
-            //throw new RuntimeException();
-        }
+					+ "		XF_MealCouponType where MealId=XF_MealCouponSet.MealId),0) "
+					+ " where MealCouponTypeID=0 and MealId is not null";
+			this.executeSql(updateSql);
+		} catch (Exception e) {
+			result = -1;
+			// TODO: handle exception
+			// 捕获了异常后，要手动进行回滚
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			// 或者抛出运行时异常
+			// throw new RuntimeException();
+		}
 
-        return result;
-    }
+		return result;
+	}
 
-    /**
-     * 创建UP库的班级就餐类型（7种）
-     *
-     * @param trainClass
-     * @return 返回存储了就餐类型MealId
-     */
+	/**
+	 * 创建UP库的班级就餐类型（7种） 注：此代码只会生成一次，即安排之后，班级基础信息不能修改
+	 * 
+	 * @param trainClass
+	 * @return 返回存储了就餐类型MealId
+	 */
 	private String[] createMealType(TrainClass trainClass) {
 
 		String beginDate = DateUtil.formatDateTime(trainClass.getBeginDate());
@@ -699,23 +712,23 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 		if (lists.size() > 0) {
 			for (int i = 0; i < lists.size(); i++) {
 				Map<String, Object> map = lists.get(i);
-				if (map.get("MealTypeID1").equals(1)) {
-					if (map.get("MealTypeID2").equals(1) && map.get("MealTypeID3").equals(1)) { // 早午晚餐
+				if (map.get("MealTypeID1").equals(true)) {
+					if (map.get("MealTypeID2").equals(true) && map.get("MealTypeID3").equals(true)) { // 早午晚餐
 						uuid7 = String.valueOf(map.get("MealId"));
-					} else if (map.get("MealTypeID2").equals(1) && map.get("MealTypeID3").equals(0)) { // 早午餐
+					} else if (map.get("MealTypeID2").equals(true) && map.get("MealTypeID3").equals(false)) { // 早午餐
 						uuid4 = String.valueOf(map.get("MealId"));
-					} else if (map.get("MealTypeID2").equals(0) && map.get("MealTypeID3").equals(1)) { // 早晚餐
+					} else if (map.get("MealTypeID2").equals(false) && map.get("MealTypeID3").equals(true)) { // 早晚餐
 						uuid5 = String.valueOf(map.get("MealId"));
 					} else { // 早餐
 						uuid1 = String.valueOf(map.get("MealId"));
 					}
-				} else if (map.get("MealTypeID2").equals(1)) {
-					if (map.get("MealTypeID3").equals(1)) { // 午晚餐
+				} else if (map.get("MealTypeID2").equals(true)) {
+					if (map.get("MealTypeID3").equals(true)) { // 午晚餐
 						uuid6 = String.valueOf(map.get("MealId"));
 					} else { // 午餐
 						uuid2 = String.valueOf(map.get("MealId"));
 					}
-				} else if (map.get("MealTypeID3").equals(1)) {
+				} else if (map.get("MealTypeID3").equals(true)) {
 					uuid3 = String.valueOf(map.get("MealId"));
 				}
 			}

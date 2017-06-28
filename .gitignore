@@ -1,5 +1,7 @@
 # Compiled class file
 *.class
+*.classpath
+*.project
 
 # Log file
 *.log
@@ -28,3 +30,5 @@ school-service/target/
 school-dao/target/
 school-web/target/
 school-web/src/main/webapp/static/core/build
+school-web/src/main/resources/sqlserver.properties
+.settings/

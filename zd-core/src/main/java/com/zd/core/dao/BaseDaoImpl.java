@@ -522,8 +522,9 @@ public class BaseDaoImpl<E> implements BaseDao<E> {
     }
 
     /**
+     * 根据HQL查询实体列表
      *
-     * @param hql 查询语句
+     * @param sql 查询语句
      * @return
      */
     @Override
@@ -840,6 +841,9 @@ public class BaseDaoImpl<E> implements BaseDao<E> {
                 break;
             case "=":// 等于
                 res = (ICriterion) Restrictions.eq(field, value);
+                break;
+            case "!=":// 不等于
+                res = (ICriterion) Restrictions.ne(field, value);
                 break;
             case "<=": // 小于等于
                 res = (ICriterion) Restrictions.le(field, value);

@@ -196,7 +196,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 	public void getUserMenuTask(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 		try {
-			String hql = "select COUNT(*) from TrainClass o where o.isDelete=0 and o.isuse=1 and o.isarrange!=1";
+			String hql = "select COUNT(*) from TrainClass o where o.isDelete=0 and ((o.isuse=1 and o.isarrange!=1) or o.isuse=3 )";
 			Integer count1 = thisService.getCount(hql);
 
 			List<Map<String, Object>> returnList=new ArrayList<>();
@@ -472,9 +472,9 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
 			int row = 0;
 			if (userInfos.size() > 0) {
-				row = thisService.syncUserInfoToAllUP(userInfos);
+				row = thisService.syncUserInfoToAllUP(userInfos,null);
 			} else {
-				row = thisService.syncUserInfoToAllUP(null);
+				row = thisService.syncUserInfoToAllUP(null,null);
 			}
 
 			if (row == 0) {

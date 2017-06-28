@@ -378,15 +378,25 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 	}
 
 	@Override
-	public int syncUserInfoToAllUP(List<SysUserToUP> userInfos) {
+	public int syncUserInfoToAllUP(List<SysUserToUP> userInfos,String departmentId) {
 		int row = 0;
 		try {
 			// 1.查询该数据源中的此用户的信息
 			String sql = "select UserId as userId,convert(varchar,EmployeeID) as employeeId,DepartmentID as departmentId,"
 					+ " convert(varchar(36),EmployeeName) as employeeName,"
 					+ " employeeStrId,sid,convert(varchar(1),sexId) sexId,identifier "
-					+ " from Tc_Employee order by userId asc";
-
+					+ " from Tc_Employee ";
+					//+ " where DepartmentID='"+departmentId+"'"
+					//+ " order by userId asc";
+			
+			
+			if(departmentId==null)	//当此值为null，表明同步的是系统的教师人员数据
+				sql+=" where DepartmentID not like '%Train%' ";
+			else	//当此值为具体的值的时候，表明同步的是某个班级的学员
+				sql+=" where DepartmentID='"+departmentId+"'";
+			
+			sql+= " order by userId asc";
+			
 			List<SysUserToUP> upUserInfos = this.doQuerySqlObject(sql, SysUserToUP.class);
 
 			// 循环对比
@@ -447,7 +457,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				}
 				
 				//若上面的循环无法找到对应的人员，表明UP中不存在此用户
-				if (!isExist && currentUser.getIsDelete() == 0) {												
+				if (!isExist && currentUser.getIsDelete() != 1) {												
 					String sqlInsert = "insert into Tc_Employee(UserId,DepartmentID,EmployeeName,EmployeeStrID,SID,EmployeePWD,SexID,identifier,cardid,CardTypeID,EmployeeStatusID,PositionId) "
 							+ "values('" + currentUser.getUserId() + "','" + currentUser.getDepartmentId() + "','"
 							+ currentUser.getEmployeeName() + "'," + "'" + currentUser.getEmployeeStrId() + "','"

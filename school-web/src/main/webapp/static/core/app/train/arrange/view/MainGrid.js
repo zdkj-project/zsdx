@@ -104,7 +104,7 @@ Ext.define("core.train.arrange.view.MainGrid", {
             text: "班级名称",
             dataIndex: "className"
         }, {
-            width:80,
+            width:100,
             text: "班级编号",
             dataIndex: "classNumb"
         },  {

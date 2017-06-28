@@ -145,7 +145,7 @@ public interface SysUserService extends BaseService<SysUser> {
     
     public int syncUserInfoToUP(SysUserToUP sysUserInfo, String userId);
 
-	public int syncUserInfoToAllUP(List<SysUserToUP> userInfos);
+	public int syncUserInfoToAllUP(List<SysUserToUP> userInfos, String departmentId);
 
 	public int syncAllCardInfoFromUp(List<CardUserInfoToUP> cardUserInfos);
 }
