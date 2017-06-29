@@ -127,7 +127,7 @@ Ext.define("core.train.coursetype.controller.MainController", {
 
         //当前节点
         var pkValue;
-        var just = "3EF578B0-61EA-45EF-8731-839F798BA3CA";
+        var just = "3EF578B0-61EA-45EF·-8731-839F798BA3CA";
         var justName = "课程分类 ";
         var parentCategory = "3EF578B0-61EA-45EF-8731-839F798BA3CA";
         var parentName = "课程分类";
@@ -183,13 +183,14 @@ Ext.define("core.train.coursetype.controller.MainController", {
                  }
                  recordData = rescords[0].data;
                  }*/
-                insertObj = recordData;
+                insertObj = tempData;
+                //console.log(insertObj);
                 insertObj = Ext.apply(insertObj, {
                     parentNode: parent,
                     parentName: parentName,
                     parentLevel: parentLevel,
                     uuid: just,
-                    nodeText: justName
+                    nodeText: justName,
                 });
                 tabTitle = funData.tabConfig.editTitle;
                 tabItemId = funCode + "_mainGridEdit";
@@ -259,8 +260,7 @@ Ext.define("core.train.coursetype.controller.MainController", {
                     case "child":
                     case "edit":
                         objDetForm = item.down("baseform[funCode=" + detCode + "]");
-                        formDeptObj = objDetForm.getForm();
-
+                        formDeptObj = objDetForm.getForm();                
                         self.setFormValue(formDeptObj, insertObj);
                         break;
                     case "order":
