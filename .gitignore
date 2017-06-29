@@ -32,3 +32,7 @@ school-web/target/
 school-web/src/main/webapp/static/core/build
 school-web/src/main/resources/sqlserver.properties
 .settings/
+school-web/src/main/webapp/static/core/bootstrap.json
+school-web/src/main/webapp/static/core/bootstrap.jsonp
+school-web/src/main/webapp/static/core/sass/example/bootstrap.json
+school-web/src/main/webapp/static/core/sass/example/bootstrap.jsonp
