@@ -27,19 +27,21 @@ Ext.define("core.train.course.view.MainQueryPanel", {
             fieldLabel: "课程名称",
             queryType: "textfield"
         }, {
-             columnWidth: 0.2,
+            columnWidth: 0.2,
             xtype: "basequeryfield",
             fieldLabel: "主讲教师",
             name: "mainTeacherName",
             queryType: "textfield"
         }, {
+            //xtype: "basequeryfield",
+            columnWidth: 0.2,
             xtype: "textfield",
             fieldLabel: "所属分类ID",
             name: "categoryId",
             hidden: true
         },{
             columnWidth: 0.2,
-              labelAlign: "right",
+            labelAlign: "right",
             fieldLabel: "所属类别",
             name: "categoryName",
             xtype: "basetreefield",

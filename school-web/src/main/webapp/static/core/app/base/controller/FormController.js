@@ -125,8 +125,7 @@ Ext.define("core.base.controller.FormController",{
 				click:function(btn){
 					//得到组件
                     //btn.up("form").reset();
-                    //zzk 2017-4-5 修改
-                    var queryPanel = btn.up("basequeryform");						
+                    //zzk 2017-4-5 修改					
                     var queryPanel=btn.up("basequeryform");
 					self.resetQueryPanel(queryPanel);
 

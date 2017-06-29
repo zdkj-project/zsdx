@@ -14,6 +14,87 @@ Ext.define("core.train.course.controller.MainController", {
     init: function () {
     },
     control: {
+        //重写高级查询
+        "basequeryform button[ref=gridSearchFormOk]":{
+            beforeclick:function(btn){     
+                var self=this;
+
+                //self.Info("暂时无法搜索！");                    
+                var queryPanel = btn.up("basequeryform");
+                var querySql1 = self.getQuerySql(queryPanel);
+                var querySql = self.getQureyFilter(queryPanel);
+                var funCode = queryPanel.funCode;
+                var basePanel = queryPanel.up("basepanel[funCode=" + funCode + "]");
+
+                //加入basegrid默认的filter
+                var baseGrid = basePanel.down("basegrid[funCode=" + funCode + "]");
+                var gridFilter=[];
+                var filter=[];
+
+                //获取baseGrid中编写的默认filter值
+                var gridFilterStr=baseGrid.extParams.filter;
+                if(gridFilterStr&&gridFilterStr.trim()!=""){
+                    gridFilter=JSON.parse(gridFilterStr); 
+                }
+
+                if (querySql.trim().length > 0) {
+                    filter=JSON.parse(querySql);  
+                
+                    for(var i=0;i<gridFilter.length;i++){
+                        //判断gridFilter是否包含此值。
+                        var isExist=false;
+                        for(var j=0;j<filter.length;j++){
+                            if(filter[j].field==gridFilter[i].field){                   
+                                isExist=true;
+                                break;
+                            }
+                        }
+                        if(isExist==false)
+                            filter.push(gridFilter[i]);
+                 
+                    }
+                }else{
+                    if(gridFilter.length>0){
+                        filter=gridFilter;
+                    }
+                }    
+                
+                //判断是否选择的分类
+                var categoryIdText=queryPanel.down("textfield[name=categoryId]");
+                var categoryNameText=queryPanel.down("textfield[name=categoryName]");
+                if(categoryIdText&&categoryIdText.getValue()){  
+                    if(categoryNameText&&categoryNameText.getValue())   //当隐藏文本 和 显式的文本都有值的时候，才查询（点击小叉叉按钮，默认不会清除隐藏域文本）
+                        filter.push({"type":"string","value":categoryIdText.getValue(),"field":"categoryId","comparison":""});
+                }    
+
+                var store = baseGrid.getStore();
+                var proxy = store.getProxy();
+                proxy.extraParams.querySql = querySql1;
+                proxy.extraParams.filter = JSON.stringify(filter);
+                store.loadPage(1);
+                
+                return false;
+            }
+        },
+        //追加重置功能
+        "basequeryform button[ref=gridSearchFormReset]":{
+            clicked:function(btn){
+                //得到组件
+                //btn.up("form").reset();
+                //zzk 2017-4-5 修改        
+
+                var queryPanel=btn.up("basequeryform");
+              
+                var categoryId=queryPanel.down("textfield[name=categoryId]");
+                var categoryName=queryPanel.down("textfield[name=categoryName]");
+                if(categoryId)
+                    categoryId.reset();
+                if(categoryName)
+                    categoryName.reset();
+
+            }
+        },
+
         /**
          * 导入
          */
