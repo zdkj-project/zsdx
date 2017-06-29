@@ -122,14 +122,16 @@ public class PoiExportExcel {
 
 				int rowNum = 0;
 				int colCount = ((String[]) listContent.get(0).get("head")).length;
-				// 第一行先创建一个大标题
-				Row sheetTitleRow = sheet.createRow(rowNum);
-				sheetTitleRow.setHeight((short) 0x300);
-				Cell sheetTitleCell = sheetTitleRow.createCell(0);
-				sheetTitleCell.setCellStyle(titleStyle);
-				sheetTitleCell.setCellValue(sheetTitle);
-				sheet.addMergedRegion(new CellRangeAddress(rowNum, rowNum, 0, colCount - 1));
-				rowNum++;
+				// 第一行先创建一个大标题(当不为null的时候，设置这一行)
+				if (sheetTitle != null) {
+					Row sheetTitleRow = sheet.createRow(rowNum);
+					sheetTitleRow.setHeight((short) 0x300);
+					Cell sheetTitleCell = sheetTitleRow.createCell(0);
+					sheetTitleCell.setCellStyle(titleStyle);
+					sheetTitleCell.setCellValue(sheetTitle);
+					sheet.addMergedRegion(new CellRangeAddress(rowNum, rowNum, 0, colCount - 1));
+					rowNum++;
+				}
 
 				for (Map<String, Object> dataList : listContent) {
 					// 获取数据

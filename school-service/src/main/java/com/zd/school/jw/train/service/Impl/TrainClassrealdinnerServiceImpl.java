@@ -133,28 +133,34 @@ public class TrainClassrealdinnerServiceImpl extends BaseServiceImpl<TrainClassr
 	@Override
 	public void createClassRecord(TrainClass trainClass,SysUser sysUser) {
 		// TODO Auto-generated method stub
-		Calendar calendar=Calendar.getInstance();
-		Date beginDate=trainClass.getBeginDate();	
-		Date endDate=trainClass.getEndDate();
-		calendar.setTime(beginDate);
+		//只生成一次，后期也不会删除和重新生成。
+		String hql="SELECT COUNT(*) FROM TrainClassrealdinner where isDelete=0 and classId=?";
+		Integer count=this.getForValue(hql, trainClass.getUuid());
+		if(count==0){
+			Calendar calendar=Calendar.getInstance();
+			Date beginDate=trainClass.getBeginDate();	
+			Date endDate=trainClass.getEndDate();
+			calendar.setTime(beginDate);
+			
+			Date currentDate=new Date();
+			String userId=sysUser.getUuid();
+			String classId=trainClass.getUuid();
+			
+			long diff = endDate.getTime() - beginDate.getTime();	//得到的差值 
+		    long days = diff / (1000 * 60 * 60 * 24)+1;  
+		    for(int i=0;i<days;i++ ){	  
+		    	TrainClassrealdinner tc=new TrainClassrealdinner();
+		    	tc.setClassId(classId);
+		    	tc.setBreakfastReal(0);
+		    	tc.setLunchReal(0);
+		    	tc.setDinnerReal(0);
+		    	tc.setDinnerDate(calendar.getTime());
+		    	tc.setCreateTime(currentDate);
+		    	tc.setCreateUser(userId);
+		    	this.merge(tc);
+		    	calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH)+1);
+		    }
+		}
 		
-		Date currentDate=new Date();
-		String userId=sysUser.getUuid();
-		String classId=trainClass.getUuid();
-		
-		long diff = endDate.getTime() - beginDate.getTime();	//得到的差值 
-	    long days = diff / (1000 * 60 * 60 * 24)+1;  
-	    for(int i=0;i<days;i++ ){	  
-	    	TrainClassrealdinner tc=new TrainClassrealdinner();
-	    	tc.setClassId(classId);
-	    	tc.setBreakfastReal(0);
-	    	tc.setLunchReal(0);
-	    	tc.setDinnerReal(0);
-	    	tc.setDinnerDate(calendar.getTime());
-	    	tc.setCreateTime(currentDate);
-	    	tc.setCreateUser(userId);
-	    	this.merge(tc);
-	    	calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH)+1);
-	    }
 	}
 }

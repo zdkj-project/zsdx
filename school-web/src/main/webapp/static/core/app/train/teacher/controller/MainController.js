@@ -358,7 +358,7 @@ Ext.define("core.train.teacher.controller.MainController", {
         });
         pkValue = insertObj.uuid;
         tabTitle = insertObj.xm + "-主讲课程";
-        tabItemId = funCode + "_gridTeacherCourseDetail" + insertObj.xm;
+        tabItemId = funCode + "_gridTeacherCourseDetail" + insertObj.uuid;
 
         //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
         var tabItem = tabPanel.getComponent(tabItemId);
@@ -674,7 +674,7 @@ Ext.define("core.train.teacher.controller.MainController", {
             xm:insertObj.xm
         });
         tabTitle = insertObj.xm + "-上课记录";
-        tabItemId = funCode + "_gridTeacherTeachingDetail" + insertObj.xm;
+        tabItemId = funCode + "_gridTeacherTeachingDetail" + insertObj.uuid;
 
         //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
         var tabItem = tabPanel.getComponent(tabItemId);

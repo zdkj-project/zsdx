@@ -305,6 +305,9 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                 }
                 form.add(items);
 
+                if(data.totalCount==0){
+                    form.setHtml("<span style='padding: 20px;font-size: 20px;text-align: center;  display: inline-block;width: 100%;'>今日没有需要就餐登记的班级！</span>");
+                }
                 setTimeout(function(){
                     Ext.Msg.hide();    
                 },500);

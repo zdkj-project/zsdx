@@ -5,13 +5,21 @@ import java.io.Serializable;
 public class CardUserInfoToUP implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+	private String uuid;
 	private String upCardId;
 	private String userId;
 	private String factNumb;
 	private Integer useState;	//1为正常使用，其他貌似是无用状态
 	private String sid;		//暂时无用；原用来记录卡片的文字卡号
 	private Integer employeeStatusID;	//up人员库的人员状态，值为24代表可用（由于人员数据以WEB平台为准，所以不从UP中同步后影响WEB的人员信息）
+	
+	
+	public String getUuid() {
+		return uuid;
+	}
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 	public String getUpCardId() {
 		return upCardId;
 	}

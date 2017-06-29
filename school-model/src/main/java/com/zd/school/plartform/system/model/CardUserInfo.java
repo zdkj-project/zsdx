@@ -71,17 +71,14 @@ public class CardUserInfo extends BaseEntity implements Serializable {
         this.useState = useState;
     }
 
-    @FieldInfo(name = "发卡对象")
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID")
-    private SysUser userInfo;
-
-    public SysUser getUserInfo() {
-        return userInfo;
+    @FieldInfo(name = "发卡对象（班级学员或老师）")
+    @Column(name = "USER_ID", length = 36, nullable = false)
+    private String userId;
+    
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
-
-    public void setUserInfo(SysUser userInfo) {
-        this.userInfo = userInfo;
+    public String getUserId() {
+        return userId;
     }
-
 }

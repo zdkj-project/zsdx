@@ -4,12 +4,20 @@ package com.zd.school.jw.train.controller;
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
+import com.zd.core.util.DBContextHolder;
 import com.zd.core.util.ImportExcelUtil;
 import com.zd.core.util.ModelUtil;
+import com.zd.core.util.PoiExportExcel;
 import com.zd.core.util.StringUtils;
+import com.zd.school.jw.train.model.TrainClass;
+import com.zd.school.jw.train.model.TrainClassschedule;
 import com.zd.school.jw.train.model.TrainClasstrainee;
+import com.zd.school.jw.train.service.TrainClassService;
 import com.zd.school.jw.train.service.TrainClasstraineeService;
+import com.zd.school.plartform.system.model.CardUserInfoToUP;
 import com.zd.school.plartform.system.model.SysUser;
+import com.zd.school.plartform.system.service.SysUserService;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +31,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -41,7 +54,13 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 
 	@Resource
 	TrainClasstraineeService thisService; // service层接口
+	
+	@Resource
+	TrainClassService trainClassService; // service层接口
 
+	@Resource
+	SysUserService sysUserService; // service层接口
+	
 	/**
 	 * @Title: list
 	 * @Description: 查询数据列表
@@ -330,6 +349,142 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			writeJSON(response, jsonBuilder.returnSuccessJson("\"取消宿舍成功！\""));
 		} else {
 			writeJSON(response, jsonBuilder.returnFailureJson("\"请求失败，请联系管理员\""));
+		}
+	}
+	
+	/*
+	 * 一键同步UP的方式
+	 */
+	@RequestMapping("/doSyncClassCardInfoFromUp")
+	public void doSyncClassCardInfoFromUp(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		StringBuffer returnJson = null;
+		try {
+			String classId = request.getParameter("classId");	
+			TrainClass trainClass = trainClassService.get(classId);
+			//设置部门ID：Train20170505（Train+班级编号）【班级编号不可变化】
+			String departmentId = "Train" + trainClass.getClassNumb();
+			
+			// 1.切换数据源
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
+
+			// 2.查询UP中的发卡信息(查询班级学员的卡片信息)
+			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
+					+ " convert(int,a.CardStatusIDXF) as useState,"
+					+ " b.SID as sid,b.EmployeeStatusID as employeeStatusID "
+					+ " from Tc_Employee b left join TC_Card a  on a.EmployeeID=b.EmployeeID"
+					+ " where b.DepartmentID='"+departmentId+"'"
+					+ "	order by a.CardID asc,a.ModifyDate asc";
+			
+
+			List<CardUserInfoToUP> upCardUserInfos = thisService.doQuerySqlObject(sql, CardUserInfoToUP.class);
+
+			// 3.恢复数据源
+			DBContextHolder.clearDBType();
+
+			int row = 0;
+			if (upCardUserInfos.size() > 0) {
+				row = sysUserService.syncClassCardInfoFromUp(upCardUserInfos,classId);
+			} else {
+				row = sysUserService.syncClassCardInfoFromUp(null,classId);
+			}
+
+			if (row == 0) {
+				returnJson = new StringBuffer("{ \"success\" : true, \"msg\":\"此班级学员已是最新发卡数据！\"}");
+			} else if (row > 0) {
+				returnJson = new StringBuffer("{ \"success\" : true, \"msg\":\"更新发卡数据成功！\"}");
+			} else {
+				returnJson = new StringBuffer("{ \"success\" : false, \"msg\":\"更新发卡数据失败，请联系管理员！\"}");
+			}
+
+		} catch (Exception e) {
+			returnJson = new StringBuffer("{ \"success\" : false, \"msg\":\"更新发卡数据失败，请联系管理员！\"}");
+		}
+
+		writeAppJSON(response, returnJson.toString());
+	}
+	
+	/**
+	 * 导出班级学员导入UP模版排信息
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/exportExcel")
+	public void exportSiteExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getSession().setAttribute("exportTrainClassTraineeIsEnd", "0");
+		request.getSession().removeAttribute("exportTrainClassTraineeIsState");
+
+		List<Map<String, Object>> allList = new ArrayList<>();
+		Integer[] columnWidth = new Integer[] { 30, 15, 20, 40, 20 };
+
+		// 1.班级信息
+		String classId = request.getParameter("classId"); // 程序中限定每次只能导出一个班级
+
+		// 2.班级学员信息
+		List<TrainClasstrainee> trainClasstraineeList = null;
+		String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2) ";
+		if (StringUtils.isNotEmpty(classId)) {
+			hql += " and classId ='" + classId + "'";
+		}
+		hql += " order by createTime desc";
+		trainClasstraineeList = thisService.doQuery(hql);
+		
+		// 处理班级基本数据
+		List<Map<String, String>> traineeList = new ArrayList<>();
+		Map<String, String> traineeMap = null;
+		for (TrainClasstrainee classTrainee : trainClasstraineeList) {
+			traineeMap = new LinkedHashMap<>();
+
+			traineeMap.put("className", classTrainee.getClassName());
+			traineeMap.put("traineeName", classTrainee.getXm());
+			traineeMap.put("sfzjh", classTrainee.getSfzjh());
+			traineeMap.put("uuid", classTrainee.getUuid());
+			traineeMap.put("cardNum", "");
+			traineeList.add(traineeMap);
+		}
+		// --------2.组装课程表格数据
+		Map<String, Object> courseAllMap = new LinkedHashMap<>();
+		courseAllMap.put("data", traineeList);
+		courseAllMap.put("title", null);
+		courseAllMap.put("head", new String[] { "班级名称", "人员姓名", "身份证件号", "人员标识", "卡片号" }); // 规定名字相同的，设定为合并
+		courseAllMap.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
+		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
+		courseAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+		allList.add(courseAllMap);
+
+		// 在导出方法中进行解析
+		boolean result = PoiExportExcel.exportExcel(response, "班级学员发卡模版表格", null, allList);
+		if (result == true) {
+			request.getSession().setAttribute("exportTrainClassTraineeIsEnd", "1");
+		} else {
+			request.getSession().setAttribute("exportTrainClassTraineeIsEnd", "0");
+			request.getSession().setAttribute("exportTrainClassTraineeIsState", "0");
+		}
+	}
+	
+	/**
+	 * 判断导出时，是否导出完毕
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/checkExportEnd")
+	public void checkExportRoomEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Object isEnd = request.getSession().getAttribute("exportTrainClassTraineeIsEnd");
+		Object state = request.getSession().getAttribute("exportTrainClassTraineeIsState");
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
 		}
 	}
 

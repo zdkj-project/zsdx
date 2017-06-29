@@ -312,7 +312,7 @@ Ext.define("core.train.course.controller.MainController", {
                     break
             }
         }
-        //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
+        //获取tabItem；若不存在，则表示·要新建tab页，否则直接打开
         var tabItem = tabPanel.getComponent(tabItemId);
 
         //判断是否已经存在tab了
@@ -369,7 +369,8 @@ Ext.define("core.train.course.controller.MainController", {
                     case "coursDesc":
                         var detailhtmlpanel = item.down("container[xtype=course.coursedescpanel]");
                         detailhtmlpanel.setData(recordData);
-                        detailhtmlpanel.show();
+                        //console.log(recordData);
+                        //detailhtmlpanel.show();
                         break;
                     case "teacherDesc":
                         

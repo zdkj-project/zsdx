@@ -713,7 +713,7 @@ Ext.define("core.train.class.controller.MainController", {
                 var records = baseGrid.getSelectionModel().getSelection();
                 if (records.length > 0) {
                     //封装ids数组
-                    Ext.Msg.confirm('温馨提示', '是否删除数据？（已启用的班级，不会被删除）', function(btn, text) {
+                    Ext.Msg.confirm('温馨提示', '是否删除数据？（已提交的班级，不会被删除）', function(btn, text) {
                         if (btn == 'yes') {
                             var ids = new Array();
                             Ext.each(records, function(rec) {
