@@ -43,7 +43,7 @@ Ext.define("core.train.arrange.view.ClassDetailHtmlPanel", {
                 '<ul class="trainClass_gridUl">',
                     '<li><span style="width:5%">序号</span><span style="width:10%">姓名</span><span style="width:5%">性别</span><span>移动电话</span><span>身份证号码</span><span style="width:20%">所在单位</span><span style="width:10%">职务</span><span style="width:10%">行政级别</span><span style="width:10%">学员状态</span></li>',                        
                 '{% if (values.length == 0) %}', 
-                    '<li style="width:100%;font-size: 20px;font-weight: 400;text-align: center;line-height: 100px;">此班级暂无学员信息...</li>',
+                    '<li style="width:100%;font-size: 13px;font-weight: 400;text-align: center;line-height: 100px;">此班级暂无学员信息...</li>',
                 '{% if (values.length == 0 ) return  %}',   //reutrun 表示不执行下面的了，在for里面可以使用break、continue
                     '<tpl for=".">',
                         '<li><span style="width:5%">{[xindex]}</span><span style="width:10%">{xm}</span><span style="width:5%">{xbm}</span><span>{phone}</span><span title="{sfzjh}">{sfzjh}</span><span style="width:20%" title="{workUnit}">{workUnit}</span><span style="width:10%">{position}</span><span style="width:10%">{headshipLevel}</span><span style="width:10%">{isDelete}</span></li>',        
@@ -62,7 +62,7 @@ Ext.define("core.train.arrange.view.ClassDetailHtmlPanel", {
                 '<ul class="trainClass_gridUl">',
                     '<li><span style="width:5%">序号</span><span style="width:20%">课程名称</span><span style="width:10%">教学形式</span><span>开始时间</span><span>结束时间</span><span style="width:10%">讲师</span><span style="width:8%">授课地点</span><span style="width:7%">是否评价</span><span style="width:10%">课程状态</span></li>',
                 '{% if (values.length == 0) %}', 
-                    '<li style="width:100%;font-size: 20px;font-weight: 400;text-align: center;line-height: 100px;">此班级暂无课程信息...</li>',
+                    '<li style="width:100%;font-size: 13px;font-weight: 400;text-align: center;line-height: 100px;">此班级暂无课程信息...</li>',
                 '{% if (values.length == 0 ) return  %}',   //reutrun 表示不执行下面的了，在for里面可以使用break、continue
                     '<tpl for=".">',
                         '<li><span style="width:5%">{[xindex]}</span><span style="width:20%" title="{courseName}">{courseName}</span><span style="width:10%">{teachType}</span><span>{beginTime}</span><span>{endTime}</span><span style="width:10%"  title="{teacher}">{teacher}</span><span style="width:8%" title="{address}">{address}</span><span style="width:7%">{isEval}</span><span style="width:10%">{isDelete}</span></li>',

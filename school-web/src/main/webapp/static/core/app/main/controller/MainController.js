@@ -341,9 +341,9 @@ Ext.define('core.main.controller.MainController', {
         }
         
         //这个菜单，默认点击不了第二层
-        // if(item.menuType=="MENU"&&item.menuParent=="ROOT"){  
-        //     return false;
-        // }
+        if(item.menuType=="MENU"&&item.menuParent=="ROOT"){  
+            return false;
+        }
 
         var viewport=this.getView();    
         var tabPanel=viewport.down("tabpanel[xtype=app-main]");

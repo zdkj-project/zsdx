@@ -39,12 +39,12 @@ Ext.define("core.train.arrange.view.MainQueryPanel", {
 			queryType: "combobox",
 			dataType:"numberfield",		//指定数据类型为 数字
 			name: "isarrange",
-			fieldLabel: "是否安排",
+			fieldLabel: "安排状态",
 			store: Ext.create('Ext.data.Store', {
             	fields: ['name', 'value'],
 	            data : [
-	                {"name":"已安排", "value":1},    
-	                {"name":"未安排", "value":0}
+	                {"name":"已安排过", "value":1},    
+	                {"name":"从未安排", "value":0}
 	            ]
 	        }),
 	        queryMode: 'local',

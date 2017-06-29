@@ -204,10 +204,12 @@ Ext.define("core.train.class.view.MainGrid", {
             dataIndex: "isuse",
             align:'center',
             renderer: function(value, metaData) {
-                if(value==1||value==3)
+                if(value==1)
                     return "<span style='color:green'>已提交</span>";
                 else if(value==2)
                     return "<span style='color:#2476FF'>修改未提交</span>";
+                else if(value==3)
+                    return "<span style='color:green'>修改已提交</span>";
                 else
                     return "<span style='color:red'>未提交</span>";
             }

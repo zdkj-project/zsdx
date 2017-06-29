@@ -73,12 +73,15 @@ Ext.define("core.train.class.view.MainQueryPanel", {
 			queryType: "combobox",
 			dataType:"numberfield",		//指定filter的数据类型为 数字
 			name: "isuse",
-			fieldLabel: "是否启用",
+			fieldLabel: "提交状态",
 			store: Ext.create('Ext.data.Store', {
             	fields: ['name', 'value'],
 	            data : [
-	                {"name":"已启用", "value":1},    
-	                {"name":"未启用", "value":0}
+	                {"name":"未提交", "value":0},
+	                {"name":"已提交", "value":1},	              
+	                {"name":"修改未提交", "value":2},	
+	                {"name":"修改已提交", "value":3}               
+	             
 	            ]
 	        }),
 	        queryMode: 'local',

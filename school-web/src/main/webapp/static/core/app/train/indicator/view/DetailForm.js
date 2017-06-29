@@ -36,7 +36,7 @@ Ext.define("core.train.indicator.view.DetailForm", {
         items: [{
             beforeLabelTextTpl: comm.get("required"),
             allowBlank: false,
-            columnWidth:0.4,
+            width:300,
             blankText: "指标名称不能为空",
             fieldLabel: "指标名称",
             name: "indicatorName",
@@ -46,7 +46,7 @@ Ext.define("core.train.indicator.view.DetailForm", {
             maxLengthText: "最多64个字符,汉字占2个字符"
         }, {
             fieldLabel: "评价类型",
-            width:800,
+            width:600,
             //name: "indicatorObject",
             xtype: 'radiogroup',
             ref:'indicatorObject',

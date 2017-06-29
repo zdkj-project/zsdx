@@ -389,3 +389,12 @@ Ext.override(Ext.form.field.Time,{
 });
 
 
+//重写pannel的一些属性
+Ext.override(Ext.panel.Panel,{
+    collapseToolText:'折叠面板',        
+    expandToolText:'展开面板',
+    closeToolText:'关闭面板'
+});
+Ext.override(Ext.window.Window,{
+    closeToolText:'关闭对话框'
+});

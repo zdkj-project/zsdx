@@ -743,7 +743,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				else if (trainClass.getIsuse() == 2)
 					isUse = "修改未提交";
 				else if (trainClass.getIsuse() == 3)
-					isUse = "已提交";
+					isUse = "修改已提交";
 				classMap.put("isUse", isUse);
 
 				String isArrange = "";
@@ -1160,7 +1160,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		else if (trainClass.getIsuse() == 2)
 			isUse = "修改未提交";
 		else if (trainClass.getIsuse() == 3)
-			isUse = "已提交";
+			isUse = "修改已提交";
 		classMap2.put("isUse", isUse);
 
 		classList1.add(classMap1);

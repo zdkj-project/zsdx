@@ -779,7 +779,7 @@ Ext.define('core.main.view.Viewport', {
             region : 'west', // 左边面板  
             width : 200,          
             split : true,
-            collapsible:true,
+            collapsible:true,            
             hidden:true,
             bind:{
                 hidden:'{!isMainMenuTree}'
@@ -790,7 +790,6 @@ Ext.define('core.main.view.Viewport', {
             width : 200,          
             split : true,
             collapsible:true,
-           
             bind:{
                 hidden:'{!isMainMenu}'
             },           

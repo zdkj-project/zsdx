@@ -532,8 +532,8 @@ Ext.define("core.train.teacher.controller.MainController", {
                 });
                 tabItem.add(item);
 
-                var ddCodes=['XBM','TECHNICAL','XLM','ZYM','INOUT','HEADSHIPLEVEL'];
-                var propNames=['xbm','technical','xlm','zym','inout','headshipLevel'];
+                var ddCodes=['XBM','TECHNICAL','XLM','INOUT','HEADSHIPLEVEL'];
+                var propNames=['xbm','technical','xlm','inout','headshipLevel'];
                 for(var i=0;i<ddCodes.length;i++){                
                     var ddItem = factory.DDCache.getItemByDDCode(ddCodes[i]);
                     var resultVal="";

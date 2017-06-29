@@ -15,14 +15,14 @@ Ext.define("core.train.indicator.view.MainQueryPanel", {
         xtype: "container",
         layout: "column",
         items: [{
-            columnWidth: 0.15,
+            columnWidth: 0.2,
             labelWidth: 50,
             xtype: "basequeryfield",
             name: "xm",
             fieldLabel: "姓名",
             queryType: "textfield",
         }, {
-            columnWidth: 0.15,
+            columnWidth: 0.2,
             labelWidth: 50,
             xtype: "basequeryfield",
             name: "xbm",
@@ -32,14 +32,14 @@ Ext.define("core.train.indicator.view.MainQueryPanel", {
                 ddCode: "XBM"
             }
         }, {
-            columnWidth: 0.15,
+            columnWidth: 0.2,
             labelWidth: 50,
             xtype: "basequeryfield",
             name: "position",
             fieldLabel: "职务",
             queryType: "textfield"
         }, {
-            columnWidth: 0.15,
+            columnWidth: 0.2,
             labelWidth: 80,
             xtype: "basequeryfield",
             name: "headshipLevel",
