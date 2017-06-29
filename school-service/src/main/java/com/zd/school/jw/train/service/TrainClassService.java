@@ -6,6 +6,7 @@ import com.zd.school.jw.model.app.ClassEvalApp;
 import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.jw.train.model.TrainTeacher;
+import com.zd.school.jw.train.model.vo.TrainClassEval;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.model.SysUserToUP;
 
@@ -99,5 +100,7 @@ public interface TrainClassService extends BaseService<TrainClass> {
 	public ClassEvalApp getClassEvalStand(String classId);
 
 	public int syncClassTraineeFoodsToUP(TrainClass trainClass, List<TrainClasstrainee> traineeFoods);
+
+    public TrainClassEval getClassEvalInfo(String ids);
 
 }

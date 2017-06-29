@@ -5,9 +5,11 @@ import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseService;
 import com.zd.school.jw.model.app.CourseEvalApp;
 import com.zd.school.jw.train.model.TrainClassschedule;
+import com.zd.school.jw.train.model.vo.TrainClassCourseEval;
 import com.zd.school.plartform.system.model.SysUser;
 
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -88,4 +90,8 @@ public interface TrainClassscheduleService extends BaseService<TrainClassschedul
 	 * @return
 	 */
 	public CourseEvalApp getCourseEvalStand(String courseId);
+
+    QueryResult<TrainClassCourseEval> getClassCourseEval(Integer start,Integer limit,String orderSql,String classId);
+
+    public  List<Map<String,Object>> getClassCourseRanking(String orderSql,String classId);
 }

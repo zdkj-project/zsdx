@@ -5,9 +5,14 @@ import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.ModelUtil;
+import com.zd.core.util.PoiExportExcel;
 import com.zd.core.util.StringUtils;
 import com.zd.school.jw.train.model.TrainClassevalresult;
+import com.zd.school.jw.train.model.vo.TrainClassEval;
+import com.zd.school.jw.train.service.TrainClassService;
 import com.zd.school.jw.train.service.TrainClassevalresultService;
+import com.zd.school.jw.train.service.TrainClassscheduleService;
+import com.zd.school.jw.train.service.TrainCourseevalresultService;
 import com.zd.school.plartform.system.model.SysUser;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -19,6 +24,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -40,6 +48,14 @@ public class TrainClassevalresultController extends FrameWorkController<TrainCla
 
     @Resource
     TrainClassevalresultService thisService; // service层接口
+    @Resource
+    private TrainClassService classService;
+    @Resource
+    private TrainClassscheduleService classCourseService;
+    @Resource
+    private TrainCourseevalresultService courseevalresultService;
+    @Resource
+    private TrainClassevalresultService classevalresultService;
 
     /**
       * @Title: list
@@ -264,4 +280,65 @@ public class TrainClassevalresultController extends FrameWorkController<TrainCla
             writeJSON(response, jsonBuilder.returnFailureJson("'关闭评价失败,详情见错误日志'"));
         }
     }
+
+    /**
+     * 导出指定班级的评价信息
+     * @param ids
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping("/exportEvalExcel")
+    public void exportEvalExcel(String ids,HttpServletRequest request,HttpServletResponse response) throws Exception{
+        request.getSession().setAttribute("exportAllEvalIsEnd", "0");
+        request.getSession().removeAttribute("exportAllEvalIsState");
+        String orderSql = " order by ranking asc ";
+        TrainClassEval trainClass = classService.getClassEvalInfo(ids);
+        List<Map<String, Object>> allList = new ArrayList<>();
+        //班级课程评价的排名信息
+        Map<String, Object> mapCourseRanking = classevalresultService.getExportRankingData(ids);
+        allList.add(mapCourseRanking);
+
+        //班级课程的评价结果
+        List<Map<String, Object>> mapCourseEval = classevalresultService.getClassCourseEvalResult(ids, orderSql);
+        allList.addAll(mapCourseEval);
+
+        //班级评价信息
+        Map<String, Object> mapOneClass = classevalresultService.getClassEvalResult(ids, trainClass);
+        allList.add(mapOneClass);
+
+        // 在导出方法中进行解析
+        boolean result = PoiExportExcel.exportAllEvalExcel(response, "培训评价", trainClass.getClassName(), allList);
+        if (result == true) {
+            request.getSession().setAttribute("exportAllEvalIsEnd", "1");
+        } else {
+            request.getSession().setAttribute("exportAllEvalIsEnd", "0");
+            request.getSession().setAttribute("exportAllEvalIsState", "0");
+        }
+    }
+
+    /**
+     * 检查导出所有的评价结果是否完成
+     *
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping("/checkEvalExportEnd")
+    public void checkEvalExportEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Object isEnd = request.getSession().getAttribute("exportAllEvalIsEnd");
+        Object state = request.getSession().getAttribute("exportAllEvalIsState");
+        if (isEnd != null) {
+            if ("1".equals(isEnd.toString())) {
+                writeJSON(response, jsonBuilder.returnSuccessJson("\"导出完成！\""));
+            } else if (state != null && state.equals("0")) {
+                writeJSON(response, jsonBuilder.returnFailureJson("0"));
+            } else {
+                writeJSON(response, jsonBuilder.returnFailureJson("\"导出未完成！\""));
+            }
+        } else {
+            writeJSON(response, jsonBuilder.returnFailureJson("\"导出未完成！\""));
+        }
+    }
+
 }

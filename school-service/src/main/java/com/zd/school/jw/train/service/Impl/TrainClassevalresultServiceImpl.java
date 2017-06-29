@@ -7,6 +7,8 @@ import com.zd.school.jw.train.dao.TrainClassevalresultDao;
 import com.zd.school.jw.train.model.TrainClassevalresult;
 import com.zd.school.jw.train.model.TrainClassschedule;
 import com.zd.school.jw.train.model.TrainIndicatorStand;
+import com.zd.school.jw.train.model.vo.TrainClassCourseEval;
+import com.zd.school.jw.train.model.vo.TrainClassEval;
 import com.zd.school.jw.train.service.*;
 import com.zd.school.plartform.system.model.SysUser;
 import org.apache.log4j.Logger;
@@ -17,9 +19,7 @@ import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * ClassName: TrainClassevalresultServiceImpl
@@ -176,5 +176,73 @@ public class TrainClassevalresultServiceImpl extends BaseServiceImpl<TrainClasse
     public Boolean doEndStartClassEval(String ids,SysUser currentUser) {
         classService.updateByProperties("uuid",ids,"isEval",2);
         return true;
+    }
+
+    @Override
+    public Map<String, Object> getExportRankingData(String classId) {
+        String orderSql = " order by ranking asc ";
+        List<Map<String, Object>> courseRank = scheduleService.getClassCourseRanking(orderSql, classId);
+        Map<String, Object> mapCourseRanking = new LinkedHashMap<>();
+        mapCourseRanking.put("data", courseRank);
+        mapCourseRanking.put("title", "班级基本信息表");
+        mapCourseRanking.put("head", new String[] { "课程名称", "课程类型", "上课教师", "很满意度", "满意度", "很满意排名" });
+        mapCourseRanking.put("columnWidth",  new Integer[] { 40, 15, 20, 15, 15, 15 }); // 30代表30个字节，15个字符
+        mapCourseRanking.put("columnAlignment", new Integer[] { 1, 0, 0, 0, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
+
+        return  mapCourseRanking;
+    }
+
+    public Map<String, Object> getClassEvalResult(String ids, TrainClassEval trainClass) {
+        Map<String, List<Map<String, Object>>> classStands = courseevalresultService.getClassEvalResult(ids);
+        Map<String, Object> mapOneClass = new HashMap<>();
+        mapOneClass.put("className",trainClass.getClassName());
+        mapOneClass.put("holdUnit", trainClass.getHoldUnit());
+        mapOneClass.put("undertaker", trainClass.getUndertaker());
+        mapOneClass.put("traineeCount",trainClass.getTrainees().toString());
+        mapOneClass.put("evalCount","0");
+        mapOneClass.put("verySatisfaction", trainClass.getVerySatisfaction());
+        mapOneClass.put("satisfaction",trainClass.getSatisfaction());
+        mapOneClass.put("advise",trainClass.getAdvise());
+        StringBuilder sb = new StringBuilder(trainClass.getBeginDate());
+        sb.append(" - ");
+        sb.append(trainClass.getEndDate());
+        sb.append(" 共 ");
+        sb.append(trainClass.getTrainDays());
+        sb.append(" 天 ");
+        mapOneClass.put("trainTime",sb.toString());
+        mapOneClass.put("head1",new String[]{"评估内容","评估等级"});
+        mapOneClass.put("head", new String[] { "评估指标", "评估标准", "很满意", "满意", "基本满意", "不满意","很满意度","满意度" });
+        mapOneClass.put("columnWidth",  new Integer[] { 20, 60, 15, 15, 15, 15 ,15,15}); // 30代表30个字节，15个字符
+        mapOneClass.put("standList", classStands);
+        return mapOneClass;
+    }
+
+    public List<Map<String, Object>> getClassCourseEvalResult(String ids, String orderSql) {
+        List<Map<String,Object>> mapCourseEval=new ArrayList<>();
+        QueryResult<TrainClassCourseEval> queryResult = scheduleService.getClassCourseEval(0, 200, orderSql, ids);
+        List<TrainClassCourseEval> list = queryResult.getResultList();
+        Map<String, Map<String,List<Map<String, Object>>>> courseStands = courseevalresultService.getClassCourseEvalResult(ids);
+
+        Map<String,Object> mapOneCourse = null;
+        int iLength= list.size();
+        for (int i = 0; i < iLength ; i++) {
+            mapOneCourse = new HashMap<>();
+            mapOneCourse.put("className",list.get(i).getClassName());
+            mapOneCourse.put("courseName",list.get(i).getCourseName());
+            mapOneCourse.put("teachTypeName",list.get(i).getTeachTypeName());
+            mapOneCourse.put("teacherName",list.get(i).getTeacherName());
+            mapOneCourse.put("verySatisfaction", list.get(i).getVerySatisfaction());
+            mapOneCourse.put("satisfaction",list.get(i).getSatisfaction());
+            mapOneCourse.put("classScheduleId", list.get(i).getClassScheduleId());
+            mapOneCourse.put("advise",list.get(i).getAdvise());
+            mapOneCourse.put("standList", courseStands.get(list.get(i).getClassScheduleId()));
+            //评估指标	评估标准	很满意	满意	基本满意	不满意	很满意度	满意度
+
+            mapOneCourse.put("head", new String[] { "评估指标", "评估标准", "很满意", "满意", "基本满意", "不满意","很满意度","满意度" });
+            mapOneCourse.put("columnWidth",  new Integer[] { 20, 60, 15, 15, 15, 15 ,15,15}); // 30代表30个字节，15个字符
+
+            mapCourseEval.add(mapOneCourse);
+        }
+        return mapCourseEval;
     }
 }

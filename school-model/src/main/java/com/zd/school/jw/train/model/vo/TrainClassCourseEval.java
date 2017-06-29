@@ -203,4 +203,15 @@ public class TrainClassCourseEval {
     public void setEvalState(Integer evalState) {
         this.evalState = evalState;
     }
+
+    @FieldInfo(name = "意见与建议")
+    private String advise;
+
+    public String getAdvise() {
+        return advise;
+    }
+
+    public void setAdvise(String advise) {
+        this.advise = advise;
+    }
 }
