@@ -2,10 +2,13 @@ package com.zd.school.jw.train.service;
 
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseService;
+import com.zd.school.jw.train.model.TrainClassevalresult;
+import com.zd.school.jw.train.model.vo.TrainClassEval;
 import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.jw.train.model.TrainClassevalresult ;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -92,4 +95,27 @@ public interface TrainClassevalresultService extends BaseService<TrainClassevalr
 	 * @return
 	 */
 	public  Boolean doSumClassEval(String ids);
+
+    /**
+     * 获取导出时班级下课程的评价排名
+     * @param classId
+     * @return
+     */
+    public Map<String, Object> getExportRankingData(String classId);
+
+    /**
+     * 获取导出时班级的评价结果
+     * @param ids
+     * @param trainClass
+     * @return
+     */
+    public Map<String, Object> getClassEvalResult(String ids, TrainClassEval trainClass);
+
+    /**
+     * 获取班级下课程的评价结果
+     * @param ids
+     * @param orderSql
+     * @return
+     */
+    public List<Map<String, Object>> getClassCourseEvalResult(String ids, String orderSql);
 }

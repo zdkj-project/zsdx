@@ -766,4 +766,17 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 
 		return new String[] { uuid1, uuid2, uuid3, uuid4, uuid5, uuid6, uuid7 };
 	}
+
+    @Override
+    public TrainClassEval getClassEvalInfo(String ids) {
+        String sql = " SELECT classId,classCategory,className,beginDate,endDate,trainDays,holdUnit,undertaker,convert(varchar(10),verySatisfaction) as verySatisfaction"
+                + ",convert(varchar(10),satisfaction) as satisfaction,bzr,mobile,trainees,advise" +
+                " FROM TRAIN_V_CLASSEVAL WHERE classId=''{0}''";
+        sql = MessageFormat.format(sql, ids);
+        List<TrainClassEval> evalClassList = this.doQuerySqlObject(sql,TrainClassEval.class);
+        if(evalClassList.size()>0)
+            return  evalClassList.get(0);
+        else
+            return  null;
+    }
 }

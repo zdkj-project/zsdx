@@ -16,7 +16,7 @@ Ext.define("core.train.alleval.view.MainLayout", {
     detLayout: "alleval.detaillayout",
     /*标注这个视图控制器的别名，以此提供给window处使用*/
     otherController:'alleval.otherController',
-    layout:'fit',
+    layout:'border',
     border:false,
     funData: {
         action: comm.get("baseUrl") + "/TrainEvalalleval", //请求Action
@@ -38,5 +38,20 @@ Ext.define("core.train.alleval.view.MainLayout", {
     
     items: [{
         xtype: "alleval.maingrid",
+        region: "west",
+        width: 440,
+        //height:300,
+        split: true,
+        style: {
+            border: '1px solid #ddd'
+        },
+        frame: false
+    }, {
+        xtype: "alleval.evalgrid",
+        region: "center",
+        flex: 1.5,
+        style: {
+            border: '1px solid #ddd'
+        }
     }]
 })

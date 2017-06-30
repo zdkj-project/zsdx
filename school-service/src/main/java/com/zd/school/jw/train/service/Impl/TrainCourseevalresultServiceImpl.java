@@ -19,9 +19,7 @@ import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -180,4 +178,93 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
         return  true;
 
     }
+
+    public  Map<String, Map<String,List<Map<String, Object>>>> getClassCourseEvalResult(String classId) {
+        //"评估指标", "评估标准", "很满意", "满意", "基本满意", "不满意","很满意度","满意度"
+        String sql = "SELECT INDICATOR_NAME,INDICATOR_STAND,VERY_SATISFACTIONCOUNT,SATISFACTIONCOUNT,BAS_SATISFACTIONCOUNT,NO_SATISFACTIONCOUNT,VERY_SATISFACTION,SATISFACTION," +
+                "CLASS_SCHEDULE_ID,INDICATOR_ID FROM dbo.TRAIN_T_COURSEEVALRESULT WHERE CLASS_ID=''{0}'' order by  CLASS_SCHEDULE_ID,INDICATOR_ID";
+        sql = MessageFormat.format(sql, classId);
+        String classCourseId = "";
+        String indicatorId = "";
+        Map<String, List<Map<String, Object>>> mapCourseIndicatorStand = new HashMap<>(); //返回的数据
+
+        //班级下所课程的所有评价指标标准
+        List<Map<String, Object>> listClassCourseStand = this.getForValuesToSql(sql);
+        int standCount = listClassCourseStand.size();
+        String perIndicatorId = listClassCourseStand.get(0).get("INDICATOR_ID").toString();
+        String perClassCourseid = listClassCourseStand.get(0).get("CLASS_SCHEDULE_ID").toString();
+
+        Map<String, Object> addStand = new HashMap<>();
+        List<Map<String, Object>> addStandList = new ArrayList<>();//要归拢的标准
+
+        Map<String, List<Map<String, Object>>> mapIndicatorStand = new HashMap<>();  //指标的map
+
+        Map<String, Map<String,List<Map<String, Object>>>> mapCourseStand = new HashMap<>();  //课程包含标准
+        for (int i = 0; i < standCount; i++) {
+            addStand = listClassCourseStand.get(i);
+            classCourseId = addStand.get("CLASS_SCHEDULE_ID").toString();
+            indicatorId = addStand.get("INDICATOR_ID").toString();
+            if (!perClassCourseid.equals(classCourseId) || i == standCount - 1) {
+                if (!perIndicatorId.equals(indicatorId) || i == standCount - 1) {
+                    //如果前一指标Id和当前指标id不同并且不是最后 一个
+                    if(i==standCount-1)
+                        addStandList.add(addStand);
+                    List<Map<String, Object>> addStandList1 = new ArrayList<>();//要归拢的标准
+                    addStandList1.addAll(addStandList);
+                    mapIndicatorStand.put(perIndicatorId,addStandList1);
+                    addStandList.clear();
+                }
+                Map<String, List<Map<String, Object>>> mapIndicatorStand1 = new HashMap<>();  //指标的map
+                mapIndicatorStand1.putAll(mapIndicatorStand);
+                mapCourseStand.put(perClassCourseid,mapIndicatorStand1);
+                mapIndicatorStand.clear();
+            } else {
+                if (!perIndicatorId.equals(indicatorId) || i == standCount - 1) {
+                    //如果前一指标Id和当前指标id不同并且不是最后 一个
+                    if(i==standCount-1)
+                        addStandList.add(addStand);
+                    List<Map<String, Object>> addStandList1 = new ArrayList<>();//要归拢的标准
+                    addStandList1.addAll(addStandList);
+                    mapIndicatorStand.put(perIndicatorId,addStandList1);
+                    addStandList.clear();
+                }
+            }
+            addStandList.add(addStand);
+            perClassCourseid = classCourseId;
+            perIndicatorId = indicatorId;
+        }
+        return mapCourseStand;
+
+    }
+    public Map<String, List<Map<String, Object>>>  getClassEvalResult(String ids){
+        String sql = " SELECT INDICATOR_NAME,INDICATOR_STAND,VERY_SATISFACTIONCOUNT,SATISFACTIONCOUNT,BAS_SATISFACTIONCOUNT,NO_SATISFACTIONCOUNT," +
+                "VERY_SATISFACTION,SATISFACTION,INDICATOR_ID FROM dbo.TRAIN_T_CLASSEVALRESULT WHERE CLASS_ID=''{0}'' order by  INDICATOR_ID ";
+        sql = MessageFormat.format(sql, ids);
+        //班级的所有评价标准
+        List<Map<String, Object>> listClassStand = this.getForValuesToSql(sql);
+        int standCount = listClassStand.size();  //所有的标准个数
+        String perIndicatorId = listClassStand.get(0).get("INDICATOR_ID").toString(); //第一条标准对应的指标id
+        String indicatorId = ""; //最校报一条标准的Id
+        Map<String, Object> addStand = new HashMap<>();  //一条标准
+        List<Map<String, Object>> addStandList = new ArrayList<>();//要归拢到指标的标准的集合
+        Map<String, List<Map<String, Object>>> mapIndicatorStand = new HashMap<>();  //指标包含的标准的map
+        //循环处理每条标准数据
+        for (int i = 0; i <standCount ; i++) {
+            addStand = listClassStand.get(i);
+            indicatorId = addStand.get("INDICATOR_ID").toString();
+            if (!perIndicatorId.equals(indicatorId) || i == standCount - 1) {
+                //如果前一指标Id和当前指标id不同并且不是最后 一个
+                if(i==standCount-1)
+                    addStandList.add(addStand);
+                List<Map<String, Object>> addStandList1 = new ArrayList<>();//要归拢的标准
+                addStandList1.addAll(addStandList);
+                mapIndicatorStand.put(perIndicatorId,addStandList1);
+                addStandList.clear();
+            }
+            addStandList.add(addStand);
+            perIndicatorId = indicatorId;
+        }
+        return  mapIndicatorStand;
+    }
+
 }

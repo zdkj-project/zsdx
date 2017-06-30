@@ -2,8 +2,11 @@ package com.zd.school.jw.train.service;
 
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseService;
+import com.zd.school.jw.train.model.TrainCourseevalresult;
 import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.jw.train.model.TrainCourseevalresult ;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -92,4 +95,10 @@ public interface TrainCourseevalresultService extends BaseService<TrainCourseeva
      * @return
      */
     public Boolean doEndCourseEval(String ids, SysUser currentUser);
+
+
+    public  Map<String, Map<String,List<Map<String, Object>>>> getClassCourseEvalResult(String classId);
+
+    public Map<String, List<Map<String, Object>>>  getClassEvalResult(String ids);
+
 }

@@ -14,36 +14,41 @@ Ext.define("core.train.alleval.controller.MainController", {
     },
     control: {
         /**
-         * 导入
+         * 班级列表相关事件
          */
-        "basegrid[xtype=alleval.maingrid] button[ref=gridImport]": {
-            beforeclick: function (btn) {
+        "basegrid[xtype=alleval.maingrid]": {
+            //列表点击事件
+            beforeitemclick: function (grid, record, item, index, e, eOpts) {
                 var self = this;
-                //得到组件
-                var baseGrid = btn.up("basegrid");
-
-                var win = Ext.create('Ext.Window', {
-                    title: "导入学员数据",
-                    iconCls: 'x-fa fa-clipboard',
-                    width: 400,
-                    resizable: false,
-                    constrain: true,
-                    autoHeight: true,
-                    modal: true,
-                    controller: 'alleval.otherController',
-                    closeAction: 'close',
-                    plain: true,
-                    grid: baseGrid,
-                    items: [{
-                        xtype: "alleval.allevalimportform"
-                    }]
+                var mainLayout = grid.up("panel[xtype=alleval.mainlayout]");
+                var filter = "[{'type':'string','comparison':'=','value':'" + record.get("uuid") + "','field':'classId'}]";
+                var funData = mainLayout.funData;
+                funData = Ext.apply(funData, {
+                    classId: record.get("uuid"),
+                    filter: filter,
+                    classGrid:grid,
+                    classRecord:record
                 });
-                win.show();
+                mainLayout.funData = funData;
+                var refreshgrid = mainLayout.down("panel[xtype=alleval.evalgrid]");
+                var store = refreshgrid.getStore();
+                var proxy = store.getProxy();
+                proxy.extraParams = {
+                    classId: record.get("uuid"),
+                    orderSql: " order by ranking asc "
+                };
+                store.load(); // 给form赋值
                 return false;
             }
+            /*            groupclick:function  (view, node, group, e, eOpts) {
+             var self = this;
+             console.log(view);
+             console.log(node);
+             console.log(group);
+             }*/
         },
         /**
-         * 导出
+         * 班级列表导出事件
          */
         "basegrid[xtype=alleval.maingrid] button[ref=gridExport]": {
             beforeclick: function (btn) {
@@ -57,64 +62,98 @@ Ext.define("core.train.alleval.controller.MainController", {
                 var pkName = funData.pkName;
                 //得到选中数据
                 var records = baseGrid.getSelectionModel().getSelection();
-                var title = "将导出所有的学员信息";
-                var ids = [];
-                if (records.length > 0) {
-                    title = "将导出所选学员的信息";
+                var title = "班级相关评价信息导出";
+                //var ids = [];
+                if (records.length!=1) {
+                    self.Warning("只能按班级导出，请重新选择");
+                    return false;
+/*                    title = "将导出所选学员的信息";
                     Ext.each(records, function (rec) {
                         var pkValue = rec.get(pkName);
                         ids.push(pkValue);
-                    });
+                    });*/
 
                 }
+                var ids = records[0].get("uuid");
                 Ext.Msg.confirm('提示', title, function (btn, text) {
                     if (btn == "yes") {
                         Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
-                        //window.location.href = comm.get('baseUrl') + "/Trainalleval/exportExcel?ids=" + ids.join(",");
-                        window.open(comm.get('baseUrl') + "/Trainalleval/exportExcel?ids=" + ids.join(",") + "&orderSql= order by workUnit");
-                        var inter = 100;
-                        var tt = Ext.Ajax.request({
-                            url: comm.get('baseUrl') + '/Trainalleval/checkExportEnd',
-                            success: function (resp, opts) {
-                                inter += 100;
-                                var result = JSON.parse(resp.responseText);
-                                if (result.success) {
-                                    //Ext.Msg.hide();
+                        var component = Ext.create('Ext.Component', {
+                            title: 'HelloWorld',
+                            width: 0,
+                            height: 0,
+                            hidden: true,
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClassevalresult/exportEvalExcel?ids=' + ids + '></iframe>',
+                            renderTo: Ext.getBody()
+                        });
+
+/*                        var time = function () {
+                            self.syncAjax({
+                                url: comm.get('baseUrl') + '/TrainClassevalresult/checkEvalExportEnd?ids=' + ids,
+                                timeout: 1000 * 60 * 30,        //半个小时
+                                //回调代码必须写在里面
+                                success: function (response) {
+                                    data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                    if (data.success) {
+                                        Ext.Msg.hide();
+                                        self.msgbox(data.obj);
+                                        component.destroy();
+                                    } else {
+                                        setTimeout(function () {
+                                            time()
+                                        }, 1000);
+                                    }
+                                },
+                                failure: function (response) {
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    component.destroy();
+                                    clearInterval(interval)
                                 }
-                            },
-                            failure: function (resp, opts) {
-                                task.delay(1200);
-                                var respText = Ext.util.JSON.decode(resp.responseText);
-                                Ext.Msg.alert('错误', respText.error);
-                            }
-                        });
-
-                        var sh;
-                        sh = setInterval(tt, 1000);
-                        var task = new Ext.util.DelayedTask(function () {
-                            Ext.Msg.hide();
-                        });
-                        task.delay(5000 + parseInt(inter));
-                        clearInterval(sh);
-
+                            });
+                        }
+                        setTimeout(function () {
+                            time()
+                        }, 1000); */   //延迟1秒执行
                     }
                 });
                 return false;
             }
         },
-
         /**
-         * 下载模板
+         * 列表查看课程排名
          */
-        "basegrid[xtype=alleval.maingrid] button[ref=gridDownTemplate]": {
+        "basegrid[xtype=alleval.evalgrid] button[ref=gridCourseRank]": {
             beforeclick: function (btn) {
                 var self = this;
-                var title = "下载导入模板";
-                Ext.Msg.confirm('提示', title, function (btn, text) {
-                    if (btn == "yes") {
-                        window.location.href = comm.get('baseUrl') + "/static/upload/template/alleval.xls";
-                    }
-                });
+                var baseGrid = btn.up("basegrid");
+                var funCode = baseGrid.funCode;
+                var basePanel = baseGrid.up("panel[xtype=alleval.mainlayout]");
+                var funData = basePanel.funData;
+                if(Ext.isEmpty(funData.classId)){
+                    self.Warning("请选择培训班级");
+                    return false;
+                }
+                var record = baseGrid.getStore().getAt(0);
+                self.doMainGridDetail_Tab(null, "rankCourse",baseGrid,record);
+                return false;
+            }
+        },
+        /**
+         * 列表查看班级评价
+         */
+        "basegrid[xtype=alleval.evalgrid] button[ref=gridClassEval]": {
+            beforeclick: function (btn) {
+                var self = this;
+                var baseGrid = btn.up("basegrid");
+                var funCode = baseGrid.funCode;
+                var basePanel = baseGrid.up("panel[xtype=alleval.mainlayout]");
+                var funData = basePanel.funData;
+                if(Ext.isEmpty(funData.classId)){
+                    self.Warning("请选择培训班级");
+                    return false;
+                }
+                var record = baseGrid.getStore().getAt(0);
+                self.doMainGridDetail_Tab(null, "rankCourse",baseGrid,record);
                 return false;
             }
         },
@@ -470,11 +509,7 @@ Ext.define("core.train.alleval.controller.MainController", {
         var detCode = basePanel.detCode;
         var detLayout = basePanel.detLayout;
         var defaultObj = funData.defaultObj;
-
-        var categoryId = funData.categoryId;  //选择的分类ID
-        var categoryName = funData.categoryName; //选择的分类名称
-        var categoryCode = funData.categoryCode; //选择的分类 的编码
-
+        insertObj = Ext.apply(insertObj, funData.classRecord);
         var operType = cmd;
         var pkValue = null;
 
@@ -502,42 +537,6 @@ Ext.define("core.train.alleval.controller.MainController", {
         tabTitle = tabConfigInfo.tabTitle; //标签页的标题
         tabItemId = tabConfigInfo.tabItemId;     //命名规则：funCode+'_ref名称',确保不重复
         itemXtype = tabConfigInfo.itemXtype;
-        /*        if (cmd != "add") {
-         if (btn) {
-         var rescords = baseGrid.getSelectionModel().getSelection();
-         if (rescords.length != 1) {
-         self.msgbox("请选择1条数据！");
-         return;
-         }
-         recordData = rescords[0].data;
-         }
-
-         insertObj = recordData;
-         //获取主键值
-         var pkName = funData.pkName;
-         pkValue = recordData[pkName];
-         switch (cmd) {
-         case "edit":
-         tabTitle = funData.tabConfig.editTitle;
-         tabItemId = funCode + "_gridEdit";
-         break
-         case "courseEval":
-         tabTitle = "课程评价_" + insertObj.courseName;
-         tabItemId = funCode + "_gridCourseEval";
-         itemXtype = "course.courseevalpanel";
-         break;
-         case"coursDesc":
-         tabTitle = "课程简介_" + insertObj.courseName;
-         tabItemId = funCode + "_gridCourseDesc";
-         itemXtype = "course.coursedescpanel";
-         break;
-         case "teacherDesc":
-         tabTitle = "教师简介_" + insertObj.courseName;
-         tabItemId = funCode + "_gridDeacherDesc";
-         itemXtype = "course.detailhtmlpanel";
-         break
-         }
-         }*/
         //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
         var tabItem = tabPanel.getComponent(tabItemId);
 
@@ -576,98 +575,7 @@ Ext.define("core.train.alleval.controller.MainController", {
                 //return;
                 //根据不同的操作进行初始化
                 self.initDetailInfo(cmd, tabItem, insertObj);
-                /*                switch (cmd) {
-                 case "edit":
-                 var objDetForm = item.down("baseform[funCode=" + detCode + "]");
-                 var formDeptObj = objDetForm.getForm();
-                 var courseDesc = objDetForm.down("htmleditor");
 
-                 self.setFormValue(formDeptObj, insertObj);
-                 courseDesc.setValue(insertObj.courseDesc);
-                 if (insertObj.courseMode === 2) {
-                 formDeptObj.findField("courseMode").setValue(true);
-                 } else
-                 formDeptObj.findField("courseMode").setValue(false);
-                 //根据需要设置一些字段为只读
-                 formDeptObj.findField("courseName").setDisabled(true);
-                 formDeptObj.findField("courseMode").setDisabled(true);
-                 formDeptObj.findField("mainTeacherName").setDisabled(true);
-                 break;
-                 case "coursDesc":
-                 var detailhtmlpanel = item.down("container[xtype=course.coursedescpanel]");
-                 detailhtmlpanel.setData(recordData);
-                 detailhtmlpanel.show();
-                 break;
-                 case "teacherDesc":
-
-                 // var ddCode="XLM";
-                 // var store=Ext.create("Ext.data.Store",{
-                 //     fields:factory.ModelFactory.getFields({modelName:"com.zd.school.plartform.baseset.model.BaseDicitem",excludes:""}),
-                 //     data:factory.DDCache.getItemByDDCode(ddCode)
-                 // });
-                 self.asyncAjax({
-                 url: funData.action + "/courseteacher",
-                 params: {
-                 courseId: insertObj.uuid
-                 },
-                 //回调代码必须写在里面
-                 success: function (response) {
-                 data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                 //console.log(data);
-                 if (data.rows != undefined) {
-                 //将数据字典数据赋值到组件属性上
-                 //var storeData=store.getData();
-                 // for(var i=0;i<rescordsData.length;i++){
-                 //     for(var j=0;j<storeData.length;j++){
-                 //         var rec=storeData.items[j];
-                 //         if(rec.get("itemCode")==rescordsData[i].xlm){
-                 //             rescordsData[i].xlm=rec.get("itemName");
-                 //             break;
-                 //         }
-                 //     }
-                 // }
-                 var rescordsData = data.rows;
-                 var obj = [];
-                 for (var index = 0; index < rescordsData.length; index++) {
-                 var recordData = rescordsData[index];
-                 var ddCodes = ['XBM', 'TECHNICAL', 'XLM', 'ZYM', 'INOUT', 'HEADSHIPLEVEL'];
-                 var propNames = ['xbm', 'technical', 'xlm', 'zym', 'inout', 'headshipLevel'];
-                 for (var i = 0; i < ddCodes.length; i++) {
-                 var ddItem = factory.DDCache.getItemByDDCode(ddCodes[i]);
-                 var resultVal = "";
-                 var value = recordData[propNames[i]];
-                 for (var j = 0; j < ddItem.length; j++) {
-                 var ddObj = ddItem[j];
-                 if (value == ddObj["itemCode"]) {
-                 resultVal = ddObj["itemName"];
-                 break;
-                 }
-                 }
-                 recordData[propNames[i]] = resultVal;
-                 }
-                 obj.push(recordData);
-                 }
-
-                 var detailhtmlpanel = tabItem.down("container[xtype=course.detailhtmlpanel]");
-                 detailhtmlpanel.setData(obj);
-                 detailhtmlpanel.show();
-
-
-                 } else {
-                 self.Error(data.obj ? data.obj : "数据读取失败，请刷新页面！");
-                 }
-                 }
-                 });
-                 break;
-                 case "courseEval":
-                 var trainRecordGrid = tabItem.down("grid[xtype=course.courseevalpanel]");
-                 var proxy = trainRecordGrid.getStore().getProxy();
-                 proxy.extraParams.propName = "courseId,courseName";
-                 proxy.extraParams.propValue = record.get("uuid") + "," + record.get("courseName");
-                 proxy.extraParams.joinMethod = "or";
-                 trainRecordGrid.getStore().loadPage(1);
-                 break;
-                 }*/
             }, 30);
 
         } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue) {     //判断是否点击的是同一条数据，不同则替换数据
@@ -683,24 +591,9 @@ Ext.define("core.train.alleval.controller.MainController", {
             case "rankCourse":
                 tabConfigInfo.tabTitle = "课程评价排名";
                 tabConfigInfo.tabItemId = funCode + "_ClassCourseRank";
-                tabConfigInfo.itemXtype = "alleval.courserankgrid";
-                // tabConfigInfo.itemXtype = "alleval.courserankhtml";
+                // tabConfigInfo.itemXtype = "alleval.courserankgrid";
+                tabConfigInfo.itemXtype = "alleval.courserankhtml";
                 break;
-            case "courseEval":
-                tabTitle = "课程评价_" + insertObj.courseName;
-                tabItemId = funCode + "_gridCourseEval";
-                itemXtype = "alleval.courserankhtml";
-                break;
-            case"coursDesc":
-                tabTitle = "课程简介_" + insertObj.courseName;
-                tabItemId = funCode + "_gridCourseDesc";
-                itemXtype = "course.coursedescpanel";
-                break;
-            case "teacherDesc":
-                tabTitle = "教师简介_" + insertObj.courseName;
-                tabItemId = funCode + "_gridDeacherDesc";
-                itemXtype = "course.detailhtmlpanel";
-                break
         }
     },
     initDetailInfo: function (cmd, tab, insertObj) {
@@ -709,20 +602,20 @@ Ext.define("core.train.alleval.controller.MainController", {
         switch (cmd) {
             case "rankCourse":
                 //初始化班级信息
-                var rankingGrid = tab.down("grid[xtype=alleval.courserankgrid]");
+/*                var rankingGrid = tab.down("grid[xtype=alleval.courserankgrid]");
                 var proxy = rankingGrid.getStore().getProxy();
                 proxy.extraParams.classId = insertObj.uuid;
                 proxy.extraParams.limit = 0;
-                rankingGrid.getStore().loadPage(1);
+                rankingGrid.getStore().loadPage(1);*/
 
-/*                var classContainer = tab.down("container[ref=classInfo]");
+                var classContainer = tab.down("container[ref=classInfo]");
                 classContainer.setData(insertObj);
-                var filter = "[{'type':'string','comparison':'=','value':'" + insertObj.uuid + "','field':'classId'}]";
+                // var filter = "[{'type':'string','comparison':'=','value':'" + insertObj.uuid + "','field':'classId'}]";
                 //初始化班级课程排名
                 self.asyncAjax({
                     url: comm.get("baseUrl") + "/TrainClassschedule/listClassEvalCourse",
                     params: {
-                        classId: insertObj.uuid,
+                        classId: insertObj.classId,
                         orderSql: " order by ranking asc",
                         page: 1,
                         start: 0,
@@ -733,7 +626,7 @@ Ext.define("core.train.alleval.controller.MainController", {
                         var classCourseRankContainer = tab.down("container[ref=classCourseRank]");
                         classCourseRankContainer.setData(data);
                     }
-                });*/
+                });
                 break;
         }
     }

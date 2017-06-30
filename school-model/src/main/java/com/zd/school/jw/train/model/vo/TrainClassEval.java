@@ -148,4 +148,15 @@ public class TrainClassEval {
     public void setMobile(String mobile) {
         this.mobile = mobile;
     }
+
+    @FieldInfo(name = "意见与建议")
+    private String advise;
+
+    public String getAdvise() {
+        return advise;
+    }
+
+    public void setAdvise(String advise) {
+        this.advise = advise;
+    }
 }

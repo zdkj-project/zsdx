@@ -4,6 +4,7 @@ import com.zd.core.model.ImportNotInfo;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
+import com.zd.core.util.StringUtils;
 import com.zd.school.jw.model.app.CourseEvalApp;
 import com.zd.school.jw.train.dao.TrainClassscheduleDao;
 import com.zd.school.jw.train.model.*;
@@ -428,7 +429,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 		List<TrainIndicatorStand> evalStand = standService.getCourseEvalStand();
 		String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
 				+ ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId," +
-				" teachTypeName FROM TRAIN_V_CLASSCOURSEEVAL where classScheduleId=''{0}''";
+				" teachTypeName,advise FROM TRAIN_V_CLASSCOURSEEVAL where classScheduleId=''{0}''";
 		sql = MessageFormat.format(sql,scheduleId);
 		CourseEvalApp entity = new CourseEvalApp();
 		List<TrainClassCourseEval> evalCourse = this.doQuerySqlObject(sql, TrainClassCourseEval.class);
@@ -438,4 +439,35 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 		entity.setEvalStand(evalStand);
 		return entity;
 	}
+
+    @Override
+    public QueryResult<TrainClassCourseEval> getClassCourseEval(Integer start, Integer limit, String orderSql, String classId) {
+	    //课程名称	课程类型	上课教师	很满意度	满意度	很满意排名
+
+        String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
+                + ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId," +
+                " teachTypeName,advise FROM TRAIN_V_CLASSCOURSEEVAL where classId=''{0}''";
+        sql = MessageFormat.format(sql, classId);
+        if (StringUtils.isNotEmpty(orderSql)) {
+            sql += orderSql;
+        }
+       // this.getForValuesToSql()
+        QueryResult<TrainClassCourseEval> list = this.doQueryResultSqlObject(sql, start, limit,
+                TrainClassCourseEval.class);
+
+        return list;
+    }
+
+    @Override
+    public List<Map<String, Object>> getClassCourseRanking(String orderSql, String classId) {
+        String sql = "SELECT courseName,teachTypeName,teacherName,convert(varchar(10),verySatisfaction) as verySatisfaction"
+                + ",convert(varchar(10),satisfaction) as satisfaction,ranking FROM TRAIN_V_CLASSCOURSEEVAL where classId=''{0}'' ";
+        sql = MessageFormat.format(sql, classId);
+        if (StringUtils.isNotEmpty(orderSql)) {
+            sql += orderSql;
+        }
+        List<Map<String, Object>> list = this.getForValuesToSql(sql);
+
+        return list;
+    }
 }
