@@ -11,7 +11,7 @@ Ext.define('core.train.courseeval.view.EvalGrid', {
     },
     noPagging: true,
     store: {
-        type: 'courseeval.maingridstore',
+        type: 'courseeval.maingridstore'
         //.......这里可以写传入这个store的其他参数
         //model:'core.good.signup.model.SignupGridModel',
     },
@@ -25,13 +25,13 @@ Ext.define('core.train.courseeval.view.EvalGrid', {
      */
     panelTopBar: {
         xtype: 'toolbar',
-        items: [/*{
+        items: [{
             xtype: 'button',
-            text: '启动评价',
-            ref: 'gridAdd_Tab',
+            text: '评价汇总',
+            ref: 'gridSumEval_Tab',
             funCode: 'girdFuntionBtn',   //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             iconCls: 'x-fa fa-plus-circle'
-        }, {
+        }, /*{
             xtype: 'button',
             text: '导出',
             ref: 'gridExport',

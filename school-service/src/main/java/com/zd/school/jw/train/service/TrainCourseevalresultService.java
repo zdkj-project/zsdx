@@ -96,9 +96,25 @@ public interface TrainCourseevalresultService extends BaseService<TrainCourseeva
      */
     public Boolean doEndCourseEval(String ids, SysUser currentUser);
 
-
+    /**
+     * 获取导出时班级下所有课程的指标标准数据
+     * @param classId 班级ID
+     * @return
+     */
     public  Map<String, Map<String,List<Map<String, Object>>>> getClassCourseEvalResult(String classId);
 
+    /**
+     * 获取导出时指定班级的指标增标准数据
+     * @param ids
+     * @return
+     */
     public Map<String, List<Map<String, Object>>>  getClassEvalResult(String ids);
 
+
+    /**
+     * 评价汇总完成后更班级下新课程的排名
+     * @param classId 班级Id
+     * @return
+     */
+    public Boolean resetCourseEvalRanking(String classId);
 }

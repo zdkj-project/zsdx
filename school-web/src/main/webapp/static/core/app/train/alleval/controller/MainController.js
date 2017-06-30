@@ -67,12 +67,6 @@ Ext.define("core.train.alleval.controller.MainController", {
                 if (records.length!=1) {
                     self.Warning("只能按班级导出，请重新选择");
                     return false;
-/*                    title = "将导出所选学员的信息";
-                    Ext.each(records, function (rec) {
-                        var pkValue = rec.get(pkName);
-                        ids.push(pkValue);
-                    });*/
-
                 }
                 var ids = records[0].get("uuid");
                 Ext.Msg.confirm('提示', title, function (btn, text) {
@@ -82,12 +76,12 @@ Ext.define("core.train.alleval.controller.MainController", {
                             title: 'HelloWorld',
                             width: 0,
                             height: 0,
-                            hidden: true,
-                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClassevalresult/exportEvalExcel?ids=' + ids + '></iframe>',
+                            hidden: false,
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClassevalresult/exportEvalExcel?ids=' + ids + '"></iframe>',
                             renderTo: Ext.getBody()
                         });
 
-/*                        var time = function () {
+                        var time = function () {
                             self.syncAjax({
                                 url: comm.get('baseUrl') + '/TrainClassevalresult/checkEvalExportEnd?ids=' + ids,
                                 timeout: 1000 * 60 * 30,        //半个小时
@@ -113,7 +107,7 @@ Ext.define("core.train.alleval.controller.MainController", {
                         }
                         setTimeout(function () {
                             time()
-                        }, 1000); */   //延迟1秒执行
+                        }, 1000);    //延迟1秒执行
                     }
                 });
                 return false;

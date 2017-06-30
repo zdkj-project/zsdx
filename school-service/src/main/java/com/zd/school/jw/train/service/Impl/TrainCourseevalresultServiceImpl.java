@@ -267,4 +267,21 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
         return  mapIndicatorStand;
     }
 
+    public Boolean resetCourseEvalRanking(String classId) {
+        String[] propName = {"classId", "isEval"};
+        Object[] propValue = {classId, 1};
+        Map<String, String> sortedCondition = new LinkedHashMap<>();
+        sortedCondition.put("satisfaction", "desc");
+        List<TrainClassschedule> classCourse = scheduleService.queryByProerties(propName, propValue, sortedCondition);
+        StringBuilder sb = new StringBuilder();
+        int courseCount = classCourse.size();
+        for (int i = 0; i < courseCount; i++) {
+            sb.append(MessageFormat.format("update TRAIN_T_CLASSSCHEDULE set ranking={0} where CLASS_SCHEDULE_ID=''{1}'';", i+1, classCourse.get(i).getUuid()));
+        }
+        if (sb.length() > 0) {
+            this.executeSql(sb.toString());
+            return true;
+        } else
+            return true;
+    }
 }

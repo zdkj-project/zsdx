@@ -23,13 +23,6 @@ Ext.define("core.train.courseeval.view.MainGrid", {
             ref: 'gridAdd_Tab',
             funCode: 'girdFuntionBtn', //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             iconCls: 'x-fa fa-plus-circle'
-        }, {
-            xtype: 'button',
-            text: '导出',
-            ref: 'gridExport',
-            funCode: 'girdFuntionBtn',
-            disabled: false,
-            iconCls: 'x-fa fa-file'
         }, '->', {
             xtype: 'tbtext',
             html: '快速搜索：'
@@ -43,12 +36,12 @@ Ext.define("core.train.courseeval.view.MainGrid", {
             funCode: 'girdSearchBtn', //指定此类按钮为girdSearchBtn类型
             ref: 'gridFastSearchBtn',
             iconCls: 'x-fa fa-search',
-        }, ' ', {
+        }/*, ' ', {
             xtype: 'button',
             text: '高级搜索',
             ref: 'gridHignSearch',
             iconCls: 'x-fa fa-sliders'
-        }]
+        }*/]
     },
     /** 排序字段定义 */
     defSort: [{

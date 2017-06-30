@@ -134,8 +134,19 @@ public class TrainClassevalresultServiceImpl extends BaseServiceImpl<TrainClasse
     }
 
     public Boolean doSumClassEval(String ids) {
+        //汇总班级评价
         String sql = MessageFormat.format("EXECUTE TRAIN_P_SUMCLASSEVAL ''{0}''",ids);
         List<?> alist = this.doQuerySql(sql);
+
+        //同步汇总班级下的需要评价课程
+        String[] propName ={"classId","isEval"};
+        Object[] propValue = {ids,1};
+        List<TrainClassschedule> classCourse = scheduleService.queryByProerties(propName, propValue);
+        for (TrainClassschedule trainClassschedule : classCourse) {
+            courseevalresultService.doSumCourseEval(trainClassschedule.getUuid());
+        }
+        //重新设置排名
+        courseevalresultService.resetCourseEvalRanking(ids);
         return true;
     }
 

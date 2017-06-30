@@ -21,11 +21,11 @@ Ext.define("core.train.courseeval.controller.MainController", {
                 var classInfo = "[" + record.get("className") + "]管理评价地址：" + evalUrl;
                 var funData = mainLayout.funData;
                 funData = Ext.apply(funData, {
-                    classId: record.get("classId"),
+                    classId: record.get("uuid"),
                     filter: filter,
-                    classEvalUrl:evalUrl,
-                    classGrid:grid,
-                    classRecord:record
+                    classEvalUrl: evalUrl,
+                    classGrid: grid,
+                    classRecord: record
                 });
                 mainLayout.funData = funData;
                 //加载该评定为该星级的班级信息
@@ -61,7 +61,7 @@ Ext.define("core.train.courseeval.controller.MainController", {
                 var grid = btn.up("basegrid");
                 var records = grid.getSelectionModel().getSelection();
                 if (records.length != 1) {
-                    self.Warning("请选择一个要评价的班级");
+                    self.Warning("请选择一个要启动评价的班级");
                     return false;
                 }
                 this.doStartEval_Tab(btn, "startEval", grid, records[0]);
@@ -69,108 +69,32 @@ Ext.define("core.train.courseeval.controller.MainController", {
             }
         },
         /**
-         * 导入
+         * 汇总评价按钮
+         * @type {[type]}
          */
-        "basegrid[xtype=courseeval.maingrid] button[ref=gridImport]": {
+        "basegrid[xtype=courseeval.evalgrid] button[ref=gridSumEval_Tab]": {
             beforeclick: function (btn) {
                 var self = this;
-                //得到组件
                 var baseGrid = btn.up("basegrid");
-
-                var win = Ext.create('Ext.Window', {
-                    title: "导入学员数据",
-                    iconCls: 'x-fa fa-clipboard',
-                    width: 400,
-                    resizable: false,
-                    constrain: true,
-                    autoHeight: true,
-                    modal: true,
-                    controller: 'courseeval.otherController',
-                    closeAction: 'close',
-                    plain: true,
-                    grid: baseGrid,
-                    items: [{
-                        xtype: "courseeval.courseevalimportform"
-                    }]
-                });
-                win.show();
-                return false;
-            }
-        },
-        /**
-         * 导出
-         */
-        "basegrid[xtype=courseeval.maingrid] button[ref=gridExport]": {
-            beforeclick: function (btn) {
-                var self = this;
-                //得到组件
-                var baseGrid = btn.up("basegrid");
-                var funCode = baseGrid.funCode;
-                var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
-                //得到配置信息
+                var basePanel = baseGrid.up("panel[xtype=courseeval.mainlayout]");
                 var funData = basePanel.funData;
-                var pkName = funData.pkName;
-                //得到选中数据
-                var records = baseGrid.getSelectionModel().getSelection();
-                var title = "将导出所有的学员信息";
-                var ids = new Array();
-                if (records.length > 0) {
-                    title = "将导出所选学员的信息";
-                    Ext.each(records, function (rec) {
-                        var pkValue = rec.get(pkName);
-                        ids.push(pkValue);
-                    });
-
+                if (Ext.isEmpty(funData.classId)) {
+                    self.Warning("请选择要汇总的班级");
+                    return false;
                 }
-                Ext.Msg.confirm('提示', title, function (btn, text) {
-                    if (btn == "yes") {
-                        Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
-                        //window.location.href = comm.get('baseUrl') + "/Traincourseeval/exportExcel?ids=" + ids.join(",");
-                        window.open(comm.get('baseUrl') + "/Traincourseeval/exportExcel?ids=" + ids.join(",") + "&orderSql= order by workUnit");
-                        var inter = 100;
-                        var tt = Ext.Ajax.request({
-                            url: comm.get('baseUrl') + '/Traincourseeval/checkExportEnd',
-                            success: function (resp, opts) {
-                                inter += 100;
-                                var result = JSON.parse(resp.responseText);
-                                if (result.success) {
-                                    //Ext.Msg.hide();
-                                }
-                            },
-                            failure: function (resp, opts) {
-                                task.delay(1200);
-                                var respText = Ext.util.JSON.decode(resp.responseText);
-                                Ext.Msg.alert('错误', respText.error);
-                            }
-                        });
-
-                        var sh;
-                        sh = setInterval(tt, 1000);
-                        var task = new Ext.util.DelayedTask(function () {
-                            Ext.Msg.hide();
-                        });
-                        task.delay(5000 + parseInt(inter));
-                        clearInterval(sh);
-
-                    }
-                });
+                var record = baseGrid.getStore().getAt(0);
+                //self.doMainGridDetail_Tab(null, "rankCourse",baseGrid,record);
+                this.doSumEval_Tab(null, "sumEval", baseGrid, record);
                 return false;
-            }
-        },
-
-        /**
-         * 下载模板
-         */
-        "basegrid[xtype=courseeval.maingrid] button[ref=gridDownTemplate]": {
-            beforeclick: function (btn) {
-                var self = this;
-                var title = "下载导入模板";
-                Ext.Msg.confirm('提示', title, function (btn, text) {
-                    if (btn == "yes") {
-                        window.location.href = comm.get('baseUrl') + "/static/upload/template/courseeval.xls";
-                    }
-                });
-                return false;
+                /*                var self = this;
+                 var grid = btn.up("basegrid");
+                 var records = grid.getSelectionModel().getSelection();
+                 if (records.length != 1) {
+                 self.Warning("请选择一个要评价的班级");
+                 return false;
+                 }
+                 this.doStartEval_Tab(btn, "startEval", grid, records[0]);
+                 return false;*/
             }
         },
         /**
@@ -286,19 +210,17 @@ Ext.define("core.train.courseeval.controller.MainController", {
             }
         }
     },
-
+    /**
+     * 启动评价
+     * @param btn
+     * @param cmd
+     * @param grid
+     * @param record
+     * @returns {boolean}
+     */
     doStartEval_Tab: function (btn, cmd, grid, record) {
         var self = this;
-        /*        var baseGrid;
-         var recordData;*/
 
-        /*        if (btn) {
-         baseGrid = btn.up("basegrid");
-         } else {
-         baseGrid = grid;
-         recordData = record.data;
-         }
-         */
         var baseGrid = grid;
         var recordData = record.data;
         //得到组件
@@ -327,7 +249,7 @@ Ext.define("core.train.courseeval.controller.MainController", {
             self.Warning("此培训班已启动评价，不能重复启动");
             return false;
         }
-        var title = "确定要启动对此课程的评价吗？";
+        var title = "确定要启动对此班级的评价吗？";
         Ext.Msg.confirm('提示', title, function (btn, text) {
             if (btn == "yes") {
                 Ext.Msg.wait('正在启动中,请稍后...', '温馨提示');
@@ -439,7 +361,7 @@ Ext.define("core.train.courseeval.controller.MainController", {
         var tabItemId = funCode + "_gridAdd"; //命名规则：funCode+'_ref名称',确保不重复
         var itemXtype = "alleval.detailform";
 
-        var title = "确定要启动对此课程的评价进行汇总统计吗？";
+        var title = "确定要启动对此班级的评价进行汇总统计吗？";
         Ext.Msg.confirm('提示', title, function (btn, text) {
             if (btn == "yes") {
                 Ext.Msg.wait('正在汇总统计中,请稍后...', '温馨提示');
@@ -448,13 +370,13 @@ Ext.define("core.train.courseeval.controller.MainController", {
                     width: 0,
                     height: 0,
                     hidden: true,
-                    html: '<iframe src="' + comm.get('baseUrl') + '/TrainCourseevalresult/sumeval?ids=' + recordData.classScheduleId + '"></iframe>',
+                    html: '<iframe src="' + comm.get('baseUrl') + '/TrainClassevalresult/sumeval?ids=' + recordData.classId + '"></iframe>',
                     renderTo: Ext.getBody()
                 });
 
                 var time = function () {
                     self.syncAjax({
-                        url: comm.get('baseUrl') + '/TrainCourseevalresult/checkSumEnd',
+                        url: comm.get('baseUrl') + '/TrainClassevalresult/checkSumEnd',
                         timeout: 1000 * 60 * 30, //半个小时
                         //回调代码必须写在里面
                         success: function (response) {
