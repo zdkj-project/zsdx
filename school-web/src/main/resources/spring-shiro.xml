@@ -121,7 +121,8 @@
 				/DocTSenddoc/doUpload = anon
 				/DocTSenddoc/downLoadFile = anon
 				/ModelFactory/getModelFields = anon
-				/BaseDicitem/getDicItemByDicCode = anon		
+				/BaseDicitem/getDicItemByDicCode = anon
+                /static/traineval/** = anon
 				/** = kickout,authc
 			</value>
 		</property>
