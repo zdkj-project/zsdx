@@ -309,7 +309,7 @@ Ext.define("core.train.course.controller.MainController", {
             baseGrid = btn.up("basegrid");
         } else {
             baseGrid = grid;
-            recordData = record.data;
+            recordData = record.getData();
         }
 
         //得到组件
@@ -364,7 +364,7 @@ Ext.define("core.train.course.controller.MainController", {
                     self.msgbox("请选择1条数据！");
                     return;
                 }
-                recordData = rescords[0].data;
+                recordData = rescords[0].getData();
             }
 
             insertObj = recordData;
@@ -485,8 +485,8 @@ Ext.define("core.train.course.controller.MainController", {
                                     var obj=[];
                                     for(var index=0;index<rescordsData.length;index++){
                                         var recordData=rescordsData[index];
-                                        var ddCodes=['XBM','TECHNICAL','XLM','ZYM','INOUT','HEADSHIPLEVEL'];
-                                        var propNames=['xbm','technical','xlm','zym','inout','headshipLevel'];
+                                        var ddCodes=['XBM','TECHNICAL','XLM','INOUT','HEADSHIPLEVEL'];
+                                        var propNames=['xbm','technical','xlm','inout','headshipLevel'];
                                         for(var i=0;i<ddCodes.length;i++){                
                                             var ddItem = factory.DDCache.getItemByDDCode(ddCodes[i]);
                                             var resultVal="";

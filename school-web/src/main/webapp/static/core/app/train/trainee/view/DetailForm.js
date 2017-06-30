@@ -202,7 +202,7 @@ Ext.define("core.train.trainee.view.DetailForm", {
         items: [{
             fieldLabel: "党校培训证书号",
             columnWidth: 0.5,
-            name: "partySchoolNum",
+            name: "partySchoolNumb",
             xtype: "textfield",
             emptyText: "请输入党校培训证书号",
             maxLength: 16,

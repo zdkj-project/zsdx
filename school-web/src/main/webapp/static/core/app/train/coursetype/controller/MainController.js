@@ -99,9 +99,10 @@ Ext.define("core.train.coursetype.controller.MainController", {
             selCount = recordData.length;
         } else {
             baseGrid = grid;
-            recordData = record.data;
+            recordData = record.getData();
             selCount = 1;
         }
+       
 
         //得到组件
         var funCode = baseGrid.funCode;
@@ -153,6 +154,12 @@ Ext.define("core.train.coursetype.controller.MainController", {
                 parentLevel = parentCategory.get("level");
             }
         }
+
+        if(justName=="未分类"){
+            self.Warning("【未分类】不允许被操作！");
+            return;
+        }
+
 
         //默认的tab参数
         var tabTitle = funData.tabConfig.addTitle; //标签页的标题
@@ -313,18 +320,28 @@ Ext.define("core.train.coursetype.controller.MainController", {
         }
         //组装要删除的数据
         var ids = new Array();
+        var hasWFL=0;   //是否包含【未分类】名称
         Ext.each(recordData, function (rec) {
             var pkValue = rec.get("id");
+            var textValue = rec.get("text");
             var child = rec.childNodes.length;
             if (child === 0) {
                 //仅能删除无子分类的数据
                 ids.push(pkValue);
+            }
+            if(textValue=="未分类"){
+                hasWFL=1;
             }
         });
         if (ids.length === 0) {
             self.Error("所选课程分类都有子项，不能删除");
             return;
         }
+        if(hasWFL==1){
+            self.Warning("【未分类】不允许被操作！");
+            return;
+        }
+
         var title = "删除时一并删除该分类下的课程,确定吗？";
         if (ids.length < recordData.length) {
             title = "仅删除无子分类的数据，\n删除时一并删除该分类下的课程，确定吗？";

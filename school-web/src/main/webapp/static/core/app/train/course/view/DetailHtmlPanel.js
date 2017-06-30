@@ -47,7 +47,7 @@ Ext.define("core.train.course.view.DetailHtmlPanel", {
                     '<span>专业：{zym}</span>',
                 '</div>',
                 '<div class="trainTeacher_right">',
-                    '<ul>',
+                    '<ul style="padding-top: 10px;">',
                         '<li>电话：{mobilePhone}</li>',
                         '<li title={sfzjh}>身份证号码：{sfzjh}</li>',
                         '<li>电子邮件：{dzxx}</li>',

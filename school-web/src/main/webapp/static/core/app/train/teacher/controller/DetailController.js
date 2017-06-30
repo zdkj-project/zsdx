@@ -6,13 +6,13 @@ Ext.define("core.train.teacher.controller.DetailController", {
     extend: "Ext.app.ViewController",
     alias: 'controller.teacher.detailController',
     mixins: {
-        /*
-        suppleUtil: "core.util.SuppleUtil",
+        
+        //suppleUtil: "core.util.SuppleUtil",
         messageUtil: "core.util.MessageUtil",
-        formUtil: "core.util.FormUtil",
-        gridActionUtil: "core.util.GridActionUtil",
-        dateUtil: 'core.util.DateUtil'
-        */
+        //formUtil: "core.util.FormUtil",
+        //gridActionUtil: "core.util.GridActionUtil",
+        //dateUtil: 'core.util.DateUtil'
+        
     },
     init: function() {
         /*执行一些初始化的代码*/
@@ -93,7 +93,7 @@ Ext.define("core.train.teacher.controller.DetailController", {
         insertObj = recordData;
         pkValue = insertObj.uuid;
         tabTitle = tabFunData.xm + "-课程评价";
-        tabItemId = funCode + "_gridCourseEvalDetail" + tabFunData.xm;
+        tabItemId = funCode + "_gridCourseEvalDetail" + tabFunData.uuid;
 
         //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
         var tabItem = tabPanel.getComponent(tabItemId);
@@ -133,8 +133,8 @@ Ext.define("core.train.teacher.controller.DetailController", {
                 //var coursegrid=win.down("grid[xtype=teacher.coursegrid]");
                 var teachingGrid = tabItem.down("grid[xtype=teacher.teachingrid]");
                 var proxy = teachingGrid.getStore().getProxy();
-                proxy.extraParams.propName="courseId,coruseName";
-                proxy.extraParams.propValue=record.get("uuid") + "," + record.get("xm");
+                proxy.extraParams.propName="courseId,courseName";
+                proxy.extraParams.propValue=record.get("uuid") + "," + record.get("courseName");
                 proxy.extraParams.joinMethod = "or";
                 //proxy.extraParams.filter = "[{'type':'string','comparison':'','value':'" + record.get("uuid") + "','field':'mainTeacherId'}]";
                 teachingGrid.getStore().loadPage(1);
