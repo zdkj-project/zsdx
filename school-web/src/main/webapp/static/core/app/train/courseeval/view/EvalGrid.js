@@ -138,7 +138,7 @@ Ext.define('core.train.courseeval.view.EvalGrid', {
             width: 200,
             fixed: true,
             items: [{
-                text: '预览评价',
+                text: '预览评价表',
                 style: 'font-size:12px;',
                 tooltip: '预览评价',
                 ref: 'gridTraniee',
