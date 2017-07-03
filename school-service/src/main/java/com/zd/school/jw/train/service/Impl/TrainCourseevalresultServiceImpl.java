@@ -22,25 +22,25 @@ import java.text.MessageFormat;
 import java.util.*;
 
 /**
- *
  * ClassName: TrainCourseevalresultServiceImpl
  * Function:  ADD FUNCTION.
  * Reason:  ADD REASON(可选).
  * Description: 课程评价结果(TRAIN_T_COURSEEVALRESULT)实体Service接口实现类.
  * date: 2017-06-19
  *
- * @author  luoyibo 创建文件
+ * @author luoyibo 创建文件
  * @version 0.1
  * @since JDK 1.8
  */
 @Service
 @Transactional
-public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCourseevalresult> implements TrainCourseevalresultService{
+public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCourseevalresult> implements TrainCourseevalresultService {
 
     @Resource
     public void setTrainCourseevalresultDao(TrainCourseevalresultDao dao) {
         this.dao = dao;
     }
+
     @Resource
     private TrainIndicatorStandService standService;
     @Resource
@@ -53,13 +53,12 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
         QueryResult<TrainCourseevalresult> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
         return qResult;
     }
+
     /**
      * 根据主键逻辑删除数据
      *
-     * @param ids
-     *            要删除数据的主键
-     * @param currentUser
-     *            当前操作的用户
+     * @param ids         要删除数据的主键
+     * @param currentUser 当前操作的用户
      * @return 操作成功返回true，否则返回false
      */
     @Override
@@ -67,8 +66,8 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
         Boolean delResult = false;
         try {
             Object[] conditionValue = ids.split(",");
-            String[] propertyName = { "isDelete", "updateUser", "updateTime" };
-            Object[] propertyValue = { 1, currentUser.getXm(), new Date() };
+            String[] propertyName = {"isDelete", "updateUser", "updateTime"};
+            Object[] propertyValue = {1, currentUser.getXm(), new Date()};
             this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
             delResult = true;
         } catch (Exception e) {
@@ -77,13 +76,12 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
         }
         return delResult;
     }
+
     /**
      * 根据传入的实体对象更新数据库中相应的数据
      *
-     * @param entity
-     *            传入的要更新的实体对象
-     * @param currentUser
-     *            当前操作用户
+     * @param entity      传入的要更新的实体对象
+     * @param currentUser 当前操作用户
      * @return
      */
     @Override
@@ -109,10 +107,8 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
     /**
      * 将传入的实体对象持久化到数据
      *
-     * @param entity
-     *            传入的要更新的实体对象
-     * @param currentUser
-     *            当前操作用户
+     * @param entity      传入的要更新的实体对象
+     * @param currentUser 当前操作用户
      * @return
      */
     @Override
@@ -121,7 +117,7 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
         try {
             List<String> excludedProp = new ArrayList<>();
             excludedProp.add("uuid");
-            BeanUtils.copyProperties(saveEntity, entity,excludedProp);
+            BeanUtils.copyProperties(saveEntity, entity, excludedProp);
             saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
             entity = this.merge(saveEntity);// 执行修改方法
 
@@ -160,7 +156,7 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
 
             this.merge(courseEvalStand);
         }
-        scheduleService.updateByProperties("uuid",ids,"evalState",1);
+        scheduleService.updateByProperties("uuid", ids, "evalState", 1);
         return true;
     }
 
@@ -174,12 +170,12 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
 
     @Override
     public Boolean doEndCourseEval(String ids, SysUser currentUser) {
-        scheduleService.updateByProperties("uuid",ids,"evalState",2);
-        return  true;
+        scheduleService.updateByProperties("uuid", ids, "evalState", 2);
+        return true;
 
     }
 
-    public  Map<String, Map<String,List<Map<String, Object>>>> getClassCourseEvalResult(String classId) {
+    public Map<String, Map<String, List<Map<String, Object>>>> getClassCourseEvalResult(String classId) {
         //"评估指标", "评估标准", "很满意", "满意", "基本满意", "不满意","很满意度","满意度"
         String sql = "SELECT INDICATOR_NAME,INDICATOR_STAND,VERY_SATISFACTIONCOUNT,SATISFACTIONCOUNT,BAS_SATISFACTIONCOUNT,NO_SATISFACTIONCOUNT,VERY_SATISFACTION,SATISFACTION," +
                 "CLASS_SCHEDULE_ID,INDICATOR_ID FROM dbo.TRAIN_T_COURSEEVALRESULT WHERE CLASS_ID=''{0}'' order by  CLASS_SCHEDULE_ID,INDICATOR_ID";
@@ -199,7 +195,7 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
 
         Map<String, List<Map<String, Object>>> mapIndicatorStand = new HashMap<>();  //指标的map
 
-        Map<String, Map<String,List<Map<String, Object>>>> mapCourseStand = new HashMap<>();  //课程包含标准
+        Map<String, Map<String, List<Map<String, Object>>>> mapCourseStand = new HashMap<>();  //课程包含标准
         for (int i = 0; i < standCount; i++) {
             addStand = listClassCourseStand.get(i);
             classCourseId = addStand.get("CLASS_SCHEDULE_ID").toString();
@@ -207,25 +203,25 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
             if (!perClassCourseid.equals(classCourseId) || i == standCount - 1) {
                 if (!perIndicatorId.equals(indicatorId) || i == standCount - 1) {
                     //如果前一指标Id和当前指标id不同并且不是最后 一个
-                    if(i==standCount-1)
+                    if (i == standCount - 1)
                         addStandList.add(addStand);
                     List<Map<String, Object>> addStandList1 = new ArrayList<>();//要归拢的标准
                     addStandList1.addAll(addStandList);
-                    mapIndicatorStand.put(perIndicatorId,addStandList1);
+                    mapIndicatorStand.put(perIndicatorId, addStandList1);
                     addStandList.clear();
                 }
                 Map<String, List<Map<String, Object>>> mapIndicatorStand1 = new HashMap<>();  //指标的map
                 mapIndicatorStand1.putAll(mapIndicatorStand);
-                mapCourseStand.put(perClassCourseid,mapIndicatorStand1);
+                mapCourseStand.put(perClassCourseid, mapIndicatorStand1);
                 mapIndicatorStand.clear();
             } else {
                 if (!perIndicatorId.equals(indicatorId) || i == standCount - 1) {
                     //如果前一指标Id和当前指标id不同并且不是最后 一个
-                    if(i==standCount-1)
+                    if (i == standCount - 1)
                         addStandList.add(addStand);
                     List<Map<String, Object>> addStandList1 = new ArrayList<>();//要归拢的标准
                     addStandList1.addAll(addStandList);
-                    mapIndicatorStand.put(perIndicatorId,addStandList1);
+                    mapIndicatorStand.put(perIndicatorId, addStandList1);
                     addStandList.clear();
                 }
             }
@@ -236,7 +232,8 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
         return mapCourseStand;
 
     }
-    public Map<String, List<Map<String, Object>>>  getClassEvalResult(String ids){
+
+    public Map<String, List<Map<String, Object>>> getClassEvalResult(String ids) {
         String sql = " SELECT INDICATOR_NAME,INDICATOR_STAND,VERY_SATISFACTIONCOUNT,SATISFACTIONCOUNT,BAS_SATISFACTIONCOUNT,NO_SATISFACTIONCOUNT," +
                 "VERY_SATISFACTION,SATISFACTION,INDICATOR_ID FROM dbo.TRAIN_T_CLASSEVALRESULT WHERE CLASS_ID=''{0}'' order by  INDICATOR_ID ";
         sql = MessageFormat.format(sql, ids);
@@ -249,22 +246,22 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
         List<Map<String, Object>> addStandList = new ArrayList<>();//要归拢到指标的标准的集合
         Map<String, List<Map<String, Object>>> mapIndicatorStand = new HashMap<>();  //指标包含的标准的map
         //循环处理每条标准数据
-        for (int i = 0; i <standCount ; i++) {
+        for (int i = 0; i < standCount; i++) {
             addStand = listClassStand.get(i);
             indicatorId = addStand.get("INDICATOR_ID").toString();
             if (!perIndicatorId.equals(indicatorId) || i == standCount - 1) {
                 //如果前一指标Id和当前指标id不同并且不是最后 一个
-                if(i==standCount-1)
+                if (i == standCount - 1)
                     addStandList.add(addStand);
                 List<Map<String, Object>> addStandList1 = new ArrayList<>();//要归拢的标准
                 addStandList1.addAll(addStandList);
-                mapIndicatorStand.put(perIndicatorId,addStandList1);
+                mapIndicatorStand.put(perIndicatorId, addStandList1);
                 addStandList.clear();
             }
             addStandList.add(addStand);
             perIndicatorId = indicatorId;
         }
-        return  mapIndicatorStand;
+        return mapIndicatorStand;
     }
 
     public Boolean resetCourseEvalRanking(String classId) {
@@ -276,12 +273,48 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
         StringBuilder sb = new StringBuilder();
         int courseCount = classCourse.size();
         for (int i = 0; i < courseCount; i++) {
-            sb.append(MessageFormat.format("update TRAIN_T_CLASSSCHEDULE set ranking={0} where CLASS_SCHEDULE_ID=''{1}'';", i+1, classCourse.get(i).getUuid()));
+            sb.append(MessageFormat.format("update TRAIN_T_CLASSSCHEDULE set ranking={0} where CLASS_SCHEDULE_ID=''{1}'';", i + 1, classCourse.get(i).getUuid()));
         }
         if (sb.length() > 0) {
             this.executeSql(sb.toString());
             return true;
         } else
             return true;
+    }
+
+    public Map<String, List<Map<String, Object>>> getCourseEvalResult(String courseId) {
+        //"评估指标", "评估标准", "很满意", "满意", "基本满意", "不满意","很满意度","满意度"
+        String sql = "SELECT INDICATOR_NAME,INDICATOR_STAND,VERY_SATISFACTIONCOUNT,SATISFACTIONCOUNT,BAS_SATISFACTIONCOUNT,NO_SATISFACTIONCOUNT,VERY_SATISFACTION,SATISFACTION," +
+                "CLASS_SCHEDULE_ID,INDICATOR_ID FROM dbo.TRAIN_T_COURSEEVALRESULT WHERE CLASS_SCHEDULE_ID=''{0}'' order by  INDICATOR_ID";
+        sql = MessageFormat.format(sql, courseId);
+        String indicatorId = "";
+
+        //所课程的所有评价指标标准
+        List<Map<String, Object>> listClassCourseStand = this.getForValuesToSql(sql);
+        int standCount = listClassCourseStand.size();
+        String perIndicatorId = listClassCourseStand.get(0).get("INDICATOR_ID").toString();
+
+        Map<String, Object> addStand = new HashMap<>();  //标准对象
+        List<Map<String, Object>> addStandList = new ArrayList<>();//要归拢的标准列表
+
+        Map<String, List<Map<String, Object>>> mapIndicatorStand = new HashMap<>();  //指标的map
+
+        for (int i = 0; i < standCount; i++) {
+            addStand = listClassCourseStand.get(i);
+            indicatorId = addStand.get("INDICATOR_ID").toString();
+            if (!perIndicatorId.equals(indicatorId) || i == standCount - 1) {
+                //如果前一指标Id和当前指标id不同并且不是最后 一个
+                if (i == standCount - 1)
+                    addStandList.add(addStand);
+                List<Map<String, Object>> addStandList1 = new ArrayList<>();//要归拢的标准列表
+                addStandList1.addAll(addStandList);
+                mapIndicatorStand.put(perIndicatorId, addStandList1);
+                addStandList.clear();
+            }
+            addStandList.add(addStand);
+            perIndicatorId = indicatorId;
+        }
+
+        return  mapIndicatorStand;
     }
 }

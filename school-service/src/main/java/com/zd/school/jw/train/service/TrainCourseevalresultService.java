@@ -117,4 +117,11 @@ public interface TrainCourseevalresultService extends BaseService<TrainCourseeva
      * @return
      */
     public Boolean resetCourseEvalRanking(String classId);
+
+    /**
+     * 获取指定课程的评价结果信息
+     * @param courseId 要获取评价结果的课程
+     * @return
+     */
+    public Map<String, List<Map<String, Object>>> getCourseEvalResult(String courseId);
 }

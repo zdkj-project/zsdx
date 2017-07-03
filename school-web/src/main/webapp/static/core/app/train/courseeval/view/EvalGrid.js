@@ -138,9 +138,9 @@ Ext.define('core.train.courseeval.view.EvalGrid', {
             width: 200,
             fixed: true,
             items: [{
-                text: '预览评价',
+                text: '预览评价表',
                 style: 'font-size:12px;',
-                tooltip: '预览评价',
+                tooltip: '预览评价表',
                 ref: 'gridTraniee',
                 getClass: function (v, metadata, record) {
                     if (record.get("evalState") === 0 || record.get("evalState") === 2)
@@ -150,10 +150,10 @@ Ext.define('core.train.courseeval.view.EvalGrid', {
                 },
                 handler: function (view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('mainGridStartEvalClick_Tab', {
+                    this.fireEvent('evalGridPreviewEvalClick_Tab', {
                         view: view.grid,
                         record: rec,
-                        cmd: 'startEval'
+                        cmd: 'preview'
                     });
                 }
             },{
@@ -175,43 +175,17 @@ Ext.define('core.train.courseeval.view.EvalGrid', {
                         cmd: 'readEval'
                     });
                 }
-            },/* {
-                text: '关闭评价',
+            },{
+                text: '评价结果',
                 style: 'font-size:12px;',
-                tooltip: '关闭评价',
-                ref: 'gridTraniee',
-                getClass: function (v, metadata, record) {
-                    if (record.get("evalState") === 2 || record.get("evalState") === 0)
-                        return 'x-hidden-display';
-                    else
-                        return null;
-                },
-                handler: function (view, rowIndex, colIndex, item) {
-                    var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('mainGridEndEvalClick_Tab', {
-                        view: view.grid,
-                        record: rec,
-                        cmd: 'startEval'
-                    });
-                }
-            }, */{
-                text: '评价汇总',
-                style: 'font-size:12px;',
-                tooltip: '评价汇总',
+                tooltip: '评价结果',
                 ref: 'gridCourse',
-                getClass: function (v, metadata, record) {
-                    if (record.get("evalState") === 1 || record.get("evalState") === 0)
-                        return 'x-hidden-display';
-                    else
-                        return null;
-                },
                 handler: function (view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
-                    //var cmd=rec.get("isuse")==1?'detail':'edit';
-                    this.fireEvent('mainGridSumEvalClick_Tab', {
+                    this.fireEvent('evalGridCourseEvalResultClick_Tab', {
                         view: view.grid,
                         record: rec,
-                        cmd: 'sumEval'
+                        cmd: 'CourseEvalResult'
                     });
                 }
             }]

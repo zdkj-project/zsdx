@@ -101,63 +101,28 @@ Ext.define("core.train.courseeval.controller.MainController", {
          * 列表操作列事件
          */
         "basegrid[xtype=courseeval.evalgrid]  actioncolumn": {
-            //操作列启动评价
-            mainGridStartEvalClick_Tab: function (data) {
+            //操作列预览评价表
+            evalGridPreviewEvalClick_Tab: function (data) {
                 var self = this;
                 var baseGrid = data.view;
                 var recordData = data.record.data;
                 //得到组件
                 var funCode = baseGrid.funCode;
-                var tabPanel = baseGrid.up("tabpanel[xtype=app-main]"); //标签页
                 var basePanel = baseGrid.up("panel[funCode=" + funCode + "]");
 
                 //得到配置信息
                 var funData = basePanel.funData;
-                var detCode = basePanel.detCode;
-                var detLayout = basePanel.detLayout;
-                var popFunData = Ext.apply(funData, {
-                    grid: baseGrid
-                });
-                //关键：window的视图控制器
-                var otherController = basePanel.otherController;
-                if (!otherController)
-                    otherController = '';
 
                 //处理特殊默认值
                 var defaultObj = funData.defaultObj;
-                var insertObj = self.getDefaultValue(defaultObj);
-                var itemXtype = "courseeval.evalurlform";
                 //弹出链接地址框
                 var evalUrl = "http://" + window.location.host + "/static/traineval/courseeval.jsp?courseId=" + recordData.classScheduleId;
                 window.open(evalUrl);
                 return false;
             },
             //操作列关闭评价
-            mainGridEndEvalClick_Tab: function (data) {
+            evalGridCourseEvalResultClick_Tab: function (data) {
                 var self = this;
-                var title = "确定要关闭对此班级的评价吗？";
-                Ext.Msg.confirm('提示', title, function (btn, text) {
-                    if (btn === "yes") {
-                        var resObj = self.ajax({
-                            url: comm.get('baseUrl') + '/TrainCourseevalresult/endeval',
-                            params: {
-                                ids: data.record.data.classScheduleId
-                            }
-                        });
-                        if (resObj.success) {
-                            var store = data.view.getStore();
-                            store.load();
-                            self.msgbox(resObj.obj);
-                        } else {
-                            self.Error(resObj.obj);
-                        }
-                    }
-                });
-                return false;
-            },
-            //操作列评价汇总
-            mainGridSumEvalClick_Tab: function (data) {
-                this.doSumEval_Tab(null, data.cmd, data.view, data.record);
                 return false;
             },
             //查看地址
@@ -195,6 +160,9 @@ Ext.define("core.train.courseeval.controller.MainController", {
             }
         },
 
+        /**
+         * 预览班级评价表
+         */
         "basegrid[xtype=courseeval.evalgrid] button[ref=btnPreview]":{
             click:function(btn){
                 var self = this;
