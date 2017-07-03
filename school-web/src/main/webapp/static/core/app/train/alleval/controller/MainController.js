@@ -76,7 +76,7 @@ Ext.define("core.train.alleval.controller.MainController", {
                             title: 'HelloWorld',
                             width: 0,
                             height: 0,
-                            hidden: false,
+                            hidden: true,
                             html: '<iframe src="' + comm.get('baseUrl') + '/TrainClassevalresult/exportEvalExcel?ids=' + ids + '"></iframe>',
                             renderTo: Ext.getBody()
                         });

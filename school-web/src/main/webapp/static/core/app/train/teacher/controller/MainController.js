@@ -424,7 +424,7 @@ Ext.define("core.train.teacher.controller.MainController", {
             baseGrid = btn.up("basegrid");
         } else {
             baseGrid = grid;
-            recordData = record.data;
+            recordData = record.getData();  //zzk:2017/6/30 不能直接使用record.data，否则会改变对象原始地址的数据
         }
 
         //得到组件
@@ -448,7 +448,7 @@ Ext.define("core.train.teacher.controller.MainController", {
         var popFunData = Ext.apply(funData, {
             grid: baseGrid
         });
-
+        
         if (btn) {
             var rescords = baseGrid.getSelectionModel().getSelection();
             if (rescords.length != 1) {
@@ -547,7 +547,7 @@ Ext.define("core.train.teacher.controller.MainController", {
                     }
                     insertObj[propNames[i]]=resultVal;
                 }
-               
+                console.log(insertObj);
                 var teacherInfoContainer=item.down("container[ref=teacherInfo]");
                 teacherInfoContainer.setData(insertObj);
 

@@ -413,7 +413,7 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
     
     
     @FieldInfo(name = "UP卡流水号")
-    @Formula("(SELECT a.UP_CARD_ID FROM CARD_T_USEINFO a where a.USER_ID=CLASS_TRAINEE_ID)")
+    @Formula("(SELECT top 1 a.UP_CARD_ID FROM CARD_T_USEINFO a where a.USER_ID=CLASS_TRAINEE_ID order by a.CREATE_TIME desc)")
     private Long upCardId;
 
     public Long getUpCardId() {
@@ -425,7 +425,7 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
     }
     
     @FieldInfo(name = "UP卡状态")
-    @Formula("(SELECT a.USE_STATE FROM CARD_T_USEINFO a where a.USER_ID=CLASS_TRAINEE_ID)")
+    @Formula("(SELECT top 1 a.USE_STATE FROM CARD_T_USEINFO a where a.USER_ID=CLASS_TRAINEE_ID order by a.CREATE_TIME desc)")
     private Integer useState;
 
     public Integer getUseState() {

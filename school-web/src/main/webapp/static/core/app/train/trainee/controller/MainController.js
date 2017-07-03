@@ -69,36 +69,50 @@ Ext.define("core.train.trainee.controller.MainController", {
                 }
                 Ext.Msg.confirm('提示', title, function (btn, text) {
                     if (btn == "yes") {
-                        Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
-                        //window.location.href = comm.get('baseUrl') + "/TrainTrainee/exportExcel?ids=" + ids.join(",");
-                        window.open(comm.get('baseUrl') + "/TrainTrainee/exportExcel?ids=" + ids.join(",") + "&orderSql= order by workUnit");
-                        var inter = 100;
-                        var tt = Ext.Ajax.request({
-                            url: comm.get('baseUrl') + '/TrainTrainee/checkExportEnd',
-                            success: function (resp, opts) {
-                                inter+=100;
-                                var result = JSON.parse(resp.responseText);
-                                if (result.success) {
-                                    //Ext.Msg.hide();
+                        Ext.Msg.wait('正在导出,请稍后...', '温馨提示');
+                        //window.location.href = comm.get('baseUrl') + "/TrainClass/exportExcel?ids=" + ids.join(",");
+                        var component=Ext.create('Ext.Component', {
+                            title: 'HelloWorld',
+                            width: 0,
+                            height:0,
+                            hidden:true,
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainTrainee/exportExcel?ids=' + ids.join(",") + '&orderSql= order by workUnit"></iframe>',
+                            renderTo: Ext.getBody()
+                        });
+                        
+                       
+                        var time=function(){
+                            self.syncAjax({
+                                url: comm.get('baseUrl') + '/TrainTrainee/checkExportEnd',
+                                timeout: 1000*60*30,        //半个小时         
+                                //回调代码必须写在里面
+                                success: function(response) {
+                                    data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                    if(data.success){
+                                        Ext.Msg.hide();
+                                        self.msgbox(data.obj);
+                                        component.destroy();                                
+                                    }else{                                    
+                                        if(data.obj==0){    //当为此值，则表明导出失败
+                                            Ext.Msg.hide();
+                                            self.Error("导出失败，请重试或联系管理员！");
+                                            component.destroy();                                        
+                                        }else{
+                                            setTimeout(function(){time()},1000);
+                                        }
+                                    }               
+                                },
+                                failure: function(response) {
+                                    Ext.Msg.hide();
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    component.destroy();
                                 }
-                            },
-                            failure: function (resp, opts) {
-                                task.delay(1200);
-                                var respText = Ext.util.JSON.decode(resp.responseText);
-                                Ext.Msg.alert('错误', respText.error);
-                            }
-                        });
-
-                        var sh;
-                        sh = setInterval(tt, 1000);
-                        var task = new Ext.util.DelayedTask(function () {
-                            Ext.Msg.hide();
-                        });
-                        task.delay(5000 + parseInt(inter));
-                        clearInterval(sh);
-
+                            });
+                        }
+                        setTimeout(function(){time()},1000);    //延迟1秒执行
                     }
                 });
+            
                 return false;
             }
         },

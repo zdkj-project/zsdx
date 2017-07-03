@@ -278,6 +278,7 @@ public class TrainTraineeController extends FrameWorkController<TrainTrainee> im
     @RequestMapping("/exportExcel")
     public void exportExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
         request.getSession().setAttribute("exportTeacherIsEnd", "0");
+        request.getSession().removeAttribute("exportTeacherIsState");
         String ids = request.getParameter("ids");
         String orderSql = request.getParameter("orderSql");
 
@@ -287,22 +288,26 @@ public class TrainTraineeController extends FrameWorkController<TrainTrainee> im
             request.getSession().setAttribute("exportTeacherIsEnd", "1");
         } catch (IOException e) {
             logger.error(e.getMessage());
-            writeJSON(response,jsonBuilder.returnFailureJson("\"文件导出失败，详情请见错误日志\""));
+            request.getSession().setAttribute("exportTeacherIsEnd", "0");
+			request.getSession().setAttribute("exportTeacherIsState", "0");
+            //writeJSON(response,jsonBuilder.returnFailureJson("\"文件导出失败，详情请见错误日志\""));
         }
     }
 
     @RequestMapping("/checkExportEnd")
     public void checkExportEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String strData = "";
+ 
         Object isEnd = request.getSession().getAttribute("exportTeacherIsEnd");
-
+        Object state = request.getSession().getAttribute("exportTeacherIsState");
+        
         if (isEnd != null) {
-            if ("1".equals(isEnd.toString())) {
-                writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
-            } else {
-                writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
-                request.getSession().setAttribute("exportTeacherIsEnd", "0");
-            }
+        	if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
         } else {
             writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
             request.getSession().setAttribute("exportTeacherIsEnd", "0");

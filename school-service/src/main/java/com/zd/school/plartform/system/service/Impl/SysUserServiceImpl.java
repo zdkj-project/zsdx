@@ -525,7 +525,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		int row = 0;
 		try {
 			// 1.查询web平台的发卡信息
-			String sql = "select uuid,convert(varchar,FACT_NUMB) as factNumb,USE_STATE as useState,"
+			String sql = "select CARD_ID as uuid,convert(varchar,FACT_NUMB) as factNumb,USE_STATE as useState,"
 					+ " USER_ID as userId,convert(varchar,UP_CARD_ID) as upCardId "
 					+ " from CARD_T_USEINFO where ISDELETE=0" + " order by upCardId asc";
 
