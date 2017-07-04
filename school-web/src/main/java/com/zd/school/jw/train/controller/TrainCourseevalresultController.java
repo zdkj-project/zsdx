@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -269,4 +271,24 @@ public class TrainCourseevalresultController extends FrameWorkController<TrainCo
         }
     }
 
+    /**
+     * \获取指定课程的评价结果表
+     * @param ids 要获取评价课程Id
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping("/getCourseEvalResult")
+    public void getCourseEvalResult(String ids, HttpServletRequest request, HttpServletResponse response) throws  Exception{
+        String strData = "";
+        if(StringUtils.isEmpty(ids)) {
+            if (StringUtils.isEmpty(ids)) {
+                writeJSON(response, jsonBuilder.returnFailureJson("'没有传入要获取评价结果的课程'"));
+                return;
+            }
+        }
+        Map<String, List<Map<String, Object>>> mapCouseEvalResult = thisService.getCourseEvalResult(ids);
+        strData = jsonBuilder.toJson(mapCouseEvalResult);
+        writeJSON(response, strData);// 返回数据
+    }
 }
