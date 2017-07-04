@@ -7,6 +7,7 @@ import com.zd.school.jw.train.dao.TrainCourseevalresultDao;
 import com.zd.school.jw.train.model.TrainClassschedule;
 import com.zd.school.jw.train.model.TrainCourseevalresult;
 import com.zd.school.jw.train.model.TrainIndicatorStand;
+import com.zd.school.jw.train.model.vo.TrainClassCourseEval;
 import com.zd.school.jw.train.service.TrainClassscheduleService;
 import com.zd.school.jw.train.service.TrainCourseevalresultService;
 import com.zd.school.jw.train.service.TrainIndicatorStandService;
@@ -217,8 +218,10 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
             } else {
                 if (!perIndicatorId.equals(indicatorId) || i == standCount - 1) {
                     //如果前一指标Id和当前指标id不同并且不是最后 一个
-                    if (i == standCount - 1)
+                    if (i == standCount - 1) {
                         addStandList.add(addStand);
+                        perIndicatorId = indicatorId;
+                    }
                     List<Map<String, Object>> addStandList1 = new ArrayList<>();//要归拢的标准
                     addStandList1.addAll(addStandList);
                     mapIndicatorStand.put(perIndicatorId, addStandList1);
@@ -249,17 +252,31 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
         for (int i = 0; i < standCount; i++) {
             addStand = listClassStand.get(i);
             indicatorId = addStand.get("INDICATOR_ID").toString();
-            if (!perIndicatorId.equals(indicatorId) || i == standCount - 1) {
-                //如果前一指标Id和当前指标id不同并且不是最后 一个
-                if (i == standCount - 1)
-                    addStandList.add(addStand);
-                List<Map<String, Object>> addStandList1 = new ArrayList<>();//要归拢的标准
+            if (!perIndicatorId.equals(indicatorId)){
+                //前一指标Id和当前指标id不同，汇总前一指标的标准
+                List<Map<String, Object>> addStandList1 = new ArrayList<>();//要归拢的标准列表
                 addStandList1.addAll(addStandList);
                 mapIndicatorStand.put(perIndicatorId, addStandList1);
                 addStandList.clear();
+
+                //如果当前标准是最后一条标准了
+                if (i == standCount-1) {
+                    addStandList.add(addStand);
+                    mapIndicatorStand.put(indicatorId, addStandList);
+                } else {
+                    addStandList.add(addStand);
+                    perIndicatorId = indicatorId;
+                }
+            } else {
+                //如果当前标准是最后一条标准了
+                if (i == standCount-1) {
+                    addStandList.add(addStand);
+                    mapIndicatorStand.put(indicatorId, addStandList);
+                } else {
+                    addStandList.add(addStand);
+                    perIndicatorId = indicatorId;
+                }
             }
-            addStandList.add(addStand);
-            perIndicatorId = indicatorId;
         }
         return mapIndicatorStand;
     }
@@ -302,19 +319,56 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
         for (int i = 0; i < standCount; i++) {
             addStand = listClassCourseStand.get(i);
             indicatorId = addStand.get("INDICATOR_ID").toString();
-            if (!perIndicatorId.equals(indicatorId) || i == standCount - 1) {
-                //如果前一指标Id和当前指标id不同并且不是最后 一个
-                if (i == standCount - 1)
-                    addStandList.add(addStand);
+            if (!perIndicatorId.equals(indicatorId)){
+                //前一指标Id和当前指标id不同，汇总前一指标的标准
                 List<Map<String, Object>> addStandList1 = new ArrayList<>();//要归拢的标准列表
                 addStandList1.addAll(addStandList);
                 mapIndicatorStand.put(perIndicatorId, addStandList1);
                 addStandList.clear();
+
+                //如果当前标准是最后一条标准了
+                if (i == standCount-1) {
+                    addStandList.add(addStand);
+                    mapIndicatorStand.put(indicatorId, addStandList);
+                } else {
+                    addStandList.add(addStand);
+                    perIndicatorId = indicatorId;
+                }
+            } else {
+                //如果当前标准是最后一条标准了
+                if (i == standCount-1) {
+                    addStandList.add(addStand);
+                    mapIndicatorStand.put(indicatorId, addStandList);
+                } else {
+                    addStandList.add(addStand);
+                    perIndicatorId = indicatorId;
+                }
             }
-            addStandList.add(addStand);
-            perIndicatorId = indicatorId;
         }
 
         return  mapIndicatorStand;
+    }
+
+    public Map<String, Object>  getCourseEvalResultDetail(String courseId){
+        String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
+                + ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId," +
+                " teachTypeName,advise FROM TRAIN_V_CLASSCOURSEEVAL where classScheduleId=''{0}''";
+        sql = MessageFormat.format(sql, courseId);
+        QueryResult<TrainClassCourseEval> qr = this.doQueryResultSqlObject(sql, 0, 200,TrainClassCourseEval.class);
+        TrainClassCourseEval classschedule = qr.getResultList().get(0);
+
+        Map<String,Object> mapOneCourse = new HashMap<>();
+        Map<String, List<Map<String, Object>>> courseStands = this.getCourseEvalResult(courseId);
+        mapOneCourse.put("className", classschedule.getClassName());
+        mapOneCourse.put("courseName",classschedule.getCourseName());
+        mapOneCourse.put("teachTypeName",classschedule.getTeachTypeName());
+        mapOneCourse.put("teacherName",classschedule.getTeacherName());
+        mapOneCourse.put("verySatisfaction", classschedule.getVerySatisfaction());
+        mapOneCourse.put("satisfaction",classschedule.getSatisfaction());
+        mapOneCourse.put("classScheduleId", classschedule.getClassScheduleId());
+        mapOneCourse.put("advise",classschedule.getAdvise());
+        mapOneCourse.put("standList", courseStands);
+
+        return  mapOneCourse;
     }
 }

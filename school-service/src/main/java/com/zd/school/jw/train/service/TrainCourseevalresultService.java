@@ -124,4 +124,10 @@ public interface TrainCourseevalresultService extends BaseService<TrainCourseeva
      * @return
      */
     public Map<String, List<Map<String, Object>>> getCourseEvalResult(String courseId);
+
+	/**
+	 * 获取指定课程评价结果的详细
+	 * @param courseId 要获取的课程的Id
+	 */
+	public Map<String, Object>  getCourseEvalResultDetail(String courseId);
 }

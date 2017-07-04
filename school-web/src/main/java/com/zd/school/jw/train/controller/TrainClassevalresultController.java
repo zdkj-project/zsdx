@@ -342,4 +342,17 @@ public class TrainClassevalresultController extends FrameWorkController<TrainCla
         }
     }
 
+	@RequestMapping("/getClassEvalResult")
+	public void getClassEvalResult(String ids,HttpServletRequest request,HttpServletResponse response) throws Exception {
+		String strData = null;
+		try {
+			TrainClassEval trainClass = classService.getClassEvalInfo(ids);
+			//班级评价信息
+			Map<String, Object> mapOneClass = classevalresultService.getClassEvalResult(ids, trainClass);
+			strData = jsonBuilder.toJson(mapOneClass);
+			writeJSON(response,strData);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 }
