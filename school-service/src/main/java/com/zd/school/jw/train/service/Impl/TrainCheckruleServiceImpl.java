@@ -1,24 +1,21 @@
 package com.zd.school.jw.train.service.Impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.zd.core.model.extjs.QueryResult;
+import com.zd.core.service.BaseServiceImpl;
+import com.zd.core.util.BeanUtils;
+import com.zd.school.jw.train.dao.TrainCheckruleDao;
+import com.zd.school.jw.train.model.TrainCheckrule;
+import com.zd.school.jw.train.service.TrainCheckruleService;
+import com.zd.school.plartform.system.model.SysUser;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.service.BaseServiceImpl;
-import com.zd.core.util.BeanUtils;
-import com.zd.core.util.StringUtils;
-import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.jw.train.model.TrainCheckrule ;
-import com.zd.school.jw.train.dao.TrainCheckruleDao ;
-import com.zd.school.jw.train.service.TrainCheckruleService ;
+import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
