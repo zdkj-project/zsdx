@@ -9,39 +9,44 @@ Ext.define("core.train.coursecheckrule.view.MainQueryPanel", {
         xtype: "container",
         layout: "column",
         items: [{
-            columnWidth: 0.45,
+            columnWidth: 0.333,
             xtype: "basequeryfield",
+            queryType: "textfield",
             name: "ruleName",
             fieldLabel: "规则名称",
-            queryType: "textfield",
-
         }, {
-            columnWidth: 0.45,
+            columnWidth: 0.333,
             xtype: "basequeryfield",
+            queryType: "basecombobox",
+            dataType:'short',
             name: "checkMode",
             fieldLabel: "考勤模式",
-            queryType: "basecombobox",
             config: {
-                ddCode: "CHECKMODE",
-                dataType:'short',
-            },
-
+                ddCode: "CHECKMODE"
+            }
         }]
     },{
         xtype: "container",
         layout: "column",
         items: [{
-            columnWidth: 0.45,
+            columnWidth: 0.333,
             xtype: "basequeryfield",
             name: "inBefore",
             fieldLabel: "签到提前分钟",
             queryType: "numberfield",
             dataType:'short'
         },{
-            columnWidth: 0.45,
+            columnWidth: 0.333,
             xtype: "basequeryfield",
             name: "beLate",
             fieldLabel: "迟到分钟",
+            queryType: "numberfield",
+            dataType:'short'
+        },{
+            columnWidth: 0.333,
+            xtype: "basequeryfield",
+            name: "absenteeism",
+            fieldLabel: "缺勤分钟",
             queryType: "numberfield",
             dataType:'short'
         }]
@@ -49,19 +54,13 @@ Ext.define("core.train.coursecheckrule.view.MainQueryPanel", {
         xtype: "container",
         layout: "column",
         items: [{
-            columnWidth: 0.45,
-            xtype: "basequeryfield",
-            name: "absenteeism",
-            fieldLabel: "缺勤分钟",
-            queryType: "numberfield",
-            dataType:'short'
-        },,{
-            columnWidth: 0.25,
+            columnWidth: 0.333,
             labelAlign: "right",
             xtype: "basequeryfield",
+            queryType: "combobox",
+            dataType:'short',
             name: "needCheckout",
             fieldLabel: "是否启用签退",
-            queryType: "combo",
             config: {
                 store:Ext.create('Ext.data.Store', {
                     fields: ['val', 'name'],
@@ -74,15 +73,15 @@ Ext.define("core.train.coursecheckrule.view.MainQueryPanel", {
                 displayField: 'name',
                 valueField: 'val',
                 editable:false,
-                dataType:'short',     //ZZK 2017-4-12 加入，用于在SqlUtil获取值的时候直接判断此值是什么类型
             }
         },{
-            columnWidth: 0.25,
+            columnWidth: 0.333,
             labelAlign: "right",
             xtype: "basequeryfield",
+            queryType: "combobox",
+            dataType:'short',
             name: "startUsing",
             fieldLabel: "是否启用规则",
-            queryType: "combo",
             config: {
                 store:Ext.create('Ext.data.Store', {
                     fields: ['val', 'name'],
@@ -95,7 +94,6 @@ Ext.define("core.train.coursecheckrule.view.MainQueryPanel", {
                 displayField: 'name',
                 valueField: 'val',
                 editable:false,
-                dataType:'short',     //ZZK 2017-4-12 加入，用于在SqlUtil获取值的时候直接判断此值是什么类型
             },
         }]
     }],

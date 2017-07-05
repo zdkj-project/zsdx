@@ -29,6 +29,11 @@ Ext.define("core.train.coursecheckrule.view.MainLayout", {
         width: 800,
         height: 420,
         defaultObj: {},
+        tabConfig: {         //zzk：2017-6-1加入，用于对tab操作提供基本配置数据
+            addTitle: '添加规则',
+            editTitle: '编辑规则',
+            detailTitle: '规则详细'
+        }
     },
 
     /*设置最小宽度，并且自动滚动*/
