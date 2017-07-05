@@ -5,17 +5,17 @@
     Ext.define('core.train.alleval.view.CourseEvalDetailPanel', {
         extend: 'Ext.Container',
         alias: "widget.alleval.coursevaldetailpanel",
-       
+        
         style: {
             border: '1px solid #ddd'
         },
-       
+        xxxxx:1111,
         margin:'0 0 0 10',
         scrollable:true, 
         width:'100%',
       
-
-     
+        ssss:11111,
+        
         tpl:new Ext.XTemplate(
         '<div>',
         '<table  class="pg"  cellspacing=0 cellpadding=0 style="font-family:microsoft yahei;">',
