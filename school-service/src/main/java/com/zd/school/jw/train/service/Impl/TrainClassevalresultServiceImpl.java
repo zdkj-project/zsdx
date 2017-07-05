@@ -205,6 +205,11 @@ public class TrainClassevalresultServiceImpl extends BaseServiceImpl<TrainClasse
 
     public Map<String, Object> getClassEvalResult(String ids, TrainClassEval trainClass) {
         Map<String, List<Map<String, Object>>> classStands = courseevalresultService.getClassEvalResult(ids);
+        //前台显示数据需要，将指标数据转成list
+        List<List<Map<String,Object>>> list = new ArrayList<>();
+        for (Map.Entry<String, List<Map<String, Object>>> entry : classStands.entrySet()) {
+            list.add(entry.getValue());
+        }
         Map<String, Object> mapOneClass = new HashMap<>();
         mapOneClass.put("className",trainClass.getClassName());
         mapOneClass.put("holdUnit", trainClass.getHoldUnit());
@@ -224,7 +229,8 @@ public class TrainClassevalresultServiceImpl extends BaseServiceImpl<TrainClasse
         mapOneClass.put("head1",new String[]{"评估内容","评估等级"});
         mapOneClass.put("head", new String[] { "评估指标", "评估标准", "很满意", "满意", "基本满意", "不满意","很满意度","满意度" });
         mapOneClass.put("columnWidth",  new Integer[] { 20, 60, 15, 15, 15, 15 ,15,15}); // 30代表30个字节，15个字符
-        mapOneClass.put("standList", classStands);
+//        mapOneClass.put("standList", classStands);
+        mapOneClass.put("standList", list);
         return mapOneClass;
     }
 

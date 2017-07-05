@@ -359,6 +359,11 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
 
         Map<String,Object> mapOneCourse = new HashMap<>();
         Map<String, List<Map<String, Object>>> courseStands = this.getCourseEvalResult(courseId);
+        //前台显示数据需要，将指标数据转成list
+        List<List<Map<String,Object>>> list = new ArrayList<>();
+        for (Map.Entry<String, List<Map<String, Object>>> entry : courseStands.entrySet()) {
+            list.add(entry.getValue());
+        }
         mapOneCourse.put("className", classschedule.getClassName());
         mapOneCourse.put("courseName",classschedule.getCourseName());
         mapOneCourse.put("teachTypeName",classschedule.getTeachTypeName());
@@ -367,7 +372,8 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
         mapOneCourse.put("satisfaction",classschedule.getSatisfaction());
         mapOneCourse.put("classScheduleId", classschedule.getClassScheduleId());
         mapOneCourse.put("advise",classschedule.getAdvise());
-        mapOneCourse.put("standList", courseStands);
+        mapOneCourse.put("standList", list);
+        //mapOneCourse.put("standList", courseStands);
 
         return  mapOneCourse;
     }
