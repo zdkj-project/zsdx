@@ -603,7 +603,7 @@ public class PoiExportExcel {
             headRow.setHeight((short) 0x1200);
             for (int ii = 0; ii < headArray.length; ii++) {
                 cell = headRow.createCell(ii);
-                cell.setCellValue(advise);
+                cell.setCellValue(advise.replace("|","\n"));
                 cell.setCellStyle(baseContentStyle);
             }
             headRow.getCell(0).setCellValue("意见与建议");
@@ -761,7 +761,7 @@ public class PoiExportExcel {
         headRow.setHeight((short) 0x1200);
         for (int ii = 0; ii < headArray.length; ii++) {
             cell = headRow.createCell(ii);
-            cell.setCellValue(advise);
+            cell.setCellValue(advise.replace("|","\n"));
             cell.setCellStyle(baseContentStyle);
         }
         headRow.getCell(0).setCellValue("意见与建议");
