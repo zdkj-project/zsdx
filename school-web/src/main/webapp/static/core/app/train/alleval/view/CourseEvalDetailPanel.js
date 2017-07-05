@@ -9,7 +9,7 @@
         style: {
             border: '1px solid #ddd'
         },
-       
+        xx:1,
         margin:'0 0 0 10',
         scrollable:true, 
         width:'100%',
