@@ -667,7 +667,7 @@ Ext.define("core.train.courseeval.controller.MainController", {
                 });
                 tabItem.add(item);
 
-                
+                /*
                 self.asyncAjax({
                     url:comm.get("baseUrl") + "/TrainCourseevalresult/getCourseEvalResult",
                     params: {
@@ -675,14 +675,14 @@ Ext.define("core.train.courseeval.controller.MainController", {
                     },
                     //回调代码必须写在里面
                     success: function(response) {
-                        data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                        var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                        
                         console.log(data);
                                                                     
                         var detailhtmlpanel = tabItem.down("container[xtype=courseeval.coursevaldetailpanel]");
                         detailhtmlpanel.setData(data);
                     }
-                });
+                });*/
                                   
             }, 30);
 

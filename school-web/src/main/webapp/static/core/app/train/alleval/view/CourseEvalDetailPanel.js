@@ -9,13 +9,11 @@
         style: {
             border: '1px solid #ddd'
         },
-        xxxxx:1111,
-        xx:1,
+        
         margin:'0 0 0 10',
         scrollable:true, 
         width:'100%',
       
-        ssss:11111,
         
         tpl:new Ext.XTemplate(
         '<div>',
@@ -42,6 +40,7 @@
                   '<td id="ten" style="width:10%">不满意</td><td id="ten" style="width:10%">很满意度</td>',
                   '<td id="ten" style="width:10%;border-right: 1px solid #cecece;">满意度</td>',
             '</tr>',
+
             '<tpl for=".">',
                 '<tr>',
                      '<td id="ten"  style="width:100px">{INDICATOR_NAME}</td>',
@@ -49,7 +48,7 @@
                      '<td>{VERY_SATISFACTIONCOUNT}</td><td>{SATISFACTIONCOUNT}</td><td>{BAS_SATISFACTIONCOUNT}</td><td>{NO_SATISFACTIONCOUNT}</td><td>{VERY_SATISFACTION}</td><td style="border-right: 1px solid #cecece;">{SATISFACTION}</td>',
                 '</tr>',
                 '</tpl>',
-
+                
                  // '<tpl for=".">',
                  //     '<tr>',
                  //        '<td id="ten"  style="width:100px">教学水平</td>',
