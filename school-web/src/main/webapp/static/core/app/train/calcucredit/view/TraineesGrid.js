@@ -61,7 +61,6 @@ Ext.define('core.train.calcucredit.view.TraineesGrid', {
     extParams: {
         whereSql: "",
         //查询的过滤字段
-        //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
         filter: "[{'type':'string','comparison':'=','value':'null','field':'classId'}]" //默认是查不出数据的
     },
     defGroup:false,

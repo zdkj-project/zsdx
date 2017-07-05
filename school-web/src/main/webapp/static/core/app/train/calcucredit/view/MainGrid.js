@@ -18,12 +18,12 @@ Ext.define("core.train.calcucredit.view.MainGrid", {
     panelTopBar: {
         xtype: 'toolbar',
         items: [/*{
-            xtype: 'button',
-            text: '启动评价',
-            ref: 'gridAdd_Tab',
-            funCode: 'girdFuntionBtn', //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
-            iconCls: 'x-fa fa-plus-circle'
-        },*/ {
+         xtype: 'button',
+         text: '启动评价',
+         ref: 'gridAdd_Tab',
+         funCode: 'girdFuntionBtn', //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
+         iconCls: 'x-fa fa-plus-circle'
+         },*/ {
             xtype: 'button',
             text: '导出',
             ref: 'gridExport',
@@ -46,12 +46,7 @@ Ext.define("core.train.calcucredit.view.MainGrid", {
     defSort: [{
         property: "classCategory", //字段名
         direction: "ASC" //升降序
-    }
-        /*, {
-         property: "isEval", //字段名
-         direction: "ASC" //升降序
-         }*/
-    ],
+    }],
     /** 扩展参数 */
     extParams: {
         whereSql: "",

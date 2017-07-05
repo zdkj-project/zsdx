@@ -39,12 +39,6 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                 store.load(); // 给form赋值
                 return false;
             }
-            /*            groupclick:function  (view, node, group, e, eOpts) {
-             var self = this;
-             console.log(view);
-             console.log(node);
-             console.log(group);
-             }*/
         },
         /**
          * 学员列表汇总学分
