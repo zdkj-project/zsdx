@@ -121,8 +121,9 @@ Ext.define("core.train.courseeval.controller.MainController", {
                 return false;
             },
             //操作列关闭评价
-            evalGridCourseEvalResultClick_Tab: function (data) {
-                var self = this;
+            evalGridCourseEvalResultClick_Tab: function (data) {              
+                console.log(22);
+                this.doCourseEvelDetail_Tab(null, data.cmd, data.view, data.record);             
                 return false;
             },
             //查看地址
@@ -556,5 +557,140 @@ Ext.define("core.train.courseeval.controller.MainController", {
             classId: record.get("uuid")
         };
         store.load(); // 给form赋值
+    },
+
+    /**
+     * 
+     * @param btn
+     * @param cmd
+     * @param grid
+     * @param record
+     */
+    doCourseEvelDetail_Tab: function (btn, cmd, grid, record) {
+        var self = this;
+        var baseGrid;
+        var recordData;
+
+        if (btn) {
+            baseGrid = btn.up("basegrid");
+        } else {
+            baseGrid = grid;
+            recordData = record.getData();
+        }
+
+        //得到组件
+        var funCode = baseGrid.funCode;
+        var tabPanel = baseGrid.up("tabpanel[xtype=app-main]"); //标签页
+        var basePanel = baseGrid.up("panel[funCode=" + funCode + "]");
+
+        //得到配置信息
+        var funData = basePanel.funData;
+        var detCode = basePanel.detCode;
+        var detLayout = basePanel.detLayout;
+        var defaultObj = funData.defaultObj;
+
+       
+        var operType = cmd;
+        var pkValue = null;
+
+        //关键：window的视图控制器
+        var otherController = basePanel.otherController;
+        if (!otherController)
+            otherController = '';
+
+        //处理特殊默认值
+        var insertObj = self.getDefaultValue(defaultObj);
+      
+        //一些要传递的参数
+        var popFunData = Ext.apply(funData, {
+            grid: baseGrid
+        });
+
+
+        var pkName = "classScheduleId";   //funData.pkName;    //classScheduleId
+        pkValue = recordData[pkName];
+        var couseName = recordData["courseName"];
+
+        //默认的tab参数
+        var tabTitle = couseName+"-评价结果"; //标签页的标题
+        var tabItemId = funCode + "_gridCourseEvel"+pkValue;     //命名规则：funCode+'_ref名称',确保不重复
+        var itemXtype = "courseeval.coursevaldetailpanel";
+
+        
+        if (btn) {
+            var rescords = baseGrid.getSelectionModel().getSelection();
+            if (rescords.length != 1) {
+                self.msgbox("请选择1条数据！");
+                return;
+            }
+            recordData = rescords[0].getData();
+        }
+
+        insertObj = recordData;
+     
+       
+         
+     
+        //获取tabItem；若不存在，则表示·要新建tab页，否则直接打开
+        var tabItem = tabPanel.getComponent(tabItemId);
+
+        //判断是否已经存在tab了
+        if (!tabItem) {
+            tabItem = Ext.create({
+                xtype: 'container',
+                title: tabTitle,
+                scrollable: true,
+                itemId: tabItemId,
+                itemPKV: pkValue,    //保存主键值
+                layout: 'fit',
+                margin: 5
+            });
+            tabPanel.add(tabItem);
+
+            //延迟放入到tab中
+            setTimeout(function () {
+                //创建组件
+                var item = Ext.widget("baseformtab", {
+                    operType: operType,
+                    controller: otherController,         //指定重写事件的控制器
+                    funCode: funCode,                    //指定mainLayout的funcode
+                    detCode: detCode,                    //指定detailLayout的funcode
+                    tabItemId: tabItemId,                //指定tab页的itemId
+                    insertObj: insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                    funData: popFunData,                //保存funData数据，提供给提交事件中使用
+                    items: [{
+                        xtype: detLayout,
+                        items: [{
+                            xtype: itemXtype
+                        }]
+                    }]
+                });
+                tabItem.add(item);
+
+                
+                self.asyncAjax({
+                    url:comm.get("baseUrl") + "/TrainCourseevalresult/getCourseEvalResult",
+                    params: {
+                        ids:pkValue
+                    },
+                    //回调代码必须写在里面
+                    success: function(response) {
+                        data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                       
+                        console.log(data);
+                                                                    
+                        var detailhtmlpanel = tabItem.down("container[xtype=courseeval.coursevaldetailpanel]");
+                        detailhtmlpanel.setData(data);
+                    }
+                });
+                                  
+            }, 30);
+
+        } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue) {     //判断是否点击的是同一条数据，不同则替换数据
+            self.Warning("您当前已经打开了一个编辑窗口了！");
+            return;
+        }
+
+        tabPanel.setActiveTab(tabItem);
     }
 });
