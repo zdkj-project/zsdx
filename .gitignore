@@ -38,3 +38,7 @@ school-web/src/main/webapp/static/core/bootstrap.json
 school-web/src/main/webapp/static/core/bootstrap.jsonp
 school-web/src/main/webapp/static/core/sass/example/bootstrap.json
 school-web/src/main/webapp/static/core/sass/example/bootstrap.jsonp
+school-web/src/main/webapp/static/core/bootstrap.css
+school-web/src/main/webapp/static/core/bootstrap.js
+school-web/src/main/webapp/static/core/sass/example/bootstrap.js
+school-web/src/main/webapp/static/core/sass/example/example.css

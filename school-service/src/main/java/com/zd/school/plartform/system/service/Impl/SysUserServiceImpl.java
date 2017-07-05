@@ -542,8 +542,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			// 当参数为null或内容为空，则直接删除发卡信息
 			if (upCardUserInfos == null || upCardUserInfos.size() == 0) {
 				sqlStr = "	delete from CARD_T_USEINFO ";
-				this.executeSql(sqlSb.toString());		
-			}else{
+				this.executeSql(sqlSb.toString());
+			} else {
 				for (int i = 0; i < upCardUserInfos.size(); i++) {
 					upCardUser = upCardUserInfos.get(i);
 					sqlStr = "";
@@ -552,18 +552,25 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 					for (int j = 0; j < webCardUserInfos.size(); j++) {
 						webCardUser = webCardUserInfos.get(j);
 						// 若web库中存在此发卡信息
-						if (upCardUser.getUpCardId().equals(webCardUser.getUpCardId())) {
+						if (upCardUser.getUserId().equals(webCardUser.getUserId())) {
 							// 执行代码
 							isExist = true;
 							if (!upCardUser.equals(webCardUser)) { // 对比数据（一部分需要判断的数据）是否一致
-								updateTime = DateUtil.formatDateTime(new Date());
+								// 若发卡ID为null，表明没有发卡，所以物理删除卡片信息
+								if (upCardUser.getUpCardId() == null) {
+									sqlStr = "delete from CARD_T_USEINFO where USER_ID='" + upCardUser.getUserId()
+											+ "';";
+									sqlSb.append(sqlStr + "  ");
+								} else { // 否则更新数据
+									updateTime = DateUtil.formatDateTime(new Date());
 
-								sqlStr = "update CARD_T_USEINFO set " + "	FACT_NUMB='" + upCardUser.getFactNumb()
-										+ "',USE_STATE='" + upCardUser.getUseState() + "'," + "	USER_ID='"
-										+ upCardUser.getUserId() + "',UPDATE_TIME=CONVERT(datetime,'" + updateTime + "')"
-										+ " where UP_CARD_ID='" + upCardUser.getUpCardId() + "'";
+									sqlStr = "update CARD_T_USEINFO set " + "	FACT_NUMB='" + upCardUser.getFactNumb()
+											+ "',USE_STATE='" + upCardUser.getUseState() + "'," + "	UP_CARD_ID='"
+											+ upCardUser.getUpCardId() + "',UPDATE_TIME=CONVERT(datetime,'" + updateTime
+											+ "')" + " where USER_ID='" + upCardUser.getUserId() + "'";
 
-								sqlSb.append(sqlStr + "  ");
+									sqlSb.append(sqlStr + "  ");
+								}
 							}
 
 							webCardUserInfos.remove(j);
@@ -572,13 +579,13 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 					}
 
 					// 若上面的循环无法找到对应的卡片信息，表明UP中不存在此卡片信息
-					if (!isExist) {
+					if (!isExist && upCardUser.getUpCardId() != null) {
 						updateTime = DateUtil.formatDateTime(new Date());
 
 						sqlStr = "insert into CARD_T_USEINFO(CARD_ID,CREATE_TIME,CREATE_USER,"
 								+ "ISDELETE,FACT_NUMB,USE_STATE,USER_ID,UP_CARD_ID)" + " values ('"
-								+ UUID.randomUUID().toString() + "',CONVERT(datetime,'" + updateTime + "'),'超级管理员'," + "0,'"
-								+ upCardUser.getFactNumb() + "'," + upCardUser.getUseState() + "," + "'"
+								+ UUID.randomUUID().toString() + "',CONVERT(datetime,'" + updateTime + "'),'超级管理员',"
+								+ "0,'" + upCardUser.getFactNumb() + "'," + upCardUser.getUseState() + "," + "'"
 								+ upCardUser.getUserId() + "','" + upCardUser.getUpCardId() + "')";
 
 						sqlSb.append(sqlStr + "  ");
@@ -591,24 +598,23 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 						sqlSb.setLength(0); // 清空
 					}
 				}
-				
+
 				// 最后执行一次
 				if (sqlSb.length() > 0)
 					row += this.executeSql(sqlSb.toString());
-				
-				//如果还有没执行到的发卡数据，则进行循环删除
-				if(webCardUserInfos.size()>0){
+
+				// 如果还有没执行到的发卡数据，则进行循环删除
+				if (webCardUserInfos.size() > 0) {
 					sqlSb.setLength(0); // 清空
 					for (int k = 0; k < webCardUserInfos.size(); k++) {
 						webCardUser = webCardUserInfos.get(k);
-						sqlStr = "delete from CARD_T_USEINFO where CARD_ID='" + webCardUser.getUuid()+ "';";
+						sqlStr = "delete from CARD_T_USEINFO where CARD_ID='" + webCardUser.getUuid() + "';";
 						sqlSb.append(sqlStr + "  ");
 					}
-					this.executeSql(sqlSb.toString());	
+					this.executeSql(sqlSb.toString());
 					// 若web库中存在此发卡信息
 				}
 			}
-			
 
 		} catch (Exception e) {
 			// 捕获了异常后，要手动进行回滚；
@@ -645,10 +651,10 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			// 当参数为null或内容为空，则直接删除这个班级的发卡信息
 			if (upCardUserInfos == null || upCardUserInfos.size() == 0) {
 				sqlStr = "	delete from CARD_T_USEINFO where USER_ID in "
-						+ "(	select CLASS_TRAINEE_ID from TRAIN_T_CLASSTRAINEE where CLASS_ID='"+classId+"')";
+						+ "(	select CLASS_TRAINEE_ID from TRAIN_T_CLASSTRAINEE where CLASS_ID='" + classId + "')";
 				this.executeSql(sqlSb.toString());
-				
-			} else {//否则循环判断。
+
+			} else {// 否则循环判断。
 				for (int i = 0; i < upCardUserInfos.size(); i++) {
 					upCardUser = upCardUserInfos.get(i);
 					sqlStr = "";
@@ -662,16 +668,16 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 							isExist = true;
 							if (!upCardUser.equals(webCardUser)) { // 对比数据（一部分需要判断的数据）是否一致
 
-								if (upCardUser.getUpCardId()==null) { // 若发卡ID为null，表明没有发卡，所以物理删除卡片信息
+								if (upCardUser.getUpCardId() == null) { // 若发卡ID为null，表明没有发卡，所以物理删除卡片信息
 									sqlStr = "delete from CARD_T_USEINFO where USER_ID='" + upCardUser.getUserId()
 											+ "';";
 									sqlSb.append(sqlStr + "  ");
 								} else { // 否则更新数据
 									updateTime = DateUtil.formatDateTime(new Date());
 									sqlStr = "update CARD_T_USEINFO set " + "	FACT_NUMB='" + upCardUser.getFactNumb()
-											+ "',USE_STATE='" + upCardUser.getUseState() + "'," + "	USER_ID='"
-											+ upCardUser.getUserId() + "',UPDATE_TIME=CONVERT(datetime,'" + updateTime
-											+ "')" + " where UP_CARD_ID='" + upCardUser.getUpCardId() + "';";
+											+ "',USE_STATE='" + upCardUser.getUseState() + "'," + "	UP_CARD_ID='"
+											+ upCardUser.getUpCardId() + "',UPDATE_TIME=CONVERT(datetime,'" + updateTime
+											+ "')" + " where USER_ID='" + upCardUser.getUserId() + "';";
 
 									sqlSb.append(sqlStr + "  ");
 								}
@@ -684,7 +690,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 					// 若上面的循环无法找到对应的卡片信息，表明UP中不存在此卡片信息
 					// 并且发卡ID不为null，表明有新的发卡数据
-					if (!isExist && upCardUser.getUpCardId()!=null){
+					if (!isExist && upCardUser.getUpCardId() != null) {
 
 						updateTime = DateUtil.formatDateTime(new Date());
 

@@ -51,6 +51,7 @@ Ext.define("core.system.menu.view.MenuTree", {
             titleAlign:"center"
         },
 	    items:[{
+	    	align:'left',
 			header: '菜单名称',
 			dataIndex: 'text',
 			xtype: 'treecolumn',	

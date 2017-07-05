@@ -29,6 +29,11 @@ Ext.define("core.train.creditrule.view.MainLayout", {
         width: 800,
         height: 350,
         defaultObj: {},
+        tabConfig:{         //zzk：2017-6-1加入，用于对tab操作提供基本配置数据
+            addTitle:'添加规则',
+            editTitle:'编辑规则',
+            detailTitle:'规则详情'
+        }
     },
 
     /*设置最小宽度，并且自动滚动*/
