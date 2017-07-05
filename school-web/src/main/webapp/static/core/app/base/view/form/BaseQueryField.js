@@ -93,7 +93,7 @@ Ext.define("core.base.view.form.BaseQueryField",{
 			var obj={
 				xtype:"datetimefield",
 				name:this.name+"_field",
-				dateType:this.dataType
+				dateType:this.dateType
 			};
 			if(this.config){
 				obj=Ext.applyIf(obj,this.config);		
@@ -113,7 +113,7 @@ Ext.define("core.base.view.form.BaseQueryField",{
 			var obj={
 				xtype:"datefield",
 				name:this.name+"_field",
-				dataType:this.dataType
+				dateType:this.dateType
 			};
 			
 			if(this.config){
@@ -130,35 +130,35 @@ Ext.define("core.base.view.form.BaseQueryField",{
 			*/
 			//columnWidth=1;
 		}
-		else if(queryType=="numberfield"){
-			var start={
-				xtype:"numberfield",
-				value:null,
-				name:this.name+"_start"
-			};
-			var end={
-				xtype:"numberfield",
-				value:null,
-				name:this.name+"_end"
-			};
-			if(this.config){
-				start=Ext.applyIf(start,this.config);
-				end=Ext.applyIf(end,this.config);
-			}
-			if(!this.operationType)
-				this.operationType='between';	//设置为区间
-			items.push(start);
-			items.push({xtype: 'displayfield',  cls:'BaseQuery_DisplayField',  value: '~',name : this.name+'_df',width:10});
-			items.push(end);
+		// else if(queryType=="numberfield"){
+		// 	var start={
+		// 		xtype:"numberfield",
+		// 		value:null,
+		// 		name:this.name+"_start"
+		// 	};
+		// 	var end={
+		// 		xtype:"numberfield",
+		// 		value:null,
+		// 		name:this.name+"_end"
+		// 	};
+		// 	if(this.config){
+		// 		start=Ext.applyIf(start,this.config);
+		// 		end=Ext.applyIf(end,this.config);
+		// 	}
+		// 	if(!this.operationType)
+		// 		this.operationType='between';	//设置为区间
+		// 	items.push(start);
+		// 	items.push({xtype: 'displayfield',  cls:'BaseQuery_DisplayField',  value: '~',name : this.name+'_df',width:10});
+		// 	items.push(end);
 			
-			/*
-			store.loadData([{name:"区间",value:"between"},{name:"精确",value:"="}]);
-			combobox.setStore(store);
-			combobox.setValue("between");
-			items.push(combobox);
-			*/
-			//columnWidth=1;
-		}
+		// 	/*
+		// 	store.loadData([{name:"区间",value:"between"},{name:"精确",value:"="}]);
+		// 	combobox.setStore(store);
+		// 	combobox.setValue("between");
+		// 	items.push(combobox);
+		// 	*/
+		// 	//columnWidth=1;
+		// }
 		else{
 			//columnWidth=.5;
 			var obj={				
@@ -170,6 +170,7 @@ Ext.define("core.base.view.form.BaseQueryField",{
 			if(this.config){
 				obj=Ext.applyIf(obj,this.config);
 			}
+		
 			this.operationType=null;	//其他组件
 
 			items.push(obj);

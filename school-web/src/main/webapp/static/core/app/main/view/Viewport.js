@@ -54,7 +54,7 @@ Ext.define('core.main.view.Viewport', {
             params:{
                 excludes:'checked'
             },  
-            success: function(response, opts) {
+            success: function(response, opts  ) {
                 try{
                     var result = Ext.decode(response.responseText);    
                     //console.log(result);
