@@ -224,12 +224,12 @@
 
 				        var classInfo = datas.evalClass;
 						var evalStands = datas.evalStand;
-
+						
 				        //单独设置某些数据
 				        $("#className").html(classInfo.className);
 				        $("#holdUnit").html(classInfo.holdUnit);
-				        $("#holdUnit").html(classInfo.holdUnit);
-				        $("#holdUnit").html(classInfo.holdUnit);
+				        $("#undertaker").html(classInfo.undertaker);
+				        $("#trainees").html(classInfo.trainees);
 				        $(".beginDate").html(classInfo.beginDate);
 						$(".endDate").html(classInfo.endDate);
 						$(".trainDays").html(classInfo.trainDays);

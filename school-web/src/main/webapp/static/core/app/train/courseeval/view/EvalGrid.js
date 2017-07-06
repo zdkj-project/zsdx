@@ -38,14 +38,14 @@ Ext.define('core.train.courseeval.view.EvalGrid', {
             funCode: 'girdFuntionBtn',
             disabled: false,
             iconCls: 'x-fa fa-file'
-        },*/ '->', {
+        },*/ /*'->', {
             xtype: 'tbtext',
             html: '快速搜索：'
         }, {
             xtype: 'textfield',
-            name: 'allevalName',
+            name: 'courseName',
             funCode: 'girdFastSearchText',
-            emptyText: '请输入指标名称'
+            emptyText: '请输入课程名称'
         }, {
             xtype: 'button',
             funCode: 'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型
@@ -56,7 +56,7 @@ Ext.define('core.train.courseeval.view.EvalGrid', {
             text: '高级搜索',
             ref: 'gridHignSearch',
             iconCls: 'x-fa fa-sliders'
-        }]
+        }*/]
     },
     /** 排序字段定义 */
     defSort: [],
@@ -80,6 +80,7 @@ Ext.define('core.train.courseeval.view.EvalGrid', {
             align: 'center'
         }, {
             flex: 1,
+            minWidth:100,
             text: "班级名称",
             dataIndex: "className",
             align: 'left'
