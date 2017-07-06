@@ -309,21 +309,22 @@ Ext.define("core.train.alleval.controller.MainController", {
                 tabItem.add(item);
 
                 
-                // self.asyncAjax({
-                //     url:comm.get("baseUrl") + "/TrainCourseevalresult/getCourseEvalResult",
-                //     params: {
-                //         ids:pkValue
-                //     },
-                //     //回调代码必须写在里面
-                //     success: function(response) {
-                //         data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                self.asyncAjax({
+                    url:comm.get("baseUrl") + "/TrainClassevalresult/getClassEvalResult",
+                    params: {
+                        ids:pkValue
+                    },                
+                    method :'GET',
+                    //回调代码必须写在里面
+                    success: function(response) {
+                        data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                        
-                //         console.log(data);
+                        //console.log(data);
                                                                     
-                //         var detailhtmlpanel = tabItem.down("container[xtype=courseeval.coursevaldetailpanel]");
-                //         detailhtmlpanel.setData(data);
-                //     }
-                // });
+                        var detailhtmlpanel = tabItem.down("container[xtype=alleval.coursevaldetailpanel]");
+                        detailhtmlpanel.setData(data);
+                    }
+                });
                                   
             }, 30);
 
