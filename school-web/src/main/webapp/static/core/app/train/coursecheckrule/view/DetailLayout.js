@@ -11,6 +11,9 @@ Ext.define("core.train.coursecheckrule.view.DetailLayout", {
 	},
     /*关联此视图控制器*/
 	controller: 'coursecheckrule.detailController',
+	 /*设置最小宽度，并且自动滚动*/
+    minWidth:1200,
+    scrollable:true,
 	items: [{
 		xtype: "coursecheckrule.detailform"
 	}]

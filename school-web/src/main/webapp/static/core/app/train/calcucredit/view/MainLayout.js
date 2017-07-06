@@ -4,8 +4,6 @@ Ext.define("core.train.calcucredit.view.MainLayout", {
     /** 引入必须的文件 */
     requires: [ 
         'core.train.calcucredit.controller.MainController',
-        //'core.train.calcucredit.model.MainGridModel',
-        //'core.train.calcucredit.store.MainGridStore', 
         'core.train.calcucredit.view.MainGrid',
         'core.train.calcucredit.view.MainQueryPanel',
         "core.train.calcucredit.view.DetailLayout",
@@ -36,7 +34,20 @@ Ext.define("core.train.calcucredit.view.MainLayout", {
     scrollable:true,
 
     items: [{
-            xtype: "calcucredit.maingrid",
-            region: "center"
+        xtype: "calcucredit.maingrid",
+        region: "west",
+        width: 440,
+        split: true,
+        style: {
+            border: '1px solid #ddd'
+        },
+        frame: false
+    }, {
+        xtype: "calcucredit.traineesgrid",
+        region: "center",
+        flex: 1.5,
+        style: {
+            border: '1px solid #ddd'
+        }
     }]
 })

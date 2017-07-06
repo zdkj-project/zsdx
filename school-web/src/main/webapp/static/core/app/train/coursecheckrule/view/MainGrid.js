@@ -20,20 +20,20 @@ Ext.define("core.train.coursecheckrule.view.MainGrid", {
         items: [{
             xtype: 'button',
             text: '添加',
-            ref: 'gridAdd',
+            ref: 'gridAdd_Tab',
             funCode: 'girdFuntionBtn', //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             iconCls: 'x-fa fa-plus-circle'
         }, {
             xtype: 'button',
             text: '编辑',
-            ref: 'gridEdit',
+            ref: 'gridEdit_Tab',
             funCode: 'girdFuntionBtn',
             disabled: true,
             iconCls: 'x-fa fa-pencil-square'
         }, {
             xtype: 'button',
             text: '详细',
-            ref: 'gridDetail',
+            ref: 'gridDetail_Tab',
             funCode: 'girdFuntionBtn',
             disabled: true,
             iconCls: 'x-fa fa-file-text'
@@ -196,7 +196,7 @@ Ext.define("core.train.coursecheckrule.view.MainGrid", {
                 ref: 'gridEdit',
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('editClick', {
+                    this.fireEvent('editClick_Tab', {
                         view: view.grid,
                         record: rec
                     });
@@ -208,7 +208,7 @@ Ext.define("core.train.coursecheckrule.view.MainGrid", {
                 ref: 'gridDetail',
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('detailClick', {
+                    this.fireEvent('detailClick_Tab', {
                         view: view.grid,
                         record: rec
                     });

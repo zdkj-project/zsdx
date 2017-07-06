@@ -4,12 +4,12 @@ Ext.define("core.train.calcucredit.view.MainGrid", {
     frame: false,
     columnLines: false,
     dataUrl: comm.get("baseUrl") + "/TrainClass/list", //数据获取地址
-    model: "com.zd.school.jw.train.model.TrainCreditsrule", //对应的数据模型
+    model: "com.zd.school.jw.train.model.TrainClass", //对应的数据模型
     /**
      * 高级查询面板
      */
     panelButtomBar: {
-        xtype: 'calcucredit.mainquerypanel',
+        xtype: 'calcucredit.mainquerypanel'
     },
     /**
      * 工具栏操作按钮
@@ -17,30 +17,20 @@ Ext.define("core.train.calcucredit.view.MainGrid", {
      */
     panelTopBar: {
         xtype: 'toolbar',
-        items: [{
-            xtype: 'button',
-            text: '计算',
-            ref: 'gridCalcute',
-            funCode: 'girdFuntionBtn', //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
-            iconCls: 'x-fa fa-plus-circle'
-        }, {
-            xtype: 'button',
-            text: '详细',
-            ref: 'gridDetail',
-            funCode: 'girdFuntionBtn',
-            disabled: true,
-            iconCls: 'x-fa fa-pencil-square'
-        }, {
+        items: [/*{
+         xtype: 'button',
+         text: '启动评价',
+         ref: 'gridAdd_Tab',
+         funCode: 'girdFuntionBtn', //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
+         iconCls: 'x-fa fa-plus-circle'
+         },*/ {
             xtype: 'button',
             text: '导出',
             ref: 'gridExport',
             funCode: 'girdFuntionBtn',
-            disabled: true,
+            disabled: false,
             iconCls: 'x-fa fa-file'
         }, '->', {
-            xtype: 'tbtext',
-            html: '快速搜索：'
-        }, {
             xtype: 'textfield',
             name: 'className',
             funCode: 'girdFastSearchText',
@@ -50,18 +40,13 @@ Ext.define("core.train.calcucredit.view.MainGrid", {
             funCode: 'girdSearchBtn', //指定此类按钮为girdSearchBtn类型
             ref: 'gridFastSearchBtn',
             iconCls: 'x-fa fa-search',
-        }, ' ', {
-            xtype: 'button',
-            text: '高级搜索',
-            ref: 'gridHignSearch',
-            iconCls: 'x-fa fa-sliders'
-        }],
+        }]
     },
     /** 排序字段定义 */
-    //defSort: [{
-    //    property: "salaryitemType", //字段名
-    //    direction: "asc" //升降序
-    //}],
+    defSort: [{
+        property: "classCategory", //字段名
+        direction: "ASC" //升降序
+    }],
     /** 扩展参数 */
     extParams: {
         whereSql: "",
@@ -69,101 +54,41 @@ Ext.define("core.train.calcucredit.view.MainGrid", {
         //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
         //filter: "[{'type':'string','comparison':'=','value':'','field':'claiId'}]"
     },
+    features: [{
+        ftype: 'grouping',
+        //groupHeaderTpl:'<span style="color: red;font-family: 微软雅黑;font-size: 13px;font-weight: bold">班级类型：{name}</span>',
+        groupHeaderTpl: Ext.create('Ext.XTemplate',
+            '<div><tpl for="children[0].data">',
+            '<tpl if="!classCategoryName">', // <-- Note that the > is encoded
+            '<span style="color:#00c4ff;font-family: 微软雅黑;font-size: 13px;font-weight: bold">无类型</span>',
+            '<tpl else >',
+            '<span style="color:#aa3e38;font-family: 微软雅黑;font-size: 13px;font-weight: bold">{classCategoryName}</span>',
+            '</tpl></tpl></div>'
+        ),
+        expandTip: '点击展开. 按下CTRL键再点击折叠其它',
+        collapseTip: '点击折叠. 按下CTRL键再点击折叠其它',
+    }],
+    defGroup: 'classCategory',
     columns: {
         defaults: {
-            align: 'center',
             titleAlign: "center"
         },
         items: [{
-            xtype: "rownumberer",
-            flex: 0,
-            width: 60,
-            text: '序号',
-            align: 'center'
-        }, {
-            width:150,
-            text: "开始日期",
-            dataIndex: "beginDate",
-            renderer: function(value, metaData) {
-                var date = value.replace(new RegExp(/-/gm), "/");
-                var title = "开始日期";
-                var ss = Ext.Date.format(new Date(date), 'Y-m-d')
-                var html = ss;
-                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
-                return ss;
-            }
-        }, {
-            width:150,
-            text: "结束日期",
-            dataIndex: "endDate",
-            renderer: function(value, metaData) {
-                var date = value.replace(new RegExp(/-/gm), "/");
-                var title = "结束日期";
-                var ss = Ext.Date.format(new Date(date), 'Y-m-d')
-                var html = ss;
-                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
-                return ss;
-            }
-        }, {
-            flex:1,
-            width:150,
+            flex: 1,
+            minWidth: 120,
             text: "班级名称",
             dataIndex: "className",
         }, {
-            width:150,
-            text: "班级类型",
-            dataIndex: "classCategory",
-            columnType: "basecombobox", //列类型
-            ddCode: "CLASSCATEGORY" //字典代码			
-        }, {
-            width:150,
-            text: "班级编号",
-            dataIndex: "classNumb",
-        }, {
-            xtype: 'actiontextcolumn',
-            text: "操作",
             width: 100,
-            fixed: true,
-            items: [{
-                //iconCls: 'x-fa fa-pencil-square',
-            	text:'编辑',  
-                style:'font-size:12px;',
-                tooltip: '编辑',
-                ref: 'gridEdit',
-                handler: function(view, rowIndex, colIndex, item) {
-                    var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('editClick', {
-                        view: view.grid,
-                        record: rec
-                    });
-                }
-            }, {
-                //iconCls: 'x-fa fa-file-text',
-            	text:'详细',  
-                style:'font-size:12px;',
-                tooltip: '详细',
-                ref: 'gridDetail',
-                handler: function(view, rowIndex, colIndex, item) {
-                    var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('detailClick', {
-                        view: view.grid,
-                        record: rec
-                    });
-                }
-            }, {
-                //iconCls: 'x-fa fa-minus-circle',
-            	text:'删除',  
-                style:'font-size:12px;',
-                tooltip: '删除',
-                ref: 'gridDelete',
-                handler: function(view, rowIndex, colIndex, item) {
-                    var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('deleteClick', {
-                        view: view.grid,
-                        record: rec
-                    });
-                }
-            }]
+            text: "班主任",
+            dataIndex: "bzrName",
+            align: 'center',
+            renderer: function (value, metaData) {
+                var title = "班主任";
+                var html = value;
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                return html;
+            }
         }]
     },
     emptyText: '<span style="width:100%;text-align:center;display: block;">暂无数据</span>'
