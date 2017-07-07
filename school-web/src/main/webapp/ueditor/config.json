@@ -1,6 +1,6 @@
 /* 前后端通信相关的配置,注释只允许使用多行方式 */
 {
-    "serverPathUrl": "http://10.10.8.136:9100",
+    "serverPathUrl": "http://10.10.8.136:9003",
 
     /* 上传图片配置项 */
     "imageActionName": "uploadimage", /* 执行上传图片的action名称 */
