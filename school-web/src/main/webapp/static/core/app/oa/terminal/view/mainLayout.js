@@ -1,7 +1,8 @@
 Ext.define("core.oa.terminal.view.mainLayout", {
     extend: "core.base.view.BasePanel",
-    
-    requires: [    
+    alias: "widget.terminal.mainlayout",
+    requires: [  
+    	"core.oa.terminal.controller.MainController",
         "core.oa.terminal.view.mainLayout",
         "core.oa.terminal.view.detailLayout",
         "core.oa.terminal.view.listGrid",
@@ -11,12 +12,10 @@ Ext.define("core.oa.terminal.view.mainLayout", {
     ],
     
     controller: 'terminal.terminalController',
-    //otherController:'dept.otherController',
     
-    alias: "widget.terminal.mainlayout",
-    layout: "border",
-    //bodyPadding: 2,
-    border: false,
+    otherController:'jobinfo.otherController',
+    layout:'border',
+    border:false,
     funCode: "terminal_main",
     detCode: "terminal_detail",
     detLayout: "terminal.detaillayout",
@@ -33,37 +32,14 @@ Ext.define("core.oa.terminal.view.mainLayout", {
             termCount:30,
             termType:"1"
         },
+        tabConfig:{         //zzk：2017-6-1加入，用于对tab操作提供基本配置数据
+        	addTitle:'添加终端',
+        	editTitle:'编辑终端',
+        	detailTitle:'终端详情'
+        }
     },
-    items: [/*{
-        xtype: 'basecenterpanel',
-        region: "center",
-        items: [{
-            xtype: "basequerypanel",
-            layout: 'form',
-            region: "north",
-            height: 100,
-            items: [{
-                xtype: "container",
-                layout: "hbox", // 从左往右的布局
-                items: [{
-                    flex: 1,
-                    labelAlign: "right",
-                    fieldLabel: "房间名称",
-                    xtype: "basequeryfield",
-                    queryType: "textfield",
-                    name: "roomName"
-                }, {
-                    flex: 1,
-                    labelAlign: "right",
-                    fieldLabel: "终端号",
-                    xtype: "basequeryfield",
-                    queryType: "textfield",
-                    name: "termCode"
-                }]
-            }]
-        },*/ {
+    items: [{
             xtype: "terminal.grid",
             region: "center"
-        /*}]*/
     }]
 })

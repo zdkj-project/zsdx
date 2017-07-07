@@ -34,21 +34,24 @@ Ext.define("core.train.coursecheckrule.view.MainQueryPanel", {
             name: "inBefore",
             fieldLabel: "签到提前分钟",
             queryType: "numberfield",
-            dataType:'short'
+            dataType:'short',
+            value:''
         },{
             columnWidth: 0.333,
             xtype: "basequeryfield",
             name: "beLate",
             fieldLabel: "迟到分钟",
             queryType: "numberfield",
-            dataType:'short'
+            dataType:'short',
+            value:''
         },{
             columnWidth: 0.333,
             xtype: "basequeryfield",
             name: "absenteeism",
             fieldLabel: "缺勤分钟",
             queryType: "numberfield",
-            dataType:'short'
+            dataType:'short',
+            value:''
         }]
     },{
         xtype: "container",
