@@ -107,7 +107,9 @@ public class TrainEvalIndicatorController extends FrameWorkController<TrainEvalI
         } else {
             SysUser currentUser = getCurrentSysUser();
             try {
-                boolean flag = thisService.doLogicDeleteByIds(delIds, currentUser);
+                delIds = delIds.replace(",", "','");
+                boolean flag = thisService.doDelete(delIds, currentUser);
+//                boolean flag = thisService.doLogicDeleteByIds(delIds, currentUser);
                 if (flag) {
                     writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
                 } else {

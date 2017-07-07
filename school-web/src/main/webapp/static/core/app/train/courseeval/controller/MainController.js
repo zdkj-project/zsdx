@@ -678,7 +678,7 @@ Ext.define("core.train.courseeval.controller.MainController", {
                     success: function(response) {
                         var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                        
-                        console.log(data);
+                        //console.log(data);
                                                                     
                         var detailhtmlpanel = tabItem.down("container[xtype=courseeval.coursevaldetailpanel]");
                         detailhtmlpanel.setData(data);

@@ -77,9 +77,6 @@ Ext.define("core.train.indicator.view.MainGrid", {
     },{
         property: "indicatorName", //字段名
         direction: "asc" //升降序
-    },{
-        property: "createTime", //字段名
-        direction: "asc" //升降序
     }],
     // defGroup:'indicatorName',
     // features: [{ftype:'grouping'}],

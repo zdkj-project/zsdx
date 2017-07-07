@@ -9,6 +9,9 @@ Ext.define("core.oa.terminal.view.detailLayout", {
 		pkName: "uuid",
 		defaultObj: {}
 	},
+	 /*设置最小宽度，并且自动滚动*/
+    minWidth:1200,
+    scrollable:true,
 	items: [{
 		xtype: "terminal.detailform"
 	}]

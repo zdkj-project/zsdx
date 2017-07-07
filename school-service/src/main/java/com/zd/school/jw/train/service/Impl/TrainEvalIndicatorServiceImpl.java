@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.*;
 
 
@@ -160,5 +161,23 @@ public class TrainEvalIndicatorServiceImpl extends BaseServiceImpl<TrainEvalIndi
             logger.error(e.getMessage());
             return null;
         }
+    }
+
+    @Override
+    public Boolean doDelete(String ids, SysUser currentUser) {
+        try {
+            String hql = "delete from TrainIndicatorStand where uuid in (''{0}'')";
+            hql = MessageFormat.format(hql,ids);
+            this.executeHql(hql);
+
+            String sql = "delete from TRAIN_T_EVALINDICATOR where (SELECT COUNT(*) FROM dbo.TRAIN_T_INDICATORSTAND WHERE INDICATOR_ID=TRAIN_T_EVALINDICATOR.INDICATOR_ID AND ISDELETE=0)=0";
+            this.executeSql(sql);
+
+            return  true;
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            return  false;
+        }
+
     }
 }
