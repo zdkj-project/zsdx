@@ -12,6 +12,12 @@ Ext.define("core.systemset.jobinfo.view.jobinfoDetailLayout",{
 		// 	 signBeing:new Date()
 		// }
 	},
+	 /*设置最小宽度，并且自动滚动*/
+    minWidth:1200,
+    scrollable:true,
+
+    /*关联此视图控制器*/
+	controller: 'jobinfo.detailController',
 	items: [{
 		xtype: "jobinfo.deailform"
 	}]

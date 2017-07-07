@@ -2,27 +2,20 @@ Ext.define("core.systemset.jobinfo.view.jobinfoGrid", {
     extend: "core.base.view.BaseGrid",
     alias: "widget.jobinfo.jobinfogrid",
     dataUrl: comm.get('baseUrl') + "/basejob/list",
-/*    tbar: [
-        { xtype: 'button', text: '添加', ref: 'gridAdd', iconCls: 'x-fa fa-plus-circle' },
-        { xtype: 'button', text: '编辑', ref: 'gridEdit', iconCls: 'x-fa fa-pencil-square', disabled: true },
-        { xtype: 'button', text: '删除', ref: 'gridDelete', iconCls: 'x-fa fa-minus-circle' }
-    ],
-    panelTopBar:false,
-    panelButtomBar:false,
-    */
+    model: 'com.zd.school.plartform.baseset.model.BaseJob',
     tbar:[],
     panelTopBar:{
         xtype:'toolbar',
         items: [{
             xtype: 'button',
             text: '添加',
-            ref: 'gridAdd',
+            ref: 'gridAdd_Tab',
             funCode:'girdFuntionBtn',   //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             iconCls: 'x-fa fa-plus-circle'
         },{
             xtype: 'button',
             text: '编辑',
-            ref: 'gridEdit',
+            ref: 'gridEdit_Tab',
             funCode:'girdFuntionBtn',   //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             disabled:true,
             iconCls: 'x-fa fa-pencil-square'
@@ -62,8 +55,6 @@ Ext.define("core.systemset.jobinfo.view.jobinfoGrid", {
         direction: 'ASC'
     }],
     extParams: {},
-    model: 'com.zd.school.plartform.baseset.model.BaseJob',
-    
     columns:  {        
         defaults:{        
             //align:'center',
@@ -76,13 +67,62 @@ Ext.define("core.systemset.jobinfo.view.jobinfoGrid", {
     }, {
         text: "名称",
         dataIndex: "jobName",
-        //flex:1,
-        width:180
+        flex: 1,
+        minWidth: 150,
     }, {
         text: "级别",
         dataIndex: "orderIndex",
         //flex:1,
-        width:120
+        width:350
+    },{
+        xtype: 'actiontextcolumn',
+        text: "操作",
+        align: 'center',
+        width: 350,
+        fixed: true,
+        items: [{
+            text:'编辑',  
+            style:'font-size:12px;', 
+            tooltip: '编辑',
+            ref: 'gridEdit',
+            handler: function(view, rowIndex, colIndex, item) {
+                var rec = view.getStore().getAt(rowIndex);
+                this.fireEvent('editClick_Tab', {
+                    view: view.grid,
+                    record: rec
+                });
+            }
+        }, {
+            text:'详细',  
+            style:'font-size:12px;', 
+            tooltip: '详细',
+            ref: 'gridDetail',
+            handler: function(view, rowIndex, colIndex, item) {
+                var rec = view.getStore().getAt(rowIndex);
+                this.fireEvent('detailClick_Tab', {
+                    view: view.grid,
+                    record: rec
+                });
+            }
+        }, {
+            text:'删除',  
+            style:'font-size:12px;', 
+            tooltip: '删除',
+            ref: 'gridDelete',
+            getClass :function(v,metadata,record,rowIndex,colIndex,store){
+                if(record.get("startUsing")==1)
+                    return 'x-hidden-display';
+                else
+                    return null;
+            },  
+            handler: function(view, rowIndex, colIndex, item) {
+                var rec = view.getStore().getAt(rowIndex);
+                this.fireEvent('deleteClick', {
+                    view: view.grid,
+                    record: rec
+                });
+            }
+        }]
     }]
     }    
 });

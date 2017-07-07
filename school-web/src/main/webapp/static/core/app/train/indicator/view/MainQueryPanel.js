@@ -15,47 +15,20 @@ Ext.define("core.train.indicator.view.MainQueryPanel", {
         xtype: "container",
         layout: "column",
         items: [{
-            columnWidth: 0.2,
-            labelWidth: 50,
+            columnWidth: 0.3,
+            labelWidth: 100,
             xtype: "basequeryfield",
-            name: "xm",
-            fieldLabel: "姓名",
+            name: "indicatorName",
+            fieldLabel: "指标名称",
             queryType: "textfield",
         }, {
-            columnWidth: 0.2,
-            labelWidth: 50,
+            columnWidth: 0.3,
+            labelWidth: 100,
             xtype: "basequeryfield",
-            name: "xbm",
-            fieldLabel: "性别",
-            queryType: "basecombobox",
-            config: {
-                ddCode: "XBM"
-            }
-        }, {
-            columnWidth: 0.2,
-            labelWidth: 50,
-            xtype: "basequeryfield",
-            name: "position",
-            fieldLabel: "职务",
+            name: "indicatorStand",
+            fieldLabel: "评价标准",
             queryType: "textfield"
-        }, {
-            columnWidth: 0.2,
-            labelWidth: 80,
-            xtype: "basequeryfield",
-            name: "headshipLevel",
-            fieldLabel: "行政级别",
-            queryType: "basecombobox",
-            config: {
-                ddCode: "HEADSHIPLEVEL"
-            }
-        }, {
-            columnWidth: 0.2,
-            labelWidth: 80,
-            xtype: "basequeryfield",
-            name: "workUnit",
-            fieldLabel: "工作单位",
-            queryType: "textfield"
-        }, {
+        },  {
             //buttonAlign: "left",
             xtype: "container",
             layout: "column",
