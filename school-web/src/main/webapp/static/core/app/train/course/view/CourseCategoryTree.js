@@ -15,14 +15,14 @@ Ext.define("core.train.course.view.CourseCategoryTree", {
     useArrows: false,
     viewConfig: {
         stripeRows: false
-    }
-/*    tools: [{
-        type: 'refresh',
-        qtip: '刷新',
-        handler: function(event, toolEl, header) {
-            var tree = header.ownerCt
-            tree.getStore().load();
-            tree.getSelectionModel().deselectAll(true);
-        }
-    }],*/
+    },
+    // tools: [{
+    //     type: 'refresh',
+    //     qtip: '刷新',
+    //     handler: function(event, toolEl, header) {
+    //         var tree = header.ownerCt
+    //         tree.getStore().load();
+    //         tree.getSelectionModel().deselectAll(true);
+    //     }
+    // }],
 })
