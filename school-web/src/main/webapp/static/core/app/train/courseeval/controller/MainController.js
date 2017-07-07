@@ -667,12 +667,13 @@ Ext.define("core.train.courseeval.controller.MainController", {
                 });
                 tabItem.add(item);
 
-                /*
+                
                 self.asyncAjax({
                     url:comm.get("baseUrl") + "/TrainCourseevalresult/getCourseEvalResult",
                     params: {
                         ids:pkValue
                     },
+                    method :'GET',
                     //回调代码必须写在里面
                     success: function(response) {
                         var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
@@ -682,7 +683,7 @@ Ext.define("core.train.courseeval.controller.MainController", {
                         var detailhtmlpanel = tabItem.down("container[xtype=courseeval.coursevaldetailpanel]");
                         detailhtmlpanel.setData(data);
                     }
-                });*/
+                });
                                   
             }, 30);
 

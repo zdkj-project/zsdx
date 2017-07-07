@@ -128,7 +128,7 @@ Ext.define("core.train.coursetype.controller.MainController", {
 
         //当前节点
         var pkValue;
-        var just = "3EF578B0-61EA-45EF·-8731-839F798BA3CA";
+        var just = "3EF578B0-61EA-45EF-8731-839F798BA3CA";
         var justName = "课程分类 ";
         var parentCategory = "3EF578B0-61EA-45EF-8731-839F798BA3CA";
         var parentName = "课程分类";
