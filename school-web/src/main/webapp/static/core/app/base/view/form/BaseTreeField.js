@@ -1,12 +1,13 @@
 Ext.define("core.base.view.form.BaseTreeField",{
-	extend:"Ext.form.field.Trigger",
+	//extend:"Ext.form.field.Trigger",
+	extend:"Ext.form.field.Picker",
 	alias: 'widget.basetreefield',
 	mixins: {
 			queryUtil:"core.util.QueryUtil"
 	},	
 	editable : false,
-    trigger1Cls: Ext.baseCSSPrefix + 'form-clear-trigger',    
-    trigger2Cls: Ext.baseCSSPrefix + 'form-search-trigger',
+    //trigger1Cls: Ext.baseCSSPrefix + 'form-clear-trigger',    
+    //trigger2Cls: Ext.baseCSSPrefix + 'form-search-trigger',
 	initComponent: function(){
 		var self=this;
 		//增加两个事件。 查询前，查询后
@@ -15,6 +16,25 @@ Ext.define("core.base.view.form.BaseTreeField",{
 	
 		this.callParent(arguments);
 	},
+
+	triggers: {
+    	//picker这个是系统默认的，可以修改，
+        picker: {			
+        	cls:Ext.baseCSSPrefix + 'form-search-trigger',
+            handler: 'onTriggerClick',
+            scope: 'this',
+            focusOnMousedown: true
+        },
+        //clear自己新加入的，命名不限定
+        clear: {
+            cls:Ext.baseCSSPrefix + 'form-clear-trigger',
+            handler: 'onTrigger1Click',
+            weight:-1,
+            scope: 'this',
+            focusOnMousedown: true
+        },
+    },
+
 	/**
 	 * 清除按钮事件
 	 */
@@ -43,7 +63,7 @@ Ext.define("core.base.view.form.BaseTreeField",{
 			}	
 		});
 	},
-	onTrigger2Click : function(){
+	onTriggerClick : function(){
 		var self=this;	
 		var ddCode=self.ddCode;
 		var rootId=self.rootId;
