@@ -178,7 +178,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 				if(this.getCount(hqlSelect2)+traineeLength<=3){
 					String hqlUpdate = "update TrainClasstrainee t set t.roomId='"+roomId+"',t.roomName='"+roomName+"',"
 							+ "	t.updateUser='" + currentUser.getXm()+ "',t.updateTime='" +  sdf.format(new Date()) + "' "
-							+ "where t.isDelete=0 and t.uuid in ('" + ids.replace(",", "','") + "')";
+							+ "where t.isDelete!=1 and t.uuid in ('" + ids.replace(",", "','") + "')";
 					this.executeHql(hqlUpdate);
 					result=1;
 				}																							
@@ -285,8 +285,8 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			//查询学员库是否存在此学生
 			trainTrainee = trainTraineeServie.getByProerties("sfzjh", lo.get(3));
 			
-			//查询此班级，是否已经存在此学员,则取出来进行数据更新操作
-			TrainClasstrainee trainee = this.getByProerties(new String[]{"sfzjh","classId","isDelete"}, new Object[]{lo.get(3),classId,0});
+			//查询此班级，是否已经存在此学员,则取出来进行数据更新操作 	//只要存在即可，isdelete为1的会被转为2
+			TrainClasstrainee trainee = this.getByProerties(new String[]{"sfzjh","classId"}, new Object[]{lo.get(3),classId});
 			if(trainee==null)
 				trainee = new TrainClasstrainee();
 			

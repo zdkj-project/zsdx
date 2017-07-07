@@ -52,6 +52,10 @@ Ext.define("core.train.arrange.controller.DetailController", {
                         self.Warning("性别必须一致！");
                         return false;
                     }
+                    if( records[i].get("isDelete")==1){
+                        self.Warning("不能给删除状态的学员设置房间！");
+                        return false;
+                    }
                     xbm=xbmTemp;
 
                     ids.push(records[i].get("uuid"));
