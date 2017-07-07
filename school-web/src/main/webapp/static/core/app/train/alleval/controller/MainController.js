@@ -140,14 +140,23 @@ Ext.define("core.train.alleval.controller.MainController", {
                 var self = this;
                 var baseGrid = btn.up("basegrid");
                 var funCode = baseGrid.funCode;
-                var basePanel = baseGrid.up("panel[xtype=alleval.mainlayout]");
+                var basePanel = baseGrid.up("panel[xtype=alleval.mainlayout]"); //组件容器、主键primary key
                 var funData = basePanel.funData;
                 if(Ext.isEmpty(funData.classId)){
                     self.Warning("请选择培训班级");
                     return false;
                 }
-                var record = baseGrid.getStore().getAt(0);
-                self.doMainGridDetail_Tab(null, "rankCourse",baseGrid,record);
+
+                var classGrid=funData.classGrid;
+                classGrid.funCode=funCode;
+                var records = classGrid.getSelectionModel().getSelection();     
+                if(records.length!=1){
+                    self.Warning("请选择一个培训班级");
+                    return false;
+                }
+                recordData = records[0];
+
+                this.doClassEvelDetail_Tab(null, "classEval",classGrid,recordData);
                 return false;
             }
         },
@@ -209,6 +218,127 @@ Ext.define("core.train.alleval.controller.MainController", {
      * @param grid
      * @param record
      */
+    doClassEvelDetail_Tab: function (btn, cmd, grid, record) {
+        var self = this;
+        var baseGrid;
+        
+        if (btn) {
+            baseGrid = btn.up("basegrid");
+        } else {
+            baseGrid = grid;
+            recordData = record.getData();
+        }
+        //得到组件
+        var funCode = baseGrid.funCode;
+        var tabPanel = baseGrid.up("tabpanel[xtype=app-main]"); //标签页
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+
+        //得到配置信息
+        var funData = basePanel.funData;
+        var detCode = basePanel.detCode;
+        var detLayout = basePanel.detLayout;
+
+       
+        var operType = cmd;
+        var pkValue = null;
+
+        //关键：window的视图控制器
+        var otherController = basePanel.otherController;
+        if (!otherController)
+            otherController = '';
+
+       
+        //一些要传递的参数
+        var popFunData = Ext.apply(funData, {
+            grid: baseGrid
+        });
+        console.log(recordData);
+        var pkName = "uuid";   //funData.pkName;    //classScheduleId
+        pkValue = recordData[pkName];
+        var couseName = recordData["className"];
+
+        var insertObj = recordData;
+     
+         
+
+        //默认的tab参数
+        var tabTitle = couseName+"-班级评价详情"; //标签页的标题
+        var tabItemId = funCode + "_gridClassEvel"+pkValue;     //命名规则：funCode+'_ref名称',确保不重复
+        var itemXtype = "alleval.classevaldetailpanel";
+
+        
+        //获取tabItem；若不存在，则表示·要新建tab页，否则直接打开
+        var tabItem = tabPanel.getComponent(tabItemId);
+
+        //判断是否已经存在tab了
+        if (!tabItem) {
+            tabItem = Ext.create({
+                xtype: 'container',
+                title: tabTitle,
+                scrollable: true,
+                itemId: tabItemId,
+                itemPKV: pkValue,    //保存主键值
+                layout: 'fit',
+                margin: 5
+            });
+            tabPanel.add(tabItem);
+
+            //延迟放入到tab中
+            setTimeout(function () {
+                //创建组件
+                var item = Ext.widget("baseformtab", {
+                    operType: operType,
+                    controller: otherController,         //指定重写事件的控制器
+                    funCode: funCode,                    //指定mainLayout的funcode
+                    detCode: detCode,                    //指定detailLayout的funcode
+                    tabItemId: tabItemId,                //指定tab页的itemId
+                    insertObj: insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                    funData: popFunData,                //保存funData数据，提供给提交事件中使用
+                    items: [{
+                        xtype: detLayout,
+                        items: [{
+                            xtype: itemXtype
+                        }]
+                    }]
+                });
+                tabItem.add(item);
+
+                
+                self.asyncAjax({
+                    url:comm.get("baseUrl") + "/TrainClassevalresult/getClassEvalResult",
+                    params: {
+                        ids:pkValue
+                    },                
+                    method :'GET',
+                    //回调代码必须写在里面
+                    success: function(response) {
+                        data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                       
+                        //console.log(data);
+                                                                    
+                        var detailhtmlpanel = tabItem.down("container[xtype=alleval.classevaldetailpanel]");
+                        detailhtmlpanel.setData(data);
+                    }
+                });
+                                  
+            }, 30);
+
+        } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue) {     //判断是否点击的是同一条数据，不同则替换数据
+            self.Warning("您当前已经打开了一个编辑窗口了！");
+            return;
+        }
+
+        tabPanel.setActiveTab(tabItem);
+    },
+
+
+    /**
+     * 
+     * @param btn
+     * @param cmd
+     * @param grid
+     * @param record
+     */
     doCourseEvelDetail_Tab: function (btn, cmd, grid, record) {
         var self = this;
         var baseGrid;
@@ -254,7 +384,7 @@ Ext.define("core.train.alleval.controller.MainController", {
         var couseName = recordData["courseName"];
 
         //默认的tab参数
-        var tabTitle = couseName+"-评价详情"; //标签页的标题
+        var tabTitle = couseName+"-课程评价详情"; //标签页的标题
         var tabItemId = funCode + "_gridCourseEvel"+pkValue;     //命名规则：funCode+'_ref名称',确保不重复
         var itemXtype = "alleval.coursevaldetailpanel";
 
@@ -310,7 +440,7 @@ Ext.define("core.train.alleval.controller.MainController", {
 
                 
                 self.asyncAjax({
-                    url:comm.get("baseUrl") + "/TrainClassevalresult/getClassEvalResult",
+                    url:comm.get("baseUrl") + "/TrainCourseevalresult/getCourseEvalResult",
                     params: {
                         ids:pkValue
                     },                
@@ -763,5 +893,7 @@ Ext.define("core.train.alleval.controller.MainController", {
                 });
                 break;
         }
-    }
+    },
+   
+      
 })
