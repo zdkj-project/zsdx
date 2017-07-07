@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.zd.core.annotation.FieldInfo;
 import com.zd.core.model.BaseEntity;
 import com.zd.core.util.DateTimeSerializer;
+import com.zd.school.excel.annotation.MapperCell;
 import com.zd.school.jw.train.model.vo.VoTrainClasstrainee;
 import org.hibernate.annotations.Formula;
 
@@ -213,6 +214,19 @@ public class TrainClassschedule extends BaseEntity implements Serializable{
 
     public void setEvalState(Integer evalState) {
         this.evalState = evalState;
+    }
+
+    @MapperCell(cellName = "课程学分", order = 6)
+    @FieldInfo(name = "学分")
+    @Column(name = "CREDITS", length = 5, nullable = false)
+    private Integer credits = 4;
+
+    public Integer getCredits() {
+        return credits;
+    }
+
+    public void setCredits(Integer credits) {
+        this.credits = credits;
     }
 
     /** 以下为不需要持久化到数据库中的字段,根据项目的需要手工增加
