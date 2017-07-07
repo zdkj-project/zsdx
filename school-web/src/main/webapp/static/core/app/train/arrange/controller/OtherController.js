@@ -247,7 +247,11 @@ Ext.define("core.train.arrange.controller.OtherController", {
                 var classId = formObj.findField("uuid").getValue();
 
                 var ids=[];            
-                for(var i in records) {                  
+                for(var i in records) {              
+                    if( records[i].get("isDelete")==1){
+                        self.Warning("不能给删除状态的课程设置场地！");
+                        return false;
+                    }    
                     ids.push(records[i].get("uuid"));
                 };
 
