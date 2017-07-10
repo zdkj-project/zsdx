@@ -11,19 +11,19 @@ Ext.define("core.system.menu.view.MenuTree", {
 	tbar: [{
 		xtype: 'button',
 		text: '添加下级',
-		ref: 'gridAdd',
+		ref: 'gridAdd_Tab',
 		iconCls: 'x-fa fa-plus-square',
 		disabled: false
 	}, {
 		xtype: 'button',
 		text: '添加同级',
-		ref: 'gridAddBrother',
+		ref: 'gridAddBrother_Tab',
 		iconCls: 'x-fa fa-plus-square-o',
 		disabled: false
 	}, {
 		xtype: 'button',
 		text: '修改',
-		ref: 'gridEdit',
+		ref: 'gridEdit_Tab',
 		iconCls: 'x-fa fa-pencil-square',
 		disabled: false  
 	}, {
