@@ -67,12 +67,12 @@ Ext.define("core.train.course.controller.OtherController", {
          * 打开时自动加载已选择的教师
          */
         "window[funcPanel=course.selectteacher.mainlayout]": {
-            afterrender: function (win) {
+            afterrender: function (win) {           
                 var tabPanel = Ext.ComponentQuery.query('tabpanel[xtype=app-main]')[0];
                 var tabItem = tabPanel.getActiveTab();
                 var formpanel = tabItem.down('form[xtype=' + win.formPanel + ']');
 
-                // var formpanel = Ext.ComponentQuery.query('form[xtype=' + win.formPanel + ']')[0];
+                var formpanel = Ext.ComponentQuery.query('form[xtype=' + win.formPanel + ']')[0];
                 var courseId = formpanel.getForm().findField("uuid").getValue();
                 var grid = win.down("grid[ref=isselectedteachergrid]");
                 var store = grid.getStore();
@@ -81,6 +81,32 @@ Ext.define("core.train.course.controller.OtherController", {
                     courseId: courseId
                 };
                 store.load();
+
+                // var grid = win.down("grid[ref=isselectedteachergrid]");
+            
+                // var mainTeacherNameStr=formpanel.getForm().findField("mainTeacherName").getValue();
+                // var mainTeacherIdStr=formpanel.getForm().findField("mainTeacherId").getValue();
+                
+                // var datas=[];
+                // if(mainTeacherNameStr.trim()!=""){
+                //     var mainTeacherNames=mainTeacherNameStr.split(",");
+                //     var mainTeacherIds=mainTeacherIdStr.split(",");                
+                
+                //     for(var i=0;i<mainTeacherNames.length;i++){
+                //         var obj={};
+                //         obj.xm=mainTeacherNames[i];
+                //         obj.uuid=mainTeacherIds[i];
+                        
+                //         datas.push(obj);
+                //     }
+                // }
+                // if(datas.length>0){                       
+                //     grid.getStore().loadData(datas);
+                // }
+                // else{
+                //     grid.getStore().removeAll();
+                // }
+                
                 return false;
             }
         },

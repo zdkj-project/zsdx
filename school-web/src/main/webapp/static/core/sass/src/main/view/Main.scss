@@ -218,3 +218,9 @@
     font-family: FontAwesome;
     color: #919191;
 }
+
+/*修改disable的文本框的透明度为0.7*/
+.x-form-item-default.x-item-disabled {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+    opacity: 0.7;
+}

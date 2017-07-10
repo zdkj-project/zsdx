@@ -118,9 +118,16 @@ Ext.define("core.train.course.view.MainGrid", {
             align:'left'
         },{
             flex:1,
+            minWidth:200,
             text: "课程名称",
 			dataIndex: "courseName",
-            align:'left'
+            align:'left',
+            renderer: function (value, metaData) {
+                var title = "课程名称";
+                var html = value;
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                return html;
+            }
         },{
             width: 150,
             text: "所属类别",

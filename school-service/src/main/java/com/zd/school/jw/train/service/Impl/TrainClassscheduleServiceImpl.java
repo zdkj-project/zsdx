@@ -210,7 +210,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 
 			String hqlUpdate = "update TrainClassschedule t set t.roomId='" + roomId + "',t.scheduleAddress='"
 					+ roomName + "'," + "	t.updateUser='" + currentUser.getXm() + "',t.updateTime='"
-					+ sdf.format(new Date()) + "' " + "where t.isDelete=0 and t.uuid in ('" + ids.replace(",", "','")
+					+ sdf.format(new Date()) + "' " + "where t.isDelete!=1 and t.uuid in ('" + ids.replace(",", "','")
 					+ "')";
 			this.executeHql(hqlUpdate);
 			result = 1;
@@ -319,8 +319,8 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 				
 				// 查询课程表中是否存在 课程名、教师名一致的课程
 				trainCourseInfo = trainCourseinfoService.getByProerties(
-						new String[] { "courseName", "mainTeacherName", "isDelete" },
-						new Object[] { courseName, teacheName, 0 });
+						new String[] { "courseName", "mainTeacherName"/*, "isDelete"*/ },
+						new Object[] { courseName, teacheName/*, 0 */});	//只要存在即可，isdelete为1的会被转为2
 				//hql = "from TrainCourseinfo a where a.isDelete=? and a.courseName=? and a.mainTeacherName=?";
 				//trainCourseInfo = trainCourseinfoService.getForValue(hql, 0, courseName, teacheName);
 

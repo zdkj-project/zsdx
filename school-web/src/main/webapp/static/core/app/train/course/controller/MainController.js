@@ -444,8 +444,11 @@ Ext.define("core.train.course.controller.MainController", {
                             formDeptObj.findField("courseMode").setValue(false);
                         //根据需要设置一些字段为只读
                         formDeptObj.findField("courseName").setDisabled(true);
+                        formDeptObj.findField("courseName").setReadOnly(true);
                         formDeptObj.findField("courseMode").setDisabled(true);
+                        formDeptObj.findField("courseMode").setReadOnly(true);
                         formDeptObj.findField("mainTeacherName").setDisabled(true);
+                        formDeptObj.findField("mainTeacherName").setReadOnly(true);
                         break;
                     case "coursDesc":
                         var detailhtmlpanel = item.down("container[xtype=course.coursedescpanel]");
