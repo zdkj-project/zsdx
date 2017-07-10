@@ -12,17 +12,17 @@ Ext.define("core.eduresources.room.view.RoomGrid", {
     tbar: [{
         xtype: 'button',
         text: '添加房间',
-        ref: 'gridAdd',
+        ref: 'gridAdd_Tab',
         iconCls: 'x-fa fa-plus-circle'
     },{
         xtype: 'button',
         text: '批量添加房间',
-        ref: 'roomAdd',
+        ref: 'roomAdd_Tab',
         iconCls: 'x-fa fa-plus-circle'
     }, {
         xtype: 'button',
         text: '编辑房间',
-        ref: 'gridEdit',
+        ref: 'gridEdit_Tab',
         iconCls: 'x-fa fa-pencil-square',
         disabled: true
     }, {
