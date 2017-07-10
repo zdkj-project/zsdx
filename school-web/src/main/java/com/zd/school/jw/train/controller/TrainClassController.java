@@ -428,10 +428,10 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			// 3.设置部门ID：Train20170505（Train+班级编号）【班级编号不可变化】
 			String departmentId = "Train" + trainClass.getClassNumb();
 
-			// 4.查询班级的学员信息【查询班级学员的最新信息】
+			// 4.查询班级的学员信息【查询班级学员的最新信息】，【New】identifier字段也存放为身份证件号字段
 			String sql = "select CLASS_TRAINEE_ID as userId,XM as employeeName,SFZJH as employeeStrId,"
 					+ "	'' as employeePwd,CASE XBM WHEN '2' THEN '0' ELSE '1' END AS sexId,"
-					+ " isDelete as isDelete,'学员' AS identifier,'1' AS cardState, " + " '' as sid,'" + departmentId
+					+ " isDelete as isDelete,SFZJH AS identifier,'1' AS cardState, " + " '' as sid,'" + departmentId
 					+ "' as departmentId " + " from TRAIN_T_CLASSTRAINEE " + " where CLASS_ID='" + classId + "'"
 					+ " order by CLASS_TRAINEE_ID asc";
 
@@ -761,7 +761,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				classMap.put("isArrange", isArrange);
 
 				classMap.put("needChecking",
-						trainClass.getIsuse() != null ? trainClass.getIsuse() == 1 ? "需要" : "不需要" : "不需要");
+						trainClass.getNeedChecking() != null ? trainClass.getNeedChecking() == 1 ? "需要" : "不需要" : "不需要");
 				classMap.put("dinnerType",
 						trainClass.getDinnerType() == null ? "3" : String.valueOf(trainClass.getDinnerType()));
 				classMap.put("avgNumber",

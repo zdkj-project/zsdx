@@ -74,7 +74,25 @@ Ext.define("core.oa.meeting.checkrule.view.DetailForm", {
                 emptyText: "请输入是否需要签退",
                 maxLength: 2,
                 maxLengthText: "最多2个字符,汉字占2个字符",
-            
+                value:1,
+                listeners: {
+                    change: function(field, newValue , oldValue ) {
+                        
+                        var currentForm=field.up("baseform[xtype=checkrule.detailform]");
+                        var checkoutFields=currentForm.query("field[ref=checkoutField]");               
+                        if (newValue == true) {                                                                        
+                            for(var i=0;i<checkoutFields.length;i++){
+                                checkoutFields[i].setVisible(true);                          
+                            }                     
+
+                        } else  {
+                            for(var i=0;i<checkoutFields.length;i++){
+                                checkoutFields[i].setVisible(false);                          
+                            }   
+                        } 
+                        
+                    }
+                }
         },{
             beforeLabelTextTpl: comm.get('required'),
             allowBlank: false,
@@ -86,6 +104,7 @@ Ext.define("core.oa.meeting.checkrule.view.DetailForm", {
             value:0   
         }]
     },{
+        ref:'checkoutField',
         fieldLabel: "签退提前分钟",
         columnWidth: 0.5,
         name: "outBefore",
@@ -94,6 +113,7 @@ Ext.define("core.oa.meeting.checkrule.view.DetailForm", {
         maxLength: 2,
         maxLengthText: "最多2个字符,汉字占2个字符",
     }, {
+        ref:'checkoutField',
         fieldLabel: "签退延迟分钟",
         columnWidth: 0.5,
         name: "outLate",
@@ -102,6 +122,7 @@ Ext.define("core.oa.meeting.checkrule.view.DetailForm", {
         maxLength: 2,
         maxLengthText: "最多2个字符,汉字占2个字符",
     }, {
+        ref:'checkoutField',
         fieldLabel: "早退分钟",
         columnWidth: 0.5,
         name: "leaveEarly",
@@ -113,7 +134,7 @@ Ext.define("core.oa.meeting.checkrule.view.DetailForm", {
         fieldLabel: "规则说明",
         columnWidth: 0.5,
         name: "ruleDesc",
-        xtype: "textfield",
+        xtype: "textarea",
         height: 80,
         emptyText: "请输入规则说明",
         maxLength: 255,
