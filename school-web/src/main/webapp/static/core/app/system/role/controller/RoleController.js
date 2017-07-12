@@ -354,7 +354,7 @@ Ext.define("core.system.role.controller.RoleController", {
                         xtype:detLayout,                        
                         funCode: detCode,
                         items: [{
-                            xtype: "role.rolegrid",
+                            xtype: "role.roleusergrid",
                             funCode: detCode                  
                         }]
                     }]
