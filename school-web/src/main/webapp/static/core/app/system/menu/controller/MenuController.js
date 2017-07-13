@@ -14,11 +14,9 @@ Ext.define("core.system.menu.controller.MenuController", {
 	init: function() {
 		var self = this;
 
-
-        console.log("初始化 menu controler");
-        
         this.control({
-			//刷新按钮事件
+        	
+        	//刷新按钮事件
 			"panel[xtype=menu.menutree] button[ref=gridRefresh]": {
 				beforeclick: function(btn) {
 					var baseGrid = btn.up("basetreegrid");
@@ -35,31 +33,30 @@ Ext.define("core.system.menu.controller.MenuController", {
 					return false;
 				}
 			},
-			//增加下级按钮事件
-			"panel[xtype=menu.menutree] button[ref=gridAdd]": {
-				beforeclick: function(btn) {
-					self.doDetail(btn, "child");
-
-					return false;
-				}
-			},
-			//增加同级按钮事件
-			"panel[xtype=menu.menutree] button[ref=gridAddBrother]": {
-				beforeclick: function(btn) {
-					self.doDetail(btn, "brother");
-
-					return false;
-				}
-			},
-
-			//修改按钮事件
-			"panel[xtype=menu.menutree] button[ref=gridEdit]": {
-				beforeclick: function(btn) {
-					self.doDetail(btn, "edit");
-
-					return false;
-				}
-			},			
+			
+			//添加下级按钮
+        	"basetreegrid button[ref=gridAdd_Tab]": {
+                beforeclick: function(btn) {
+                    this.doDetail_Tab(btn,"child");
+                    return false;
+                }
+            },
+            
+            //添加同级按钮
+            "basetreegrid button[ref=gridAddBrother_Tab]": {
+                beforeclick: function(btn) {
+                    this.doDetail_Tab(btn,"brother");
+                    return false;
+                }
+            },
+            //修改按钮
+            "basetreegrid button[ref=gridEdit_Tab]": {
+                beforeclick: function(btn) {
+                    this.doDetail_Tab(btn,"edit");
+                    return false;
+                }
+            },
+			
 			//启用菜单事件
 			"panel[xtype=menu.menutree] button[ref=gridUnLock]": {
 				beforeclick: function(btn) {
@@ -79,26 +76,29 @@ Ext.define("core.system.menu.controller.MenuController", {
     	
 	},
     
-    //增加或修改菜单事件
-	doDetail: function(btn, cmd) {
+	//增加修改菜单
+	doDetail_Tab:function(btn, cmd, grid, record) {
+        var self = this;
+        var baseGrid = btn.up("basetreegrid");
+        var tabPanel = baseGrid.up("tabpanel[xtype=app-main]");
 
-		var self = this;
-		var baseGrid = btn.up("basetreegrid");
-		var funCode = baseGrid.funCode;
-		var basePanel = baseGrid.up("panel[xtype=menu.mainlayout]");
-		var funData = basePanel.funData;
-		var detCode = basePanel.detCode;
-		var detLayout = basePanel.detLayout;
-		//处理特殊默认值
-		var defaultObj = funData.defaultObj;
-		var insertObj = self.getDefaultValue(defaultObj);
-		var popFunData = Ext.apply(funData, {
-			grid: baseGrid,
-			whereSql: " and isDelete='0' "
-		});
+        //得到配置信息
+        var funCode = baseGrid.funCode;
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
 
-		//先确定要选择记录
-		var records = baseGrid.getSelectionModel().getSelection();
+        var funData = basePanel.funData;
+        var detCode = basePanel.detCode;
+        var detLayout = basePanel.detLayout;
+        var defaultObj = funData.defaultObj;
+        
+      //设置tab页的itemId
+        var tabItemId = funCode + "_gridAdd";     //命名规则：funCode+'_ref名称',确保不重复
+
+        //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
+        var tabItem = tabPanel.getComponent(tabItemId);
+
+        var insertObj = self.getDefaultValue(defaultObj);
+        var records = baseGrid.getSelectionModel().getSelection();
 		if (records.length != 1) {
 			self.Error("请先选择菜单");
 			return;
@@ -114,6 +114,7 @@ Ext.define("core.system.menu.controller.MenuController", {
 		var parentName = "ROOT";
 		if (parentNode)
 			parentName = parentNode.get("text");
+        
 		//根据选择的记录与操作确定form初始化的数据
 		var iconCls = "x-fa fa-plus-square";
 		var title = "增加下级菜单";
@@ -153,33 +154,64 @@ Ext.define("core.system.menu.controller.MenuController", {
 				});
 				break;
 		}
-		var winId = detCode + "_win";
-		var win = Ext.getCmp(winId);
-		if (!win) {
-			win = Ext.create('core.base.view.BaseFormWin', {
-				id: winId,
-				title: title,
-				width: 600,
-				height: 360,
-				resizable: false,
-				iconCls: iconCls,
-				operType: operType,
-				funData: popFunData,
-				funCode: detCode,
-				//给form赋初始值
-				insertObj: insertObj,
-				items: [{
-					xtype: "menu.detaillayout"
-				}]
-			});
-		}
-		win.show();
-		var detailPanel = win.down("basepanel[funCode=" + detCode + "]");
-		var objDetForm = detailPanel.down("baseform[funCode=" + detCode + "]");
-		var formDeptObj = objDetForm.getForm();
-		//表单赋值
-		self.setFormValue(formDeptObj, insertObj);
-	},
+		
+        //关键：window的视图控制器
+        var otherController = basePanel.otherController;
+        if (!otherController)
+            otherController = '';
+
+        var popFunData = Ext.apply(funData, {
+            grid: baseGrid
+        });
+
+        if (!tabItem) {
+            var tabTitle = title;
+
+            tabItem = Ext.create({
+                xtype: 'container',
+                title: tabTitle,
+                scrollable: true,
+                itemId: tabItemId,
+                layout: 'fit',
+            });
+            tabPanel.add(tabItem);
+
+            //延迟放入到tab中
+            setTimeout(function () {
+                //创建组件
+                var item = Ext.widget("baseformtab", {
+                    operType: 'add',
+                    controller: otherController,         //指定重写事件的控制器
+                    funCode: funCode,                    //指定mainLayout的funcode
+                    detCode: detCode,                    //指定detailLayout的funcode
+                    tabItemId: tabItemId,                //指定tab页的itemId
+                    insertObj: insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                    funData: popFunData,                //保存funData数据，提供给提交事件中使用
+                    items: [{
+                        xtype: detLayout
+                    }]
+                });
+                tabItem.add(item);
+
+                var objDetForm = item.down("baseform[funCode=" + detCode + "]");
+                var formDeptObj = objDetForm.getForm();
+
+                self.setFormValue(formDeptObj, insertObj);
+
+            }, 30);
+
+        }
+
+        tabPanel.setActiveTab(tabItem);
+
+
+        //执行回调函数
+        if (btn.callback) {
+            btn.callback();
+        }
+
+    },
+
 
 	//锁定或解锁菜单
 	doLockOrUnlock: function(btn, cmd) {

@@ -20,12 +20,12 @@ Ext.define("core.systemset.dictionary.view.itemGrid", {
 	tbar: [{
 		xtype: 'button',
 		text: '添加',
-		ref: 'gridAdd',
+		ref: 'gridAdd_Tab',
         iconCls: 'x-fa fa-plus-circle',
 	}, {
 		xtype: 'button',
 		text: '编辑',
-		ref: 'gridEdit',
+		ref: 'gridEdit_Tab',
         iconCls: 'x-fa fa-pencil-square',
 		disabled: true
 	}, {
@@ -33,12 +33,7 @@ Ext.define("core.systemset.dictionary.view.itemGrid", {
 		text: '删除',
 		ref: 'gridDelete',
         iconCls: 'x-fa fa-minus-circle',
-	}/*,, {
-		xtype: 'button',
-		text: '启用',
-		ref: 'gridRestore',
-		iconCls: 'table_unlock'
-	}*/],
+	}],
 	panelTopBar:false,
 	panelButtomBar:false,
     columns:  { 
@@ -54,13 +49,12 @@ Ext.define("core.systemset.dictionary.view.itemGrid", {
 		}, {
 			text: "字典项名称",
 			dataIndex: "itemName",
-			//flex:1
-			width:130
+			flex:1,
+			minWidth:130
 		}, {
 			text: "字典项编码",
 			dataIndex: "itemCode",
-			//flex:1
-			width:130
+			flex:1
 		}]
 	}
 });

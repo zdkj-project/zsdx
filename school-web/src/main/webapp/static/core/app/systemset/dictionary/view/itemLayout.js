@@ -12,6 +12,9 @@ Ext.define("core.systemset.dictionary.view.itemLayout", {
 			orderIndex: 1
 		}
 	},
+	/*设置最小宽度，并且自动滚动*/
+    minWidth:1200,
+    scrollable:true,
 	items: [{
 		xtype: "dic.itemform"
 	}]

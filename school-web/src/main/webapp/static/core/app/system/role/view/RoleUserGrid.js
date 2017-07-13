@@ -2,17 +2,17 @@ Ext.define("core.system.role.view.RoleUserGrid", {
 	extend: "core.base.view.BaseGrid",
 	alias: "widget.role.roleusergrid",
 	dataUrl: comm.get('baseUrl') + "/teacher/roleteacherlist",
+//	dataUrl: comm.get('baseUrl') + "/sysuser/list",
 	model: factory.ModelFactory.getModelByName("com.zd.school.plartform.system.model.SysUser", "checked").modelName,
-	al: false,
     selModel:null,	
 	noPagging: true,
 	extParams: {
 		whereSql: "",
 		orderSql: ""
 	},
-	tbar: null,
+	tbar: [],
 	panelTopBar:null,
-	panelBottomBar:null,
+	panelBottomBar:false,
 
 	columns: {        
         defaults:{

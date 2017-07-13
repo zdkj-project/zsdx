@@ -27,10 +27,17 @@ Ext.define("core.systemset.dictionary.view.MainLayout", {
 			orderIndex: 1,
 			dicType:"LIST"
 		},
-		width:500,
-		height:400
-	},
-	layout: 'border',
+		tabConfig:{         //zzk：2017-6-1加入，用于对tab操作提供基本配置数据
+        	addTitle:'添加字典',
+        	editTitle:'编辑字典',
+        	detailTitle:'字典详细',
+        }
+    },    
+    layout: 'border',
+    
+    /*设置最小宽度，并且自动滚动*/
+    minWidth:1200,
+    scrollable:true,
 	//bodyPadding: 2,
 	items: [{
 		xtype: "dic.dicgrid",

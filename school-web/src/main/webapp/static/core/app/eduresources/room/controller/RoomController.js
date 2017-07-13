@@ -1,5 +1,6 @@
 Ext.define("core.eduresources.room.controller.RoomController", {
     extend: "Ext.app.ViewController",
+    alias: 'controller.room.roomController',
     mixins: {
         suppleUtil: "core.util.SuppleUtil",
         messageUtil: "core.util.MessageUtil",
@@ -7,108 +8,19 @@ Ext.define("core.eduresources.room.controller.RoomController", {
         treeUtil: "core.util.TreeUtil",
         gridActionUtil: "core.util.GridActionUtil"
     },
-
-    alias: 'controller.room.roomController',
-
-    /*    views: ["core.eduresources.room.view.MainLayout",
-     "core.eduresources.room.view.areaGrid",
-     "core.eduresources.room.view.areaDetailLayout",
-     "core.eduresources.room.view.areaForm",
-     "core.eduresources.room.view.RoomLayout",
-     "core.eduresources.room.view.RoomGrid",
-     "core.eduresources.room.view.RoomForm",
-     "core.eduresources.room.view.BatchRoomForm",
-     ],*/
+    
     init: function () {
         var self = this
         // 事件注册
         this.control({
-            //批量添加房间
-            "panel[xtype=room.RoomGrid] button[ref=roomAdd]": {
-                beforeclick: function (btn) {
-                    // 得到组件
-                    var baseGrid = btn.up("basegrid");
-                    var tree = baseGrid.up("panel[xtype=room.mainlayout]").down("panel[xtype=room.areagrid]");
-                    var selectObject = tree.getSelectionModel().getSelection()[0];
-                    var areaId = "";
-                    var level = "";
-                    var areaName = ""
-
-                    var funCode = baseGrid.funCode;
-                    var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
-                    var otherController = basePanel.otherController;
-                    if (!otherController)
-                        otherController = '';
-
-                    if (selectObject == null) {
-                        self.Warning("请选择楼层!");
-                        return false;
-                    } else {
-                        areaId = selectObject.get("id");
-                        level = selectObject.get("level");
-                        areaName = selectObject.get("text");
-                    }
-                    if (level != 3) {
-                        self.Warning("只能选择楼层添加!");
-                        return false;
-                    }
-                    var win = Ext.create('Ext.Window', {
-                        title: "批量添加房间",
-                        controller: otherController,
-                        baseGrid: baseGrid,
-                        iconCls: 'x-fa fa-plus-circle',
-                        resizable: false,
-                        modal: true,
-                        width: 400,
-                        height: 400,
-                        iconCls: 'x-fa fa-plus-circle',
-                        items: [{
-                            xtype: "room.BatchRoomForm"
-                        }]
-                    });
-                    win.show();
-                    var detailPanel = win.down("panel");
-                    //var objDetForm = detailPanel.down("form");
-                    var gerForm = detailPanel.getForm();
-                    //表单赋值
-                    // self.setFormValue(formDeptObj, insertObj);
-
-                    // var dicForm = Ext.getCmp("room.BatchRoomForm"); // 这是手动的获取上级部门的ID
-                    //  var gerForm = dicForm.getForm();
-                    gerForm.findField('areaId').setValue(areaId);
-                    gerForm.findField('areaName').setValue(areaName);
+        	
+        	"basegrid[xtype=room.RoomGrid] button[ref=roomAdd_Tab]": {
+                beforeclick: function(btn) {
+                    this.dobatch_Tab(btn,"add");
                     return false;
                 }
             },
-            //批量添加保存
-            "panel[xtype=room.BatchRoomForm] button[ref=formSave]": {
-                beforeclick: function (btn) {
-                    var baseGrid = btn.up('window').baseGrid;
-                    var dicForm = btn.up("panel[xtype=room.BatchRoomForm]").getForm();
-                    var params = self.getFormValue(dicForm);
-                    var resObj = null;
-                    if (dicForm.isValid()) {
-                        resObj = self.ajax({
-                            url: comm.get('baseUrl') + "/BuildRoominfo/batChdoAdd",
-                            params: params
-                        });
-                        if (resObj.success) {
-                            self.msgbox('成功');
-                            baseGrid.getStore().load();
-                        } else {
-                            self.msgbox(resObj.obj);
-                        }
-                    }
-                    return false;
-                }
-            },
-            //批量添加关闭
-            "panel[xtype=room.BatchRoomForm] button[ref=formClose]": {
-                beforeclick: function (btn) {
-                    btn.up('window').close();
-                    return false;
-                }
-            },
+            
             //区域列表点击事件
             "panel[xtype=room.areagrid]": {
                 itemclick: function (tree, record, item, index, e, eOpts) {
@@ -239,22 +151,329 @@ Ext.define("core.eduresources.room.controller.RoomController", {
                     }
                 }
             },
-            //房间修改按钮事件
-            "panel[xtype=room.RoomGrid] button[ref=gridEdit]": {
-                beforeclick: function (btn) {
-                    self.doRoomDetail(btn, "edit");
+            "basegrid[xtype=room.RoomGrid] button[ref=gridAdd_Tab]": {
+                beforeclick: function(btn) {
+                    this.doDetail_Tab(btn,"add");
                     return false;
                 }
             },
-            //房间添加按钮事件
-            "panel[xtype=room.RoomGrid] button[ref=gridAdd]": {
-                beforeclick: function (btn) {
-                    self.doRoomDetail(btn, "add");
+
+            "basegrid[xtype=room.RoomGrid] button[ref=gridEdit_Tab]": {
+                beforeclick: function(btn) {
+                    this.doDetail_Tab(btn,"edit");
                     return false;
                 }
             },
         });
     },
+    
+    doDetail_Tab:function(btn, cmd, grid, record) {
+        var self = this;
+        var baseGrid;
+        var recordData;
+
+        //根据点击的地方是按钮或者操作列，处理一些基本数据
+        if (btn) {
+            baseGrid = btn.up("basegrid");
+        } else {
+            baseGrid = grid;
+            recordData = record.data;
+        }
+
+        //得到组件
+        var funCode = baseGrid.funCode; //jobinfo_main
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode +"]");
+        var tabPanel=baseGrid.up("tabpanel[xtype=app-main]");   //获取整个tabpanel
+
+        //得到配置信息
+        var funData = basePanel.funData;
+        var detCode =  basePanel.detCode;  
+        var detLayout = basePanel.detLayout;
+        var defaultObj = funData.defaultObj;
+                
+        //关键：打开新的tab视图界面的控制器
+        var otherController = basePanel.otherController;
+        if (!otherController)
+            otherController = '';
+        
+        var areaId = funData.areaId;
+        var areaType = funData.areaType;
+        var areaName = funData.areaName;
+        if (areaType != "04") {
+            self.Warning("请选择楼层!");
+            return false;
+        }
+        detCode = "room_roomdetail";
+        //处理特殊默认值
+        var insertObj = self.getDefaultValue(defaultObj);
+        insertObj = Ext.apply(insertObj, {
+            areaId: areaId,
+            areaName: areaName
+        });
+        var popFunData = Ext.apply(funData, {
+            grid: baseGrid,
+            filter: "[{'type':'string','comparison':'=','value':'" + areaId + "','field':'areaId'}]"
+        });
+
+        //本方法只提供班级详情页使用
+        var tabTitle = funData.tabConfig.addTitle;
+        //设置tab页的itemId
+        var tabItemId=funCode+"_gridAdd";     //命名规则：funCode+'_ref名称',确保不重复
+        var pkValue= null;
+        var operType = cmd;    // 只显示关闭按钮
+        switch (cmd) {
+            case "edit":
+                if (btn) {
+                    var rescords = baseGrid.getSelectionModel().getSelection();
+                    if (rescords.length != 1) {
+                        self.msgbox("请选择一条数据！");
+                        return;
+                    }
+                    recordData = rescords[0].data;
+                }
+                //获取主键值
+                var pkName = funData.pkName;
+                pkValue= recordData[pkName];
+
+                insertObj = recordData;
+                tabTitle = funData.tabConfig.editTitle;
+                tabItemId=funCode+"_gridEdit"; 
+                break;
+            case "detail":                
+                if (btn) {
+                    var rescords = baseGrid.getSelectionModel().getSelection();
+                    if (rescords.length != 1) {
+                        self.msgbox("请选择一条数据！");
+                        return;
+                    }
+                    recordData = rescords[0].data;
+                }
+                //获取主键值
+                var pkName = funData.pkName;
+                pkValue= recordData[pkName];
+                insertObj = recordData;
+                tabTitle =  funData.tabConfig.detailTitle;
+                tabItemId=funCode+"_gridDetail"+pkValue; 
+                break;
+        }
+
+        //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
+        var tabItem=tabPanel.getComponent(tabItemId);
+        if(!tabItem){
+            
+            //创建一个新的TAB
+            tabItem=Ext.create({
+                xtype:'container',
+                title: tabTitle,
+                //iconCls: 'x-fa fa-clipboard',
+                scrollable :true, 
+                itemId:tabItemId,
+                itemPKV:pkValue,      //保存主键值
+                layout:'fit', 
+            });
+            tabPanel.add(tabItem); 
+
+            //延迟放入到tab中
+            setTimeout(function(){
+                //创建组件
+                var item=Ext.widget("baseformtab",{
+                    operType:operType,                            
+                    controller:otherController,         //指定重写事件的控制器
+                    funCode:funCode,                    //指定mainLayout的funcode
+                    detCode:detCode,                    //指定detailLayout的funcode
+                    tabItemId:tabItemId,                //指定tab页的itemId
+                    insertObj:insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                    funData: popFunData,                //保存funData数据，提供给提交事件中使用
+                    items:[{
+                        xtype:detLayout,                        
+                        funCode: detCode             
+                    }]
+                }); 
+                tabItem.add(item);  
+
+                //将数据显示到表单中（或者通过请求ajax后台数据之后，再对应的处理相应的数据，显示到界面中）             
+                var objDetForm = item.down("baseform[funCode=" + detCode + "]");
+                var formDeptObj = objDetForm.getForm();
+                self.setFormValue(formDeptObj, insertObj);
+
+                if(cmd=="detail"){
+                    self.setFuncReadOnly(funData, objDetForm, true);
+                }
+
+            },30);
+                           
+        }else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据
+            self.Warning("您当前已经打开了一个编辑窗口了！");
+            return;
+        }
+
+        tabPanel.setActiveTab( tabItem);        
+    },
+    
+    dobatch_Tab:function(btn, cmd, grid, record) {
+        var self = this;
+        var baseGrid;
+        var recordData;
+
+        //根据点击的地方是按钮或者操作列，处理一些基本数据
+        if (btn) {
+        	baseGrid = btn.up("basegrid");
+        	var tree = baseGrid.up("panel[xtype=room.mainlayout]").down("panel[xtype=room.areagrid]");
+            var selectObject = tree.getSelectionModel().getSelection()[0];
+            var areaId = "";
+            var level = "";
+            var areaName = ""
+        } else {
+            baseGrid = grid;
+            recordData = record.data;
+        }
+        if (selectObject == null) {
+            self.Warning("请选择楼层!");
+            return false;
+        } else {
+            areaId = selectObject.get("id");
+            level = selectObject.get("level");
+            areaName = selectObject.get("text");
+        }
+        if (level != 3) {
+            self.Warning("只能选择楼层添加!");
+            return false;
+        }
+        //得到组件
+        var funCode = baseGrid.funCode; //jobinfo_main
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode +"]");
+        var tabPanel=baseGrid.up("tabpanel[xtype=app-main]");   //获取整个tabpanel
+
+        //得到配置信息
+        var funData = basePanel.funData;
+        var detCode =  'room_batchroomdetail';  
+        var detLayout = basePanel.detLayout;
+        var defaultObj = funData.defaultObj;
+                
+        //关键：打开新的tab视图界面的控制器
+        var otherController = basePanel.otherController;
+        if (!otherController)
+            otherController = '';
+        
+        var areaId = funData.areaId;
+        var areaType = funData.areaType;
+        var areaName = funData.areaName;
+        if (areaType != "04") {
+            self.Warning("请选择楼层!");
+            return false;
+        }
+        //处理特殊默认值
+        var insertObj = self.getDefaultValue(defaultObj);
+        insertObj = Ext.apply(insertObj, {
+            areaId: areaId,
+            areaName: areaName
+        });
+        var popFunData = Ext.apply(funData, {
+            grid: baseGrid,
+            filter: "[{'type':'string','comparison':'=','value':'" + areaId + "','field':'areaId'}]"
+        });
+
+        //本方法只提供班级详情页使用
+        var tabTitle = funData.tabConfig.batchaddTitle;
+        //设置tab页的itemId
+        var tabItemId=funCode+"_gridbatchAdd";     //命名规则：funCode+'_ref名称',确保不重复
+        var pkValue= null;
+        var operType = cmd;    // 只显示关闭按钮
+        switch (cmd) {
+            case "edit":
+                if (btn) {
+                    var rescords = baseGrid.getSelectionModel().getSelection();
+                    if (rescords.length != 1) {
+                        self.msgbox("请选择一条数据！");
+                        return;
+                    }
+                    recordData = rescords[0].data;
+                }
+                //获取主键值
+                var pkName = funData.pkName;
+                pkValue= recordData[pkName];
+
+                insertObj = recordData;
+                tabTitle = funData.tabConfig.editTitle;
+                tabItemId=funCode+"_gridEdit"; 
+                break;
+            case "detail":                
+                if (btn) {
+                    var rescords = baseGrid.getSelectionModel().getSelection();
+                    if (rescords.length != 1) {
+                        self.msgbox("请选择一条数据！");
+                        return;
+                    }
+                    recordData = rescords[0].data;
+                }
+                //获取主键值
+                var pkName = funData.pkName;
+                pkValue= recordData[pkName];
+                insertObj = recordData;
+                tabTitle =  funData.tabConfig.batchaddTitle;
+                tabItemId=funCode+"_gridDetail"+pkValue; 
+                break;
+        }
+
+        //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
+        var tabItem=tabPanel.getComponent(tabItemId);
+        if(!tabItem){
+            
+            //创建一个新的TAB
+            tabItem=Ext.create({
+                xtype:'container',
+                title: tabTitle,
+                //iconCls: 'x-fa fa-clipboard',
+                scrollable :true, 
+                itemId:tabItemId,
+                itemPKV:pkValue,      //保存主键值
+                layout:'fit', 
+            });
+            tabPanel.add(tabItem); 
+
+            //延迟放入到tab中
+            setTimeout(function(){
+                //创建组件
+                var item=Ext.widget("baseformtab",{
+                    operType:operType,                            
+                    controller:otherController,         //指定重写事件的控制器
+                    funCode:funCode,                    //指定mainLayout的funcode
+                    detCode:detCode,                    //指定detailLayout的funcode
+                    tabItemId:tabItemId,                //指定tab页的itemId
+                    insertObj:insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                    funData: popFunData,                //保存funData数据，提供给提交事件中使用
+                    items:[{
+                        xtype:detLayout,                        
+                        funCode: detCode,
+                        items: [{
+                            xtype: "room.BatchRoomForm",
+                            funCode: detCode                  
+                        }]
+                    }]
+                }); 
+                tabItem.add(item);  
+
+                //将数据显示到表单中（或者通过请求ajax后台数据之后，再对应的处理相应的数据，显示到界面中）             
+                var objDetForm = item.down("baseform[funCode=" + detCode + "]");
+                var formDeptObj = objDetForm.getForm();
+                self.setFormValue(formDeptObj, insertObj);
+
+                if(cmd=="detail"){
+                    self.setFuncReadOnly(funData, objDetForm, true);
+                }
+
+            },30);
+                           
+        }else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据
+            self.Warning("您当前已经打开了一个编辑窗口了！");
+            return;
+        }
+
+        tabPanel.setActiveTab( tabItem);        
+    },
+
+    
+    
     //增加修改区域
     doDetail: function (btn, cmd) {
         //debugger;
@@ -380,81 +599,4 @@ Ext.define("core.eduresources.room.controller.RoomController", {
         //表单赋值
         self.setFormValue(formDeptObj, insertObj);
     },
-    //增加或修改房间
-    doRoomDetail: function (btn, cmd) {
-        //debugger;
-        var self = this;
-        //当前的grid
-        var baseGrid = btn.up("basegrid");
-        var funCode = baseGrid.funCode;
-        var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
-        var funData = basePanel.funData;
-        var areaId = funData.areaId;
-        var areaType = funData.areaType;
-        var areaName = funData.areaName;
-        if (areaType != "04") {
-            self.Warning("请选择楼层!");
-            return false;
-        }
-        detCode = "room_roomdetail";
-        //处理特殊默认值
-        var defaultObj = funData.defaultObj;
-        var insertObj = self.getDefaultValue(defaultObj);
-        insertObj = Ext.apply(insertObj, {
-            areaId: areaId,
-            areaName: areaName
-        });
-        var popFunData = Ext.apply(funData, {
-            grid: baseGrid,
-            filter: "[{'type':'string','comparison':'=','value':'" + areaId + "','field':'areaId'}]"
-        });
-        var iconCls = "x-fa fa-plus-circle";
-        if (cmd == "edit" || cmd == "detail") {
-            if (cmd == "edit") iconCls = "x-fa fa-pencil-square";
-            else iconCls = "x-fa fa-pencil-square";
-            var rescords = baseGrid.getSelectionModel().getSelection();
-            if (rescords.length != 1) {
-                self.msgbox("请选择数据");
-                return;
-            }
-            insertObj = rescords[0].data;
-            insertObj = Ext.apply(insertObj, {
-                areaId: areaId,
-                areaName: areaName
-            });
-        }
-        var winId = detCode + "_win";
-        var win = Ext.getCmp(winId);
-        if (!win) {
-            win = Ext.create('core.base.view.BaseFormWin', {
-                id: winId,
-                width: 400,
-                height: 500,
-                resizable: false,
-                iconCls: iconCls,
-                operType: cmd,
-                funData: popFunData,
-                funCode: detCode,
-                //给form赋初始值
-                insertObj: insertObj,
-                items: [{
-                    xtype: "room.roomdetaillayout"
-                }]
-            });
-        }
-        win.show();
-        var detailPanel = win.down("basepanel[funCode=" + detCode + "]");
-        var objDetForm = detailPanel.down("baseform[funCode=" + detCode + "]");
-        var formDeptObj = objDetForm.getForm();
-        //表单赋值
-        self.setFormValue(formDeptObj, insertObj);
-        //根据操作设置是否只读
-        if (cmd == "detail") {
-            self.setFuncReadOnly(funData, objDetForm, true);
-        }
-        //执行回调函数
-        if (btn.callback) {
-            btn.callback();
-        }
-    }
 });
