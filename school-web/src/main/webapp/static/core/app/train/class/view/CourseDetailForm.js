@@ -54,6 +54,17 @@ Ext.define("core.train.class.view.CourseDetailForm", {
             //format: "Y年m月d日 H:i",   //显示的格式
             //submitFormat:'Y-m-d H:i',   //真正提交的格式
             columnWidth: 0.5
+        },{
+            beforeLabelTextTpl: comm.get('required'),
+            allowBlank: false,
+            fieldLabel: "课程学分",                  
+            name: "credits",
+            xtype: "numberfield",        
+            minValue: 0,
+            maxValue:999, 
+            emptyText: "请输入课程学分",     
+            value:4,
+            columnWidth: 0.5
         }]
     },{
         xtype: "container",

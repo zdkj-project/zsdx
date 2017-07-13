@@ -29,11 +29,11 @@ Ext.define("core.system.user.view.selectUserLayout", {
 	        //width: 800,
 	        region: "west",
 	        width: comm.get("clientWidth") * 0.35,
-	        //margin:'5',
+	        margin:'5',
 		
 	}, {
 		xtype: "selectsysuser.isselectusergrid",
         region: "center",
-        //margin:'5',
+        margin:'5',
 	}]
 })

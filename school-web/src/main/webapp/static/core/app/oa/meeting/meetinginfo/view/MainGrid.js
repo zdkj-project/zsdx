@@ -179,7 +179,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
                 ref: 'gridEdit',
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('editClick', {
+                    this.fireEvent('editClick_Tab', {
                         view: view.grid,
                         record: rec
                     });
@@ -192,7 +192,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
                 ref: 'gridDetail',
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('detailClick', {
+                    this.fireEvent('detailClick_Tab', {
                         view: view.grid,
                         record: rec
                     });

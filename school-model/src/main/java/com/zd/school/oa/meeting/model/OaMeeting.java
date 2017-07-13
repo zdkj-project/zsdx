@@ -155,7 +155,7 @@ public class OaMeeting extends BaseEntity implements Serializable{
 
 	@FieldInfo(name = "会议状态0：未开始 1:进行中 2:已完成")
     @Column(name = "MEETING_STATE", length = 5, nullable = true)
-    private Short meetingState;
+    private Short meetingState=0;	//默认为0
     public void setMeetingState(Short meetingState) {
         this.meetingState = meetingState;
     }

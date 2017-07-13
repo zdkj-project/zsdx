@@ -81,7 +81,7 @@ Ext.define("core.train.class.view.ClassCourseGrid", {
             dataIndex: "className",
         },*/{
             flex: 1,
-            minWidth:150,
+            minWidth:100,
             text: "课程名称",
             dataIndex: "courseName"
         }, {
@@ -124,7 +124,7 @@ Ext.define("core.train.class.view.ClassCourseGrid", {
             ddCode: "COURSEMODE" //字典代码  
         },*/{
             flex: 1,
-            minWidth:150,
+            minWidth:100,
             text: "授课地点",
             dataIndex: "scheduleAddress",
             renderer: function(value, metaData) {
@@ -144,13 +144,17 @@ Ext.define("core.train.class.view.ClassCourseGrid", {
             }
         },{
             width:80,
+            text: "课程学分",
+            dataIndex: "credits"
+        },{
+            width:80,
             text: "课程状态",
             dataIndex: "isDelete",
             renderer: function(value, metaData) {
                 if(value==0)
                     return "<span style='color:green'>正常</span>";
                 else if(value==1)
-                    return "<span style='color:red'>取消</span>";
+                    return "<span style='color:red'>删除</span>";
                 else if(value==2)
                     return "<span style='color:#FFAC00'>新增</span>";            
             }

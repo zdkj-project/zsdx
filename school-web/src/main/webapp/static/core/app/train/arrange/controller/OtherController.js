@@ -25,7 +25,7 @@ Ext.define("core.train.arrange.controller.OtherController", {
 
                 var baseGrid = btn.up("grid[ref=arrangeRoomGrid]");
                 var basePanel = baseGrid.up("basepanel[xtype=arrange.detaillayout]");
-                var baseWin=basePanel.up("window[funCode=arrange_roomDetail]");
+                var baseTab= basePanel.up("baseformtab[detCode=arrange_roomDetail]");
 
                 var records = baseGrid.getSelectionModel().getSelection();
                 if (records.length == 0) {
@@ -57,7 +57,7 @@ Ext.define("core.train.arrange.controller.OtherController", {
                                     self.asyncAjax({
                                         url: comm.get("baseUrl")  + "/TrainClasstrainee/getClassRoomTrainees",
                                         params: {
-                                            classId: baseWin.insertObj.uuid,
+                                            classId: baseTab.insertObj.uuid,
                                             page:1,
                                             start:0,
                                             limit:-1    //-1表示不分页
@@ -117,7 +117,10 @@ Ext.define("core.train.arrange.controller.OtherController", {
                 var pkName = funData.pkName;
             
                 var roomId=records[0].get(pkName);
+                var areaUpName=records[0].get("areaUpName");
+                var areaName=records[0].get("areaName");
                 var roomName=records[0].get("roomName");
+                           
                 var classTraineIds=win.insertObj.ids;
                 var xbm=win.insertObj.xbm;
         
@@ -126,7 +129,7 @@ Ext.define("core.train.arrange.controller.OtherController", {
                     url: comm.get("baseUrl")  + "/TrainClasstrainee/updateRoomInfo",
                     params: {
                         roomId: roomId,
-                        roomName:roomName,
+                        roomName: areaUpName+"-"+areaName+"-"+roomName,
                         ids:classTraineIds.join(","),
                         xbm:xbm
                     },
@@ -343,6 +346,8 @@ Ext.define("core.train.arrange.controller.OtherController", {
                 var pkName = funData.pkName;
             
                 var roomId=records[0].get(pkName);
+                var areaUpName=records[0].get("areaUpName");
+                var areaName=records[0].get("areaName");
                 var roomName=records[0].get("roomName");
                 var classCourseIds=win.insertObj.ids;              
         
@@ -351,7 +356,7 @@ Ext.define("core.train.arrange.controller.OtherController", {
                     url: comm.get("baseUrl")  + "/TrainClassschedule/updateRoomInfo",
                     params: {
                         roomId: roomId,
-                        roomName:roomName,
+                        roomName:areaUpName+"-"+areaName+"-"+roomName,
                         ids:classCourseIds.join(",")                        
                     },
                     //回调代码必须写在里面

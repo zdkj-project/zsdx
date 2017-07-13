@@ -81,7 +81,7 @@
             if (me.UEditorIsReady) {
                 me.ue.sync(me.getInputId());
             }
-            v = (me.inputEl ? me.inputEl.getValue() : Ext.valueFrom(me.rawValue, ''));
+            v = (me.inputEl ?me.inputEl.dom?me.inputEl.getValue() : Ext.valueFrom(me.rawValue, '') : Ext.valueFrom(me.rawValue, ''));
             me.rawValue = v;
             return v;
         },

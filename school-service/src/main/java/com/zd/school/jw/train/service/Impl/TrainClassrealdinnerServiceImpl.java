@@ -135,7 +135,7 @@ public class TrainClassrealdinnerServiceImpl extends BaseServiceImpl<TrainClassr
 		// TODO Auto-generated method stub
 		//只生成一次，后期也不会删除和重新生成。
 		String hql="SELECT COUNT(*) FROM TrainClassrealdinner where isDelete=0 and classId=?";
-		Integer count=this.getForValue(hql, trainClass.getUuid());
+		Long count=this.getForValue(hql, trainClass.getUuid());
 		if(count==0){
 			Calendar calendar=Calendar.getInstance();
 			Date beginDate=trainClass.getBeginDate();	

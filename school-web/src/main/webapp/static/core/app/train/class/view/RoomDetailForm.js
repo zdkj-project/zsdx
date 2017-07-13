@@ -114,7 +114,7 @@ Ext.define("core.train.class.view.RoomDetailForm", {
                         if(value==0)
                             return "<span style='color:green'>正常</span>";
                         else if(value==1)
-                            return "<span style='color:red'>取消</span>";
+                            return "<span style='color:red'>删除</span>";
                         else if(value==2)
                             return "<span style='color:#FFAC00'>新增</span>";            
                     }

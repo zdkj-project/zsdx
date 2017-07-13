@@ -85,7 +85,7 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 		// 先拿到已持久化的实体
 		OaMeeting saveEntity = this.get(entity.getUuid());
 		try {
-			BeanUtils.copyProperties(saveEntity, entity);
+			BeanUtils.copyPropertiesExceptNull(saveEntity, entity);
 			saveEntity.setUpdateTime(new Date()); // 设置修改时间
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 			entity = this.merge(saveEntity);// 执行修改方法

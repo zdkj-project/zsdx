@@ -45,7 +45,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 
 	@Resource
 	private TrainClassService trainClassService;
-	
+
 	@Resource
 	private BaseDicitemService dicitemService;
 
@@ -71,8 +71,8 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 	}
 
 	/**
-	 * 根据主键逻辑删除数据
-	 * New:删除后，更新班级的isuse值
+	 * 根据主键逻辑删除数据 New:删除后，更新班级的isuse值
+	 * 
 	 * @param ids
 	 *            要删除数据的主键
 	 * @param currentUser
@@ -80,7 +80,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 	 * @return 操作成功返回true，否则返回false
 	 */
 	@Override
-	public Boolean doLogicDeleteByIds(String classId,String ids, SysUser currentUser) {
+	public Boolean doLogicDeleteByIds(String classId, String ids, SysUser currentUser) {
 		Boolean delResult = false;
 		try {
 			Object[] conditionValue = ids.split(",");
@@ -88,16 +88,16 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 			Object[] propertyValue = { 1, currentUser.getXm(), new Date() };
 			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
 			delResult = true;
-			
-			//设置班级的状态
+
+			// 设置班级的状态
 			TrainClass trainClass = trainClassService.get(classId);
-			Integer isuse=trainClass.getIsuse();
-			if(isuse!=null&&isuse!=0){	//当班级已经提交过一次之后，每次修改都设置为2
+			Integer isuse = trainClass.getIsuse();
+			if (isuse != null && isuse != 0) { // 当班级已经提交过一次之后，每次修改都设置为2
 				trainClass.setIsuse(2);
 				trainClass.setUpdateTime(new Date()); // 设置修改时间
 				trainClass.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 				trainClassService.update(trainClass);
-			}	
+			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			delResult = false;
@@ -144,31 +144,38 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 	 * @return
 	 */
 	@Override
-	public TrainClassschedule doAddEntity(TrainClassschedule entity, String teachType,SysUser currentUser) {
-		TrainClassschedule saveEntity = new TrainClassschedule();
+	public TrainClassschedule doAddEntity(TrainClassschedule entity, String teachType, SysUser currentUser) {
+		TrainClassschedule saveEntity = null;
 		try {
+			// 查询此班级是否已经存在此课程,若存在则取出来进行数据更新操作 //只要存在即可，isdelete为1的会被转为2
+			saveEntity = this.getByProerties(new String[] { "courseName", "mainTeacherName", "classId" },
+					new Object[] { entity.getCourseName(), entity.getMainTeacherName(), entity.getClassId()});
+			//若不为null，则使用此班级课程的id
+			if (saveEntity == null)	
+				saveEntity=new TrainClassschedule();
+			
 			List<String> excludedProp = new ArrayList<>();
 			excludedProp.add("uuid");
 			BeanUtils.copyProperties(saveEntity, entity, excludedProp);
 			saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
-			
-			//设置班级的状态
+
+			// 设置班级的状态
 			TrainClass trainClass = trainClassService.get(entity.getClassId());
-			Integer isuse=trainClass.getIsuse();
-			if(isuse!=null&&isuse!=0){	//当班级已经提交过一次之后，每次修改都设置为2
-				saveEntity.setIsDelete(2);	
-				
+			Integer isuse = trainClass.getIsuse();
+			if (isuse != null && isuse != 0) { // 当班级已经提交过一次之后，每次修改都设置为2
+				saveEntity.setIsDelete(2);
+
 				trainClass.setIsuse(2);
 				trainClass.setUpdateTime(new Date()); // 设置修改时间
 				trainClass.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 				trainClassService.update(trainClass);
-			}			
+			}
 			
+				
 			// 查询课程表中是否存在 课程名、教师名一致的课程
 			TrainCourseinfo trainCourseInfo = trainCourseinfoService.getByProerties(
 					new String[] { "courseName", "mainTeacherId", "isDelete" },
 					new Object[] { saveEntity.getCourseName(), saveEntity.getMainTeacherId(), 0 });
-			
 
 			// 如果存在，把课程id和教师id直接存放到当前班级课程中
 			// 否则，创建新的课程，并查找教师id
@@ -176,18 +183,19 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 				// 查询未分类的id
 				String hql = "select uuid from TrainCoursecategory a where a.isDelete=? and a.nodeText=?";
 				String categoryId = coursecategoryService.getForValue(hql, 0, "未分类");
-			
+
 				// 否则存入到课程库
 				trainCourseInfo = new TrainCourseinfo();
 				trainCourseInfo.setCategoryId(categoryId);
-				trainCourseInfo.setTeachType(teachType);		//当课程不存在，并创建的时候，才会设置教学形式
+				trainCourseInfo.setTeachType(teachType); // 当课程不存在，并创建的时候，才会设置教学形式
 				trainCourseInfo.setCourseName(entity.getCourseName());
 				trainCourseInfo.setMainTeacherId(entity.getMainTeacherId());
 				trainCourseInfo.setMainTeacherName(entity.getMainTeacherName());
-			
+				trainCourseInfo.setCredits(entity.getCredits());
+
 				trainCourseinfoService.merge(trainCourseInfo);
 			}
-			
+
 			saveEntity.setCourseId(trainCourseInfo.getUuid());
 			entity = this.merge(saveEntity);// 执行修改方法
 
@@ -269,15 +277,15 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 		String categoryId = coursecategoryService.getForValue(hql, 0, "未分类");
 
 		/**
-		 * 格式 第一行为列头【日期 开始时间 结束时间 教学形式 课程名称 主讲老师 是否评价 授课模式】 第二行开始为数据 【2017年6月13日
-		 * 10:00 12:00 专题讲座 学习贯彻习近平总书记对广东工作重要批示精神 刘忠友 是 否】
+		 * 格式 第一行为列头【日期 开始时间 结束时间 教学形式 课程名称 主讲老师 是否评价 课程学分】 第二行开始为数据 【2017年6月13日
+		 * 10:00 12:00 专题讲座 学习贯彻习近平总书记对广东工作重要批示精神 刘忠友 是 4】
 		 */
-		//设置班级的状态
+		// 设置班级的状态
 		TrainClass trainClass = trainClassService.get(classId);
-		Integer isuse=trainClass.getIsuse();
-		Integer isDelete=0;
-		if(isuse!=null&&isuse!=0){	//当班级已经提交过一次之后，每次修改都设置为2
-			isDelete=2;
+		Integer isuse = trainClass.getIsuse();
+		Integer isDelete = 0;
+		if (isuse != null && isuse != 0) { // 当班级已经提交过一次之后，每次修改都设置为2
+			isDelete = 2;
 			trainClass.setIsuse(2);
 			trainClass.setUpdateTime(new Date()); // 设置修改时间
 			trainClass.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
@@ -285,12 +293,13 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 		String doResult = "";
 		String title = "";
 		String errorLevel = "";
-		boolean isError=false;
+		boolean isError = false;
 		String beginTime = null;
 		String endTime = null;
 		String teacheName = null;
 		String courseName = null;
-		String courseMode = null;
+		// String courseMode = null;
+		String courseCredits = null;
 		TrainCourseinfo trainCourseInfo = null;
 		for (int i = 0; i < importData.size(); i++) {
 
@@ -302,36 +311,43 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 
 				courseName = String.valueOf(lo.get(4));
 				teacheName = String.valueOf(lo.get(5));
-				courseMode = String.valueOf(lo.get(7));
-				
+				courseCredits = String.valueOf(lo.get(7));
+
 				title = courseName;
-				doResult="导入成功";	// 默认是成功
-				isError=false;
-				
-				TrainClassschedule tcs = new TrainClassschedule();
+				doResult = "导入成功"; // 默认是成功
+				isError = false;
+
+				// 查询此班级是否已经存在此课程,若存在则取出来进行数据更新操作 //只要存在即可，isdelete为1的会被转为2
+				TrainClassschedule tcs = this.getByProerties(
+						new String[] { "courseName", "mainTeacherName", "classId" },
+						new Object[] { courseName, teacheName, classId });
+				if (tcs == null)
+					tcs = new TrainClassschedule();
+				// TrainClassschedule tcs = new TrainClassschedule();
 				tcs.setClassId(classId);
 				tcs.setBeginTime(dateTimeSdf.parse(beginTime));
 				tcs.setEndTime(dateTimeSdf.parse(endTime));
 				tcs.setCourseName(courseName);
 				tcs.setMainTeacherName(teacheName);
 				tcs.setIsEval(String.valueOf(lo.get(6)).equals("是") ? 1 : 0);
-				tcs.setIsDelete(isDelete);	//设置isdelete为特定的值。
-				
+				tcs.setIsDelete(isDelete); // 设置isdelete为特定的值。
+				tcs.setCredits(Integer.valueOf(courseCredits));
+
 				// 查询课程表中是否存在 课程名、教师名一致的课程
 				trainCourseInfo = trainCourseinfoService.getByProerties(
-						new String[] { "courseName", "mainTeacherName"/*, "isDelete"*/ },
-						new Object[] { courseName, teacheName/*, 0 */});	//只要存在即可，isdelete为1的会被转为2
-				//hql = "from TrainCourseinfo a where a.isDelete=? and a.courseName=? and a.mainTeacherName=?";
-				//trainCourseInfo = trainCourseinfoService.getForValue(hql, 0, courseName, teacheName);
+						new String[] { "courseName", "mainTeacherName", "isDelete" },
+						new Object[] { courseName, teacheName, 0 });
+						// hql = "from TrainCourseinfo a where a.isDelete=? and
+						// a.courseName=? and a.mainTeacherName=?";
+						// trainCourseInfo =
+						// trainCourseinfoService.getForValue(hql, 0,
+						// courseName, teacheName);
 
 				// 查询是否是团队授课模式 1：单一模式 2：群组模式
 				/*
-				if (courseMode.equals("是")) {
-					tcs.setCourseMode((short) 2);
-				} else {
-					tcs.setCourseMode((short) 1);
-				}
-				*/
+				 * if (courseMode.equals("是")) { tcs.setCourseMode((short) 2); }
+				 * else { tcs.setCourseMode((short) 1); }
+				 */
 
 				// 如果存在，把课程id和教师id直接存放到当前班级课程中
 				// 否则，创建新的课程，并查找教师id
@@ -342,9 +358,10 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 					trainCourseInfo.setTeachType(mapTeachType.get(lo.get(3)));
 					trainCourseInfo.setCourseName(courseName);
 					trainCourseInfo.setMainTeacherName(teacheName);
+					trainCourseInfo.setCredits(tcs.getCredits());
 
 					// 查询是否是团队授课模式 1：单一模式 2：群组模式
-					//if (courseMode.equals("是")) {
+					// if (courseMode.equals("是")) {
 					// 理论上会出现多个老师，所以要拆分，存入老师id
 					String teaStr[] = teacheName.split(",");
 					String teaIds = "";
@@ -353,7 +370,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 						List<TrainTeacher> trainTeachers = teacherService.getForValues(hql, 0, teaStr[j]);
 						if (trainTeachers.size() > 1) {
 							// 若存在多个同名老师，则记录报错信息
-							errorLevel = "错误";								
+							errorLevel = "错误";
 							doResult = "异常信息：系统中存在同名的老师 " + teaStr[j] + "；请在班级课程管理处进行手动添加！";
 							teaIds = null;
 							isError = true;
@@ -370,32 +387,35 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 						trainCourseInfo.setMainTeacherId(teaIds);
 					}
 
-//					} else {
-//						// 理论是单个教师，所以直接查找通过教师名称查找即可
-//						hql = "from TrainTeacher a where a.isDelete=? and a.xm=?";
-//						List<TrainTeacher> trainTeachers = teacherService.getForValues(hql, -1, teacheName);
-//						if (trainTeachers.size() > 1) {
-//							// 若存在多个同名老师，则记录报错信息
-//							errorLevel = "错误";						
-//							doResult = "异常信息：系统中存在同名的老师 " + teacheName + "；请在班级课程管理处进行手动调整！";
-//							isError = true;
-//						} else if (trainTeachers.size() == 1) {
-//							trainCourseInfo.setMainTeacherId(trainTeachers.get(0).getUuid());
-//						}
-//					}
-					
-					if(isError==false)
+					// } else {
+					// // 理论是单个教师，所以直接查找通过教师名称查找即可
+					// hql = "from TrainTeacher a where a.isDelete=? and
+					// a.xm=?";
+					// List<TrainTeacher> trainTeachers =
+					// teacherService.getForValues(hql, -1, teacheName);
+					// if (trainTeachers.size() > 1) {
+					// // 若存在多个同名老师，则记录报错信息
+					// errorLevel = "错误";
+					// doResult = "异常信息：系统中存在同名的老师 " + teacheName +
+					// "；请在班级课程管理处进行手动调整！";
+					// isError = true;
+					// } else if (trainTeachers.size() == 1) {
+					// trainCourseInfo.setMainTeacherId(trainTeachers.get(0).getUuid());
+					// }
+					// }
+
+					if (isError == false)
 						trainCourseinfoService.merge(trainCourseInfo);
 				}
-					
-				//当没发生错误的时候，才会添加入库
-				if(isError==false){
+
+				// 当没发生错误的时候，才会添加入库
+				if (isError == false) {
 					tcs.setCourseId(trainCourseInfo.getUuid());
 					tcs.setMainTeacherId(trainCourseInfo.getMainTeacherId());
-	
+
 					this.merge(tcs);
 				}
-			
+
 			} catch (Exception e) {
 				// return null;
 				errorLevel = "错误";
@@ -415,12 +435,12 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 			}
 
 		}
-		
-		//如果两个容器的大小一样，表明没有导入数据,否则导入了
-		if(importData.size()!=listNotExit.size()){
+
+		// 如果两个容器的大小一样，表明没有导入数据,否则导入了
+		if (importData.size() != listNotExit.size()) {
 			trainClassService.update(trainClass);
 		}
-		
+
 		return listNotExit;
 	}
 
@@ -428,9 +448,9 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 	public CourseEvalApp getCourseEvalStand(String scheduleId) {
 		List<TrainIndicatorStand> evalStand = standService.getCourseEvalStand();
 		String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
-				+ ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId," +
-				" teachTypeName,advise FROM TRAIN_V_CLASSCOURSEEVAL where classScheduleId=''{0}''";
-		sql = MessageFormat.format(sql,scheduleId);
+				+ ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId,"
+				+ " teachTypeName,advise FROM TRAIN_V_CLASSCOURSEEVAL where classScheduleId=''{0}''";
+		sql = MessageFormat.format(sql, scheduleId);
 		CourseEvalApp entity = new CourseEvalApp();
 		List<TrainClassCourseEval> evalCourse = this.doQuerySqlObject(sql, TrainClassCourseEval.class);
 		entity.setSuccess(true);
@@ -440,34 +460,35 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 		return entity;
 	}
 
-    @Override
-    public QueryResult<TrainClassCourseEval> getClassCourseEval(Integer start, Integer limit, String orderSql, String classId) {
-	    //课程名称	课程类型	上课教师	很满意度	满意度	很满意排名
+	@Override
+	public QueryResult<TrainClassCourseEval> getClassCourseEval(Integer start, Integer limit, String orderSql,
+			String classId) {
+		// 课程名称 课程类型 上课教师 很满意度 满意度 很满意排名
 
-        String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
-                + ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId," +
-                " teachTypeName,advise FROM TRAIN_V_CLASSCOURSEEVAL where classId=''{0}''";
-        sql = MessageFormat.format(sql, classId);
-        if (StringUtils.isNotEmpty(orderSql)) {
-            sql += orderSql;
-        }
-       // this.getForValuesToSql()
-        QueryResult<TrainClassCourseEval> list = this.doQueryResultSqlObject(sql, start, limit,
-                TrainClassCourseEval.class);
+		String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
+				+ ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId,"
+				+ " teachTypeName,advise FROM TRAIN_V_CLASSCOURSEEVAL where classId=''{0}''";
+		sql = MessageFormat.format(sql, classId);
+		if (StringUtils.isNotEmpty(orderSql)) {
+			sql += orderSql;
+		}
+		// this.getForValuesToSql()
+		QueryResult<TrainClassCourseEval> list = this.doQueryResultSqlObject(sql, start, limit,
+				TrainClassCourseEval.class);
 
-        return list;
-    }
+		return list;
+	}
 
-    @Override
-    public List<Map<String, Object>> getClassCourseRanking(String orderSql, String classId) {
-        String sql = "SELECT courseName,teachTypeName,teacherName,convert(varchar(10),verySatisfaction) as verySatisfaction"
-                + ",convert(varchar(10),satisfaction) as satisfaction,ranking FROM TRAIN_V_CLASSCOURSEEVAL where classId=''{0}'' ";
-        sql = MessageFormat.format(sql, classId);
-        if (StringUtils.isNotEmpty(orderSql)) {
-            sql += orderSql;
-        }
-        List<Map<String, Object>> list = this.getForValuesToSql(sql);
+	@Override
+	public List<Map<String, Object>> getClassCourseRanking(String orderSql, String classId) {
+		String sql = "SELECT courseName,teachTypeName,teacherName,convert(varchar(10),verySatisfaction) as verySatisfaction"
+				+ ",convert(varchar(10),satisfaction) as satisfaction,ranking FROM TRAIN_V_CLASSCOURSEEVAL where classId=''{0}'' ";
+		sql = MessageFormat.format(sql, classId);
+		if (StringUtils.isNotEmpty(orderSql)) {
+			sql += orderSql;
+		}
+		List<Map<String, Object>> list = this.getForValuesToSql(sql);
 
-        return list;
-    }
+		return list;
+	}
 }

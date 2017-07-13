@@ -1,7 +1,7 @@
-Ext.define("core.system.user.view.isSelectUserGrid", {
+Ext.define("core.oa.meeting.meetinginfo.view.isSelectUserGrid", {
     extend: "core.base.view.BaseGrid",
-    alias: "widget.selectsysuser.isselectusergrid",
-    dataUrl: comm.get('baseUrl') + "/sysuser/list",
+    alias: "widget.meetinginfo.selectsysuser.isselectusergrid",
+    dataUrl: comm.get('baseUrl') + "/sysuser/selectedUserlist",
     model: factory.ModelFactory.getModelByName("com.zd.school.plartform.system.model.SysUser", "checked").modelName,
     al: false,
     //排序字段及模式定义
