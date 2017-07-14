@@ -9,8 +9,9 @@ Ext.define("core.system.ip.view.ipMainLayout", {
         "core.system.ip.view.ipDetailForm"
    
     ],
-    
+    /*关联此视图控制器*/
     controller: 'ip.ipController',
+    /*控制器中获取组件*/
     funCode: "ip_main",
     detCode: 'ip_detail',
     detLayout: 'ip.detaillayout',
@@ -20,8 +21,16 @@ Ext.define("core.system.ip.view.ipMainLayout", {
         orderSql: " order by orderIndex", //表格排序条件
         pkName: "uuid",
         defaultObj: {
-        }
+        },
+        
+        /*7.10 lhy*/
+       tabConfig:{
+        reactTitle:'编辑',
+        deleteTitle:'删除'
+       }
     },
+
+
     items: [{
         xtype: 'basecenterpanel',
         items: [/*{

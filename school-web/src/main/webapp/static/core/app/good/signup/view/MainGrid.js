@@ -67,6 +67,13 @@ Ext.define("core.good.signup.view.MainGrid", {
             dataIndex: "actDate" ,
             renderer:function(v){                    
                 return Ext.Date.format(new Date(v), 'Y-m-d H:i:s');              
+            },{
+                text:'编辑',
+                dataIndex:'redact',
+                width:'150',
+            },{
+                text:'删除',
+                dataIndex:'delete',
             }      
         }],
         defaults:{
@@ -82,4 +89,15 @@ Ext.define("core.good.signup.view.MainGrid", {
         displayInfo: true,       
         emptyMsg: "没有可显示的数据"
     }],
+     /*7.10 lhy*/
+    // ,{
+    //     xtype:'button',
+    //     text:'编辑',
+    //     ref:'gridRedact_Tab'
+    // },{
+    //     xtype:'button',
+    //     text:'删除',
+    //     ref:'gridDelete_Tab'
+    // }
+
 });
