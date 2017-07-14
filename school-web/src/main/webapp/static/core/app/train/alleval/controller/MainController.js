@@ -238,7 +238,7 @@ Ext.define("core.train.alleval.controller.MainController", {
         var detCode = basePanel.detCode;
         var detLayout = basePanel.detLayout;
 
-       
+        
         var operType = cmd;
         var pkValue = null;
 
@@ -252,7 +252,7 @@ Ext.define("core.train.alleval.controller.MainController", {
         var popFunData = Ext.apply(funData, {
             grid: baseGrid
         });
-        console.log(recordData);
+        //console.log(recordData);
         var pkName = "uuid";   //funData.pkName;    //classScheduleId
         pkValue = recordData[pkName];
         var couseName = recordData["className"];

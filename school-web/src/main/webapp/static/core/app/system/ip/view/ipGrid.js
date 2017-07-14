@@ -71,11 +71,49 @@ Ext.define("core.system.ip.view.ipGrid", {
         text: "ip名称",
         dataIndex: "ipName",
         flex:1,
-        width: 350
+        width: 420
     }, {
         text: "ip地址",
         dataIndex: "ipUrl",
         flex:1,
+        width: 420
+    },{
+        xtype:'actiontextcolumn',
+        text:'操作',
+        align:'center',
+        width:200,
+        fixed:true,
+        items:[{
+            text:'编辑',
+            style:'font-size:12px;',
+            tooltip:'编辑',
+            ref:'gridreact',
+            getClass:function(v,metadata,record,rowIndex,colIndex,store){
+                if(record.get("gridreact")==1)
+                    return 'x-hidden-display';
+                 else
+                    return null;       
+            },
+            handler:function(view,rowIndex,colIndex,item){
+                var rec=view.getStore().getAt(rowIndex);
+                this.fireEvent('gridreactClick_Tab',{
+                    view:view.grid,
+                    record:rec
+                    });
+            }
+        },{
+            text:'删除',
+            style:'font-size:12px;',
+            tooltip:'删除',
+            ref:'gridDelete',
+            handler:function(view,rowIndex,colIndex,item){
+                 var rec=view.getStore().getAt(rowIndex);
+                 this.fireEvent('deleteClick',{
+                  view:view.grid,
+                  record:rec
+                 });
+             }
+        }]
     }]
-    }    
+    },   
 });

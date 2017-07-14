@@ -12,6 +12,11 @@ Ext.define("core.system.ip.view.ipDetailLayout",{
 		// 	 signBeing:new Date()
 		// }
 	},
+	minWidth:1200,
+	scrollable:true,
+
+	/*关联此视图控制器*/
+     controller:'ip.ipController',
 	items: [{
 		xtype: "ip.deailform"
 	}]
