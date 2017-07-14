@@ -13,6 +13,11 @@ Ext.define("core.system.role.view.RoleDetailLayout",{
 			orderIndex:'1'
 		}
 	},
+	
+	 /*设置最小宽度，并且自动滚动*/
+    minWidth:1200,
+    scrollable:true,
+    
 	items: [{
 		xtype: "role.deailform"
 	}]

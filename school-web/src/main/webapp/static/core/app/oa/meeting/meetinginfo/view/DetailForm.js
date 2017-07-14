@@ -5,7 +5,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
     layout: "form", //从上往下布局
     autoHeight: true,
     frame: false,
-    //bodyPadding: '0 10 10 0',
+    bodyPadding: '10 25 10 5',
     fieldDefaults: { // 统一设置表单字段默认属性
         labelSeparator: "：", // 分隔符
         msgTarget: "qtip",
@@ -26,12 +26,23 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             allowBlank: false,
             blankText: "会议主题不能为空",
             fieldLabel: "会议主题",
-            columnWidth: 1,
+            columnWidth: 0.49,
             name: "meetingTitle",
             xtype: "textfield",
             emptyText: "请输入会议主题",
-            maxLength: 36,
-            maxLengthText: "最多36个字符,汉字占2个字符",
+            maxLength: 50,
+            maxLengthText: "最多50个字符,汉字占2个字符",
+        },{
+            beforeLabelTextTpl: comm.get("required"),
+            allowBlank: false,
+            blankText: "会议名称不能为空",
+            fieldLabel: "会议名称",
+            columnWidth: 0.49,
+            name: "meetingName",
+            xtype: "textfield",
+            emptyText: "请输入会议名称",
+            maxLength: 50,
+            maxLengthText: "最多50个字符,汉字占2个字符",
         }]
     }, {
         xtype: "container",
@@ -42,14 +53,15 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             allowBlank: false,
             blankText: "会议类型不能为空",
             fieldLabel: "会议类型",
-            columnWidth: 0.5,
+            columnWidth: 0.49,
             name: "meetingCategory",
             xtype: "basecombobox",
             ddCode: "MEETINGCATEGORY",
             emptyText: "请选择会议类型",
         }, {
-            fieldLabel: "是否考勤 ",
-            columnWidth: 0.5,
+            beforeLabelTextTpl: comm.get("required"),
+            fieldLabel: "是否考勤",
+            columnWidth: 0.49,
             name: "needChecking",
             xtype: "checkbox",
             boxLabel: "考勤",
@@ -65,7 +77,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             allowBlank: false,
             blankText: "开始时间不能为空",
             fieldLabel: "开始时间",
-            columnWidth: 0.5,
+            columnWidth: 0.49,
             name: "beginTime",
             xtype: "datetimefield",
             dateType: 'datetime',
@@ -76,7 +88,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             allowBlank: false,
             blankText: "结束时间不能为空",
             fieldLabel: "结束时间",
-            columnWidth: 0.5,
+            columnWidth: 0.49,
             name: "endTime",
             xtype: "datetimefield",
             dateType: 'datetime',
@@ -92,7 +104,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             allowBlank: false,
             blankText: "主持人不能为空",
             fieldLabel: "主持人",
-            columnWidth: 0.5,
+            columnWidth: 0.49,
             name: "emcee",
             xtype: "textfield",
             emptyText: "请输入主持人",
@@ -103,22 +115,22 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             allowBlank: false,
             blankText: "会议地点不能为空",
             fieldLabel: "会议地点",
-            columnWidth: 0.5,
+            columnWidth: 0.49,
             name: "roomName",
             xtype: "textfield",
             emptyText: "请输入会议地点",
             maxLength: 32,
             maxLengthText: "最多32个字符,汉字占2个字符",
-        }, {
+        }, /*{
             fieldLabel: "房间ID",
-            columnWidth: 0.5,
+           // columnWidth: 0.5,
             name: "roomId",
             xtype: "textfield",
             emptyText: "请输入房间ID",
             maxLength: 36,
             maxLengthText: "最多36个字符,汉字占2个字符",
             hidden: true
-        }]
+        }*/]
     }, {
         xtype: "container",
         layout: "column",
@@ -130,11 +142,11 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             hidden:true
         }, {
 
-            columnWidth: 0.5,
+            columnWidth: 0.49,
             xtype: "basefuncfield",
             //funcController: "core.systemset.jobinfo.controller.jobinfoController", //该属性现在不需要了
-            funcPanel: "selectsysuser.mainlayout", //该功能显示的主视图
-            refController:'user.otherController',             //指定弹出的window引用的控制器，方便方法重写。 若不需要重写，则不配置此项
+            funcPanel: "meetinginfo.selectsysuser.mainlayout", //该功能显示的主视图
+            refController:'meetinginfo.otherController',             //指定弹出的window引用的控制器，方便方法重写。 若不需要重写，则不配置此项
             formPanel:"meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
             funcTitle: "参会人员", //查询窗口的标题
             configInfo: {
@@ -155,7 +167,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
         labelAlign: "right",
         items: [{
             fieldLabel: "会议内容",
-            columnWidth: 1,
+            columnWidth: 0.98,
             name: "meetingContent",
             xtype: "ueditor",
             height: 200,

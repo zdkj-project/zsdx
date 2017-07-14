@@ -395,7 +395,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
                             id: winId,
                             title: "用户角色选择",
                             width: 1024,
-                            height: 768,
+                            height: 600,
                             resizable: false,
                             controller:'user.otherController',
                             iconCls: "x-fa fa-user",

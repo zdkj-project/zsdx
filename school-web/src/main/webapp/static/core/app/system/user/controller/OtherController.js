@@ -96,7 +96,7 @@ Ext.define("core.system.user.controller.OtherController", {
                 var store = grid.getStore();
                 var proxy = store.getProxy();
                 proxy.extraParams = {
-                		uuid: classId
+                	uuid: classId
                 };
                 store.load();
                 return false;

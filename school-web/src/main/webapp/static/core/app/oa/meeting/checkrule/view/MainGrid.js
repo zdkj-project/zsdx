@@ -23,7 +23,7 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
             ref: 'gridAdd_Tab',
             funCode: 'girdFuntionBtn', //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             iconCls: 'x-fa fa-plus-circle'
-        }, {
+        },/* {
             xtype: 'button',
             text: '编辑',
             ref: 'gridEdit_Tab',
@@ -37,7 +37,7 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
             funCode: 'girdFuntionBtn',
             disabled: true,
             iconCls: 'x-fa fa-file-text'
-        }, {
+        },*/ {
             xtype: 'button',
             text: '删除',
             ref: 'gridDelete',
@@ -46,11 +46,11 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
             iconCls: 'x-fa fa-minus-circle'
         }, {
             xtype: 'button',
-            text: '启用',
+            text: '启用/取消启用',
             ref: 'gridSetUse',
             funCode: 'girdFuntionBtn',
-            disabled: true,
-            iconCls: 'x-fa fa-clipboard'
+            //disabled: true,
+            iconCls: 'x-fa fa-check-square'
         }, '->', {
             xtype: 'tbtext',
             html: '快速搜索：'
@@ -96,36 +96,65 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
             align: 'center'
         }, {
             flex: 1,
-        	minWidth:200,
+        	minWidth:150,
             text: "规则名称",
             dataIndex: "ruleName",
+            align: 'left',
         }, {
             //flex: 1,
         	width:120,
             text: "签到提前分钟",
             dataIndex: "inBefore",
+            align: 'left',
         }, {
             //flex: 1,
         	width:100,
             text: "迟到分钟",
             dataIndex: "beLate",
+            align: 'left',
         }, {
             //flex: 1,
         	width:100,
             text: "缺勤分钟",
             dataIndex: "absenteeism",
+            align: 'left',
+        },{
+            flex: 1,
+            minWidth:150,
+            text: "规则说明",
+            dataIndex: "ruleDesc",
+            renderer: function(value, metaData) {
+                var html = value;
+                var title='规则说明';
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                return value;
+            }
         }, {
             //flex: 1,
-        	width:130,
+        	width:100,
             text: "是否需要签退",
             dataIndex: "needCheckout",
             renderer: function(value, metaData) {
-                return value == "0" ? "不需要" : "需要";
+                if(value==1)
+                    return "<span style='color:green'>需要</span>";
+                else
+                    return "<span style='color:red'>不需要</span>";
             }
         }, {
+            //flex: 1,
+            width:80,
+            text: "是否启用",
+            dataIndex: "startUsing",        
+            renderer: function(value, metaData) {
+                if(value==1)
+                    return "<span style='color:green'>已启用</span>";
+                else
+                    return "<span style='color:red'>未启用</span>";
+            }
+        },  {
             xtype: 'actiontextcolumn',
             text: "操作",
-            width: 100,
+            width: 120,
             fixed: true,
             items: [{
                 //iconCls: 'x-fa fa-pencil-square',
@@ -135,7 +164,7 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
                 ref: 'gridEdit',
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('editClick', {
+                    this.fireEvent('editClick_Tab', {
                         view: view.grid,
                         record: rec
                     });
@@ -148,7 +177,7 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
                 ref: 'gridDetail',
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('detailClick', {
+                    this.fireEvent('detailClick_Tab', {
                         view: view.grid,
                         record: rec
                     });

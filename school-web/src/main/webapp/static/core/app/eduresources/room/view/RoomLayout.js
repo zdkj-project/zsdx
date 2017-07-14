@@ -14,6 +14,11 @@ Ext.define("core.eduresources.room.view.RoomLayout", {
             
         }
     },
+    
+    /*设置最小宽度，并且自动滚动*/
+    minWidth:1200,
+    scrollable:true,
+    
     layout: 'fit',
     bodyPadding: 2,
     items: [{

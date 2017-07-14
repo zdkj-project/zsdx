@@ -26,8 +26,17 @@ Ext.define("core.system.role.view.RoleMainLayout", {
         defaultObj: {
             orderIndex: 1,
             issystem: 1
+        },
+        tabConfig:{         //zzk：2017-6-1加入，用于对tab操作提供基本配置数据
+    	addTitle:'添加角色',
+    	editTitle:'编辑角色',
+    	detailTitle:'角色用户'
         }
     },
+    /*设置最小宽度，并且自动滚动*/
+    minWidth:1200,
+    scrollable:true,
+    
     items: [{        
         xtype: "role.rolegrid",
         region: "center",

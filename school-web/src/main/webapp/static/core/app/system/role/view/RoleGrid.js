@@ -10,20 +10,20 @@ Ext.define("core.system.role.view.RoleGrid", {
         items: [{
             xtype: 'button',
             text: '添加',
-            ref: 'gridAdd',
+            ref: 'gridAdd_Tab',
             funCode:'girdFuntionBtn',   //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             iconCls: 'x-fa fa-plus-circle'
         },{
             xtype: 'button',
             text: '编辑',
-            ref: 'gridEdit',
+            ref: 'gridEdit_Tab',
             funCode:'girdFuntionBtn',   //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             disabled:true,
             iconCls: 'x-fa fa-pencil-square'
         },{
             xtype: 'button',
             text: '角色用户',
-            ref: 'gridDetail',
+            ref: 'gridDetail_Tab',
             funCode:'girdFuntionBtn',   //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             disabled:true,
             iconCls: 'x-fa fa-user'
@@ -115,7 +115,7 @@ Ext.define("core.system.role.view.RoleGrid", {
                 ref: 'gridEdit',
                 handler: function(view, rowIndex, colIndex, item) {                 
                     var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('editClick', {
+                    this.fireEvent('editClick_Tab', {
                         view:view.grid,
                         record: rec
                     });                    
@@ -129,13 +129,10 @@ Ext.define("core.system.role.view.RoleGrid", {
                 //hidden:true,            
                 handler: function(view, rowIndex, colIndex, item) {             
                     var rec = view.getStore().getAt(rowIndex);
-                    /*
-                    this.fireEvent('detailClick', {
+                    this.fireEvent('detailClick_Tab', {
                         view:view.grid,
                         record: rec
                     });
-                    */
-                    this.fireEvent('detailClick', view, rec);
                 }
             },{              
                 text:'删除',

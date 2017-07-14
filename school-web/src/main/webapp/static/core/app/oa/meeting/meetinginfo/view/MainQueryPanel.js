@@ -11,6 +11,30 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainQueryPanel", {
 			columnWidth:0.3,
 			labelAlign: "right",
 			xtype: "basequeryfield",
+			name: "beginTime",
+			fieldLabel: "开始时间",
+			queryType: "datetimefield",
+			dateType:'date',		//指定这个组件的格式，date或者datetime
+			dataType:'date',		//指定查询设置filter时的进行判断的类型，date或者datetime
+			operationType:">=",	
+		}, {
+			columnWidth:0.3,
+			labelAlign: "right",
+			xtype: "basequeryfield",
+			name: "endTime",
+			fieldLabel: "结束时间",
+			queryType: "datetimefield",
+			dateType:'date',		//指定这个组件的格式，date或者datetime
+			dataType:'date',		//指定查询设置filter时的进行判断的类型，date或者datetime
+			operationType:"<=",	
+		}]
+	},{
+		xtype: "container",
+		layout: "column",
+		items: [{
+			columnWidth:0.3,
+			labelAlign: "right",
+			xtype: "basequeryfield",
 			name: "meetingTitle",
 			fieldLabel: "会议主题",
 			queryType: "textfield",
@@ -23,7 +47,8 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainQueryPanel", {
 			queryType: "basecombobox",
 			config: {
 				ddCode: "MEETINGSTATE"
-			}
+			},
+			dataType:"short",
 		}, {
 			columnWidth:0.3,
 			labelAlign: "right",
@@ -32,27 +57,8 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainQueryPanel", {
 			fieldLabel: "会议类型",
 			queryType: "basecombobox",
 			config: {
-				ddCode: " MEETINGCATEGORY"
+				ddCode: "MEETINGCATEGORY"
 			}
-		}]
-	}, {
-		xtype: "container",
-		layout: "column",
-		items: [{
-			columnWidth:0.5,
-			labelAlign: "right",
-			xtype: "basequeryfield",
-			name: "beginTime",
-			fieldLabel: "开始时间",
-			queryType: "datetimefield",
-
-		}, {
-			columnWidth:0.5,
-			labelAlign: "right",
-			xtype: "basequeryfield",
-			name: "endTime",
-			fieldLabel: "结束时间",
-			queryType: "datetimefield",
 		}]
 	}],
 	buttonAlign: "center",

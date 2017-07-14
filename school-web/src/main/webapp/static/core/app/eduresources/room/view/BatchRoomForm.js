@@ -6,11 +6,10 @@ var combostore = new Ext.data.ArrayStore({
     ]
 });
 Ext.define("core.eduresources.room.view.BatchRoomForm", {
-    extend: "Ext.form.Panel",
+	extend: "core.base.view.BaseForm",
     //id: "room.BatchRoomForm",
     alias: "widget.room.BatchRoomForm",
     layout: "form",
-    bodyPadding: '10 20 10 5',
     frame: false,
     fieldDefaults: { // 统一设置表单字段默认属性
         labelSeparator: "：", // 分隔符
@@ -71,16 +70,4 @@ Ext.define("core.eduresources.room.view.BatchRoomForm", {
         name: "areaName",
         readOnly: true
     }],
-    buttonAlign: 'center',
-    buttons: [{
-        xtype: "button",
-        text: "保存",
-        ref: "formSave",
-        iconCls: "table_save"
-    }, {
-        xtype: "button",
-        text: "关闭",
-        ref: "formClose",
-        iconCls: "return"
-    }]
 });

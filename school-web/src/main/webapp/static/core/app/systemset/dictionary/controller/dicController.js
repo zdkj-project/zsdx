@@ -1,8 +1,6 @@
 Ext.define("core.systemset.dictionary.controller.dicController", {
 	extend: "Ext.app.ViewController",
-	
     alias: 'controller.dictionary.dictionaryController',
-
 	
 	mixins: {
 		suppleUtil: "core.util.SuppleUtil",
@@ -11,15 +9,7 @@ Ext.define("core.systemset.dictionary.controller.dicController", {
 		treeUtil: "core.util.TreeUtil",
 		gridActionUtil: "core.util.GridActionUtil"
 	},
-/*	views: [
-		"core.systemset.dictionary.view.MainLayout",
-		"core.systemset.dictionary.view.dicDetailLayout",
-		"core.systemset.dictionary.view.dicGrid",
-		"core.systemset.dictionary.view.dicForm",
-		"core.systemset.dictionary.view.itemLayout",
-		"core.systemset.dictionary.view.itemGrid",
-		"core.systemset.dictionary.view.itemForm"
-	],*/
+	
 	init: function() {
 		var self = this
 			//事件注册
@@ -153,6 +143,21 @@ Ext.define("core.systemset.dictionary.controller.dicController", {
 					return false;
 				}
 			},
+			
+			
+			"basegrid[xtype=dic.itemgrid] button[ref=gridAdd_Tab]": {
+                beforeclick: function(btn) {
+                    this.doDetail_Tab(btn,"add");
+                    return false;
+                }
+            },
+
+            "basegrid[xtype=dic.itemgrid] button[ref=gridEdit_Tab]": {
+                beforeclick: function(btn) {
+                    this.doDetail_Tab(btn,"edit");
+                    return false;
+                }
+            },
 
 			//字典项删除按钮事件
 			"panel[xtype=dic.itemgrid] button[ref=gridDelete]": {
@@ -207,7 +212,146 @@ Ext.define("core.systemset.dictionary.controller.dicController", {
 
 	},
 	
+	doDetail_Tab:function(btn, cmd, grid, record) {
+        var self = this;
+        var baseGrid = btn.up("basegrid");
+		var funCode = baseGrid.funCode;
+		var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+		var tabPanel=baseGrid.up("tabpanel[xtype=app-main]");   //获取整个tabpanel
+		
+		var funData = basePanel.funData;
+		var detCode =  basePanel.detCode;  
+	    var detLayout = basePanel.detLayout;
+	    var defaultObj = funData.defaultObj;
+		
+		var otherController = basePanel.otherController;
+	        if (!otherController)
+	            otherController = '';
+		//选择的字典信息
+		var dicGrid = baseGrid.up("panel[xtype=dictionary.mainlayout]").down("panel[xtype=dic.dicgrid]");
+		var selectObject = dicGrid.getSelectionModel().getSelection();
+		if (selectObject.length <= 0) {
+			self.Warning("请选择数据字典!");
+			return false;
+		}
+		//得到选择的字典
+		var objDic = selectObject[0];
+		var dicId = objDic.get("id");
+		var dicName = objDic.get("text");
+		var detCode = "dicItem_main";
+		//处理特殊默认值
+		var defaultObj = funData.defaultObj;
+		var insertObj = self.getDefaultValue(defaultObj);
+		var tabTitle = funData.tabConfig.addTitle;
+		insertObj = Ext.apply(insertObj, {
+			dicId: dicId,
+			dicName: dicName
+		});
+		var popFunData = Ext.apply(funData, {
+			grid: baseGrid,
+			filter: "[{'type':'string','comparison':'=','value':'" + dicId + "','field':'dicId'}]"
+		});
+		
+		
+		//设置tab页的itemId
+        var tabItemId=funCode+"_gridAdd";     //命名规则：funCode+'_ref名称',确保不重复
+        var pkValue= null;
+		var operType = cmd; 
+        switch (cmd) {
+            case "edit":
+                if (btn) {
+                    var rescords = baseGrid.getSelectionModel().getSelection();
+                    if (rescords.length != 1) {
+                        self.msgbox("请选择一条数据！");
+                        return;
+                    }
+                    recordData = rescords[0].data;
+                }
+                //获取主键值
+                var pkName = funData.pkName;
+                pkValue= recordData[pkName];
 
+                insertObj = recordData;
+                tabTitle = funData.tabConfig.editTitle;
+                tabItemId=funCode+"_gridEdit"; 
+                break;
+            case "detail":                
+                if (btn) {
+                    var rescords = baseGrid.getSelectionModel().getSelection();
+                    if (rescords.length != 1) {
+                        self.msgbox("请选择一条数据！");
+                        return;
+                    }
+                    recordData = rescords[0].data;
+                }
+                //获取主键值
+                var pkName = funData.pkName;
+                pkValue= recordData[pkName];
+                insertObj = recordData;
+                tabTitle =  funData.tabConfig.detailTitle;
+                tabItemId=funCode+"_gridDetail"+pkValue; 
+                break;
+        }
+
+        //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
+        var tabItem=tabPanel.getComponent(tabItemId);
+        if(!tabItem){
+            
+            //创建一个新的TAB
+            tabItem=Ext.create({
+                xtype:'container',
+                title: tabTitle,
+                //iconCls: 'x-fa fa-clipboard',
+                scrollable :true, 
+                itemId:tabItemId,
+                itemPKV:pkValue,      //保存主键值
+                layout:'fit', 
+            });
+            tabPanel.add(tabItem); 
+
+            //延迟放入到tab中
+            setTimeout(function(){
+                //创建组件
+                var item=Ext.widget("baseformtab",{
+                    operType:operType,                            
+                    controller:otherController,         //指定重写事件的控制器
+                    funCode:funCode,                    //指定mainLayout的funcode
+                    detCode:detCode,                    //指定detailLayout的funcode
+                    tabItemId:tabItemId,                //指定tab页的itemId
+                    insertObj:insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                    funData: popFunData,                //保存funData数据，提供给提交事件中使用
+                    items:[{
+                        xtype:detLayout,                        
+                        funCode: detCode ,
+                        items: [{
+                            xtype: "dic.itemform",
+                            funCode: detCode                  
+                        }]
+                    }]
+                }); 
+                tabItem.add(item);  
+
+                //将数据显示到表单中（或者通过请求ajax后台数据之后，再对应的处理相应的数据，显示到界面中）             
+                var objDetForm = item.down("baseform[funCode=" + detCode + "]");
+                var formDeptObj = objDetForm.getForm();
+                self.setFormValue(formDeptObj, insertObj);
+
+                if(cmd=="detail"){
+                    self.setFuncReadOnly(funData, objDetForm, true);
+                }
+
+            },30);
+                           
+        }else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据
+            self.Warning("您当前已经打开了一个编辑窗口了！");
+            return;
+        }
+
+        tabPanel.setActiveTab( tabItem);        
+    },
+    
+    
+    
 	doDetail: function(btn, cmd) {
 		//debugger;
 		var self = this;
@@ -309,88 +453,88 @@ Ext.define("core.systemset.dictionary.controller.dicController", {
 	},
 
 	//增加或修改字典项
-	doItmeDetail: function(btn, cmd) {
-		//debugger;
-		var self = this;
-		//当前的grid
-		var baseGrid = btn.up("basegrid");
-		var funCode = baseGrid.funCode;
-		var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
-		var funData = basePanel.funData;
-		//选择的字典信息
-		var dicGrid = baseGrid.up("panel[xtype=dictionary.mainlayout]").down("panel[xtype=dic.dicgrid]");
-		var selectObject = dicGrid.getSelectionModel().getSelection();
-		if (selectObject.length <= 0) {
-			self.Warning("请选择数据字典!");
-			return false;
-		}
-		//得到选择的字典
-		var objDic = selectObject[0];
-		var dicId = objDic.get("id");
-		var dicName = objDic.get("text");
-		var detCode = "dicItem_main";
-		//处理特殊默认值
-		var defaultObj = funData.defaultObj;
-		var insertObj = self.getDefaultValue(defaultObj);
-		insertObj = Ext.apply(insertObj, {
-			dicId: dicId,
-			dicName: dicName
-		});
-		var popFunData = Ext.apply(funData, {
-			grid: baseGrid,
-			filter: "[{'type':'string','comparison':'=','value':'" + dicId + "','field':'dicId'}]"
-		});
-		var iconCls = "x-fa fa-plus-circle";
-		if (cmd == "edit" || cmd == "detail") {
-			if (cmd == "edit")
-				iconCls = "x-fa fa-pencil-square";
-			else
-				iconCls = "x-fa fa-pencil-square";
-
-			var rescords = baseGrid.getSelectionModel().getSelection();
-			if (rescords.length != 1) {
-				self.msgbox("请选择数据");
-				return;
-			}
-			insertObj = rescords[0].data;
-			insertObj = Ext.apply(insertObj, {
-				dicId: dicId,
-				dicName: dicName
-			});
-		}
-		var winId = detCode + "_win";
-		var win = Ext.getCmp(winId);
-		if (!win) {
-			win = Ext.create('core.base.view.BaseFormWin', {
-				id: winId,
-				width: 400,
-				height: 320,
-				resizable: false,
-				iconCls: iconCls,
-				operType: cmd,
-				funData: popFunData,
-				funCode: detCode,
-				//给form赋初始值
-				insertObj: insertObj,
-				items: [{
-					xtype: "dic.itemlayout"
-				}]
-			});
-		}
-		win.show();
-		var detailPanel = win.down("basepanel[funCode=" + detCode + "]");
-		var objDetForm = detailPanel.down("baseform[funCode=" + detCode + "]");
-		var formDeptObj = objDetForm.getForm();
-
-		//表单赋值
-		self.setFormValue(formDeptObj, insertObj);
-		//根据操作设置是否只读
-		if (cmd == "detail") {
-			self.setFuncReadOnly(funData, objDetForm, true);
-		}
-		//执行回调函数
-		if (btn.callback) {
-			btn.callback();
-		}
-	}
+//	doItmeDetail: function(btn, cmd) {
+//		//debugger;
+//		var self = this;
+//		//当前的grid
+//		var baseGrid = btn.up("basegrid");
+//		var funCode = baseGrid.funCode;
+//		var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+//		var funData = basePanel.funData;
+//		//选择的字典信息
+//		var dicGrid = baseGrid.up("panel[xtype=dictionary.mainlayout]").down("panel[xtype=dic.dicgrid]");
+//		var selectObject = dicGrid.getSelectionModel().getSelection();
+//		if (selectObject.length <= 0) {
+//			self.Warning("请选择数据字典!");
+//			return false;
+//		}
+//		//得到选择的字典
+//		var objDic = selectObject[0];
+//		var dicId = objDic.get("id");
+//		var dicName = objDic.get("text");
+//		var detCode = "dicItem_main";
+//		//处理特殊默认值
+//		var defaultObj = funData.defaultObj;
+//		var insertObj = self.getDefaultValue(defaultObj);
+//		insertObj = Ext.apply(insertObj, {
+//			dicId: dicId,
+//			dicName: dicName
+//		});
+//		var popFunData = Ext.apply(funData, {
+//			grid: baseGrid,
+//			filter: "[{'type':'string','comparison':'=','value':'" + dicId + "','field':'dicId'}]"
+//		});
+//		var iconCls = "x-fa fa-plus-circle";
+//		if (cmd == "edit" || cmd == "detail") {
+//			if (cmd == "edit")
+//				iconCls = "x-fa fa-pencil-square";
+//			else
+//				iconCls = "x-fa fa-pencil-square";
+//
+//			var rescords = baseGrid.getSelectionModel().getSelection();
+//			if (rescords.length != 1) {
+//				self.msgbox("请选择数据");
+//				return;
+//			}
+//			insertObj = rescords[0].data;
+//			insertObj = Ext.apply(insertObj, {
+//				dicId: dicId,
+//				dicName: dicName
+//			});
+//		}
+//		var winId = detCode + "_win";
+//		var win = Ext.getCmp(winId);
+//		if (!win) {
+//			win = Ext.create('core.base.view.BaseFormWin', {
+//				id: winId,
+//				width: 400,
+//				height: 320,
+//				resizable: false,
+//				iconCls: iconCls,
+//				operType: cmd,
+//				funData: popFunData,
+//				funCode: detCode,
+//				//给form赋初始值
+//				insertObj: insertObj,
+//				items: [{
+//					xtype: "dic.itemlayout"
+//				}]
+//			});
+//		}
+//		win.show();
+//		var detailPanel = win.down("basepanel[funCode=" + detCode + "]");
+//		var objDetForm = detailPanel.down("baseform[funCode=" + detCode + "]");
+//		var formDeptObj = objDetForm.getForm();
+//
+//		//表单赋值
+//		self.setFormValue(formDeptObj, insertObj);
+//		//根据操作设置是否只读
+//		if (cmd == "detail") {
+//			self.setFuncReadOnly(funData, objDetForm, true);
+//		}
+//		//执行回调函数
+//		if (btn.callback) {
+//			btn.callback();
+//		}
+//	}
 });

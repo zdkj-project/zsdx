@@ -382,7 +382,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 
 	@RequestMapping(value = { "/teacherlist" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
 			org.springframework.web.bind.annotation.RequestMethod.POST })
-	public void selectTeacherlist(@ModelAttribute SysDatapermission entity, HttpServletRequest request,
+	public void getTeacherlist(@ModelAttribute SysDatapermission entity, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		String strData = ""; // 返回给js的数据
 		QueryResult<SysUser> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
@@ -391,7 +391,20 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 		strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
 	}
-
+	
+	@RequestMapping(value = { "/selectedUserlist" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
+			org.springframework.web.bind.annotation.RequestMethod.POST })
+	public void getSelectedUserlist(@ModelAttribute SysDatapermission entity, HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		String strData = ""; // 返回给js的数据
+		String ids=request.getParameter("ids");
+		String hql="from SysUser a where uuid in ('"+ids.replace(",", "','")+"')";
+		List<SysUser> userList = thisService.doQuery(hql);
+		
+		strData = jsonBuilder.buildObjListToJson((long) userList.size(),userList, true);// 处理数据
+		writeJSON(response, strData);// 返回数据
+	}
+	
 	/*
 	 * 单条数据调用同步UP的方式 用于修改单条人员数据的时候进行同步（貌似目前暂时未使用到）
 	 */
@@ -457,7 +470,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			// 1.查询最新的用户、部门信息
 			String sql = "select  u.USER_ID as userId,u.XM as employeeName, u.user_numb as employeeStrId,"
 					+ "'' as employeePwd,CASE u.XBM WHEN '2' THEN '0' ELSE '1' END AS sexId,u.isDelete as isDelete,"
-					+ "job.JOB_NAME AS identifier,'1' AS cardState, " // cardState
+					+ "u.SFZJH AS identifier,'1' AS cardState, " // cardState
 																		// 和 sid
 																		// 都置默认值，现在不做特定的处理
 					+ "'' as sid,org.EXT_FIELD04 as departmentId  " + " from SYS_T_USER u" + " join BASE_T_ORG org on "

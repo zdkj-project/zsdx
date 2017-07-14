@@ -58,4 +58,12 @@ public interface TrainEvalIndicatorService extends BaseService<TrainEvalIndicato
      * @return
      */
     public TrainEvalIndicator doAddEntity(TrainEvalIndicator entity, List<TrainIndicatorStand> stands, SysUser currentUser);
+
+    /**
+     * 删除指标标准
+     * @param ids 要删除的指标标准
+     * @param currentUser 当前操作用户
+     * @return
+     */
+    public Boolean doDelete(String ids ,SysUser currentUser);
 }

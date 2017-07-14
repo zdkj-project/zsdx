@@ -8,12 +8,48 @@ Ext.define("core.oa.meeting.checkrule.view.MainQueryPanel", {
         xtype: "container",
         layout: "column",
         items: [{
-            columnWidth:0.3,
+            columnWidth:0.25,
             labelAlign: "right",
             xtype: "basequeryfield",
             name: "ruleName",
             fieldLabel: "规则名称",
             queryType: "textfield",
+        },{
+            columnWidth: 0.25,
+            xtype: "basequeryfield",
+            queryType: "combobox",
+            dataType:"short",     //指定filter的数据类型为 short
+            name: "needCheckout",
+            fieldLabel: "是否需要签退",
+            store: Ext.create('Ext.data.Store', {
+                fields: ['name', 'value'],
+                data : [
+                    {"name":"不需要", "value":0},
+                    {"name":"需要", "value":1}             
+                ]
+            }),
+            queryMode: 'local',
+            displayField: 'name',
+            valueField: 'value',
+            editable:false
+        },{
+            columnWidth: 0.25,
+            xtype: "basequeryfield",
+            queryType: "combobox",
+            dataType:"short",     //指定filter的数据类型为 short
+            name: "startUsing",
+            fieldLabel: "是否启用",
+            store: Ext.create('Ext.data.Store', {
+                fields: ['name', 'value'],
+                data : [
+                    {"name":"未启用", "value":0},
+                    {"name":"已启用", "value":1}                                 
+                ]
+            }),
+            queryMode: 'local',
+            displayField: 'name',
+            valueField: 'value',
+            editable:false
         }]
     }],
     buttonAlign: "center",

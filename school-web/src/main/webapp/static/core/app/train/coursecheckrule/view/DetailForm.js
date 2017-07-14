@@ -84,26 +84,59 @@ Ext.define("core.train.coursecheckrule.view.DetailForm", {
             emptyText: "请输入迟到分钟",    
             minValue: 0,
             maxValue:99999, 
-        },{         
+        }]    
+    },{
+        xtype: "container",
+        layout: "column",
+        labelAlign: "right",
+        items: [{
+            beforeLabelTextTpl: comm.get("required"),
+            allowBlank: false,
+            fieldLabel: "是否需要签退",
+            columnWidth: 0.5,
+            name: "needCheckout",
+            xtype: "checkbox",
+            boxLabel: "签退",
+            value:1,
+            listeners: {
+                change: function(field, newValue , oldValue ) {
+                    
+                    var currentForm=field.up("baseform[xtype=coursecheckrule.detailform]");
+                    var checkoutCtrs=currentForm.query("container[ref=checkoutCtr]");               
+                    if (newValue == true) {                                                                        
+                        for(var i=0;i<checkoutCtrs.length;i++){
+                            checkoutCtrs[i].setVisible(true);                          
+                        }                     
+
+                    } else  {
+                        for(var i=0;i<checkoutCtrs.length;i++){
+                            checkoutCtrs[i].setVisible(false);                          
+                        }   
+                    } 
+                    
+                }
+            }
+        },{
+            beforeLabelTextTpl: comm.get('required'),
+            allowBlank: false,
+            fieldLabel: "规则是否启用",
+            columnWidth: 0.5,
+            name: "startUsing",
+            xtype: "checkbox",
+            boxLabel: "启用",
+            value:0   
+        }]
+    }, {
+        xtype: "container",
+        layout: "column",
+        labelAlign: "right",
+        ref:'checkoutCtr',
+        items: [,{         
             fieldLabel: "签退提前分钟",
             columnWidth: 0.5,
             name: "outBefore",
             xtype: "numberfield",
             emptyText: "请输入签退提前分钟",
-            minValue: 0,    
-            maxValue:99999,     
-            value:0
-        }]    
-    }, {
-        xtype: "container",
-        layout: "column",
-        labelAlign: "right",
-        items: [{           
-            fieldLabel: "早退分钟",
-            columnWidth: 0.5,
-            name: "leaveEarly",
-            xtype: "numberfield",
-            emptyText: "请输入早退分钟",
             minValue: 0,    
             maxValue:99999,     
             value:0
@@ -121,26 +154,19 @@ Ext.define("core.train.coursecheckrule.view.DetailForm", {
         xtype: "container",
         layout: "column",
         labelAlign: "right",
-        items: [{
-            beforeLabelTextTpl: comm.get("required"),
-            allowBlank: false,
-            fieldLabel: "是否需要签退",
+        ref:'checkoutCtr',
+        items: [{           
+            fieldLabel: "早退分钟",
             columnWidth: 0.5,
-            name: "needCheckout",
-            xtype: "checkbox",
-            boxLabel: "签退",
+            name: "leaveEarly",
+            xtype: "numberfield",
+            emptyText: "请输入早退分钟",
+            minValue: 0,    
+            maxValue:99999,     
             value:0
-        },{
-            beforeLabelTextTpl: comm.get('required'),
-            allowBlank: false,
-            fieldLabel: "规则是否启用",
-            columnWidth: 0.5,
-            name: "startUsing",
-            xtype: "checkbox",
-            boxLabel: "启用",
-            value:0   
         }]
-    }, {
+    },
+    {
         xtype: "container",
         layout: "column",
         labelAlign: "right",

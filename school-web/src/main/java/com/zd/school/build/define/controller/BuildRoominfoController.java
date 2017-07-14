@@ -75,6 +75,7 @@ public class BuildRoominfoController extends FrameWorkController<BuildRoominfo> 
 			throws IOException, IllegalAccessException, InvocationTargetException {
 			String areaId = entity.getAreaId();
 			String roomName = entity.getRoomName();
+			String rommType=entity.getRoomType();
 			// 此处为放在入库前的一些检查的代码，如唯一校验等
 			String hql = " o.isDelete='0' and o.areaId='" + areaId + "' ";
 			if (thisService.IsFieldExist("roomName", roomName, "-1", hql)) {
@@ -94,6 +95,7 @@ public class BuildRoominfoController extends FrameWorkController<BuildRoominfo> 
 			// 增加时要设置创建人
 			entity.setCreateUser(userCh); // 创建人
 			// 持久化到数据库
+			entity.setRoomType(rommType);
 			entity = thisService.merge(entity);
 			// 返回实体到前端界面
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));

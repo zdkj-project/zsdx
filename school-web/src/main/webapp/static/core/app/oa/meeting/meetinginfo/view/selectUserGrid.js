@@ -1,6 +1,6 @@
-Ext.define("core.system.user.view.selectUserGrid", {
+Ext.define("core.oa.meeting.meetinginfo.view.selectUserGrid", {
 	extend: "core.base.view.BaseGrid",
-	alias: "widget.selectsysuser.selectusergrid",
+	alias: "widget.meetinginfo.selectsysuser.selectusergrid",
 	dataUrl: comm.get('baseUrl') + "/sysuser/teacherlist",
 	model: factory.ModelFactory.getModelByName("com.zd.school.plartform.system.model.SysUser", "checked").modelName,
 	al: true,
