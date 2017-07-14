@@ -360,6 +360,15 @@ Ext.define("core.system.role.controller.RoleController", {
                     }]
                 }); 
                 tabItem.add(item);  
+
+                var grid = item.down("grid[xtype=role.roleusergrid]");
+                var store = grid.getStore();
+                var proxy = store.getProxy();
+                proxy.extraParams = {
+                    roleId: pkValue
+                };
+                store.load();
+
             },30);
                            
         }else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据

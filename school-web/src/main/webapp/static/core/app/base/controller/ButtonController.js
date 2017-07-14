@@ -1461,7 +1461,7 @@ Ext.define("core.base.controller.ButtonController", {
                                          orderSql: win.funData.orderSql,
                                          filter: win.funData.filter
                                          };*/
-                                        store.load(); //刷新父窗体的grid
+                                        store.load(); //刷新父窗体的grid                                     
                                     }
 
                                     loading.hide();

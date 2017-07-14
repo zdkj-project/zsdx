@@ -20,9 +20,12 @@ import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.ModelUtil;
 import com.zd.core.util.BeanUtils;
+import com.zd.core.util.DBContextHolder;
 import com.zd.core.util.StringUtils;
 import com.zd.school.plartform.system.model.SysUser;
+import com.zd.school.plartform.system.model.SysUserToUP;
 import com.zd.school.oa.meeting.model.OaMeetingcheckrule ;
+import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.oa.meeting.dao.OaMeetingcheckruleDao ;
 import com.zd.school.oa.meeting.service.OaMeetingcheckruleService ;
 
@@ -153,4 +156,29 @@ public class OaMeetingcheckruleController extends FrameWorkController<OaMeetingc
 			writeJSON(response, jsonBuilder.returnFailureJson("'数据修改失败,详情见错误日志'"));
 		}
     }
+    
+    @RequestMapping("/doUse")
+	public void doUse(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, IllegalAccessException, InvocationTargetException {
+
+		try {
+			// 获取当前的操作用户
+			SysUser currentUser = getCurrentSysUser();
+			String uuid = request.getParameter("uuid");
+			String startUsing = request.getParameter("startUsing");		
+		
+			OaMeetingcheckrule meetingcheckrule = thisService.get(uuid);
+
+			meetingcheckrule.setStartUsing(Short.valueOf(startUsing));
+			meetingcheckrule.setUpdateUser(currentUser.getUserName());
+			meetingcheckrule.setUpdateTime(new Date());
+			
+			thisService.merge(meetingcheckrule);
+			
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"设置启用状态成功！\""));
+			
+		} catch (Exception e) {			
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"请求失败，请联系管理员！\""));
+		}
+	}
 }

@@ -2,6 +2,7 @@ Ext.define("core.system.role.view.RoleUserGrid", {
 	extend: "core.base.view.BaseGrid",
 	alias: "widget.role.roleusergrid",
 	dataUrl: comm.get('baseUrl') + "/teacher/roleteacherlist",
+	al:false,
 //	dataUrl: comm.get('baseUrl') + "/sysuser/list",
 	model: factory.ModelFactory.getModelByName("com.zd.school.plartform.system.model.SysUser", "checked").modelName,
     selModel:null,	
@@ -34,6 +35,9 @@ Ext.define("core.system.role.view.RoleUserGrid", {
 			text: "编号",
 			dataIndex: "userNumb"
 		}, {
+			text: "用户名",
+			dataIndex: "userName"
+		},{
 			text: "姓名",
 			dataIndex: "xm"
 		}, {

@@ -279,7 +279,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 	public QueryResult<SysUser> getUserByRoleId(String roleId) {
 		QueryResult<SysUser> qr = new QueryResult<SysUser>();
 		String hql = "from SysUser as u inner join fetch u.sysRoles as r where r.uuid='" + roleId
-				+ "' and r.isDelete=0 and u.isDelete=0 order by u.jobCode asc ";
+				+ "' and r.isDelete=0 and u.isDelete=0 ";		
 		List<SysUser> list = this.doQuery(hql);
 
 		SortListUtil<SysUser> sortJob = new SortListUtil<SysUser>();

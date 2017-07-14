@@ -23,7 +23,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
             ref: 'gridAdd_Tab',     //命名规则：后面多加入了一个后缀【_Tab】
             funCode: 'girdFuntionBtn', //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             iconCls: 'x-fa fa-plus-circle'
-        }, {
+        }, /*{
             xtype: 'button',
             text: '编辑',
             ref: 'gridEdit_Tab',
@@ -37,7 +37,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
             funCode: 'girdFuntionBtn',
             disabled: true,
             iconCls: 'x-fa fa-file-text'
-        }, {
+        }, */{
             xtype: 'button',
             text: '删除',
             ref: 'gridDelete',
@@ -98,7 +98,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
     },
     columns: {
         defaults: {
-            align: 'center',
+            //align: 'left',
             titleAlign: "center"
         },
         items: [{
@@ -113,11 +113,13 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
         	//width:200,
             text: "会议主题",
             dataIndex: "meetingTitle",
+            align: 'left',
         }, {
             //flex: 1,
         	width:180,
             text: "开始时间",
             dataIndex: "beginTime",
+            align: 'left',
             renderer: function(value, metaData) {
                 var date = value.replace(new RegExp(/-/gm), "/");
                 var title = "开始时间";
@@ -131,6 +133,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
         	width:160,
             text: "结束时间",
             dataIndex: "endTime",
+            align: 'left',
             renderer: function(value, metaData) {
                 var date = value.replace(new RegExp(/-/gm), "/");
                 var title = "结束时间";
@@ -150,10 +153,12 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
         	width: 130,
             text: "会议地点",
             dataIndex: "roomName",
+            align: 'left',
         },{
             //flex: 1,
         	width:100,
             text: "会议类型",
+            align: 'left',
             dataIndex: "meetingCategory",
             columnType: "basecombobox", //列类型
             ddCode: "MEETINGCATEGORY" //字典代码
@@ -169,8 +174,9 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
     , {
             xtype: 'actiontextcolumn',
             text: "操作",
-            width: 100,
+            width: 120,
             fixed: true,
+            align: 'center',
             items: [{
                 //iconCls: 'x-fa fa-pencil-square',
             	text:'编辑',  

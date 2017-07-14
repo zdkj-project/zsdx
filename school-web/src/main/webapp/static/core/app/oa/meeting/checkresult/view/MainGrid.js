@@ -140,13 +140,13 @@ Ext.define("core.oa.meeting.checkresult.view.MainGrid", {
                 metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return value;
             }
-        }/*,{
+        },{
             xtype: 'actiontextcolumn',
             text: "操作",
-            width: 100,
+            width: 80,
             fixed: true,
             items: [
-                {
+                /*{
                     iconCls: 'x-fa fa-pencil-square',
                     tooltip: '编辑',
                     ref: 'gridEdit',
@@ -157,7 +157,7 @@ Ext.define("core.oa.meeting.checkresult.view.MainGrid", {
                             record: rec
                         });
                     }
-                            },
+                            },*/
                 {
                     //iconCls: 'x-fa fa-file-text',
                 	text:'详细',  
@@ -166,12 +166,12 @@ Ext.define("core.oa.meeting.checkresult.view.MainGrid", {
                     ref: 'gridDetail_Tab',
                     handler: function(view, rowIndex, colIndex, item) {
                         var rec = view.getStore().getAt(rowIndex);
-                        this.fireEvent('detailClick', {
+                        this.fireEvent('detailClick_Tab', {
                             view: view.grid,
                             record: rec
                         });
                     }
-                }, {
+                }/*, {
                     //iconCls: 'x-fa fa-minus-circle',
                 	text:'分析',  
                     style:'font-size:12px;',
@@ -184,9 +184,9 @@ Ext.define("core.oa.meeting.checkresult.view.MainGrid", {
                             record: rec
                         });
                     }
-                }
+                }*/
             ]
-        }*/]
+        }]
     },
     emptyText: '<span style="width:100%;text-align:center;display: block;">暂无数据</span>'
 });
