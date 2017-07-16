@@ -78,7 +78,7 @@ Ext.define("core.system.ip.controller.otherController", {
                     }
                 },
                 failure:function(response){
-                    Ext.Msg.alert('请求失败'，'错误信息：\n'+response.responseText);
+                    Ext.Msg.alert('请求失败','错误信息：\n'+response.responseText);
                     loading.hide();
                 }
                 });
