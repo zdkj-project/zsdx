@@ -51,7 +51,7 @@ Ext.define("core.train.creditrule.view.MainGrid", {
             funCode: 'girdFuntionBtn',
             disabled: false,
             iconCls: 'x-fa fa-star'
-        },  {
+        }/*,  {
             xtype: 'button',
             text: '导入',
             ref: 'gridImport',
@@ -65,7 +65,7 @@ Ext.define("core.train.creditrule.view.MainGrid", {
             funCode: 'girdFuntionBtn',
             disabled: true,
             iconCls: 'x-fa fa-file'
-        }, '->', {
+        }*/, '->', {
             xtype: 'tbtext',
             html: '快速搜索：'
         }, {
