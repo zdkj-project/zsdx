@@ -67,14 +67,7 @@ Ext.define("core.good.signup.view.MainGrid", {
             dataIndex: "actDate" ,
             renderer:function(v){                    
                 return Ext.Date.format(new Date(v), 'Y-m-d H:i:s');              
-            },{
-                text:'编辑',
-                dataIndex:'redact',
-                width:'150',
-            },{
-                text:'删除',
-                dataIndex:'delete',
-            }      
+            }     
         }],
         defaults:{
             flex:1,
