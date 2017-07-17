@@ -15,12 +15,12 @@ Ext.define("core.systemset.dictionary.view.itemForm", {
         fieldLabel: "主键",
         name: "uuid",
         hidden: true
-    }, {
+    }, /*{
         xtype: "textfield",
         fieldLabel: "排序号",
         name: "orderIndex",
         hidden: true
-    }, {
+    }, */{
         xtype: "textfield",
         fieldLabel: "字典ID",
         name: "dicId",
@@ -52,7 +52,7 @@ Ext.define("core.systemset.dictionary.view.itemForm", {
         blankText: "排序号不能为空",
         fieldLabel: '排序号',
         name: "orderIndex",
-        xtype: "numberfield",
+        //xtype: "numberfield",
         emptyText: "同级别字典项的显示顺序",
     }, {
         beforeLabelTextTpl: "",
