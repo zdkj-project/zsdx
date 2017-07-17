@@ -45,19 +45,22 @@ Ext.define("core.train.indicator.view.StandGrid", {
         //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
         filter: "[{'type':'string','comparison':'=','value':'','field':'indicatorId'}]"
     },
-    plugins: ['cellediting'],
+    plugins: {
+        ptype: 'cellediting',
+        clicksToEdit: 1
+    },
     columns: {
         defaults: {
             titleAlign: "center"
         },
-        items: [{
+        items: [/*{
             xtype: "rownumberer",
             width: 50,
             text: '序号',
             align: 'center'
-        }, {
+        },*/ {
             flex: 1,
-            text: "评价标准(双击修改)",
+            text: "评价标准",
             dataIndex: "indicatorStand",
             editor: {
                 allowBlank: false,

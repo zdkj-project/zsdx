@@ -10,6 +10,7 @@ Ext.define('core.train.courseeval.view.EvalGrid', {
         border: '1px solid #ddd'
     },
     noPagging: true,
+    selModel:false,
     store: {
         type: 'courseeval.maingridstore'
         //.......这里可以写传入这个store的其他参数

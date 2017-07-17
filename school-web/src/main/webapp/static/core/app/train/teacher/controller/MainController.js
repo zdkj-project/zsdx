@@ -714,9 +714,9 @@ Ext.define("core.train.teacher.controller.MainController", {
 
                 var teachingGrid = tabItem.down("grid[xtype=teacher.teachingrid]");
                 var proxy = teachingGrid.getStore().getProxy();
-                proxy.extraParams.propName="teacherId,teacherName";
-                proxy.extraParams.propValue=record.get("uuid") + "," + record.get("xm");
-                proxy.extraParams.joinMethod = "or";
+                proxy.extraParams.propName="teacherId";
+                proxy.extraParams.propValue=record.get("uuid");
+                proxy.extraParams.joinMethod = "";
                 //proxy.extraParams.filter = "[{'type':'string','comparison':'','value':'" + record.get("uuid") + "','field':'mainTeacherId'}]";
                 teachingGrid.getStore().loadPage(1);
             }, 30);

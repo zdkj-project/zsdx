@@ -458,6 +458,13 @@ public class PoiExportExcel {
         return workbook;
     }
 
+    /**
+     * 生成课程的sheet ,一门课一个sheet
+     * @param fileName
+     * @param listContent
+     * @param workbook
+     * @return
+     */
     private static HSSFWorkbook createCourseEvalSheet(String fileName, List<Map<String, Object>> listContent, HSSFWorkbook workbook) {
         int couseCount = listContent.size() - 2;
         int sheetNameCount = 0;
@@ -573,6 +580,10 @@ public class PoiExportExcel {
                         cell = textRow.createCell(k);
                         cell.setCellStyle(baseContentStyle);
                         cell.setCellValue(String.valueOf(val));
+                        if (k == 0)
+                            cell.setCellStyle(baseTitleStyle);
+                        else
+                            cell.setCellStyle(baseContentStyle);
                         k++;
                     }
                 }
@@ -614,6 +625,16 @@ public class PoiExportExcel {
         return workbook;
     }
 
+    /**
+     * 生成班级评价的sheet
+     * @param fileName
+     * @param listContent
+     * @param workbook
+     * @param titleStyle
+     * @param baseTitleStyle
+     * @param baseContentStyle
+     * @return
+     */
     private static HSSFWorkbook createClassEvalSheet(String fileName, List<Map<String, Object>> listContent, HSSFWorkbook workbook, CellStyle titleStyle, CellStyle baseTitleStyle, CellStyle baseContentStyle) {
         Sheet sheet = workbook.createSheet("管理评价");
         Map<String, Object> dataList = listContent.get(listContent.size() - 1);
@@ -708,10 +729,11 @@ public class PoiExportExcel {
         int standCount = 1;
         int rowBegin = 7;
         int rowEnd = 1;
-        Map<String, List<Map<String, Object>>> standData = (Map<String, List<Map<String, Object>>>) dataList.get("standList");
+        List<List<Map<String,Object>>>standData = (List<List<Map<String, Object>>>) dataList.get("standList");
+        int standDataCount = standData.size();
         //循环每个指标
-        for (String s : standData.keySet()) {
-            List<Map<String, Object>> value = standData.get(s);  //指标下的标准
+        for (int n = 0; n < standDataCount; n++) {
+            List<Map<String, Object>> value = standData.get(n);  //指标下的标准
             standCount = value.size();
             rowEnd = rowBegin + standCount;
             for (int j = 0; j < standCount; j++) {
