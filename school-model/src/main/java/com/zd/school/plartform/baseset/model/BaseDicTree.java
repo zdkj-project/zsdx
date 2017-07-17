@@ -92,7 +92,7 @@ public class BaseDicTree extends ExtTreeNode<BaseDicTree> {
         this.dicCode = dicCode;
         this.dicType = dicType;
         this.refModel = refModel;
-/*        this.parent = parent;
-        this.orderIndex = orderIndex;*/
+        this.parent = parent;
+        this.orderIndex = orderIndex;
     }
 }

@@ -15,25 +15,25 @@ Ext.define("core.systemset.dictionary.view.dicGrid", {
         text: '添加下级',
         ref: 'gridAdd',
         iconCls: 'x-fa fa-plus-circle',
-        disabled:true
+        //disabled:true
     }, {
         xtype: 'button',
         text: '添加同级',
         ref: 'gridAddBrother',
         iconCls: 'x-fa fa-plus-circle',
-        disabled:true
+        //disabled:true
     }, {
         xtype: 'button',
         text: '修改',
         ref: 'gridEdit',
         iconCls: 'x-fa fa-pencil-square',
-        disabled:true
+        //disabled:true
     }, {
         xtype: 'button',
         text: '删除',
         ref: 'gridDelete',
         iconCls: 'x-fa fa-minus-circle',
-        disabled:true
+        //disabled:true
     }, {
         xtype: 'button',
         text: '刷新',
