@@ -16,16 +16,9 @@ Ext.define("core.train.coursetype.controller.DetailController", {
     },
     init: function () {
         /*执行一些初始化的代码*/
-        //console.log("初始化 detail controler");     
+        //console.log("初始化 detail controler");
     },
     /** 该视图内的组件事件注册 */
     control: {
-        /*
-         "button": {
-         click : function(btn) {
-         console.log(this);
-
-         }
-         }*/
     }
 });

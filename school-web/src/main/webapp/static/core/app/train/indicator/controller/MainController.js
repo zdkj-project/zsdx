@@ -119,7 +119,7 @@ Ext.define("core.train.indicator.controller.MainController", {
             }
         },
         /**
-         * 学员列表操作列事件
+         * 指标列表操作列事件
          */
         "basegrid  actioncolumn": {
             //操作列编辑、详细
