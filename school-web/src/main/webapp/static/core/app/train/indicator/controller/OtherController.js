@@ -102,7 +102,7 @@ Ext.define("core.train.indicator.controller.OtherController", {
         var radioObject = objForm.down("radiogroup[ref=indicatorObject]").getChecked();
         var sValue = radioObject[0].inputValue;
         var indicatorName = formObj.findField("indicatorName").getValue();
-        var pkValue = formObj.findField(pkName).getValue();
+        var pkValue = formObj.findField("indicatorId").getValue();
         if (Ext.isEmpty(indicatorName)) {
             self.Error("指标名称不能为空");
             return;
@@ -157,41 +157,5 @@ Ext.define("core.train.indicator.controller.OtherController", {
         } else {
             self.Error(resObj.obj);
         }
-        /*        if (formObj.isValid()) {
-
-         formObj.submit({
-         url: funData.action + "/" + act,
-         //params: params,       //表单的参数会自动上传
-         submitEmptyText: false,     //不提交表单为空值的数据
-         waitMsg: '正在提交，请等待...',
-         success: function (fp, action) {
-         formObj.reset();
-         self.msgbox("保存成功!");
-
-         var grid = basetab.funData.grid; //此tab是否保存有grid参数
-         if (!Ext.isEmpty(grid)) {
-         var store = grid.getStore();
-         store.loadPage(1); //刷新父窗体的grid
-         tabPanel.remove(tabItem);
-         }
-
-         },
-         failure: function (form, action) {
-         if (!Ext.isEmpty(action.result.obj))
-         self.Info(action.result.obj);
-         }
-         });
-
-
-         } else {
-
-         var errors = ["前台验证失败，错误信息："];
-         formObj.getFields().each(function (f) {
-         if (!f.isValid()) {
-         errors.push("<font color=red>" + f.fieldLabel + "</font>:" + f.getErrors().join(","));
-         }
-         });
-         self.msgbox(errors.join("<br/>"));
-         }*/
     }
 });

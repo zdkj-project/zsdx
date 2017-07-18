@@ -49,4 +49,3 @@ Ext.define("core.system.ip.controller.otherController", {
     }
          
 });
- 

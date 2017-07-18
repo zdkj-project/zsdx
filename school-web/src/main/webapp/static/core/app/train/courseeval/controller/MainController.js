@@ -250,7 +250,9 @@ Ext.define("core.train.courseeval.controller.MainController", {
                                 //给课程列表界面下面的班级赋值
                                 var mainLayout = baseGrid.up("panel[xtype=courseeval.mainlayout]");
                                 var refreshgrid = mainLayout.down("panel[xtype=courseeval.evalgrid]");
-                                refreshgrid.down('panel[ref=evalClassInfoPanel] label[ref=label1]').setText('班级类型：' + record.get("classCategoryName"));
+                                var evalUrl = "http://" + window.location.host + "/static/traineval/classeval.jsp?classId=" + recordData.uuid;
+                                var classInfo = "[" + record.get("className") + "]管理评价地址：" + evalUrl;
+                                refreshgrid.down('panel[ref=evalClassInfoPanel] label[ref=label1]').setText(classInfo);
                                 //refreshgrid.down('panel[ref=evalClassInfoPanel] label[ref=label2]').setText('班级名称: ' + record.get("className"));
                                 //弹出链接地址框
                                 /*                                var evalUrl = "http://" + window.location.host + "/static/traineval/courseeval.jsp?courseId=" + recordData.classScheduleId;

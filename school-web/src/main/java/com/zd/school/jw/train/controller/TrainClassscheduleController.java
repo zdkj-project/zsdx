@@ -329,8 +329,6 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
         String joinMethod = request.getParameter("joinMethod");
         Integer start = super.start(request);
         Integer limit = super.limit(request);
-/*		String sort = super.sort(request);
-        String filter = super.filter(request);*/
 
         String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
                 + ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId,evalState " +
@@ -350,9 +348,9 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
             } else {
                 for (int i = 0; i < name.length; i++) {
                     sb.append(name[i]);
-                    sb.append(" like '%");
+                    sb.append(" = '");
                     sb.append(value[i]);
-                    sb.append("%' and ");
+                    sb.append("' and ");
                 }
                 sb = sb.delete(sb.length() - 4, sb.length());
             }

@@ -151,116 +151,115 @@ Ext.define("core.system.ip.controller.ipController", {
             }
 
     
-        var funCode=baseGrid.funCode;
-        var basePanel=baseGrid.up("basepanel[funCode="+funCode+"]");
-        var tabPanel=baseGrid.up("tabpanel[xtype=app-main]");
+            var funCode=baseGrid.funCode;
+            var basePanel=baseGrid.up("basepanel[funCode="+funCode+"]");
+            var tabPanel=baseGrid.up("tabpanel[xtype=app-main]");
 
-                                                                             
-        var funData=basePanel.funData;
-        var detCode=basePanel.detCode;
-        var detLayout=basePanel.detLayout;
-        var defaultObj=funData.defaultObj;
+                                                                                 
+            var funData=basePanel.funData;
+            var detCode=basePanel.detCode;
+            var detLayout=basePanel.detLayout;
+            var defaultObj=funData.defaultObj;
 
-                                                                            
-        var otherController=basePanel.otherController;
-        if (!otherController) 
-            otherController='';
-                                                                            
-        var insertObj=self.getDefaultValue(defaultObj);
-        var popFunData=Ext.apply(funData,{
-              grid:baseGrid
-        });
-
-
-       var tabTitle=funData.tabConfig.addTitle;
-       var tabItemId=funCode+"_gridAdd";
-       var pkValue=null;
-       var operType=cmd;
-       switch(cmd){
-            case "react":
-                if (btn) {
-                    var rescords=baseGrid.getSelectionModel().getSelection();
-                    if (rescords.length !=1) {
-                        self.msgbox("请选择一条数据！");
-                        return;
-                    }
-                    recordData=rescords[0].data;
-                }
-                var pkName=funData.pkName;
-                pkValue=recordData[pkName];
-
-                insertObj=recordData;
-                tabTitle=funData.tabConfig.reactTitle;
-                tabItemId=funCode+"_gridReact";
-                operType="edit";
-                break;
-
-
-
-            case "delete":
-               if (btn) {
-                  var rescords=baseGrid.getSelectionModel().getSelection();
-                    if (tabItem.itemPKV&&tabItem.itemPKV!=pkValue) {
-                        self.msgbox("是否删除数据？");
-                        return;
-                    }
-                    recordData=rescords[0].data;
-                }
-
-              var pkName=funData.pkName;
-              pkValue=recordData[pkName];
-              insertObj=recordData;
-              tabTitle=funData.tabConfig.deleteTitle;
-              tabItemId=funCode+"_gridDelete"+pkValue;
-              break;
-        }
-    
-    
-        var tabItem=tabPanel.getComponent(tabItemId);
-        if (!tabItem) {
-            tabItem=Ext.create({
-                xtype:'container',
-                title:tabTitle,
-                scrollable:true,
-                itemId:tabItemId,
-                itemPKV:pkValue,
-                layout:'fit',
+                                                                                
+            var otherController=basePanel.otherController;
+            if (!otherController) 
+                otherController='';
+                                                                                
+            var insertObj=self.getDefaultValue(defaultObj);
+            var popFunData=Ext.apply(funData,{
+                  grid:baseGrid
             });
-            tabPanel.add(tabItem);
+
+
+           var tabTitle=funData.tabConfig.addTitle;
+           var tabItemId=funCode+"_gridAdd";
+           var pkValue=null;
+           var operType=cmd;
+           switch(cmd){
+                case "react":
+                    if (btn) {
+                        var rescords=baseGrid.getSelectionModel().getSelection();
+                        if (rescords.length !=1) {
+                            self.msgbox("请选择一条数据！");
+                            return;
+                        }
+                        recordData=rescords[0].data;
+                    }
+                    var pkName=funData.pkName;
+                    pkValue=recordData[pkName];
+
+                    insertObj=recordData;
+                    tabTitle=funData.tabConfig.reactTitle;
+                    tabItemId=funCode+"_gridReact";
+                    operType="edit";
+                    break;
+
+
+
+                case "delete":
+                   if (btn) {
+                      var rescords=baseGrid.getSelectionModel().getSelection();
+                        if (tabItem.itemPKV&&tabItem.itemPKV!=pkValue) {
+                            self.msgbox("是否删除数据？");
+                            return;
+                        }
+                        recordData=rescords[0].data;
+                    }
+
+                  var pkName=funData.pkName;
+                  pkValue=recordData[pkName];
+                  insertObj=recordData;
+                  tabTitle=funData.tabConfig.deleteTitle;
+                  tabItemId=funCode+"_gridDelete"+pkValue;
+                  break;
+            }
+    
+    
+                var tabItem=tabPanel.getComponent(tabItemId);
+                if (!tabItem) {
+                    tabItem=Ext.create({
+                        xtype:'container',
+                        title:tabTitle,
+                        scrollable:true,
+                        itemId:tabItemId,
+                        itemPKV:pkValue,
+                        layout:'fit',
+                    });
+                    tabPanel.add(tabItem);
             
                               
-            setTimeout(function(){
-                var item=Ext.widget("baseformtab",{
-                    operType:operType,
-                    controller:otherController,
-                    funCode:funCode,
-                    detCode:detCode,
-                    tabItemId:tabItemId,
-                    insertObj:insertObj,
-                    funData:popFunData,
-                    items:[{
-                        xtype:detLayout,
-                        funCode:detCode,
-                    }]
-                });
+                    setTimeout(function(){
+                        var item=Ext.widget("baseformtab",{
+                            operType:operType,
+                            controller:otherController,
+                            funCode:funCode,
+                            detCode:detCode,
+                            tabItemId:tabItemId,
+                            insertObj:insertObj,
+                            funData:popFunData,
+                            items:[{
+                                xtype:detLayout,
+                                funCode:detCode,
+                            }]
+                        });
 
-                tabItem.add(item);
-                var objDetForm=item.down("baseform[funCode="+detCode+"]");
-                var formDeptObj=objDetForm.getForm();
-                self.setFormValue(formDeptObj,insertObj);
-                
-                if (cmd=="detail") {
-                    self.setFuncReadOnly(funData,objDetForm,true);
+                        tabItem.add(item);
+                        var objDetForm=item.down("baseform[funCode="+detCode+"]");
+                        var formDeptObj=objDetForm.getForm();
+                        self.setFormValue(formDeptObj,insertObj);
+                        
+                        if (cmd=="detail") {
+                            self.setFuncReadOnly(funData,objDetForm,true);
+                        }
+                    },30);
+
+                }else if (tabItem.itemPKV&&tabItem.itemPKV!=pkValue){
+                    self.Warning("你已经打开一个编辑窗口了");
+                    return;
                 }
-            },30);
-
-        }else if (tabItem.itemPKV&&tabItem.itemPKV!=pkValue){
-            self.Warning("你已经打开一个编辑窗口了");
-            return;
-        }
-        tabPanel.setActiveTab(tabItem);
-        
-    },
+                tabPanel.setActiveTab(tabItem);   
+        },
 
     //数据维护操作
     doDetail: function(btn, cmd) {

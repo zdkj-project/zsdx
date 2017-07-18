@@ -37,30 +37,24 @@ Ext.define("core.train.coursetype.view.ChangeOrderGrid", {
         },
         listeners: {
             drop: function(node, data, dropRec, dropPosition) {
-                //var store = this.getStore;
-                //var rowIndex = data.rowIndex;
-                //console.log(rowIndex);
-                // for(var i=0;i<store.totalCount;i++){
-                //     store.getAt(i).set('orderIndex',i+1);
-                //     store.commitChanges();
-                // }
             }
         }
     },
-    plugins: ['cellediting', 'gridfilters'],
+    plugins: {
+        ptype: 'cellediting',
+        clicksToEdit: 1
+    },
     columns: {
         defaults: {
             align: 'center',
             titleAlign: "center"
         },
-        items: [{
-             xtype: "rownumberer",
-            //flex:0,
-            //dataIndex: "orderIndex",
+        items: [/*{
+            xtype: "rownumberer",
             width: 60,
             text: '序号',
             align: 'center'
-        }, {
+        }, */{
             width: 100,
             text: "分类名称",
             dataIndex: "nodeText",
@@ -72,7 +66,8 @@ Ext.define("core.train.coursetype.view.ChangeOrderGrid", {
             align: 'left',
             editor: {
                 allowBlank: false,
-                type: 'int'
+                xtype: 'numberfield',
+                minValue:0
             }
         }]
     },

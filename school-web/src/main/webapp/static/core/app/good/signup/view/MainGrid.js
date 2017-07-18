@@ -64,10 +64,11 @@ Ext.define("core.good.signup.view.MainGrid", {
             dataIndex: "actTitle"
         }, {
             text: "活动时间",
-            dataIndex: "actDate",
-            renderer: function (v) {
-                return Ext.Date.format(new Date(v), 'Y-m-d H:i:s');
-            }
+            dataIndex: "actDate" ,
+            renderer:function(v){                    
+                return Ext.Date.format(new Date(v), 'Y-m-d H:i:s');              
+            }     
+
         }],
         defaults: {
             flex: 1,

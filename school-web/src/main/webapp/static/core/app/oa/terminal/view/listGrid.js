@@ -14,13 +14,13 @@ Ext.define("core.oa.terminal.view.listGrid", {
             ref: 'gridAdd_Tab',
             funCode:'girdFuntionBtn',   //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             iconCls: 'x-fa fa-plus-circle'
-        },{
+        }/*,{
             xtype: 'button',
             text: '导出Excel',
             ref: 'exportExcel',
             funCode:'girdFuntionBtn',   //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             iconCls: 'x-fa fa-minus-circle'
-        },'->',{
+        }*/,'->',{
             xtype: 'tbtext', 
             html:'快速搜索：'
         },{
