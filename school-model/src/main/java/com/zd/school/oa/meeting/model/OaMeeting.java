@@ -80,6 +80,17 @@ public class OaMeeting extends BaseEntity implements Serializable{
         return meetingCategory;
     }
         
+    
+    @FieldInfo(name = "主持人ID")
+    @Column(name = "EMCEE_ID", length = 36, nullable = true)
+    private String emceeId;
+    public void setEmceeId(String emceeId) {
+        this.emceeId = emceeId;
+    }
+    public String getEmceeId() {
+        return emceeId;
+    }
+    
     @FieldInfo(name = "主持人")
     @Column(name = "EMCEE", length = 16, nullable = true)
     private String emcee;

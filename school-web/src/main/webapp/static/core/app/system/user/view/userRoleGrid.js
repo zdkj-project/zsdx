@@ -5,7 +5,7 @@ Ext.define("core.system.user.view.userRoleGrid", {
     title:"用户所属角色",
     noPagging:true,
     al:false,
-
+    remoteSort:false,
   
     tbar: [{
         xtype: 'button',
@@ -30,6 +30,7 @@ Ext.define("core.system.user.view.userRoleGrid", {
         filter:"[{'type':'numeric','comparison':'=','value':0,'field':'isDelete'},{'type':'string','comparison':'=','value':'0','field':'userId'}]"
     },
     model: 'com.zd.school.plartform.system.model.SysRole',
+
     columns: { 
         defaults:{
             //flex:1,     //【若使用了 selType: "checkboxmodel"；则不要在这设定此属性了，否则多选框的宽度也会变大 】

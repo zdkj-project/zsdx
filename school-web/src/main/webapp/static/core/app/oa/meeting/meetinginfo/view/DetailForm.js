@@ -100,28 +100,55 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
         layout: "column",
         labelAlign: "right",
         items: [{
-            beforeLabelTextTpl: comm.get("required"),
-            allowBlank: false,
-            blankText: "主持人不能为空",
-            fieldLabel: "主持人",
-            columnWidth: 0.49,
-            name: "emcee",
+            fieldLabel: "主持人ID",
+            name: "emceeId",
             xtype: "textfield",
-            emptyText: "请输入主持人",
-            maxLength: 16,
-            maxLengthText: "最多16个字符,汉字占2个字符",
+            hidden: true
+        },{                   
+            columnWidth: 0.49,      
+            xtype: "basefuncfield",
+            refController: "meetinginfo.otherController", //该功能主控制器，这里重新指定为当前视图的控制器了
+            funcPanel: "meetinginfo.selectemcee.mainlayout", //该功能显示的主视图
+            formPanel:"meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
+            funcTitle: "主持人选择", //查询窗口的标题
+            configInfo: {
+                //width:comm.get("clientWidth")*0.8,
+                width:1000,
+                height:650,
+                fieldInfo: "emceeId~emcee,uuid~xm",
+                whereSql: " and isDelete='0' ",
+                orderSql: " order by createTime DESC ",
+                muiltSelect: false //是否多选
+            },
+            fieldLabel: '主持人',
+            emptyText: "请选择主持人",
+            name: "emcee",     
+
         }, {
             beforeLabelTextTpl: comm.get("required"),
             allowBlank: false,
             blankText: "会议地点不能为空",
+            columnWidth: 0.49,     
+
+            xtype: "basefuncfield",
+            refController: "meetinginfo.otherController", //该功能主控制器，这里重新指定为当前视图的控制器了
+            funcPanel: "room.mainlayout", //该功能显示的主视图
+            formPanel:"meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
+            funcTitle: "会议地点选择", //查询窗口的标题
+            configInfo: {
+                //width:comm.get("clientWidth")*0.8,
+                width:1200,
+                height:650,
+                fieldInfo: "roomId~roomName,uuid~roomName",
+                whereSql: " and isDelete='0' ",
+                orderSql: " order by createTime DESC ",
+                muiltSelect: false //是否多选
+            },
             fieldLabel: "会议地点",
-            columnWidth: 0.49,
-            name: "roomName",
-            xtype: "textfield",
-            emptyText: "请输入会议地点",
-            maxLength: 32,
-            maxLengthText: "最多32个字符,汉字占2个字符",
-        }, /*{
+            emptyText: "请选择会议地点",
+            name: "roomName",     
+    
+        }, {
             fieldLabel: "房间ID",
            // columnWidth: 0.5,
             name: "roomId",
@@ -130,7 +157,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             maxLength: 36,
             maxLengthText: "最多36个字符,汉字占2个字符",
             hidden: true
-        }*/]
+        }]
     }, {
         xtype: "container",
         layout: "column",

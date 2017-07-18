@@ -14,6 +14,15 @@ Ext.define("core.system.user.view.DeptTree", {
         orderSql: " order by parentNode,orderIndex asc",
         excludes:"checked"
     },
+
+    columnLines:false,
+    selModel: null,
+    lines:true,
+    useArrows: false,
+    viewConfig: {
+        stripeRows: false
+    },
+
     tools: [{
         type: 'refresh',
         qtip: '刷新',
@@ -23,18 +32,19 @@ Ext.define("core.system.user.view.DeptTree", {
             tree.getSelectionModel().deselectAll(true);
         }
     }],
-    columns: [{
-        header: '部门名称',
-        dataIndex: 'text',
-        xtype: 'treecolumn',
-        flex: 1
-    },/* {
-        header: '主负责人',
-        dataIndex: 'mainLeader'
-    }, {
-        header: '副负责人',
-        dataIndex: 'viceLeader'
-    }*/],
+
+    // columns: [{
+    //     header: '部门名称',
+    //     dataIndex: 'text',
+    //     xtype: 'treecolumn',
+    //     flex: 1
+    // }, {
+    //     header: '主负责人',
+    //     dataIndex: 'mainLeader'
+    // }, {
+    //     header: '副负责人',
+    //     dataIndex: 'viceLeader'
+    // }],
     listeners: {
         itemclick: function(grid, record, item, index, e) {
             var mainLayout = grid.up("panel[xtype=user.mainlayout]");

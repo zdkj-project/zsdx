@@ -133,4 +133,5 @@ public interface BaseDeptjobService extends BaseService<BaseDeptjob> {
 	 * @return
 	 */
 	public Boolean setSuperJob(String ids, String setIds, String setType, SysUser currentUser);
+
 }

@@ -81,4 +81,10 @@ public interface BaseUserdeptjobService extends BaseService<BaseUserdeptjob> {
 
 	public Boolean doLogicDeleteByIds(String ids, SysUser currentUser);
 
+	public boolean removeUserFromDeptJob(String delIds, SysUser currentUser);
+
+	public boolean addUserToDeptJob(String deptJobId, String userId, SysUser currentUser);
+
+	public boolean setMasterDeptJob(String delIds, String userId, SysUser currentUser);
+
 }

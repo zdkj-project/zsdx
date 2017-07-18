@@ -30,7 +30,7 @@ Ext.define("core.system.role.view.RoleUserGrid", {
         },{
 			text: "主键",
 			dataIndex: "uuid",
-			hidden: true
+			hidden: true 
 		}, {
 			text: "编号",
 			dataIndex: "userNumb"

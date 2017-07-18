@@ -15,7 +15,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.selectUserGrid", {
 	extParams: {
 		whereSql: "",
 		orderSql: "",
-		filter: "[{'type':'numeric','comparison':'=','value':0,'field':'isDelete'},	  {'type':'string','comparison':'=','value':'1','field':'category'}, {'type': 'numeric','comparison': '=','value': '1','field': 'issystem'}]"
+		filter: '[{"type":"numeric","comparison":"=","value":0,"field":"isDelete"},{"type":"string","comparison":"=","value":"1","field":"category"}, {"type": "numeric","comparison": "=","value": "1","field": "issystem"}]'
 	},
 	//title: "<font color=red>可选人员(选中后向右拖动或双击添加)</font>",
 	viewConfig: {
@@ -39,7 +39,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.selectUserGrid", {
             html:'快速搜索：'
         },{
             xtype:'textfield',
-            name:'name',
+            name:'xm',
             funCode:'girdFastSearchText', 
             emptyText: '请输入姓名'
         }]

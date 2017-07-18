@@ -63,7 +63,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 	SysMenuService sysMenuService;
 
 	@Resource
-	BaseUserdeptjobService deptjobService;
+	BaseUserdeptjobService userDeptjobService;
 
 	/**
 	 * list查询 @Title: list @Description: TODO @param @param entity
@@ -79,19 +79,35 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 
 		deptId = deptId == null ? "2851655E-3390-4B80-B00C-52C7CA62CB39" : deptId;
 
-		List<BaseUserdeptjob> udj = deptjobService.queryByProerties("deptId", deptId);
+		// 若为学校部门，则查询出所有的用户
+		if (deptId.equals("2851655E-3390-4B80-B00C-52C7CA62CB39")) {
+			
+			QueryResult<SysUser> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+					super.sort(request), super.filter(request), true);
+			strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
+		
+		} else {
+			List<BaseUserdeptjob> udj = userDeptjobService.queryByProerties("deptId", deptId);
+			
+			String userIds = "";
+			for (int i = 0; i < udj.size(); i++) {
+				userIds += "'" + udj.get(i).getUserId() + "',";
+			}
 
-		String userIds = "";
-		for (int i = 0; i < udj.size(); i++) {
-			userIds += "'" + udj.get(i).getUserId() + "',";
+			if (userIds.trim().length() > 0){	//若又在用户，就去查询
+				
+				userIds = StringUtils.trimLast(userIds);
+				
+				SysUser currentUser = getCurrentSysUser();
+				QueryResult<SysUser> qr = thisService.getDeptUser(super.start(request), super.limit(request),
+						super.sort(request), super.filter(request), true, userIds, currentUser);
+				strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
+			
+			}else{
+				strData = jsonBuilder.buildObjListToJson((long) 0, new ArrayList<>(), true);// 处理数据
+			}			
 		}
-		userIds = StringUtils.trimLast(userIds);
 
-		SysUser currentUser = getCurrentSysUser();
-		QueryResult<SysUser> qr = thisService.getDeptUser(super.start(request), super.limit(request),
-				super.sort(request), super.filter(request), true, userIds, currentUser);
-
-		strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
 	}
 
@@ -199,17 +215,17 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			String hql = "select COUNT(*) from TrainClass o where o.isDelete=0 and ((o.isuse=1 and o.isarrange!=1) or o.isuse=3 )";
 			Integer count1 = thisService.getCount(hql);
 
-			List<Map<String, Object>> returnList=new ArrayList<>();
-			
+			List<Map<String, Object>> returnList = new ArrayList<>();
+
 			Map<String, Object> map1 = new HashMap<>();
-			map1.put("name","TRAINARRANGE");
-			map1.put("value",count1);
-			
+			map1.put("name", "TRAINARRANGE");
+			map1.put("value", count1);
+
 			returnList.add(map1);
-			
+
 			String strData = jsonBuilder.toJson(returnList);
 			writeJSON(response, jsonBuilder.returnSuccessJson(strData));
-			
+
 		} catch (Exception e) {
 			writeJSON(response, jsonBuilder.returnFailureJson("\"请求失败，请重试或联系管理员！\""));
 		}
@@ -391,20 +407,110 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 		strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
 	}
-	
-	@RequestMapping(value = { "/selectedUserlist" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
+
+	@RequestMapping(value = { "/selectedUserlist" }, method = {
+			org.springframework.web.bind.annotation.RequestMethod.GET,
 			org.springframework.web.bind.annotation.RequestMethod.POST })
 	public void getSelectedUserlist(@ModelAttribute SysDatapermission entity, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		String strData = ""; // 返回给js的数据
-		String ids=request.getParameter("ids");
-		String hql="from SysUser a where uuid in ('"+ids.replace(",", "','")+"')";
+		String ids = request.getParameter("ids");
+		String hql = "from SysUser a where uuid in ('" + ids.replace(",", "','") + "')";
 		List<SysUser> userList = thisService.doQuery(hql);
-		
-		strData = jsonBuilder.buildObjListToJson((long) userList.size(),userList, true);// 处理数据
+
+		strData = jsonBuilder.buildObjListToJson((long) userList.size(), userList, true);// 处理数据
 		writeJSON(response, strData);// 返回数据
 	}
 	
+	
+	@RequestMapping(value = { "/userDeptJobList" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
+			org.springframework.web.bind.annotation.RequestMethod.POST })
+	public void getUserDeptJobList(@ModelAttribute SysDatapermission entity, HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		String strData = ""; // 返回给js的数据
+		
+		String userId = request.getParameter("userId");
+		
+		String propName[]={"isDelete","userId"};
+		Object propValue[]={0,userId};
+		List<BaseUserdeptjob> list = userDeptjobService.queryByProerties(propName, propValue);
+	
+		strData = jsonBuilder.buildObjListToJson((long) list.size(),list, true);// 处理数据
+		writeJSON(response, strData);// 返回数据
+	}
+	
+	/**
+	 * 将指定的用户绑定到指定的部门岗位上
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping("/addUserToDeptJob")
+	public void addUserToDeptJob(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String deptJobId = request.getParameter("ids");
+		String userId = request.getParameter("setIds");
+		if (StringUtils.isEmpty(deptJobId) || StringUtils.isEmpty(userId)) {
+			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入设置的参数'"));
+			return;
+		} else {
+			SysUser currentUser = getCurrentSysUser();
+			boolean flag = userDeptjobService.addUserToDeptJob(deptJobId, userId, currentUser);
+			if (flag)
+				writeJSON(response, jsonBuilder.returnSuccessJson("'设置成功'"));
+			else
+				writeJSON(response, jsonBuilder.returnSuccessJson("'设置失败'"));
+		}
+	}
+	
+	/**
+	 * 删除用户所在的部门岗位，只是逻辑删除
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping("/removeUserFromDeptJob")
+	public void removeTeacherFromDeptJob(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String delIds = request.getParameter("ids");
+		if (StringUtils.isEmpty(delIds)) {
+			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入要解除绑定的部门岗位'"));
+			return;
+		} else {
+			SysUser currentUser = getCurrentSysUser();
+			boolean flag = userDeptjobService.removeUserFromDeptJob(delIds, currentUser);
+			if (flag)
+				writeJSON(response, jsonBuilder.returnSuccessJson("'解除绑定成功'"));
+			else
+				writeJSON(response, jsonBuilder.returnSuccessJson("'解除绑定失败'"));
+		}
+	}
+	
+	/**
+	 * 调整指定用户的主部门岗位
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping("/setMasterDeptJob")
+	public void setMasterDeptJob(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String delIds = request.getParameter("ids");
+		String userId = request.getParameter("setIds");
+		if (StringUtils.isEmpty(delIds) || StringUtils.isEmpty(userId)) {
+			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入要设置部门岗位'"));
+			return;
+		} else {
+			SysUser currentUser = getCurrentSysUser();
+			boolean flag = userDeptjobService.setMasterDeptJob(delIds, userId, currentUser);
+			if (flag)
+				writeJSON(response, jsonBuilder.returnSuccessJson("'设置主部门成功'"));
+			else
+				writeJSON(response, jsonBuilder.returnSuccessJson("'设置主部门失败'"));
+		}
+	}
+	
+
 	/*
 	 * 单条数据调用同步UP的方式 用于修改单条人员数据的时候进行同步（貌似目前暂时未使用到）
 	 */
@@ -471,8 +577,8 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			String sql = "select  u.USER_ID as userId,u.XM as employeeName, u.user_numb as employeeStrId,"
 					+ "'' as employeePwd,CASE u.XBM WHEN '2' THEN '0' ELSE '1' END AS sexId,u.isDelete as isDelete,"
 					+ "u.SFZJH AS identifier,'1' AS cardState, " // cardState
-																		// 和 sid
-																		// 都置默认值，现在不做特定的处理
+																	// 和 sid
+																	// 都置默认值，现在不做特定的处理
 					+ "'' as sid,org.EXT_FIELD04 as departmentId  " + " from SYS_T_USER u" + " join BASE_T_ORG org on "
 					+ "		(select top 1 DEPT_ID from BASE_T_UserDeptJOB where USER_ID=u.USER_ID and ISDELETE=0 order by master_dept desc,CREATE_TIME desc)=org.dept_ID "
 					+ " join BASE_T_JOB job on "
@@ -485,9 +591,9 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
 			int row = 0;
 			if (userInfos.size() > 0) {
-				row = thisService.syncUserInfoToAllUP(userInfos,null);
+				row = thisService.syncUserInfoToAllUP(userInfos, null);
 			} else {
-				row = thisService.syncUserInfoToAllUP(null,null);
+				row = thisService.syncUserInfoToAllUP(null, null);
 			}
 
 			if (row == 0) {
@@ -523,8 +629,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
 					+ " convert(int,a.CardStatusIDXF) as useState,"
 					+ " b.SID as sid,b.EmployeeStatusID as employeeStatusID "
-					+ " from Tc_Employee b left join TC_Card a on b.CardID=a.CardID"
-					+ " where b.UserId is not null "
+					+ " from Tc_Employee b left join TC_Card a on b.CardID=a.CardID" + " where b.UserId is not null "
 					+ "	order by a.CardID asc,a.ModifyDate asc";
 
 			List<CardUserInfoToUP> upCardUserInfos = thisService.doQuerySqlObject(sql, CardUserInfoToUP.class);

@@ -3,7 +3,8 @@ Ext.define("core.base.view.form.BaseFuncField",{
 	extend:"Ext.form.field.Picker",
 	alias: 'widget.basefuncfield',
 	mixins: {
-		sqlUtil:"core.util.SqlUtil"
+		sqlUtil:"core.util.SqlUtil",
+		messageUtil: "core.util.MessageUtil"
 	},
 	editable : false,
     //trigger1Cls: Ext.baseCSSPrefix + 'form-clear-trigger',    
@@ -196,7 +197,8 @@ Ext.define("core.base.view.form.BaseFuncField",{
 						okBtn.on("click",function(btn){
 							//查询的OK事件
 							var records=baseGrid.getSelectionModel().getSelection();
-							//点击确定之后会得到选中的数据做处理
+							if(records.length>0){
+								//点击确定之后会得到选中的数据做处理
 								if(muiltSelect){
 									//因为是多选，将值用逗号隔开放入字段中
 									Ext.each(dataField,function(f,index){
@@ -232,6 +234,9 @@ Ext.define("core.base.view.form.BaseFuncField",{
 								baseProxy.extraParams.whereSql =old_wheresql;
 								baseProxy.extraParams.filter = old_filter;	//恢复原始参数 2017-2-14.ZZK
 								win.close();
+							}else{
+								self.msgbox("请至少选择一条数据！");
+							}
 						});
 						var calBtn=win.down("button[ref=ssCancelBtn]");
 						if(calBtn){

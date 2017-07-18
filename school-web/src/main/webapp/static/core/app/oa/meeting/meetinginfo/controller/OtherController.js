@@ -115,6 +115,42 @@ Ext.define("core.oa.meeting.meetinginfo.controller.OtherController", {
             }
         },
 
+        "window[funcPanel=room.mainlayout] button[ref=ssOkBtn]":{
+            beforeclick: function(btn) {               
+                var self=this;
+
+                var win=btn.up("window[funcPanel=room.mainlayout]");
+                var baseGrid=win.down("grid[xtype=room.RoomGrid]");                       
+
+                var tabPanel=Ext.ComponentQuery.query('tabpanel[xtype=app-main]')[0];
+                var tabItem=tabPanel.getActiveTab();
+                var formpanel=tabItem.down('form[xtype=' + win.formPanel + ']');
+                                    
+                var records = baseGrid.getSelectionModel().getSelection();
+                if (records.length != 1) {
+                    self.msgbox("请选择一个场地！");
+                    return false;
+                }
+
+                var funCode = baseGrid.funCode;
+                var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+                //得到配置信息
+                var funData = basePanel.funData;
+                var pkName = funData.pkName;
+            
+                var roomId=records[0].get(pkName);
+                var areaUpName=records[0].get("areaUpName");
+                var areaName=records[0].get("areaName");
+                var roomName=records[0].get("roomName");
+                
+                formpanel.getForm().findField("roomId").setValue(roomId);
+                formpanel.getForm().findField("roomName").setValue(areaUpName+"-"+areaName+"-"+roomName);             
+
+                win.close();
+                return false;
+            }
+        },
+
         //选择班主任，界面加载事件
         "window[funcPanel=meetinginfo.selectsysuser.mainlayout]":{
             afterrender:function(win){

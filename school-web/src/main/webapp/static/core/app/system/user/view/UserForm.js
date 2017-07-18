@@ -72,7 +72,7 @@ Ext.define("core.system.user.view.UserForm", {
             allowBlank: false,
             blankText: ""
         }]
-    }, {
+    }, /*{
         xtype: 'container',
         layout: "column", // 从左往右的布局
         items: [{
@@ -85,7 +85,7 @@ Ext.define("core.system.user.view.UserForm", {
             fieldLabel: "岗位ID",
             name: "jobId",
             hidden: true
-        }, /*{
+        }, *//*{
             columnWidth: .5,
             beforeLabelTextTpl: comm.get("required"),
             //xtype: "textfield",
@@ -103,7 +103,7 @@ Ext.define("core.system.user.view.UserForm", {
                 whereSql: " and isDelete='0' ",
                 orderSql: " order by parentNode,orderIndex asc"
             } //
-        },*/ {
+        },*/ /*{
             columnWidth: .5,
             beforeLabelTextTpl: comm.get("required"),
             xtype: "basefuncfield",
@@ -121,7 +121,7 @@ Ext.define("core.system.user.view.UserForm", {
             allowBlank: true,
             blankText: "所属岗位不能为空"
         }]
-    }, {
+    },*/ {
         xtype: 'container',
         layout: "column", // 从左往右的布局
         items: [{
@@ -149,21 +149,19 @@ Ext.define("core.system.user.view.UserForm", {
         items: [{
             columnWidth: .5,
             beforeLabelTextTpl: "",
-            fieldLabel: '固定电话',
-            name: "telphone",
+            fieldLabel: '身份证件号',
+            name: "sfzjh",
             xtype: 'textfield',
             allowBlank: true,
-            emptyText: '请输入固定电话',
-            blankText: "固定电话不能为空"
+            emptyText: '请输入身份证件号',
         }, {
             columnWidth: .5,
             beforeLabelTextTpl: "",
             fieldLabel: '电子邮箱',
-            name: "eMail",
+            name: "dzxx",
             xtype: 'textfield',
             allowBlank: true,
-            emptyText: '请输入电子邮箱',
-            blankText: "电子邮箱不能为空"
+            emptyText: '请输入电子邮箱'
         }]
     }]
 });

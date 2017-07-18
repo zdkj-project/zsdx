@@ -10,12 +10,17 @@ import javax.annotation.Resource;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.zd.core.service.BaseServiceImpl;
+import com.zd.core.util.ModelUtil;
 import com.zd.school.plartform.baseset.dao.BaseUserdeptjobDao;
+import com.zd.school.plartform.baseset.model.BaseDeptjob;
 import com.zd.school.plartform.baseset.model.BaseUserdeptjob;
+import com.zd.school.plartform.baseset.service.BaseDeptjobService;
 import com.zd.school.plartform.baseset.service.BaseUserdeptjobService;
 import com.zd.school.plartform.system.model.SysUser;
+import com.zd.school.plartform.system.service.SysUserService;
 
 /**
  * 
@@ -35,7 +40,12 @@ public class BaseUserdeptjobServiceImpl extends BaseServiceImpl<BaseUserdeptjob>
 	public void setBaseUserdeptjobDao(BaseUserdeptjobDao dao) {
 		this.dao = dao;
 	}
-
+	@Resource
+	private SysUserService userService;
+	
+	@Resource
+	private BaseDeptjobService baseDeptjobService;
+	
 	private static Logger logger = Logger.getLogger(BaseUserdeptjobServiceImpl.class);
 
 	@Override
@@ -104,6 +114,94 @@ public class BaseUserdeptjobServiceImpl extends BaseServiceImpl<BaseUserdeptjob>
 			delResult = false;
 		}
 		return delResult;
+	}
+
+	@Override
+	public boolean addUserToDeptJob(String deptJobId, String userId, SysUser currentUser) {
+		Boolean reResult = false;
+		String[] userIds = userId.split(",");
+		try {
+			// 所有要设置的用户
+			List<SysUser> users = userService.queryByProerties("uuid", userIds);
+			
+			String hql = " select a from BaseDeptjob a  where a.uuid in ('" + deptJobId.replace(",", "','")
+					+ "') order by a.jobLevel asc ";
+			List<BaseDeptjob> deptjobs = baseDeptjobService.doQuery(hql);
+			
+			for (SysUser user : users) {
+				// 查询当前用户已有的部门岗位
+				Map<String, BaseUserdeptjob> userHasJobMap = this.getUserDeptJobMaps(user);
+				BaseUserdeptjob isMasterDeptJob = this.getUserMasterDeptJob(user);
+				for (int i = 0; i < deptjobs.size(); i++) {
+					String uuid = deptjobs.get(i).getUuid(); // 选择的部门岗位Id
+					if (userHasJobMap.get(uuid) == null) {
+						// 如果当前岗位还没有设置成此教师的部门岗位
+						BaseUserdeptjob userDeptJob = new BaseUserdeptjob();
+						userDeptJob.setDeptId(deptjobs.get(i).getDeptId());
+						userDeptJob.setJobId(deptjobs.get(i).getJobId());
+						userDeptJob.setDeptjobId(uuid);
+						userDeptJob.setUserId(user.getUuid());
+						userDeptJob.setCreateTime(new Date());
+						userDeptJob.setCreateUser(currentUser.getUuid());
+						// 当前人没有主工作部门时将一个岗位设置为主部门
+						if (!ModelUtil.isNotNull(isMasterDeptJob) && i == 0) {
+							userDeptJob.setMasterDept(1);
+						} else
+							userDeptJob.setMasterDept(0);
+
+						this.merge(userDeptJob);
+					}
+				}
+				// 将老师从临时部门删除
+				user.setDeptId("");
+				user.setUpdateTime(new Date());
+				user.setUpdateUser(currentUser.getUuid());
+				userService.merge(user);
+			}
+
+			return true;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			//手动回滚
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			return false;
+		}
+	}
+
+	@Override
+	public boolean removeUserFromDeptJob(String delIds, SysUser currentUser) {
+		try {
+			return this.doLogicDeleteByIds(delIds, currentUser);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			return false;
+		}
+	}
+
+	@Override
+	public boolean setMasterDeptJob(String delIds, String userId, SysUser currentUser) {
+		try {
+			// 先将原来的主部门岗位设置成非主部门岗位
+			SysUser user = userService.get(userId);
+			BaseUserdeptjob oldMaster = this.getUserMasterDeptJob(user);
+			if (ModelUtil.isNotNull(oldMaster)) {
+				oldMaster.setMasterDept(0);
+				oldMaster.setUpdateTime(new Date());
+				oldMaster.setUpdateUser(currentUser.getUuid());
+				this.merge(oldMaster);
+			}
+			
+			// 将新的部门岗位设置为主部门岗位
+			String[] propertyName = { "masterDept", "updateTime", "updateUser" };
+			Object[] propertyValue = { 1, new Date(), currentUser.getUuid() };
+			this.updateByProperties("uuid", delIds, propertyName, propertyValue);
+			return true;
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			return false;
+		}
 	}
 
 	/**

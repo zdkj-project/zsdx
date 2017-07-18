@@ -3,7 +3,7 @@ Ext.define("core.system.user.view.selectRoleLayout", {
 	alias: 'widget.user.selectrolelayout',
 	funCode: "user_selectrolemain",
 	layout: 'border',
-	bodyPadding: 5,	
+	//bodyPadding: 5,	
 	funData: {
 		action: comm.get('baseUrl') + "/sysuser", //请求Action
 		whereSql: "", //表格查询条件
@@ -22,13 +22,15 @@ Ext.define("core.system.user.view.selectRoleLayout", {
 	items: [{
 		xtype: "user.selectrolegrid",
 		region: "west",
-		margin:'0 5 0 0',
+		margin:5,
 		flex:2,
-		border:true
+		title:null
+		//border:true
 	},{
 		xtype: "user.isselectrolegrid",
 		region: "center",
 		flex:1,
-		border:true
+		margin:5,
+		//border:true
 	}]
 })

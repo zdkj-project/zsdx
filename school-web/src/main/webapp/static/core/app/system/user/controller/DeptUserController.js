@@ -14,9 +14,29 @@ Ext.define("core.system.user.controller.DeptUserController", {
         var self = this
             //事件注册
         this.control({
+            "panel[xtype=user.usergrid] actiontextcolumn": {
+                gridUserRoleClick:function(data){
+                    var baseGrid = data.view;
+                    var record = data.record;
+
+                    this.doDetail_Tab(null, data.cmd, baseGrid, record);
+                 
+                    return false;
+                },
+                gridDeptJobClick:function(data){
+                    var baseGrid = data.view;
+                    var record = data.record;
+
+                    this.doDetail_Tab(null, data.cmd, baseGrid, record);
+                 
+                    return false;
+                }
+            },
+
             //点击用户事件响应,刷新用户所属的角色
             "panel[xtype=user.usergrid]": {
                 beforeitemclick: function(grid, record, item, index, e, eOpts) {
+                    /*
                     var basePanel = grid.up("panel[xtype=user.mainlayout]");
                     var records = grid.getSelectionModel().getSelection();
                     var selUserId = records[0].get("uuid");
@@ -27,6 +47,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
                         userId: selUserId
                     };
                     roleStore.load();
+                    */
                 }
             },
             //添加用户事件
@@ -368,130 +389,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
                 }
             },
 
-            //添加用户所属角色事件
-            "panel[xtype=user.userrolegrid] button[ref=gridAdd]": {
-                beforeclick: function(btn) {
-                    var userRoleGrid = btn.up("basegrid");
-                    var mainLayout = userRoleGrid.up("panel[xtype=user.mainlayout]");
-                    var funData = mainLayout.funData;
-                    //选择的用户
-                    var userGrid = mainLayout.down("panel[xtype=user.usergrid]");
-                    var selectUser = userGrid.getSelectionModel().getSelection();
-                    if (selectUser.length == 0) {
-                        self.Error("请选择要增加角色的用户");
-                        return false;
-                    }
-                    var selectUserId = selectUser[0].get("uuid");
-                    var detCode = "user_selectrolemain";
-                    var popFunData = Ext.apply(funData, {
-                        grid: userRoleGrid,
-                        userId: selectUserId
-                    }); //
-                    var cmd = "edit";
-                    var winId = detCode + "_win";
-                    var win = Ext.getCmp(winId);
-                    if (!win) {
-                        win = Ext.create('core.base.view.BaseFormWin', {
-                            id: winId,
-                            title: "用户角色选择",
-                            width: 1024,
-                            height: 600,
-                            resizable: false,
-                            controller:'user.otherController',
-                            iconCls: "x-fa fa-user",
-                            operType: cmd,
-                            funData: popFunData,
-                            funCode: detCode,
-                            txtformSave: "确定",
-                            items: [{
-                                xtype: "user.selectrolelayout"
-                            }]
-                        });
-                    }
-                    win.show();
-                    //待选的项目中要过虑掉已选择的
-                    var selectRoleGrid = win.down("panel[xtype=user.selectrolegrid]");
-                    var selectRoletore = selectRoleGrid.getStore();
-                    var selectRoleProxy = selectRoletore.getProxy();
-                    selectRoleProxy.extraParams = {
-                        userId: selectUserId
-                    };
-                    selectRoletore.load();
-                    return false;
-                }
-            },
-
-            //删除用户所属角色事件
-            "panel[xtype=user.userrolegrid] button[ref=gridDelete]": {
-                beforeclick: function(btn) {
-                    var userRoleGrid = btn.up("basegrid");
-                    var mainLayout = userRoleGrid.up("panel[xtype=user.mainlayout]");
-                    var funData = mainLayout.funData;
-                    //选择的用户
-                    var userGrid = mainLayout.down("panel[xtype=user.usergrid]");
-                    var selectUser = userGrid.getSelectionModel().getSelection();
-                    if (selectUser.length == 0) {
-                        self.Error("请选择要删除的角色");
-                        return false;
-                    }
-                    var selectUserId = selectUser[0].get("uuid");
-
-                    //选择的角色
-                    var selectUserRole = userRoleGrid.getSelectionModel().getSelection();
-                    if (selectUserRole.length == 0) {
-                        self.Warning("没有选择要删除的角色，请选择");
-                        return false;
-                    }
-                    var store = userRoleGrid.getStore();
-                    var recdCount = store.getCount();
-                    if (recdCount==1){
-                        self.Warning("每个用户至少要包含一个角色，不能再删除");
-                        return false;                       
-                    }
-                    if (recdCount==selectUserRole.length){
-                        self.Warning("每个用户至少要包含一个角色，不能全部删除");
-                        return false;      
-                    }
-                    //拼装所选择的角色
-                    var ids = new Array();
-                    Ext.each(selectUserRole, function(rec) {
-                        var pkValue = rec.get("uuid");
-                        ids.push(pkValue);
-                    });
-                    var title = "删除角色后，用户将不再拥有这些角色的权限，确定删除吗？";
-                    Ext.Msg.confirm('警告', title, function(btn, text) {
-                        if (btn == 'yes') {
-                            //发送ajax请求
-                            var resObj = self.ajax({
-                                url: funData.action + "/deleteUserRole",
-                                params: {
-                                    ids: ids.join(","),
-                                    userId: selectUserId
-                                }
-                            });
-                            if (resObj.success) {
-                                var store = userRoleGrid.getStore();
-                                var proxy = store.getProxy();
-                                var filterArry = new Array();
-                                filterArry.push("{'type':'numeric','comparison':'=','value':0,'field':'isDelete'}");
-                                proxy.extraParams = {
-                                    filter: "[" + filterArry.join(",") + "]",
-                                    userId: selectUserId
-                                };
-                                store.load();
-                                self.msgbox(resObj.obj);
-                            } else {
-                                self.Error(resObj.obj);
-                            }
-                        }
-                    });
-                    //执行回调函数
-                    if (btn.callback) {
-                        btn.callback();
-                    }
-                    return false;
-                }
-            },
+            
 
             
 
@@ -605,7 +503,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
         var self = this;
         var userGrid = btn.up("basegrid");
         var mainLayout = userGrid.up("panel[xtype=user.mainlayout]");
-        var userRoleGrid = mainLayout.down("panel[xtype=user.userrolegrid]");
+        //var userRoleGrid = mainLayout.down("panel[xtype=user.userrolegrid]");
         var funData = mainLayout.funData;
         var deptId = funData.deptId;
         var info = "";
@@ -653,12 +551,12 @@ Ext.define("core.system.user.controller.DeptUserController", {
                 });
                 if (resObj.success) {
                     //刷新用户所属角色列表
-                    var store = userRoleGrid.getStore();
-                    var proxy = store.getProxy();
-                    proxy.extraParams = {
-                        userId: "0"
-                    };
-                    store.load();
+                    // var store = userRoleGrid.getStore();
+                    // var proxy = store.getProxy();
+                    // proxy.extraParams = {
+                    //     userId: "0"
+                    // };
+                    // store.load();
 
                     //刷新用户列表
                     var userStore = userGrid.getStore();
@@ -678,5 +576,168 @@ Ext.define("core.system.user.controller.DeptUserController", {
         if (btn.callback) {
             btn.callback();
         }
+    },
+
+    doDetail_Tab:function(btn, cmd, grid, record) {
+
+        var self = this;
+        var baseGrid;
+        var recordData;
+
+        if (btn) {
+            baseGrid = btn.up("basegrid");
+        } else {
+            baseGrid = grid;
+            recordData = record.data;
+        }
+
+
+        //得到组件
+        var funCode = baseGrid.funCode;
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode +"]");
+        var tabPanel=baseGrid.up("tabpanel[xtype=app-main]");
+
+        //得到配置信息
+        var funData = basePanel.funData;
+        var detCode =  basePanel.detCode;  
+        var detLayout = basePanel.detLayout;
+        var defaultObj = funData.defaultObj;
+                
+        //关键：window的视图控制器
+        var otherController = basePanel.otherController;
+        if (!otherController)
+            otherController = '';
+
+        //处理特殊默认值
+        var insertObj = self.getDefaultValue(defaultObj);
+        var popFunData = Ext.apply(funData, {
+            grid: baseGrid
+        });
+
+        
+        if (btn) {
+            var rescords = baseGrid.getSelectionModel().getSelection();
+            if (rescords.length != 1) {
+                self.msgbox("请选择一条数据！");
+                return;
+            }
+            recordData = rescords[0].data;
+        }
+
+        insertObj = recordData;
+
+         //本方法只提供班级详情页使用
+        var tabTitle =insertObj.xm+"-角色管理";
+        //设置tab页的itemId
+        var pkValue= null;
+        var operType = "detail";    // 只显示关闭按钮
+        var tabItemId=funCode+"_gridUserRole"+insertObj.classNumb;    //详细界面可以打开多个
+        items=[{
+            xtype:detLayout,
+            defaults:null,
+            items:[{
+                xtype:'user.userrolegrid',
+                title:null
+            }]
+        }];
+        switch(cmd){
+            case 'userRole':
+                var tabTitle =insertObj.xm+"-角色管理";
+                //设置tab页的itemId
+                var operType = "detail";    // 只显示关闭按钮
+                var tabItemId=funCode+"_gridUserRole"+insertObj.uuid;    //详细界面可以打开多个
+                items=[{
+                    xtype:detLayout,
+                    defaults:null,
+                    items:[{
+                        xtype:'user.userrolegrid',
+                        title:null
+                    }]
+                }];
+                break;
+            case 'deptJob':
+                var tabTitle =insertObj.xm+"-部门岗位";
+                //设置tab页的itemId
+                var operType = "detail";    // 只显示关闭按钮
+                var tabItemId=funCode+"_gridDeptJob"+insertObj.uuid;    //详细界面可以打开多个
+                items=[{
+                    xtype:detLayout,
+                    defaults:null,
+                    items:[{
+                        xtype:'user.userdeptjobgrid',
+                        title:null
+                    }]
+                }];
+                break;
+        }
+
+        
+
+        //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
+        var tabItem=tabPanel.getComponent(tabItemId);
+        if(!tabItem){
+    
+            tabItem=Ext.create({
+                xtype:'container',
+                title: tabTitle,
+                //iconCls: 'x-fa fa-clipboard',
+                scrollable :true, 
+                itemId:tabItemId,
+                itemPKV:pkValue,      //保存主键值
+                layout:'fit', 
+            });
+            tabPanel.add(tabItem); 
+
+            //延迟放入到tab中
+            setTimeout(function(){
+                //创建组件
+                var item=Ext.widget("baseformtab",{
+                    operType:operType,                            
+                    controller:otherController,         //指定重写事件的控制器
+                    funCode:funCode,                    //指定mainLayout的funcode
+                    detCode:detCode,                    //指定detailLayout的funcode
+                    tabItemId:tabItemId,                //指定tab页的itemId
+                    insertObj:insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                    funData: popFunData,                //保存funData数据，提供给提交事件中使用
+                    items:items
+                }); 
+                tabItem.add(item);  
+                
+                switch(cmd){
+                    case 'userRole':
+
+                        var roleGrid = item.down("panel[xtype=user.userrolegrid]");
+                        var roleStore = roleGrid.getStore();
+                        var roleProxy = roleStore.getProxy();
+                        roleProxy.extraParams = {
+                            userId: insertObj.uuid
+                        };
+                        roleStore.load();
+
+                        break;
+                    case 'deptJob':
+                        var deptJobGrid = item.down("panel[xtype=user.userdeptjobgrid]");
+                        var deptJobStore = deptJobGrid.getStore();
+                        var deptJobProxy = deptJobStore.getProxy();
+                        deptJobProxy.extraParams = {
+                            userId: insertObj.uuid
+                        };
+                        deptJobStore.load();
+                        break;
+                }
+
+                
+
+            },30);
+                           
+        }else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据
+            self.Warning("您当前已经打开了一个编辑窗口了！");
+            return;
+        }
+
+        tabPanel.setActiveTab( tabItem);
+        
+        
     }
+
 });

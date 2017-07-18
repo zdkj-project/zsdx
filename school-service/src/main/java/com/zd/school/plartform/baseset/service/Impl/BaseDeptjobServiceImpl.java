@@ -12,19 +12,24 @@ import javax.annotation.Resource;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
+import com.zd.core.util.ModelUtil;
 import com.zd.core.util.StringUtils;
 import com.zd.school.plartform.baseset.dao.BaseDeptjobDao;
 import com.zd.school.plartform.baseset.model.BaseDeptjob;
 import com.zd.school.plartform.baseset.model.BaseDpetJobTree;
 import com.zd.school.plartform.baseset.model.BaseJob;
 import com.zd.school.plartform.baseset.model.BaseOrg;
+import com.zd.school.plartform.baseset.model.BaseUserdeptjob;
 import com.zd.school.plartform.baseset.service.BaseDeptjobService;
 import com.zd.school.plartform.baseset.service.BaseJobService;
 import com.zd.school.plartform.baseset.service.BaseOrgService;
+import com.zd.school.plartform.baseset.service.BaseUserdeptjobService;
 import com.zd.school.plartform.system.model.SysUser;
+import com.zd.school.plartform.system.service.SysUserService;
 
 /**
  * 
@@ -50,6 +55,12 @@ public class BaseDeptjobServiceImpl extends BaseServiceImpl<BaseDeptjob> impleme
 
 	@Resource
 	BaseJobService jobService;
+	
+	@Resource
+	private BaseUserdeptjobService baseUserdeptjobService;
+	
+	@Resource
+	private SysUserService userService;
 
 	private static Logger logger = Logger.getLogger(BaseDeptjobServiceImpl.class);
 
@@ -154,6 +165,8 @@ public class BaseDeptjobServiceImpl extends BaseServiceImpl<BaseDeptjob> impleme
 			return true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			//手动回滚
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return false;
 		}
 	}
@@ -244,6 +257,8 @@ public class BaseDeptjobServiceImpl extends BaseServiceImpl<BaseDeptjob> impleme
 			return true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			//手动回滚
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return false;
 		}
 	}
@@ -253,12 +268,18 @@ public class BaseDeptjobServiceImpl extends BaseServiceImpl<BaseDeptjob> impleme
 		List<BaseDpetJobTree> list = getDeptJobTreeList(rootId, whereSql);
 		BaseDpetJobTree root = new BaseDpetJobTree();
 		for (BaseDpetJobTree node : list) {
-			if (!(StringUtils.isNotEmpty(node.getParent()) && !node.getId().equals(rootId))) {
-				root = node;
-				list.remove(node);
-				break;
+			//默认会找到根目录root（从sdfz迁移而来的bug，下面的判断找不到root）
+			if(node.getId().equals("2851655E-3390-4B80-B00C-52C7CA62CB39")||node.getParent().equals("ROOT")){
+				root = node;					
 			}
+			//若这个地方可以执行，那么将使用这里的root
+			if (!(StringUtils.isNotEmpty(node.getParent()) && !node.getId().equals(rootId))) {			
+				root = node;
+				//list.remove(node);
+				break;
+			}		
 		}
+		list.remove(root);
 		createTreeChildren(list, root);
 		return root;
 	}
@@ -353,7 +374,11 @@ public class BaseDeptjobServiceImpl extends BaseServiceImpl<BaseDeptjob> impleme
 			return true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
+			//手动回滚
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			return false;
 		}
 	}
+
+	
 }

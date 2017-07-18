@@ -5,8 +5,8 @@ Ext.define('core.base.view.query.TreeView', {
 	alias: 'widget.mttreeview',
 	rootVisible: false,
 	multiSelect: false,
-	width: comm.get("clientWidth") * 0.5,
-	height: comm.get("resolutionHeight") * 0.9,
+	width: 400,
+	height:500,
 	autoScroll: true,
 	animate: true,
 	initComponent: function() {

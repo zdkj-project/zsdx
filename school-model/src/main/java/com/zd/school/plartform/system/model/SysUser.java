@@ -368,7 +368,7 @@ public class SysUser extends BaseEntity implements Serializable {
         this.rememberMe = rememberMe;
     }
     @FieldInfo(name = "主部门ID")
-    @Formula("(SELECT ISNULL(a.DEPT_ID,'') FROM BASE_T_DEPTJOB a WHERE a.DEPTJOB_ID=(SELECT b.DEPTJOB_ID FROM BASE_T_USERDEPTJOB b WHERE b.MASTER_DEPT=1 AND  b.USER_ID=USER_ID))")
+    @Formula("(SELECT ISNULL(a.DEPT_ID,'') FROM BASE_T_DEPTJOB a WHERE a.DEPTJOB_ID=(SELECT b.DEPTJOB_ID FROM BASE_T_USERDEPTJOB b WHERE b.MASTER_DEPT=1 AND  b.USER_ID=USER_ID AND b.ISDELETE=0))")
     private String deptId;
 
     public void setDeptId(String deptId) {
@@ -380,7 +380,7 @@ public class SysUser extends BaseEntity implements Serializable {
     }
 
     @FieldInfo(name = "主部门名称")
-    @Formula("(SELECT ISNULL(a.DEPT_NAME,'') FROM BASE_T_DEPTJOB a WHERE a.DEPTJOB_ID=(SELECT b.DEPTJOB_ID FROM BASE_T_USERDEPTJOB b WHERE b.MASTER_DEPT=1 AND  b.USER_ID=USER_ID))")
+    @Formula("(SELECT ISNULL(a.DEPT_NAME,'') FROM BASE_T_DEPTJOB a WHERE a.DEPTJOB_ID=(SELECT b.DEPTJOB_ID FROM BASE_T_USERDEPTJOB b WHERE b.MASTER_DEPT=1 AND  b.USER_ID=USER_ID AND b.ISDELETE=0))")
     private String deptName;
 
     public String getDeptName() {
@@ -392,7 +392,7 @@ public class SysUser extends BaseEntity implements Serializable {
     }
 
     @FieldInfo(name = "主岗位ID")
-    @Formula("(SELECT ISNULL(a.JOB_ID,'') FROM BASE_T_DEPTJOB a WHERE a.DEPTJOB_ID=(SELECT b.DEPTJOB_ID FROM BASE_T_USERDEPTJOB b WHERE b.MASTER_DEPT=1 AND  b.USER_ID=USER_ID))")
+    @Formula("(SELECT ISNULL(a.JOB_ID,'') FROM BASE_T_DEPTJOB a WHERE a.DEPTJOB_ID=(SELECT b.DEPTJOB_ID FROM BASE_T_USERDEPTJOB b WHERE b.MASTER_DEPT=1 AND  b.USER_ID=USER_ID AND b.ISDELETE=0))")
     private String jobId;
 
     public String getJobId() {
@@ -403,7 +403,7 @@ public class SysUser extends BaseEntity implements Serializable {
         this.jobId = jobId;
     }
     @FieldInfo(name = "主岗位名称")
-    @Formula("(SELECT ISNULL(a.JOB_NAME,'') FROM BASE_T_DEPTJOB a WHERE a.DEPTJOB_ID=(SELECT b.DEPTJOB_ID FROM BASE_T_USERDEPTJOB b WHERE b.MASTER_DEPT=1 AND  b.USER_ID=USER_ID))")
+    @Formula("(SELECT ISNULL(a.JOB_NAME,'') FROM BASE_T_DEPTJOB a WHERE a.DEPTJOB_ID=(SELECT b.DEPTJOB_ID FROM BASE_T_USERDEPTJOB b WHERE b.MASTER_DEPT=1 AND  b.USER_ID=USER_ID AND b.ISDELETE=0))")
     private String jobName;
 
     public String getJobName() {
@@ -460,7 +460,31 @@ public class SysUser extends BaseEntity implements Serializable {
     public void setStudyYearname(String studyYearname) {
         this.studyYearname = studyYearname;
     }
+    
+    @FieldInfo(name = "UP卡流水号")
+    @Formula("(SELECT top 1 a.UP_CARD_ID FROM CARD_T_USEINFO a where a.USER_ID=USER_ID order by a.CREATE_TIME desc)")
+    private Long upCardId;
 
+    public Long getUpCardId() {
+        return upCardId;
+    }
+
+    public void setUpCardId(Long upCardId) {
+        this.upCardId = upCardId;
+    }
+    
+    @FieldInfo(name = "UP卡状态")
+    @Formula("(SELECT top 1 a.USE_STATE FROM CARD_T_USEINFO a where a.USER_ID=USER_ID order by a.CREATE_TIME desc)")
+    private Integer useState;
+
+    public Integer getUseState() {
+        return useState;
+    }
+
+    public void setUseState(Integer useState) {
+        this.useState = useState;
+    }
+    
     public SysUser() {
         super();
     }

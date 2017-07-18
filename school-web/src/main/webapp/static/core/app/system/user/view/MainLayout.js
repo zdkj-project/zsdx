@@ -42,68 +42,50 @@ Ext.define("core.system.user.view.MainLayout", {
 			orderIndex: 1,
 			userPwd: '123456',
 			issystem: '1'
-		}
+		},
+		tabConfig: {         //zzk：2017-6-1加入，用于对tab操作提供基本配置数据
+            addTitle: '添加用户',
+            editTitle: '编辑用户',
+            detailTitle: '用户详情'
+        }
 	},
 	layout: 'border',
-	//bodyPadding: 2,
+
+	/*设置最小宽度，并且自动滚动*/
+    minWidth: 1300,
+    scrollable: true,
+
+
+	bodyPadding: '2 0 0 0',
 	items: [{
 		xtype: "user.depttree",
 		region: "west",
     	//border:true,
 		width:250,
 		split : true,
-        collapsible:true,
-        /*style:{
-            border: '1px solid #ddd'
-        },*/
-	}, /*{
-		xtype: 'basecenterpanel',
-		region: "center",
-		items: [{
-			xtype: "basequerypanel",
-			layout: 'form',
-			region: "north",
-			height: 110,
-			items: [{
-                xtype: "container",
-                layout: "hbox", // 从左往右的布局
-                items: [{
-                    flex: 1,
-                    labelAlign: "right",
-                    fieldLabel: "用户名",
-                    xtype: "basequeryfield",
-                    queryType: "textfield",
-                    name: "userName"
-                }, {
-                    flex: 1,
-                    labelAlign: "right",
-                    fieldLabel: "姓名",
-                    name: "xm",
-                    xtype: "basequeryfield",
-                    queryType: "textfield"
-                }]
-            }]
-		}, {
-			xtype: "user.usergrid",
-			region: "center"
-		}]
-	},*/
+        collapsible:true,    
+        // style:{
+        //     border: '1px solid #ddd'
+        // },    
+	}, 
 	{
 		xtype: "user.usergrid",
 		region: "center",
-		/*style:{
-            border: '1px solid #ddd'
-        },*/
+		//flex:1,
+		title:null,
+		// style:{
+  //           border: '1px solid #ddd'
+  //       },
     	//margin:'0 5 0 5',
-	},{
+	}/*,{
 		xtype: "user.userrolegrid",
 		region: "east",
     	//border:true,
 		width: 300,
 		split : true,
         collapsible:true,
-        /*style:{
-            border: '1px solid #ddd'
-        },*/
-	}]
+        //style:{
+        //    border: '1px solid #ddd'
+        //},
+	}*/]
 })

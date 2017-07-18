@@ -210,4 +210,6 @@ public class BaseDeptjobController extends FrameWorkController<BaseDeptjob> impl
 			writeJSON(response, jsonBuilder.returnFailureJson("'设置失败,详情见错误日志'"));
 		}
 	}
+	
+	
 }

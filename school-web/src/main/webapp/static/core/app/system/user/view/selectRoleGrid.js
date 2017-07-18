@@ -5,9 +5,35 @@ Ext.define("core.system.user.view.selectRoleGrid", {
     title: "待选角色(选中后拖动添加)",
     al: false,
     tbar: [],
-    panelTopBar:null,
+    panelTopBar:{
+        xtype:'toolbar',
+        items: [ {
+            xtype: 'tbtext',
+            html: '待选角色(选中后拖动添加)',
+            style: {
+                fontSize: '16px',
+                color: '#C44444',
+                fontWeight:800
+            }
+        }/*,'->',{
+            xtype: 'tbtext', 
+            html:'快速搜索：'
+        },{
+            xtype:'textfield',
+            name:'roleName',
+            funCode:'girdFastSearchText', 
+            isNotForm:true,   //由于文本框重写了baseform下面的funcode值，所以使用这个属性，防止重写这里设定的fundcode值。
+            emptyText: '请输入角色名称'
+        },{
+            xtype: 'button',
+            funCode:'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型
+            ref: 'gridFastSearchBtn',   
+            iconCls: 'x-fa fa-search',  
+        }*/],
+    },
     panelButtomBar:null,
     viewConfig: {
+        stripeRows: false,
         plugins: {
             ptype: 'gridviewdragdrop',
             dragGroup: 'firstGridDDGroup',

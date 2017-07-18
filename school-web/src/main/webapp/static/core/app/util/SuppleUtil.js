@@ -51,6 +51,10 @@ Ext.define("core.util.SuppleUtil", {
         });             
 	*/
 	asyncAjax: function(config) {
+		if(config.loadMask==true){
+			Ext.Msg.wait('正在执行中,请稍后...', '温馨提示');
+		}
+
 		var data = {};
 		var request = {
 			method: "POST",
@@ -58,8 +62,14 @@ Ext.define("core.util.SuppleUtil", {
 			timeout: 60000,
 			success: function(response) {
 				//data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+				if(config.loadMask==true){
+					Ext.Msg.hide();
+				}
 			},
 			failure: function(response) {
+				if(config.loadMask==true){
+					Ext.Msg.hide();
+				}
 				Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
 			}
 		};
@@ -84,5 +94,6 @@ Ext.define("core.util.SuppleUtil", {
 		var request = Ext.apply(request, config);
 		Ext.Ajax.request(request);
 		return data;
-	}
+	},
+
 });

@@ -2,13 +2,13 @@ Ext.define("core.system.user.view.isSelectRoleGrid", {
     extend: "core.base.view.BaseGrid",
     alias: "widget.user.isselectrolegrid",
     dataUrl: comm.get('baseUrl') + "/sysrole/selectlist",
-    title: "已选角色",
+    title: "当前已选角色",
     al: false,
     noPagging: true,
-    tbar: [],
-    panelTopBar:null,
-    panelButtomBar:null,
+    panelTopBar:false,
+    panelButtomBar:false,
     viewConfig: {
+        stripeRows: false,
         plugins: {
             ptype: 'gridviewdragdrop',
             dragGroup: 'secondGridDDGroup',
