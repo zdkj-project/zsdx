@@ -61,9 +61,9 @@
 	<bean id="dataSourceFour" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close">
         <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
-        <property name="url" value="jdbc:oracle:thin:@121.35.251.53:1521:orcl"/>
-        <property name="username" value="zsdxtest"/>
-        <property name="password" value="zsdxtest"/>
+        <property name="url" value="jdbc:oracle:thin:@172.18.246.175:1521:orcl"/>
+        <property name="username" value="zsdx_sync_yikatong"/>
+        <property name="password" value="zsdx_sync_yikatong654321"/>
         <!-- 连接池启动时的初始值 -->
         <property name="initialSize" value="3" />
         <!-- 连接池的最大值 -->
