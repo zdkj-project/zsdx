@@ -24,7 +24,7 @@
                     '<li style="width:30%">会议主题：{meetingTitle}</li>',
                     '<li style="width:30%">会议名称：{meetingName}</li>',
                     '<li style="width:30%">会议类型：{meetingCategory}</li>',
-                    '<li style="width:30%">是否考勤：{needChecking}</li>',
+                    '<li style="width:30%">是否考勤：<tpl if="needChecking == 1">需要考勤<tpl else>不考勤</tpl></li>',
                     '<li style="width:30%">开始时间：{beginTime}</li>',
                     '<li style="width:30%">结束时间：{endTime}</li>',
                     '<li style="width:30%">主持人：{emcee}</li>',

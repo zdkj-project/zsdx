@@ -273,6 +273,9 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                         tabItem.add(item);
                         
                         var detailhtmlpanel = item.down("container[xtype=meetinginfo.DetailPanel]");
+
+                        recordData.needChecking = recordData.needChecking==1?"需要考勤":"不考勤";
+
                         detailhtmlpanel.setData(recordData);                       
                         
                     },30);

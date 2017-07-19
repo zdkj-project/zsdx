@@ -69,9 +69,11 @@ Ext.define("core.train.calcucredit.view.MainGrid", {
         collapseTip: '点击折叠. 按下CTRL键再点击折叠其它',
     }],
     defGroup: 'classCategory',
+    sortableColumns :false,
     columns: {
         defaults: {
-            titleAlign: "center"
+            titleAlign: "center",
+            menuDisabled:true   //隐藏menu菜单
         },
         items: [{
             flex: 1,
