@@ -56,7 +56,7 @@ Ext.define("core.system.ip.view.ipGrid", {
         direction: 'ASC'
     }],
     extParams: {},
-    model: 'com.zd.school.IpControl.IpControl.model',
+    model: 'com.zd.school.IpControl.IpControl.model.SysIp',
     
     columns:  {        
         defaults:{        
