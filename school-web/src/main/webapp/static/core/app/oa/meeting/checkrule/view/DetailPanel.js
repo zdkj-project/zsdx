@@ -19,7 +19,7 @@
         scrollable:true,
         tpl: new Ext.XTemplate(
             '<div class="trainClass_classInfo">',
-                '<div class="trainClass_title">会议详情：</div>',
+                '<div class="trainClass_title">规则详情：</div>',
                 '<ul>',
                     '<li style="width:30%">规则名称：{ruleName}</li>',
                     '<li style="width:30%">签到提前分钟：{inBefore}</li>',

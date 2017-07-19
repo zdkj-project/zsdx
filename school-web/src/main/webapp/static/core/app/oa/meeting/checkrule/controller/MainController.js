@@ -157,7 +157,7 @@ Ext.define("core.oa.meeting.checkrule.controller.MainController", {
 
                 insertObj=recordData;
                 tabTitle=funData.tabConfig.detailTitle;
-                tabItemId=funCode+"_gridDetail";
+                tabItemId=funCode+"_gridDetail"+insertObj.uuid;
                 operType="Detail";
                 break;
         }

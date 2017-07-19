@@ -19,7 +19,7 @@
         scrollable:true,
         tpl: new Ext.XTemplate(
             '<div class="trainClass_classInfo">',
-                '<div class="trainClass_title">考勤详情：</div>',
+                '<div class="trainClass_title">会议考勤详情：</div>',
                 '<ul>',
                     '<li style="width:30%">会议主题：{meetingTitle}</li>',
                     '<li style="width:30%">会议名称：{meetingName}</li>',
@@ -29,7 +29,8 @@
                     '<li style="width:30%">结束时间：{endTime}</li>',
                     '<li style="width:30%">主持人：{emcee}</li>',
                     '<li style="width:30%">会议地点：{roomName}</li>',
-                    '<li style="width:30%">参会人员:{mettingEmpname}</li>',
+                    '<li style="width:30%">参会人员：{mettingEmpname}</li>',
+                    '<li style="width:90%">考勤结果：{attendResult}</li>',
                     '<div style="clear:both"></div>',
                 '</ul>',
             '</div>',
