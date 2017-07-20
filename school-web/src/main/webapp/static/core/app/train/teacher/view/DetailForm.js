@@ -163,7 +163,7 @@ Ext.define("core.train.teacher.view.DetailForm", {
             maxLength: 64,
             maxLengthText: "最多64个字符,汉字占2个字符",
         }]
-    }, {
+    },{
         xtype: "container",
         layout: "column",
         labelAlign: "right",

@@ -164,6 +164,16 @@ Ext.define("core.train.teacher.view.MainGrid", {
             dataIndex: "workUnits",
             align: 'left'
         }, {
+            width: 150,
+            text: "创建时间",
+            dataIndex: "createTime",
+            align: 'left'
+        }, {
+            width: 150,
+            text: "更新时间",
+            dataIndex: "updateTime",
+            align: 'left'
+        }, {
             xtype: 'actiontextcolumn',
             text: "操作",
             width: 300,
