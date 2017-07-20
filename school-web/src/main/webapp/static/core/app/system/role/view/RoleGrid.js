@@ -90,7 +90,7 @@ Ext.define("core.system.role.view.RoleGrid", {
             text: "是否系统角色",
             dataIndex: "issystem",
             renderer: function(value) {
-                return value=="0"?"<font color=red>是</font>":"<font color=green>否</font>"
+                return value=="1"?"<font color=red>是</font>":"<font color=green>否</font>"
             }
         }, {
             text: "角色说明",
@@ -140,7 +140,7 @@ Ext.define("core.system.role.view.RoleGrid", {
                 tooltip: '删除',
                 ref: 'gridDelete',
                 getClass :function(v,metadata,record,rowIndex,colIndex,store){
-                    if(record.get("issystem")==0)
+                    if(record.get("issystem")==1)
                         return 'x-hidden-display';
                     else
                         return null;

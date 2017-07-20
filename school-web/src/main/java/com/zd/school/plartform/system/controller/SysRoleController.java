@@ -1,21 +1,6 @@
 
 package com.zd.school.plartform.system.controller;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.zd.core.constant.Constant;
 import com.zd.core.constant.StatuVeriable;
 import com.zd.core.controller.core.FrameWorkController;
@@ -29,6 +14,19 @@ import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.service.SysMenuService;
 import com.zd.school.plartform.system.service.SysRoleService;
 import com.zd.school.plartform.system.service.SysUserService;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 /**
  * 
@@ -121,7 +119,7 @@ public class SysRoleController extends FrameWorkController<SysRole> implements C
         //增加时要设置创建人
         entity.setCreateUser(userCh); //创建人
         entity.setIsHidden("0");
-        entity.setIssystem(1);
+        entity.setIssystem(0);
 
         //持久化到数据库
         entity = thisService.merge(entity);

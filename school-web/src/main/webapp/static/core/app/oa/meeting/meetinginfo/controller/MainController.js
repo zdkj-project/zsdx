@@ -189,7 +189,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                 baseGrid=btn.up("basegrid");
             }else{
                 baseGrid=grid;
-                recordData=record.data;
+                recordData=record.getData();
             }
 
 
@@ -226,14 +226,14 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                         self.msgbox("请选择一条数据！");
                         return;
                     }
-                    recordData=rescords[0].data;
+                    recordData=rescords[0].getData();
                 }
                 var pkName=funData.pkName;
                 pkValue=recordData[pkName];
 
                 insertObj=recordData;
                 tabTitle=funData.tabConfig.detailTitle;
-                tabItemId=funCode+"_gridDetail";
+                tabItemId=funCode+"_gridDetail"+insertObj.uuid;
                 operType="Detail";
                 break;
         }
@@ -272,7 +272,24 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
 
                         tabItem.add(item);
                         
+
                         var detailhtmlpanel = item.down("container[xtype=meetinginfo.DetailPanel]");
+
+                        //处理数据字段的值                                       
+                        var ddItem = factory.DDCache.getItemByDDCode("MEETINGCATEGORY");
+                        var resultVal="";
+                        var value=recordData["meetingCategory"];
+                        for (var i = 0; i < ddItem.length; i++) {
+                            var ddObj = ddItem[i];
+                            if (value == ddObj["itemCode"]) {
+                                resultVal = ddObj["itemName"];
+                                break;
+                            }                                                    
+                        }
+                        recordData.meetingCategory=resultVal;  
+
+                        recordData.needChecking = recordData.needChecking==1?"需要考勤":"不考勤";
+
                         detailhtmlpanel.setData(recordData);                       
                         
                     },30);

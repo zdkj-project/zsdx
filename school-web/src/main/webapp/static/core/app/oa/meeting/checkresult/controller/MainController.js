@@ -61,7 +61,7 @@ Ext.define("core.oa.meeting.checkresult.controller.MainController", {
                     baseGrid=btn.up("basegrid");
                 }else{
                     baseGrid=grid;
-                    recordData=record.data;
+                    recordData=record.getData();
                 }
                 
                 var funCode=baseGrid.funCode;
@@ -91,20 +91,20 @@ Ext.define("core.oa.meeting.checkresult.controller.MainController", {
                 var operType=cmd;
                 switch(cmd){
                     case "detail":
-                      if (btn) {
+                        if (btn) {
                             var records=baseGrid.getSelectionModel().getSelection();
                             if (records.length !=1) {
                                 self.msgbox("请选择一条数据!");
                                 return;
                             }
-                            recordData=records[0].data;
+                            recordData=records[0].getData();
                         }
-                            var pkName=funData.pkName;
-                            pkValue=recordData[pkName];
+                        var pkName=funData.pkName;
+                        pkValue=recordData[pkName];
 
-                            insertObj=recordData;
-                            tabTitle=funData.tabConfig.detailTitle;
-                            tabItemId=funCode+"_gridDetail";                           
+                        insertObj=recordData;
+                        tabTitle=funData.tabConfig.detailTitle;
+                        tabItemId=funCode+"_gridDetail"+insertObj.uuid;                           
                         break;
                 }  
               
@@ -140,6 +140,20 @@ Ext.define("core.oa.meeting.checkresult.controller.MainController", {
                         });
                         tabItem.add(item);
                         var detailhtmlpanel=item.down("container[xtype=checkresult.DetailPanel]");
+
+                        //处理数据字典字段的值                                       
+                        var ddItem = factory.DDCache.getItemByDDCode("MEETINGCATEGORY");
+                        var resultVal="";
+                        var value=recordData["meetingCategory"];
+                        for (var i = 0; i < ddItem.length; i++) {
+                            var ddObj = ddItem[i];
+                            if (value == ddObj["itemCode"]) {
+                                resultVal = ddObj["itemName"];
+                                break;
+                            }                                                    
+                        }
+                        recordData.meetingCategory=resultVal;  
+
                         detailhtmlpanel.setData(recordData);
                     },30);
                 }else if (tabItem.itemPKV&&tabItem.itemPKV!=pkValue){
