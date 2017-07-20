@@ -4,20 +4,14 @@ package com.zd.school.jw.train.controller;
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.util.DBContextHolder;
-import com.zd.core.util.ImportExcelUtil;
-import com.zd.core.util.ModelUtil;
-import com.zd.core.util.PoiExportExcel;
-import com.zd.core.util.StringUtils;
+import com.zd.core.util.*;
 import com.zd.school.jw.train.model.TrainClass;
-import com.zd.school.jw.train.model.TrainClassschedule;
 import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.jw.train.service.TrainClassService;
 import com.zd.school.jw.train.service.TrainClasstraineeService;
 import com.zd.school.plartform.system.model.CardUserInfoToUP;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.service.SysUserService;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,9 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -488,4 +480,13 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		}
 	}
 
+	@RequestMapping("/getCreditsDetail")
+    public void doGetCreditsDetail(HttpServletRequest request,HttpServletResponse response) throws  IOException{
+        String strData = "";
+	    String classId = request.getParameter("classId");
+        String classTraineeId = request.getParameter("ids");
+        List<Map<String, Object>> list = thisService.getClassTraineeCreditsList(classTraineeId);
+        strData = jsonBuilder.buildObjListToJson((long) list.size(), list, true);// 处理数据
+        writeJSON(response, strData);// 返回数据
+    }
 }

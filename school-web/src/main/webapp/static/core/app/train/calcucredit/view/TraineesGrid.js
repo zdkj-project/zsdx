@@ -92,11 +92,11 @@ Ext.define('core.train.calcucredit.view.TraineesGrid', {
             flex:1,
             minWidth: 150,
             text: "所在单位",
-            dataIndex: "workUnit",
+            dataIndex: "workUnit"
         },{
             width:150,
             text: "职务",
-            dataIndex: "position",
+            dataIndex: "position"
         },{
             width:150,
             text: "行政级别",
@@ -120,10 +120,10 @@ Ext.define('core.train.calcucredit.view.TraineesGrid', {
                 ref: 'gridTraniee',
                 handler: function (view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('evalGridCourseDetailClick_Tab', {
+                    this.fireEvent('gridTraineeCreditClick_Tab', {
                         view: view.grid,
                         record: rec,
-                        cmd: 'startEval'
+                        cmd: 'creditDetail'
                     });
                 }
             }/*  {

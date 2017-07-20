@@ -1,6 +1,7 @@
 package com.zd.school.jw.train.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseService;
@@ -81,4 +82,11 @@ public interface TrainClasstraineeService extends BaseService<TrainClasstrainee>
 	public void doImportTrainee(List<List<Object>> listObject, String classId, String needSync, SysUser currentUser);
 
 	public void doSyncClassTrainee(String classId, SysUser currentUser);
+
+    /**
+     * 获取指定学员的学分明细
+     * @param classTraineeId 要获取学分的学员Id
+     * @return
+     */
+    public List<Map<String, Object>> getClassTraineeCreditsList(String classTraineeId);
 }

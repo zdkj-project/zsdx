@@ -27,6 +27,9 @@ Ext.define("core.train.calcucredit.view.MainLayout", {
         width: 1000,
         height: 600,
         defaultObj: {},
+        tabConfig:{
+            editTitle:''
+        }
     },
 
     /*设置最小宽度，并且自动滚动*/
