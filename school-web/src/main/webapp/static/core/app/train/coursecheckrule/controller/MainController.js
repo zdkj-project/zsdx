@@ -142,13 +142,12 @@ Ext.define("core.train.coursecheckrule.controller.MainController", {
 
                 return false;
             },
-            detailClick_Tab:function(data){
+            detailClick_Tab: function(data) {
                 var baseGrid=data.view;
                 var record=data.record;
 
                 this.doDetail_Tab(null,"detail",baseGrid,record);
-
-                return false;
+                 return false;
             },
             editClick: function(data) {
                 var baseGrid=data.view;
@@ -211,7 +210,7 @@ Ext.define("core.train.coursecheckrule.controller.MainController", {
         }
     },
     
-    doDetail_Tab:function(btn, cmd, grid, record) {
+    doDetail_Tab:function(btn, cmd, grid, record){
         var self = this;
         var baseGrid;
         var recordData;
@@ -221,7 +220,7 @@ Ext.define("core.train.coursecheckrule.controller.MainController", {
             baseGrid = btn.up("basegrid");
         } else {
             baseGrid = grid;
-            recordData = record.data;
+            recordData = record.getData();
         }
 
         //得到组件
@@ -252,6 +251,11 @@ Ext.define("core.train.coursecheckrule.controller.MainController", {
         var tabItemId=funCode+"_gridAdd";     //命名规则：funCode+'_ref名称',确保不重复
         var pkValue= null;
         var operType = cmd;    // 只显示关闭按钮
+        var itemXtype=[{
+            xtype:detLayout,                        
+            funCode: detCode             
+        }];
+
         switch (cmd) {
             case "edit":
                 if (btn) {
@@ -260,7 +264,7 @@ Ext.define("core.train.coursecheckrule.controller.MainController", {
                         self.msgbox("请选择一条数据！");
                         return;
                     }
-                    recordData = rescords[0].data;
+                    recordData = rescords[0].getData();
                 }
                 //获取主键值
                 var pkName = funData.pkName;
@@ -277,14 +281,24 @@ Ext.define("core.train.coursecheckrule.controller.MainController", {
                         self.msgbox("请选择一条数据！");
                         return;
                     }
-                    recordData = rescords[0].data;
+                    recordData = rescords[0].getData();
                 }
                 //获取主键值
                 var pkName = funData.pkName;
                 pkValue= recordData[pkName];
                 insertObj = recordData;
                 tabTitle =  funData.tabConfig.detailTitle;
-                tabItemId=funCode+"_gridDetail"+pkValue; 
+                tabItemId=funCode+"_gridDetail"+insertObj.uuid; 
+                operType="Detail";
+
+                itemXtype=[{
+                    xtype:detLayout,
+                    funCode:detCode,
+                    items:[{
+                        xtype:"coursecheckrule.DetailPanel"
+                    }]
+                }];
+
                 break;
         }
 
@@ -314,20 +328,33 @@ Ext.define("core.train.coursecheckrule.controller.MainController", {
                     tabItemId:tabItemId,                //指定tab页的itemId
                     insertObj:insertObj,                //保存一些需要默认值，提供给提交事件中使用
                     funData: popFunData,                //保存funData数据，提供给提交事件中使用
-                    items:[{
-                        xtype:detLayout,                        
-                        funCode: detCode             
-                    }]
+                    items:itemXtype
                 }); 
                 tabItem.add(item);  
                
-                //将数据显示到表单中（或者通过请求ajax后台数据之后，再对应的处理相应的数据，显示到界面中）             
-                var objDetForm = item.down("baseform[funCode=" + detCode + "]");
-                var formDeptObj = objDetForm.getForm();
-                self.setFormValue(formDeptObj, insertObj);
+                if(cmd=="edit"){
+                    //将数据显示到表单中（或者通过请求ajax后台数据之后，再对应的处理相应的数据，显示到界面中）             
+                    var objDetForm = item.down("baseform[funCode=" + detCode + "]");
+                    var formDeptObj = objDetForm.getForm();
+                    self.setFormValue(formDeptObj, insertObj);
 
-                if(cmd=="detail"){
-                    self.setFuncReadOnly(funData, objDetForm, true);
+                } else if(cmd=="detail"){
+                    var detailhtmlpanel=item.down("container[xtype=coursecheckrule.DetailPanel]");                
+
+                    // 处理数据字典字段的值
+                    var ddItem=factory.DDCache.getItemByDDCode("CHECKMODE");
+                    var resultVal="";
+                    var value=recordData["checkMode"];
+                    for(var i=0;i<ddItem.length;i++){
+                        var ddObj=ddItem[i];
+                        if (value==ddObj["itemCode"]) {
+                            resultVal=ddObj["itemName"];
+                            break;
+                        }
+                    } 
+                    recordData.checkMode=resultVal;
+
+                    detailhtmlpanel.setData(recordData);
                 }
             },30);
                            
@@ -337,115 +364,5 @@ Ext.define("core.train.coursecheckrule.controller.MainController", {
         }
         tabPanel.setActiveTab( tabItem);        
     },
-
-//    doDetail:function(btn,cmd,grid,record){
-//        
-//        var self=this;
-//        var baseGrid;
-//        var recordData;
-//
-//        if(btn){
-//            baseGrid = btn.up("basegrid");
-//        }else{
-//            baseGrid=grid;
-//            recordData=record.data;
-//        }
-//       
-//        //得到模型
-//        var store = baseGrid.getStore();
-//        var Model = store.model;
-//        var funCode = baseGrid.funCode;
-//        var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
-//        //得到配置信息
-//        var funData = basePanel.funData;
-//        var detCode = basePanel.detCode;
-//        var detLayout = basePanel.detLayout;
-//    
-//        //关键：window的视图控制器
-//        var otherController=basePanel.otherController;  
-//        if(!otherController)
-//            otherController='';
-//
-//        //处理特殊默认值
-//        var defaultObj = funData.defaultObj;
-//        var insertObj = self.getDefaultValue(defaultObj);
-//
-//        var popFunData = Ext.apply(funData, {
-//            grid: baseGrid
-//        });
-//
-//        var width = 1000;
-//        var height = 650;
-//        if (funData.width)
-//            width = funData.width;
-//        if (funData.height)
-//            height = funData.height;
-//
-//        var iconCls='x-fa fa-plus-circle';
-//        var operType=cmd;
-//        var title="增加";
-//
-//        switch(cmd){
-//            case "edit":
-//
-//                if(btn){
-//                    var rescords = baseGrid.getSelectionModel().getSelection();
-//                    if (rescords.length != 1) {
-//                        self.msgbox("请选择一条数据！");
-//                        return;
-//                    }
-//                    recordData=rescords[0].data;
-//                }
-//                
-//                insertObj = recordData;
-//
-//                iconCls='x-fa fa-pencil-square',
-//                operType="edit";
-//                title="编辑";
-//                break;
-//            case "detail":
-//
-//                if(btn){
-//                    var rescords = baseGrid.getSelectionModel().getSelection();
-//                    if (rescords.length != 1) {
-//                        self.msgbox("请选择一条数据！");
-//                        return;
-//                    }
-//                    recordData=rescords[0].data;
-//                }
-//                
-//                insertObj = recordData;
-//
-//                iconCls='x-fa fa-file-text',
-//                operType="detail";
-//                title="详情";
-//                break;
-//        }
-//
-//        var win = Ext.create('core.base.view.BaseFormWin', {
-//            title:title,
-//            iconCls: iconCls,
-//            operType: operType,
-//            width: width,
-//            height: height,
-//            controller:otherController,
-//            funData: popFunData,
-//            funCode: detCode,
-//            insertObj:insertObj,
-//            items: [{
-//                xtype: detLayout
-//            }]
-//        });
-//        win.show();
-//        var detPanel = win.down("basepanel[funCode=" + detCode + "]");
-//        var objDetForm = detPanel.down("baseform[funCode=" + detCode + "]");
-//        var formDeptObj = objDetForm.getForm();
-//        self.setFormValue(formDeptObj, insertObj);
-//
-//        //若是编辑，则隐藏启用规则字段
-//        if(cmd=="edit")
-//            formDeptObj.findField("startUsing").hide();
-//        else if(cmd=="detail")
-//            self.setFuncReadOnly(funData, objDetForm, true);
-//    }    
+ 
 });

@@ -147,8 +147,7 @@ Ext.define("core.train.creditrule.controller.MainController", {
                 var record=data.record;
 
                 this.doDetail_Tab(null,"detail",baseGrid,record);
-
-                return false;
+                 return false;
             },
             editClick: function(data) {
                 var baseGrid=data.view;
@@ -225,7 +224,7 @@ Ext.define("core.train.creditrule.controller.MainController", {
             baseGrid = btn.up("basegrid");
         } else {
             baseGrid = grid;
-            recordData = record.data;
+            recordData = record.getData();
         }
 
 
@@ -257,6 +256,11 @@ Ext.define("core.train.creditrule.controller.MainController", {
         var tabItemId=funCode+"_gridAdd";     //命名规则：funCode+'_ref名称',确保不重复
         var pkValue= null;
         var operType = cmd;    // 只显示关闭按钮
+        var itemXtype=[{
+            xtype:detLayout,                        
+            funCode: detCode             
+        }];
+
         switch (cmd) {
             case "edit":
                 if (btn) {
@@ -265,7 +269,7 @@ Ext.define("core.train.creditrule.controller.MainController", {
                         self.msgbox("请选择一条数据！");
                         return;
                     }
-                    recordData = rescords[0].data;
+                    recordData = rescords[0].getData();
                 }
                 //获取主键值
                 var pkName = funData.pkName;
@@ -282,14 +286,22 @@ Ext.define("core.train.creditrule.controller.MainController", {
                         self.msgbox("请选择一条数据！");
                         return;
                     }
-                    recordData = rescords[0].data;
+                    recordData = rescords[0].getData();
                 }
                 //获取主键值
                 var pkName = funData.pkName;
                 pkValue= recordData[pkName];
                 insertObj = recordData;
                 tabTitle =  funData.tabConfig.detailTitle;
-                tabItemId=funCode+"_gridDetail"+pkValue; 
+                tabItemId=funCode+"_gridDetail"+insertObj.uuid; 
+                operType="Detail";
+                 itemXtype=[{
+                    xtype:detLayout,
+                    funCode:detCode,
+                    items:[{
+                        xtype:"creditrule.DetailPanel"
+                    }]
+                }];
                 break;
         }
 
@@ -320,23 +332,21 @@ Ext.define("core.train.creditrule.controller.MainController", {
                     tabItemId:tabItemId,                //指定tab页的itemId
                     insertObj:insertObj,                //保存一些需要默认值，提供给提交事件中使用
                     funData: popFunData,                //保存funData数据，提供给提交事件中使用
-                    items:[{
-                        xtype:detLayout,                        
-                        funCode: detCode             
-                    }]
+                    items:itemXtype
                 }); 
                 tabItem.add(item);  
                
-
-                //将数据显示到表单中（或者通过请求ajax后台数据之后，再对应的处理相应的数据，显示到界面中）             
-                var objDetForm = item.down("baseform[funCode=" + detCode + "]");
-                var formDeptObj = objDetForm.getForm();
-                self.setFormValue(formDeptObj, insertObj);
-
-                if(cmd=="detail"){
-                    self.setFuncReadOnly(funData, objDetForm, true);
-                }
-
+               
+                //将数据显示到表单中（或者通过请求ajax后台数据之后，再对应的处理相应的数据，显示到界面中） 
+                if (cmd=="edit") {
+                    var objDetForm = item.down("baseform[funCode=" + detCode + "]");
+                    var formDeptObj = objDetForm.getForm();
+                    self.setFormValue(formDeptObj, insertObj);
+                }else if(cmd=="detail"){
+                     var detailhtmlpanel=item.down("container[xtype=creditrule.DetailPanel]");
+    // 设置数据
+                     detailhtmlpanel.setData(recordData);
+                    }
             },30);
                            
         }else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据
@@ -346,6 +356,11 @@ Ext.define("core.train.creditrule.controller.MainController", {
 
         tabPanel.setActiveTab( tabItem);        
     },
+
+
+
+
+
 
     doDetail:function(btn,cmd,grid,record){
         
