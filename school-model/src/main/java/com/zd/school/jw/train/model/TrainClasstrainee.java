@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.zd.core.annotation.FieldInfo;
 import com.zd.core.model.BaseEntity;
 import com.zd.core.util.DateSerializer;
+import com.zd.school.excel.annotation.MapperCell;
 import org.hibernate.annotations.Formula;
 
 import javax.persistence.AttributeOverride;
@@ -56,6 +57,7 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         return traineeId;
     }
 
+    @MapperCell(cellName = "姓名", order = 1)
     @FieldInfo(name = "姓名")
     @Column(name = "XM", length = 64, nullable = true)
     private String xm;
@@ -68,6 +70,7 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         return xm;
     }
 
+    @MapperCell(cellName = "性别", order = 2)
     @FieldInfo(name = "性别 XBM字典")
     @Column(name = "XBM", length = 1, nullable = true)
     private String xbm;
@@ -80,6 +83,7 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         return xbm;
     }
 
+    @MapperCell(cellName = "移动电话", order = 3)
     @FieldInfo(name = "移动电话")
     @Column(name = "MOBILE_PHONE", length = 36, nullable = true)
     private String mobilePhone;
@@ -104,6 +108,7 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         return sfzjh;
     }
 
+    @MapperCell(cellName = "所在单位", order = 4)
     @FieldInfo(name = "所在单位")
     @Column(name = "WORK_UNIT", length = 128, nullable = true)
     private String workUnit;
@@ -116,7 +121,7 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         return workUnit;
     }
 
-
+    @MapperCell(cellName = "职务", order = 5)
     @FieldInfo(name = "职务")
     @Column(name = "POSITION", length = 128, nullable = true)
     private String position;
@@ -129,6 +134,7 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         return position;
     }
 
+    @MapperCell(cellName = "行政级别", order = 6)
     @FieldInfo(name = "行政级别 HEADSHIPLEVEL字典")
     @Column(name = "HEADSHIP_LEVEL", length = 16, nullable = true)
     private String headshipLevel;
@@ -238,6 +244,7 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         return absenceCredit;
     }
 
+    @MapperCell(cellName = "学分", order = 7)
     @FieldInfo(name = "实际学分")
     @Column(name = "REAL＿CREDIT", length = 8, nullable = true)
     private BigDecimal realRredit;

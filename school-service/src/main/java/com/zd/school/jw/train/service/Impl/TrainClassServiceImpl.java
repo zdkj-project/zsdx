@@ -25,7 +25,6 @@ import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -778,5 +777,12 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
             return  evalClassList.get(0);
         else
             return  null;
+    }
+
+    public Boolean doSumCredit(String classId){
+        String sql = MessageFormat.format("EXECUTE TRAIN_P_SUMTRAINEECREDIT ''{0}''", classId);
+        List<?> alist = this.doQuerySql(sql);
+
+	    return true;
     }
 }

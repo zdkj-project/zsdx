@@ -103,4 +103,11 @@ public interface TrainClassService extends BaseService<TrainClass> {
 
     public TrainClassEval getClassEvalInfo(String ids);
 
+    /**
+     * 汇总指定班级学员的学分
+     * @param classId 要汇总学分的班级
+     * @return
+     */
+    public Boolean doSumCredit(String classId);
+
 }
