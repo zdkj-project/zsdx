@@ -69,6 +69,7 @@
             comm.add("userName","${SESSION_SYS_USER.userName}");
             comm.add("xm","${SESSION_SYS_USER.xm}");
             comm.add("globalRoleId","${SESSION_SYS_USER.sysRoles}");
+            comm.add("roleKey","${ROLE_KEY}");
         }
     }
     ExtCommLoad();

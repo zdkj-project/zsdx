@@ -13,13 +13,34 @@ Ext.define("core.train.teacher.controller.MainController", {
     init: function () {
     },
     control: {
+        "basegrid[xtype=teacher.maingrid]": {
+            afterrender: function (grid, eOpts) {
+                var btnAdd = grid.down("button[ref=gridAdd_Tab]");
+                var btnDelete = grid.down("button[ref=gridDelete]");
+                var btnGridImport = grid.down("button[ref=gridImport]");
+                var btnGridDownTemplate = grid.down("button[ref=gridDownTemplate]");
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("TCMANAGER") == -1) {
+                    btnAdd.setHidden(true);
+                    btnDelete.setHidden(true);
+                    btnGridImport.setHidden(true);
+                    btnGridDownTemplate.setHidden(true);
+                }
+            }
+        },
+/*        "basegrid[xtype=teacher.maingrid] button[ref=gridAdd_Tab]": {
+            beforeclick: function (btn) {
+                var self = this;
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("PEIXUNROLE") == -1) {
+                    self.Warning("无权限增加");
+                    return false;
+                }
+            }
+        },*/
         /*导入*/
         "basegrid[xtype=teacher.maingrid] button[ref=gridImport]": {
             beforeclick: function (btn) {
-                var self = this;
-
-                //判断是否选择了班级，判断是添加新班级 或是 编辑班级
-
                 //得到组件
                 var baseGrid = btn.up("basegrid");
 
@@ -48,7 +69,6 @@ Ext.define("core.train.teacher.controller.MainController", {
          */
         "basegrid[xtype=teacher.maingrid] button[ref=gridExport]": {
             beforeclick: function (btn) {
-                var self = this;
                 //得到组件
                 var baseGrid = btn.up("basegrid");
                 var funCode = baseGrid.funCode;
@@ -169,7 +189,7 @@ Ext.define("core.train.teacher.controller.MainController", {
                 return false;
             },
             //操作列上课记录
-            gridTeachingClick_Tab:function(data) {
+            gridTeachingClick_Tab: function (data) {
                 var baseGrid = data.view;
                 var record = data.record;
                 var cmd = data.cmd;
@@ -353,8 +373,8 @@ Ext.define("core.train.teacher.controller.MainController", {
         insertObj = recordData;
         var popFunData = Ext.apply(funData, {
             grid: baseGrid,
-            teacherId:insertObj.uuid,
-            xm:insertObj.xm
+            teacherId: insertObj.uuid,
+            xm: insertObj.xm
         });
         pkValue = insertObj.uuid;
         tabTitle = insertObj.xm + "-主讲课程";
@@ -448,7 +468,7 @@ Ext.define("core.train.teacher.controller.MainController", {
         var popFunData = Ext.apply(funData, {
             grid: baseGrid
         });
-        
+
         if (btn) {
             var rescords = baseGrid.getSelectionModel().getSelection();
             if (rescords.length != 1) {
@@ -461,39 +481,39 @@ Ext.define("core.train.teacher.controller.MainController", {
         insertObj = recordData;
 
         //根据cmd操作类型，来设置不同的值
-        var tabTitle = insertObj.xm +"-教师详情";
+        var tabTitle = insertObj.xm + "-教师详情";
         //设置tab页的itemId
         var tabItemId = funCode + "_gridDetail_Tab" + insertObj.uuid;     //命名规则：funCode+'_ref名称',确保不重复
-        var ItemXtype="teacher.detailhtmlpanel";
+        var ItemXtype = "teacher.detailhtmlpanel";
         var pkValue = null;
         var operType = cmd;
 
-        if(cmd=="teacherInfo"){
+        if (cmd == "teacherInfo") {
             tabTitle = insertObj.xm + "-个人简介";
             tabItemId = funCode + "_gridTeacherInfoDetail" + insertObj.uuid;
-            ItemXtype="teacher.teacherinfohtmlpanel";
-            operType="detail";
+            ItemXtype = "teacher.teacherinfohtmlpanel";
+            operType = "detail";
         }
-       
-/*
-        var ddCode = "XLM";
-        var store = Ext.create("Ext.data.Store", {
-            fields: factory.ModelFactory.getFields({
-                modelName: "com.zd.school.plartform.baseset.model.BaseDicitem",
-                excludes: ""
-            }),
-            data: factory.DDCache.getItemByDDCode("XLM")
-        });
-        //将数据字典数据赋值到组件属性上
-        var dicData = {};
-        var storeData = store.getData();
-        for (var i = 0; i < storeData.length; i++) {
-            var rec = storeData.items[i];
-            if (rec.get("itemCode") == insertObj.xlm) {
-                insertObj.xlm = rec.get("itemName");
-                break;
-            }
-        }*/
+
+        /*
+         var ddCode = "XLM";
+         var store = Ext.create("Ext.data.Store", {
+         fields: factory.ModelFactory.getFields({
+         modelName: "com.zd.school.plartform.baseset.model.BaseDicitem",
+         excludes: ""
+         }),
+         data: factory.DDCache.getItemByDDCode("XLM")
+         });
+         //将数据字典数据赋值到组件属性上
+         var dicData = {};
+         var storeData = store.getData();
+         for (var i = 0; i < storeData.length; i++) {
+         var rec = storeData.items[i];
+         if (rec.get("itemCode") == insertObj.xlm) {
+         insertObj.xlm = rec.get("itemName");
+         break;
+         }
+         }*/
         //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
         var tabItem = tabPanel.getComponent(tabItemId);
         if (!tabItem) {
@@ -525,19 +545,19 @@ Ext.define("core.train.teacher.controller.MainController", {
                         margin: 10,
                         funCode: detCode,
                         items: [{
-                            xtype:ItemXtype
+                            xtype: ItemXtype
                             //data: insertObj
                         }]
                     }]
                 });
                 tabItem.add(item);
 
-                var ddCodes=['XBM','TECHNICAL','XLM','INOUT','HEADSHIPLEVEL'];
-                var propNames=['xbm','technical','xlm','inout','headshipLevel'];
-                for(var i=0;i<ddCodes.length;i++){                
+                var ddCodes = ['XBM', 'TECHNICAL', 'XLM', 'INOUT', 'HEADSHIPLEVEL'];
+                var propNames = ['xbm', 'technical', 'xlm', 'inout', 'headshipLevel'];
+                for (var i = 0; i < ddCodes.length; i++) {
                     var ddItem = factory.DDCache.getItemByDDCode(ddCodes[i]);
-                    var resultVal="";
-                    var value=insertObj[propNames[i]];
+                    var resultVal = "";
+                    var value = insertObj[propNames[i]];
                     for (var j = 0; j < ddItem.length; j++) {
                         var ddObj = ddItem[j];
                         if (value == ddObj["itemCode"]) {
@@ -545,60 +565,59 @@ Ext.define("core.train.teacher.controller.MainController", {
                             break;
                         }
                     }
-                    insertObj[propNames[i]]=resultVal;
+                    insertObj[propNames[i]] = resultVal;
                 }
-                console.log(insertObj);
-                var teacherInfoContainer=item.down("container[ref=teacherInfo]");
+                var teacherInfoContainer = item.down("container[ref=teacherInfo]");
                 teacherInfoContainer.setData(insertObj);
 
-                if(cmd=="detail"){
+                if (cmd == "detail") {
                     //读取主讲课程信息
                     self.asyncAjax({
-                        url: comm.get("baseUrl")  + "/TrainCourseinfo/list",
+                        url: comm.get("baseUrl") + "/TrainCourseinfo/list",
                         params: {
                             filter: "[{'type':'string','comparison':'','value':'" + insertObj.uuid + "','field':'mainTeacherId'}]",
-                            page:1,
-                            start:0,
-                            limit:-1    //-1表示不分页
+                            page: 1,
+                            start: 0,
+                            limit: -1    //-1表示不分页
                         },
                         //回调代码必须写在里面
-                        success: function(response) {
+                        success: function (response) {
                             var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                            var rows=data.rows;
+                            var rows = data.rows;
                             //console.log(rows);
-                            if(rows!=undefined){  //若存在rows数据，则表明请求正常
-                                var classCourseInfoContainer=item.down("container[ref=classCourseInfo]");  
-                                classCourseInfoContainer.setData(rows);     
-                            }else{
+                            if (rows != undefined) {  //若存在rows数据，则表明请求正常
+                                var classCourseInfoContainer = item.down("container[ref=classCourseInfo]");
+                                classCourseInfoContainer.setData(rows);
+                            } else {
                                 self.Error(data.obj);
                             }
                         }
-                    });  
+                    });
 
                     //读取课程记录信息
                     self.asyncAjax({
-                        url: comm.get("baseUrl")  + "/TrainClassschedule/listCourseEval",
+                        url: comm.get("baseUrl") + "/TrainClassschedule/listCourseEval",
                         params: {
-                            propName:"teacherId,teacherName",
-                            propValue:insertObj.uuid + "," + insertObj.xm,
-                            joinMethod : "or",
-                            page:1,
-                            start:0,
-                            limit:-1    //-1表示不分页
+                            propName: "teacherId,teacherName",
+                            propValue: insertObj.uuid + "," + insertObj.xm,
+                            joinMethod: "or",
+                            page: 1,
+                            start: 0,
+                            limit: -1    //-1表示不分页
                         },
                         //回调代码必须写在里面
-                        success: function(response) {
+                        success: function (response) {
                             var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                            var rows=data.rows;
+                            var rows = data.rows;
                             //console.log(rows);
-                            if(rows!=undefined){  //若存在rows数据，则表明请求正常
-                                var classCourseRecordContainer=item.down("container[ref=classCourseRecord]");  
-                                classCourseRecordContainer.setData(rows);     
-                            }else{
+                            if (rows != undefined) {  //若存在rows数据，则表明请求正常
+                                var classCourseRecordContainer = item.down("container[ref=classCourseRecord]");
+                                classCourseRecordContainer.setData(rows);
+                            } else {
                                 self.Error(data.obj);
                             }
                         }
-                    });  
+                    });
                 }
             }, 30);
 
@@ -647,9 +666,9 @@ Ext.define("core.train.teacher.controller.MainController", {
 
         //处理特殊默认值
         var insertObj = {};
-/*        var popFunData = Ext.apply(funData, {
-            grid: baseGrid
-        });*/
+        /*        var popFunData = Ext.apply(funData, {
+         grid: baseGrid
+         });*/
 
         //根据cmd操作类型，来设置不同的值
         var tabTitle = "上课记录";
@@ -670,8 +689,8 @@ Ext.define("core.train.teacher.controller.MainController", {
         insertObj = recordData;
         var popFunData = Ext.apply(funData, {
             grid: baseGrid,
-            teacherId:insertObj.uuid,
-            xm:insertObj.xm
+            teacherId: insertObj.uuid,
+            xm: insertObj.xm
         });
         tabTitle = insertObj.xm + "-上课记录";
         tabItemId = funCode + "_gridTeacherTeachingDetail" + insertObj.uuid;
@@ -714,8 +733,8 @@ Ext.define("core.train.teacher.controller.MainController", {
 
                 var teachingGrid = tabItem.down("grid[xtype=teacher.teachingrid]");
                 var proxy = teachingGrid.getStore().getProxy();
-                proxy.extraParams.propName="teacherId";
-                proxy.extraParams.propValue=record.get("uuid");
+                proxy.extraParams.propName = "teacherId";
+                proxy.extraParams.propValue = record.get("uuid");
                 proxy.extraParams.joinMethod = "";
                 //proxy.extraParams.filter = "[{'type':'string','comparison':'','value':'" + record.get("uuid") + "','field':'mainTeacherId'}]";
                 teachingGrid.getStore().loadPage(1);

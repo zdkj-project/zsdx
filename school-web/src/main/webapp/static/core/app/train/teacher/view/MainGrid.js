@@ -200,7 +200,7 @@ Ext.define("core.train.teacher.view.MainGrid", {
                     this.fireEvent('gridTeacherCourseClick_Tab', {
                         view: view.grid,
                         record: rec,
-                        cmd:"detail"
+                        cmd: "detail"
                     });
                 }
             }, {
@@ -226,6 +226,13 @@ Ext.define("core.train.teacher.view.MainGrid", {
                         view: view.grid,
                         record: rec
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("TCMANAGER") == -1) {
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             }, {
                 text: '详细',
@@ -250,6 +257,13 @@ Ext.define("core.train.teacher.view.MainGrid", {
                         view: view.grid,
                         record: rec
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("TCMANAGER") == -1) {
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             }]
         }]
