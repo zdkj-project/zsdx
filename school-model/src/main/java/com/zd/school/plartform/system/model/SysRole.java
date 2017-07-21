@@ -1,22 +1,13 @@
 package com.zd.school.plartform.system.model;
 
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.zd.core.annotation.FieldInfo;
 import com.zd.core.model.BaseEntity;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 
@@ -58,7 +49,7 @@ public class SysRole extends BaseEntity implements Serializable {
         return roleName;
     }
 
-    @FieldInfo(name = "是否系统角色")
+    @FieldInfo(name = "是否系统角色 0-否 1-是")
     @Column(name = "ISSYSTEM", length = 10, nullable = false)
     private Integer issystem;
 

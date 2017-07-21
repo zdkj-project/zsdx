@@ -275,10 +275,19 @@
     font-size: 12px;
     margin:0;
     padding:0;
-    width:100%;    
+    width:100%;
     border: 1px #cecece  solid;
     max-height: 228px;
     overflow: auto;
+}
+.trainClass_classTraineeInfo ul.trainClass_gridUl.trainClassTrainee_gridUl{
+    font-size: 12px;
+    margin:0;
+    padding:0;
+    width:100%;
+    border: 1px #cecece  solid;
+    max-height: 600px;
+    overflow: auto
 }
 .trainClass_classTraineeInfo ul.trainClass_gridUl li{
     margin:0;   

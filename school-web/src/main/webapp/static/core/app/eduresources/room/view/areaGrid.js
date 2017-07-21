@@ -15,25 +15,25 @@ Ext.define("core.eduresources.room.view.areaGrid", {
         xtype: 'button',
         text: '添加下级',
         ref: 'gridAdd',
-        iconCls: 'x-fa fa-plus-circle',
+        iconCls: 'x-fa fa-plus-circle'
         //disabled: true
     }, {
         xtype: 'button',
         text: '添加同级',
         ref: 'gridAddBrother',
-        iconCls: 'x-fa fa-plus-circle',
+        iconCls: 'x-fa fa-plus-circle'
         //disabled: true
     }, {
         xtype: 'button',
         text: '修改',
         ref: 'gridEdit',
-        iconCls: 'x-fa fa-pencil-square',
+        iconCls: 'x-fa fa-pencil-square'
         //disabled: true
     }, {
         xtype: 'button',
         text: '删除',
         ref: 'gridDelete',
-        iconCls: 'x-fa fa-minus-circle',
+        iconCls: 'x-fa fa-minus-circle'
         //disabled: true
     }, {
         xtype: 'button',
@@ -43,8 +43,6 @@ Ext.define("core.eduresources.room.view.areaGrid", {
     }],
     columns:  {        
         defaults:{
-            //flex:1,
-            align:'center',
             titleAlign:"center"
         },
     items: [{

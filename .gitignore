@@ -25,6 +25,7 @@ hs_err_pid*
 rebel*
 
 # files
+*.iml
 .idea/
 zd-core/target/
 school-model/target/

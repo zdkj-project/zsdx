@@ -8,7 +8,7 @@ Ext.define("core.train.calcucredit.controller.MainController", {
         gridActionUtil: "core.util.GridActionUtil",
         dateUtil: 'core.util.DateUtil'
     },
-    init: function() {
+    init: function () {
     },
     control: {
         /**
@@ -24,8 +24,8 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                 funData = Ext.apply(funData, {
                     classId: record.get("uuid"),
                     filter: filter,
-                    classGrid:grid,
-                    classRecord:record
+                    classGrid: grid,
+                    classRecord: record
                 });
                 mainLayout.funData = funData;
                 var refreshgrid = mainLayout.down("panel[xtype=calcucredit.traineesgrid]");
@@ -34,9 +34,73 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                 proxy.extraParams = {
                     classId: record.get("uuid"),
                     orderSql: " order by createTime asc ",
-                    filter:filter
+                    filter: filter
                 };
                 store.load(); // 给form赋值
+                return false;
+            }
+        },
+        /**
+         * 班级列表导出按钮事件
+         */
+        "basegrid[xtype=calcucredit.maingrid] button[ref=gridExport]": {
+            beforeclick: function (btn) {
+                var self = this;
+                var baseGrid = btn.up("basegrid");
+                var records = baseGrid.getSelectionModel().getSelection();
+                if (records.length != 1) {
+                    self.Warning("只能按班级导出，请重新选择");
+                    return false;
+                }
+                var record = records[0].data;
+                var title = "确定要导出此班级学员的学分信息吗？";
+                Ext.Msg.confirm('提示', title, function (btn, text) {
+                    if (btn == "yes") {
+                        Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
+                        var component = Ext.create('Ext.Component', {
+                            title: 'HelloWorld',
+                            width: 0,
+                            height: 0,
+                            hidden: true,
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClass/exportCredit?ids=' + record.uuid + '"></iframe>',
+                            renderTo: Ext.getBody()
+                        });
+
+                        var time = function () {
+                            self.syncAjax({
+                                url: comm.get('baseUrl') + '/TrainClass/checkExportCreditEnd',
+                                timeout: 1000 * 60 * 30,        //半个小时
+                                //回调代码必须写在里面
+                                success: function (response) {
+                                    data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                    if (data.success) {
+                                        Ext.Msg.hide();
+                                        self.msgbox(data.obj);
+                                        component.destroy();
+                                    } else {
+                                        if (data.obj == 0) {    //当为此值，则表明导出失败
+                                            Ext.Msg.hide();
+                                            self.Error("导出失败，请重试或联系管理员！");
+                                            component.destroy();
+                                        } else {
+                                            setTimeout(function () {
+                                                time()
+                                            }, 1000);
+                                        }
+                                    }
+                                },
+                                failure: function (response) {
+                                    Ext.Msg.hide();
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    component.destroy();
+                                }
+                            });
+                        };
+                        setTimeout(function () {
+                            time()
+                        }, 1000);    //延迟1秒执行
+                    }
+                });
                 return false;
             }
         },
@@ -49,17 +113,111 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                 var baseGrid = btn.up("basegrid");
                 var basePanel = baseGrid.up("panel[xtype=calcucredit.mainlayout]");
                 var funData = basePanel.funData;
-                if(Ext.isEmpty(funData.classId)){
+                if (Ext.isEmpty(funData.classId)) {
                     self.Warning("请选择培训班级");
                     return false;
                 }
                 var record = baseGrid.getStore().getAt(0);
-                self.doSumTraineesCredit(null, "sumCredit",baseGrid,record);
+                self.doSumTraineesCredit(null, "sumCredit", baseGrid, record);
+                return false;
+            }
+        },
+        /**
+         * 学员列表操作列事件
+         */
+        "basegrid[xtype=calcucredit.traineesgrid]  actioncolumn": {
+            gridTraineeCreditClick_Tab: function (data) {
+                var baseGrid = data.view;
+                var record = data.record;
+                var cmd = data.cmd;
+                this.doTranieeDetail_Tab(null, cmd, baseGrid, record);
+
                 return false;
             }
         }
     },
+    /**
+     * 学分汇总
+     * @param btn
+     * @param cmd
+     * @param grid
+     * @param record
+     */
     doSumTraineesCredit: function (btn, cmd, grid, record) {
+        var self = this;
+        var baseGrid;
+        var recordData;
+
+        if (btn) {
+            baseGrid = btn.up("basegrid");
+        } else {
+            baseGrid = grid;
+            recordData = record.data;
+        }
+        //得到组件
+        var funCode = baseGrid.funCode;
+        var basePanel = baseGrid.up("panel[funCode=" + funCode + "]");
+
+        var title = "确定要汇总此班级学员的学分吗？";
+        Ext.Msg.confirm('提示', title, function (btn, text) {
+            if (btn == "yes") {
+                Ext.Msg.wait('正在汇总统计中,请稍后...', '温馨提示');
+                var component = Ext.create('Ext.Component', {
+                    title: 'HelloWorld',
+                    width: 0,
+                    height: 0,
+                    hidden: true,
+                    html: '<iframe src="' + comm.get('baseUrl') + '/TrainClass/sumcredit?ids=' + recordData.classId + '"></iframe>',
+                    renderTo: Ext.getBody()
+                });
+
+                var time = function () {
+                    self.syncAjax({
+                        url: comm.get('baseUrl') + '/TrainClass/checkSumCreditEnd',
+                        timeout: 1000 * 60 * 30,        //半个小时
+                        //回调代码必须写在里面
+                        success: function (response) {
+                            data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                            if (data.success) {
+                                Ext.Msg.hide();
+                                self.msgbox(data.obj);
+                                component.destroy();
+
+                                baseGrid.getStore().load();
+                            } else {
+                                if (data.obj == 0) {    //当为此值，则表明导出失败
+                                    Ext.Msg.hide();
+                                    self.Error("汇总失败，请重试或联系管理员！");
+                                    component.destroy();
+                                } else {
+                                    setTimeout(function () {
+                                        time()
+                                    }, 1000);
+                                }
+                            }
+                        },
+                        failure: function (response) {
+                            Ext.Msg.hide();
+                            Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                            component.destroy();
+                        }
+                    });
+                };
+                setTimeout(function () {
+                    time()
+                }, 1000);    //延迟1秒执行
+            }
+        });
+    },
+
+    /**
+     * 查看学员的学分详细情况
+     * @param btn
+     * @param cmd
+     * @param grid
+     * @param record
+     */
+    doTranieeDetail_Tab: function (btn, cmd, grid, record) {
         var self = this;
         var baseGrid;
         var recordData;
@@ -94,66 +252,13 @@ Ext.define("core.train.calcucredit.controller.MainController", {
         var insertObj = self.getDefaultValue(defaultObj);
 
         //默认的tab参数
-        var tabTitle = ""; //标签页的标题
-        var tabItemId = funCode + "_gridAdd";     //命名规则：funCode+'_ref名称',确保不重复
-        var itemXtype = "alleval.detailform";
-
-        var title = "确定要汇总此班级学员的学分吗？";
-        Ext.Msg.confirm('提示', title, function (btn, text) {
-            if (btn == "yes") {
-                Ext.Msg.wait('正在汇总统计中,请稍后...', '温馨提示');
-                var component = Ext.create('Ext.Component', {
-                    title: 'HelloWorld',
-                    width: 0,
-                    height: 0,
-                    hidden: true,
-                    html: '<iframe src="' + comm.get('baseUrl') + '/TrainClasstrainee/sumcredit?ids=' + recordData.classId + '"></iframe>',
-                    renderTo: Ext.getBody()
-                });
-
-                var time = function () {
-                    self.syncAjax({
-                        url: comm.get('baseUrl') + '/TrainClasstrainee/checkSumCreditEnd',
-                        timeout: 1000 * 60 * 30,        //半个小时
-                        //回调代码必须写在里面
-                        success: function (response) {
-                            data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                            if (data.success) {
-                                Ext.Msg.hide();
-                                self.msgbox(data.obj);
-                                component.destroy();
-
-                                //baseGrid.getStore().load();
-                                //转汇总结果显示的tab页面
-                            } else {
-                                if (data.obj == 0) {    //当为此值，则表明导出失败
-                                    Ext.Msg.hide();
-                                    self.Error("汇总失败，请重试或联系管理员！");
-                                    component.destroy();
-                                } else {
-                                    setTimeout(function () {
-                                        time()
-                                    }, 1000);
-                                }
-                            }
-                        },
-                        failure: function (response) {
-                            Ext.Msg.hide();
-                            Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
-                            component.destroy();
-                        }
-                    });
-                };
-                setTimeout(function () {
-                    time()
-                }, 1000);    //延迟1秒执行
-            }
-        });
-        return;
+        var tabTitle = recordData.xm + "-学分详情"; //标签页的标题
+        var tabItemId = funCode + "_gridDetail";     //命名规则：funCode+'_ref名称',确保不重复
+        var itemXtype = "calcucredit.detailhtml";
 
         //根据不同的操作对数据进行组装
         switch (cmd) {
-            case "edit":
+            case "creditDetail": //学分详情
                 if (btn) {
                     var rescords = baseGrid.getSelectionModel().getSelection();
                     if (rescords.length != 1) {
@@ -163,49 +268,15 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                     recordData = rescords[0].data;
                 }
                 insertObj = recordData;
-                tabTitle = funData.tabConfig.editTitle;
-                tabItemId = funCode + "_gridEdit";
-                //获取主键值
-                var pkName = funData.pkName;
-                pkValue = recordData[pkName];
-                break;
-            case "detail":
-                if (btn) {
-                    var rescords = baseGrid.getSelectionModel().getSelection();
-                    if (rescords.length != 1) {
-                        self.msgbox("请选择1条数据！");
-                        return;
-                    }
-                    recordData = rescords[0].data;
-                }
-                insertObj = recordData;
-                tabTitle = funData.tabConfig.editTitle;
+                tabTitle = recordData.xm + "-学分详情";
                 tabItemId = funCode + "_gridDetail";
-                //获取主键值
-                var pkName = funData.pkName;
-                pkValue = recordData[pkName];
-                break;
-            case "trainrecord":
-                if (btn) {
-                    var rescords = baseGrid.getSelectionModel().getSelection();
-                    if (rescords.length != 1) {
-                        self.msgbox("请选择1条数据！");
-                        return;
-                    }
-                    recordData = rescords[0].data;
-                }
-                insertObj = recordData;
-                tabTitle = insertObj.xm + "-培训记录";
-                tabItemId = funCode + "_gridTrainRecord";
-                itemXtype = "alleval.trainrecordgrid";
                 //获取主键值
                 var pkName = funData.pkName;
                 pkValue = recordData[pkName];
                 break;
         }
         var popFunData = Ext.apply(funData, {
-            grid: baseGrid,
-            xm: insertObj.xm
+            grid: baseGrid
         });
         //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
         var tabItem = tabPanel.getComponent(tabItemId);
@@ -218,7 +289,7 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                 scrollable: true,
                 itemId: tabItemId,
                 itemPKV: pkValue,    //保存主键值
-                layout: 'fit',
+                layout: 'fit'
             });
             tabPanel.add(tabItem);
 
@@ -241,7 +312,20 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                     }]
                 });
                 tabItem.add(item);
-                if (cmd != "trainrecord") {
+                var classTraineeContainer = tabItem.down("container[ref=classTraineeInfo]");
+                classTraineeContainer.setData(insertObj);
+                self.asyncAjax({
+                    url: comm.get("baseUrl") + "/TrainClasstrainee/getCreditsDetail",
+                    params: {
+                        ids: recordData.uuid
+                    },
+                    success: function (response) {
+                        var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                        var indicatorStandContainer = tabItem.down("container[ref=classTraineeCredits]");
+                        indicatorStandContainer.setData(data);
+                    }
+                });
+/*                if (cmd != "trainrecord") {
                     var objDetForm = item.down("baseform[funCode=" + detCode + "]");
                     var formDeptObj = objDetForm.getForm();
 
@@ -251,11 +335,11 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                     //显示封面图片
                     objDetForm.down('image[ref=newsImage]').setSrc(insertObj.zp);
                 } else {
-                    var trainRecordGrid = tabItem.down("grid[xtype=alleval.trainrecordgrid]");
+                    var trainRecordGrid = tabItem.down("grid[xtype=trainee.trainrecordgrid]");
                     var proxy = trainRecordGrid.getStore().getProxy();
-                    proxy.extraParams.filter = "[{'type':'string','comparison':'=','value':'" + record.get("uuid") + "','field':'allevalId'}]";
+                    proxy.extraParams.filter = "[{'type':'string','comparison':'=','value':'" + record.get("uuid") + "','field':'traineeId'}]";
                     trainRecordGrid.getStore().loadPage(1);
-                }
+                }*/
             }, 30);
 
         } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue) {     //判断是否点击的是同一条数据，不同则替换数据
@@ -264,5 +348,6 @@ Ext.define("core.train.calcucredit.controller.MainController", {
         }
 
         tabPanel.setActiveTab(tabItem);
-    },
+    }
+
 });

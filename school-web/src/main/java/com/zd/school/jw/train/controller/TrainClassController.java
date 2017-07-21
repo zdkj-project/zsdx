@@ -1,55 +1,11 @@
 
 package com.zd.school.jw.train.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.annotation.Resource;
-import javax.annotation.Resources;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.hssf.usermodel.HSSFRichTextString;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.util.DBContextHolder;
-import com.zd.core.util.ImportExcelUtil;
-import com.zd.core.util.ModelUtil;
-import com.zd.core.util.PoiExportExcel;
-import com.zd.core.util.StringUtils;
+import com.zd.core.util.*;
 import com.zd.school.excel.FastExcel;
-import com.zd.school.excel.annotation.MapperCell;
 import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClassschedule;
 import com.zd.school.jw.train.model.TrainClasstrainee;
@@ -59,12 +15,24 @@ import com.zd.school.jw.train.service.TrainClassrealdinnerService;
 import com.zd.school.jw.train.service.TrainClassscheduleService;
 import com.zd.school.jw.train.service.TrainClasstraineeService;
 import com.zd.school.plartform.baseset.model.BaseDicitem;
-import com.zd.school.plartform.baseset.model.BaseOrgToUP;
 import com.zd.school.plartform.baseset.service.BaseDicitemService;
-import com.zd.school.plartform.baseset.service.BaseOrgService;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.model.SysUserToUP;
-import com.zd.school.plartform.system.service.SysUserService;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 
@@ -119,18 +87,15 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		writeJSON(response, strData);// 返回数据
 	}
 
-	/**
-	 * 
-	 * @Title: doadd
-	 * @Description: 增加新实体信息至数据库
-	 * @param TrainClass
-	 *            实体类
-	 * @param request
-	 * @param response
-	 * @return void 返回类型
-	 * @throws IOException
-	 *             抛出异常
-	 */
+    /**
+     *
+     * @param entity
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
 	@RequestMapping(value = { "/doadd" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
 			org.springframework.web.bind.annotation.RequestMethod.POST })
 	public void doAdd(TrainClass entity, HttpServletRequest request, HttpServletResponse response)
@@ -193,18 +158,15 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		}
 	}
 
-	/**
-	 * NEW：当班级已经设置为提交状态后，则再次修改，会将isuse设置为2（修改未提交状态）
-	 * 
-	 * @Title: doUpdate
-	 * @Description: 编辑指定记录
-	 * @param TrainClass
-	 * @param request
-	 * @param response
-	 * @return void 返回类型
-	 * @throws IOException
-	 *             抛出异常
-	 */
+    /**
+     *
+     * @param entity
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
 	@RequestMapping("/doupdate")
 	public void doUpdates(TrainClass entity, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, IllegalAccessException, InvocationTargetException {
@@ -243,12 +205,12 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		}
 	}
 
-	/**
-	 * 获取班级的学员、课程
-	 * 
-	 * @param id
-	 * @return
-	 */
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws IOException
+     */
 	@RequestMapping("/getClassInfo")
 	public void getClassInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String strData = "";
@@ -1412,368 +1374,129 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			return "晚上";
 	}
 
-	/**
-	 * 导出EXCEL文件（单个sheet，可以多个表格）
-	 * 
-	 * @param response
-	 * @param fileName
-	 *            文件名称
-	 * @param sheetTitle
-	 *            sheet中的大标题（第一行）
-	 * @param listContent
-	 *            sheet中的数据集（list中每个map数据中，存放一个表格的数据；在每个map中又细分为多个不同的Object数据）
-	 *            如：（详见导出班级代码） List<Map<String, Object>> listContent = new
-	 *            ArrayList<>(); //数据集
-	 * 
-	 *            Map<String, Object> roomAllMap = new LinkedHashMap<>();
-	 *            //一个map中，代表一个表格 roomAllMap.put("data", roomList);
-	 *            //此表格中的具体遍历数据 roomAllMap.put("title", "班级学员宿舍信息表");
-	 *            //表格标题，若为null，且数据集中存在其他map，则下一个map不会空出3行（空出3行，用于划分各个表格）。
-	 *            roomAllMap.put("head", new String[] { "姓名", "性别", "是否午休",
-	 *            "是否晚宿" });
-	 *            //若存在名字相同的，则名字相同且相邻的head合并（当head名字相同，并且某行中的对应的列值也相同，则合并它们）
-	 *            roomAllMap.put("columnWidth", new Integer[] { 15, 15, 15, 20
-	 *            }); //
-	 *            20代表20个字节，10个字符（整个sheet中，只能存在一个columnWidth,因为列宽是针对整个sheet的）
-	 *            roomAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0
-	 *            }); // 0代表居中，1代表居左，2代表居右 roomAllMap.put("mergeCondition",
-	 *            null); // 跨行合行列需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
-	 * 
-	 *            listContent.add(roomAllMap); //加入此map到数据集中
-	 * 
-	 * @return
-	 * @throws IOException
-	 */
-	// public boolean exportExcel(HttpServletResponse response, String fileName,
-	// String sheetTitle,
-	// List<Map<String, Object>> listContent) throws IOException {
-	// HSSFWorkbook workbook = new HSSFWorkbook();
-	// boolean result = false;
-	// OutputStream fileOutputStream = null;
-	// response.reset();// 清空输出流
-	// response.setHeader("Content-disposition",
-	// "attachment; filename=" + new String((fileName +
-	// ".xls").getBytes("GB2312"), "ISO8859-1"));
-	// response.setContentType("application/msexcel");
-	//
-	// if (null != listContent && !listContent.isEmpty()) {
-	//
-	// try {
-	// Sheet sheet = workbook.createSheet(fileName);
-	//
-	// // 大标题栏样式
-	// HSSFFont titleFont = workbook.createFont();
-	// titleFont.setFontName("方正黑体简体");
-	// titleFont.setFontHeightInPoints((short) 22);// 字体大小
-	// titleFont.setBold(true);
-	// CellStyle titleStyle = workbook.createCellStyle();
-	// titleStyle.setFont(titleFont);
-	// titleStyle.setAlignment(HorizontalAlignment.CENTER);// 左右居中
-	// titleStyle.setVerticalAlignment(VerticalAlignment.CENTER);// 上下居中
-	//
-	// // 表头字体样式
-	// HSSFFont headFont = workbook.createFont();
-	// headFont.setFontName("方正黑体简体");
-	// headFont.setFontHeightInPoints((short) 11);// 字体大小
-	// headFont.setBold(true);
-	// // 表头Cell样式
-	// CellStyle headStyle = workbook.createCellStyle();
-	// headStyle.setAlignment(HorizontalAlignment.CENTER);
-	// headStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-	// headStyle.setFont(headFont);
-	// headStyle.setWrapText(true);
-	// headStyle.setBorderLeft(BorderStyle.THIN);
-	// headStyle.setBorderRight(BorderStyle.THIN);
-	// headStyle.setBorderTop(BorderStyle.THIN);
-	// headStyle.setBorderBottom(BorderStyle.THIN);
-	//
-	// // 内容字体样式
-	// HSSFFont textFont = workbook.createFont();
-	// textFont.setFontName("方正黑体简体");
-	// // textFont.setFontHeightInPoints((short) 11);// 字体大小
-	// // 内容Cell样式，内容居中对齐
-	// CellStyle textStyleCenter = workbook.createCellStyle();
-	// textStyleCenter.setAlignment(HorizontalAlignment.CENTER);
-	// textStyleCenter.setVerticalAlignment(VerticalAlignment.CENTER);
-	// textStyleCenter.setBorderLeft(BorderStyle.THIN);
-	// textStyleCenter.setBorderRight(BorderStyle.THIN);
-	// textStyleCenter.setBorderTop(BorderStyle.THIN);
-	// textStyleCenter.setBorderBottom(BorderStyle.THIN);
-	// textStyleCenter.setFont(textFont);
-	// textStyleCenter.setWrapText(true);
-	//
-	// // 内容Cell样式2,内容居左对齐
-	// CellStyle textStyleLeft = workbook.createCellStyle();
-	// textStyleLeft.setAlignment(HorizontalAlignment.LEFT);
-	// textStyleLeft.setVerticalAlignment(VerticalAlignment.CENTER);
-	// textStyleLeft.setBorderLeft(BorderStyle.THIN);
-	// textStyleLeft.setBorderRight(BorderStyle.THIN);
-	// textStyleLeft.setBorderTop(BorderStyle.THIN);
-	// textStyleLeft.setBorderBottom(BorderStyle.THIN);
-	// textStyleLeft.setFont(textFont);
-	// textStyleLeft.setWrapText(true);
-	//
-	// // 内容Cell样式3,内容居右对齐
-	// CellStyle textStyleRight = workbook.createCellStyle();
-	// textStyleRight.setAlignment(HorizontalAlignment.RIGHT);
-	// textStyleRight.setVerticalAlignment(VerticalAlignment.CENTER);
-	// textStyleRight.setBorderLeft(BorderStyle.THIN);
-	// textStyleRight.setBorderRight(BorderStyle.THIN);
-	// textStyleRight.setBorderTop(BorderStyle.THIN);
-	// textStyleRight.setBorderBottom(BorderStyle.THIN);
-	// textStyleRight.setFont(textFont);
-	// textStyleRight.setWrapText(true);
-	//
-	// int rowNum = 0;
-	// int colCount = ((String[]) listContent.get(0).get("head")).length;
-	// // 第一行先创建一个大标题
-	// Row sheetTitleRow = sheet.createRow(rowNum);
-	// sheetTitleRow.setHeight((short) 0x300);
-	// Cell sheetTitleCell = sheetTitleRow.createCell(0);
-	// sheetTitleCell.setCellStyle(titleStyle);
-	// sheetTitleCell.setCellValue(sheetTitle);
-	// sheet.addMergedRegion(new CellRangeAddress(rowNum, rowNum, 0, colCount -
-	// 1));
-	// rowNum++;
-	//
-	// for (Map<String, Object> dataList : listContent) {
-	// // 获取数据
-	// List<Map<String, String>> currentData = (List<Map<String, String>>)
-	// dataList.get("data");
-	// String title = (String) dataList.get("title");
-	// String[] headArray = (String[]) dataList.get("head");
-	// Integer[] columnWidthArray = (Integer[]) dataList.get("columnWidth");
-	// Integer[] columnWidthAlignment = (Integer[])
-	// dataList.get("columnAlignment");
-	// String[] columnMergeCondition = (String[])
-	// dataList.get("mergeCondition");
-	//
-	// // 设置标题栏内容(当不为null的时候，设置这一行)
-	// if (title != null) {
-	// if (rowNum > 1) // 除了第一个表格的时候
-	// rowNum += 3; // 空出三行
-	//
-	// Row titleRow = sheet.createRow(rowNum);
-	// titleRow.setHeight((short) 0x248);
-	// for (int i = 0; i < headArray.length; i++) {
-	// Cell titleCell = titleRow.createCell(i);
-	// titleCell.setCellStyle(headStyle);
-	// titleCell.setCellValue(title);
-	// }
-	// sheet.addMergedRegion(new CellRangeAddress(rowNum, rowNum, 0,
-	// headArray.length - 1));
-	// rowNum++;
-	// }
-	//
-	// // 设置表头内容
-	// Row headRow = sheet.createRow(rowNum);
-	// headRow.setHeight((short) 0x200);
-	// Object[] headMergeObj = null; // （因为2个行或列合并了之后，就必须要先移除合并，才能重新合并更多的行）
-	// for (int i = 0; i < headArray.length; i++) {
-	// Cell cell = headRow.createCell(i);
-	// cell.setCellValue(headArray[i]);
-	// cell.setCellStyle(headStyle);
-	// // 指定列的宽度
-	// sheet.setColumnWidth(i, columnWidthArray[i] * 256);
-	//
-	// // 如果当前列名和上一列的名字一致，则合并
-	// if (i > 0 && headArray[i - 1].equals(headArray[i])) {
-	// if (headMergeObj == null) {
-	// int index = sheet.addMergedRegion(new CellRangeAddress(rowNum, rowNum, i
-	// - 1, i));
-	// headMergeObj = new Object[] { index, headArray[i], i - 1 }; ////
-	// 合并的index值，表头值，行号。。
-	// } else {
-	// if (headMergeObj[1].equals(headArray[i])) {
-	// sheet.removeMergedRegion((int) headMergeObj[0]);
-	// int index = sheet.addMergedRegion(
-	// new CellRangeAddress(rowNum, rowNum, (int) headMergeObj[2], i));
-	// headMergeObj[0] = index;
-	// } else {
-	// int index = sheet.addMergedRegion(new CellRangeAddress(rowNum, rowNum, i
-	// - 1, i));
-	// headMergeObj = new Object[] { index, headArray[i], i - 1 }; //
-	// 合并的index值，表头值，行号。
-	// }
-	// }
-	// }
-	//
-	// }
-	// rowNum++;
-	//
-	// // 保存上一个map
-	// Map<String, String> preMap = null;
-	// // 保存某一列上一个合并的数据，并用来判断是否再合并（因为2个列合并了之后，就必须要先移除合并，才能合并）
-	// Map<Integer, Object[]> recordMap = new HashMap<>();
-	// // 保存某一行的上一个合并的数据，并用来判断是否再合并
-	// Object[] rowMergeObj = null;
-	// for (int i = 0; i < currentData.size(); i++) {
-	// Row textRow = sheet.createRow(rowNum);
-	// Map<String, String> map = currentData.get(i);
-	//
-	// int j = 0, maxTextHeight = (short) 0X250; // 默认行高，可以放2行数据
-	// String preVal = null; // 保存某一行中，上一列的值
-	// for (String s : map.keySet()) {
-	//
-	// Object val = map.get(s);
-	// if (val == null)
-	// val = "";
-	//
-	// Cell cell = textRow.createCell(j);
-	// cell.setCellValue(String.valueOf(val));
-	//
-	// if (columnWidthAlignment[j] == 0) {
-	// cell.setCellStyle(textStyleCenter);
-	// } else if (columnWidthAlignment[j] == 1) {
-	// cell.setCellStyle(textStyleLeft);
-	// } else if (columnWidthAlignment[j] == 2) {
-	// cell.setCellStyle(textStyleRight);
-	// } else {
-	// cell.setCellStyle(textStyleCenter);
-	// }
-	//
-	// // 计算最大的高度值
-	// int len = String.valueOf(val).getBytes().length;
-	// if (len > columnWidthArray[j] + 1) {
-	// int tempHeight = (len / (columnWidthArray[j] - 1) + 1) * 0X125; //
-	// 加入了边框，所以一行放入的字节数会少一个
-	// if (tempHeight > maxTextHeight)
-	// maxTextHeight = tempHeight;
-	// }
-	//
-	// // 判断是否需要进行列合并
-	// // 如果当前列名和上一列的名字一致，并且行的值也一致，则合并
-	// if (j > 0 && headArray[j - 1].equals(headArray[j]) && preVal != null
-	// && preVal.equals(val)) {
-	// if (rowMergeObj == null) {
-	// int index = sheet.addMergedRegion(new CellRangeAddress(rowNum, rowNum, j
-	// - 1, j));
-	// rowMergeObj = new Object[] { index, headArray[j - 1], preVal, i, j - 1 };
-	// // 合并的index值，表头值，数据值，行号,列号。
-	// } else {
-	// // 当上一个合并的数据值、表头值、行号 与
-	// // 当前处理的单元格的数据一致时，才继续合并，否则单独合并两列
-	// if (rowMergeObj[2].equals(val) && rowMergeObj[1].equals(headArray[j])
-	// && i == (int) rowMergeObj[3]) {
-	// sheet.removeMergedRegion((int) rowMergeObj[0]);
-	// int index = sheet.addMergedRegion(
-	// new CellRangeAddress(rowNum, rowNum, (int) rowMergeObj[4], j));
-	// rowMergeObj[0] = index;
-	// } else {
-	// int index = sheet
-	// .addMergedRegion(new CellRangeAddress(rowNum, rowNum, j - 1, j));
-	// rowMergeObj = new Object[] { index, headArray[j - 1], preVal, i, j - 1 };
-	// // 合并的index值，表头值，数据值，行号,列号。
-	// }
-	// }
-	// }
-	//
-	// // 判断是否需要进行行合并
-	// if (i > 0 && preMap.get(s) != null && !preMap.get(s).equals("") &&
-	// preMap.get(s).equals(val)
-	// && columnMergeCondition != null) { // 当前后的值都一致，才能满足最基本的合并条件
-	//
-	// boolean isMerge = true;
-	// String tempStr = "";
-	// // 当需要合并的列，满足必要的合并条件后，才允许合并
-	// for (int k = 0; k < columnMergeCondition.length; k++) {
-	// tempStr = columnMergeCondition[k];
-	//
-	// // 当前判断的列为条件中的列时，可以直接合并（因为列是有顺序的，所以当判断到当前列的时候，表明前面的列条件都判断完毕）
-	// if (s.equals(tempStr)) {
-	// isMerge = true;
-	// break;
-	// } else if (!preMap.get(tempStr).equals(map.get(tempStr))) { //
-	// 当其中一个条件不满足，则不允许合并
-	// isMerge = false;
-	// break;
-	// }
-	// }
-	//
-	// if (isMerge == true) {
-	// // 若不存在值，表明还未合并
-	// Object[] recordObj = recordMap.get(j);
-	// if (recordObj == null) {
-	// int index = sheet
-	// .addMergedRegion(new CellRangeAddress(rowNum - 1, rowNum, j, j));
-	// recordObj = new Object[] { index, currentData.get(i), rowNum - 1 }; //
-	// 合并的index值，MAP，行号。
-	// recordMap.put(j, recordObj);
-	// }
-	// // 若存在值，则判断，值是否一致，一致则合并，否则重新保存新的数据
-	// else {
-	// boolean isTempMerger = false;
-	// Map<String, String> tempMap = (Map) recordObj[1];
-	// // 当需要合并的列，满足必要的合并条件后，才允许合并
-	// for (int k = 0; k < columnMergeCondition.length; k++) {
-	// tempStr = columnMergeCondition[k];
-	//
-	// // 当前判断的列为条件中的列时，可以直接合并（因为列是有顺序的，所以当判断到当前列的时候，表明前面的列条件都判断完毕）
-	// if (s.equals(tempStr) && tempMap.get(s).equals(val)) {
-	// isTempMerger = true;
-	// break;
-	// } else if (!tempMap.get(tempStr).equals(map.get(tempStr))) { //
-	// 当其中一个条件不满足，则不允许合并
-	// isTempMerger = false;
-	// break;
-	// }
-	// }
-	// if (isTempMerger == true) {
-	// sheet.removeMergedRegion((int) recordObj[0]); // 先移除
-	// int index = sheet.addMergedRegion(
-	// new CellRangeAddress((int) recordObj[2], rowNum, j, j)); // 再合并
-	// recordObj[0] = index;
-	// recordMap.put(j, recordObj);
-	// } else { // 否则，重新保存此列的合并数据
-	// int index = sheet
-	// .addMergedRegion(new CellRangeAddress(rowNum - 1, rowNum, j, j));
-	// recordObj = new Object[] { index, currentData.get(i), rowNum - 1 }; //
-	// 保存新的合并的index值，列值，行号。
-	// recordMap.put(j, recordObj);
-	// }
-	//
-	// }
-	// }
-	// }
-	// preVal = (String) val;
-	// j++;
-	// }
-	// // 设置行高
-	// textRow.setHeight((short) maxTextHeight);
-	// // 保存上一个map
-	// preMap = currentData.get(i);
-	// rowNum++;
-	// }
-	//
-	// }
-	//
-	// fileOutputStream = response.getOutputStream();
-	// workbook.write(fileOutputStream);
-	// } catch (IOException e) {
-	// System.out.println(e.getMessage());
-	//
-	// return false;
-	// // LOG.error("流异常", e);
-	// } /*
-	// * catch (IllegalAccessException e) { // LOG.error("反射异常", e); }
-	// */
-	// catch (Exception e) {
-	//
-	// System.out.println(e.getMessage());
-	// return false;
-	// // LOG.error("其他异常", e);
-	// } finally {
-	// if (null != fileOutputStream) {
-	// try {
-	// fileOutputStream.close();
-	// } catch (IOException e) {
-	// System.out.println(e.getMessage());
-	// // LOG.error("关闭流异常", e);
-	// }
-	// }
-	// }
-	// result = true;
-	// }
-	// return result;
-	// }
+    /**
+     * 汇总班级学员的学分
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+	@RequestMapping("/sumcredit")
+    public void doSumCredit(HttpServletRequest request,HttpServletResponse response) throws  IOException{
+	    SysUser currentUser = getCurrentSysUser();
+	    String endFlag = currentUser.getUserName() + "sumCreditIsEnd";
+	    String stateFlag = currentUser.getUserName() + "sumCreditState";
+        String ids = request.getParameter("ids");
+        request.getSession().setAttribute(endFlag, "0");
+        request.getSession().removeAttribute(stateFlag);
+
+        if(StringUtils.isEmpty(ids)){
+            request.getSession().setAttribute(endFlag, "0");
+            request.getSession().setAttribute(stateFlag, "0");
+        } else {
+            boolean result = thisService.doSumCredit(ids);
+            if (result == true) {
+                request.getSession().setAttribute(endFlag, "1");
+            } else {
+                request.getSession().setAttribute(endFlag, "0");
+                request.getSession().setAttribute(stateFlag, "0");
+            }
+        }
+    }
+
+    /**
+     * 检查学分汇总是否完成
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping("/checkSumCreditEnd")
+    public void docheckSumCreditEnd(HttpServletRequest request,HttpServletResponse response) throws  IOException{
+        SysUser currentUser = getCurrentSysUser();
+        String endFlag = currentUser.getUserName() + "sumCreditIsEnd";
+        String stateFlag = currentUser.getUserName() + "sumCreditState";
+        Object isEnd = request.getSession().getAttribute(endFlag);
+        Object state = request.getSession().getAttribute(stateFlag);
+        if (isEnd != null) {
+            if ("1".equals(isEnd.toString())) {
+                writeJSON(response, jsonBuilder.returnSuccessJson("\"学分汇总完成！\""));
+            } else if (state != null && state.equals("0")) {
+                writeJSON(response, jsonBuilder.returnFailureJson("0"));
+            } else {
+                writeJSON(response, jsonBuilder.returnFailureJson("\"学分汇总未完成！\""));
+            }
+        } else {
+            writeJSON(response, jsonBuilder.returnFailureJson("\"学分汇总未完成！\""));
+        }
+    }
+
+    /**
+     * 导出指定班级的学员学分
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping("/exportCredit")
+    public void doexportCredit(HttpServletRequest request,HttpServletResponse response) throws  IOException{
+        SysUser currentUser = getCurrentSysUser();
+        String endFlag = currentUser.getUserName() + "exportCreditIsEnd";
+        String stateFlag = currentUser.getUserName() + "exportCreditState";
+        String ids = request.getParameter("ids");
+        request.getSession().setAttribute(endFlag, "0");
+        request.getSession().removeAttribute(stateFlag);
+
+        if(StringUtils.isEmpty(ids)){
+            request.getSession().setAttribute(endFlag, "0");
+            request.getSession().setAttribute(stateFlag, "0");
+        } else {
+            List<TrainClasstrainee> exportList = new ArrayList<>();
+            //职称数据字典
+            String mapKey = null;
+            String[] propValue = {"XBM","HEADSHIPLEVEL"};
+            Map<String, String> mapDicItem = new HashMap<>();
+            List<BaseDicitem> listDicItem = dicitemService.queryByProerties("dicCode", propValue);
+            for (BaseDicitem baseDicitem : listDicItem) {
+                mapKey = baseDicitem.getItemCode() + baseDicitem.getDicCode();
+                mapDicItem.put(mapKey, baseDicitem.getItemName());
+            }
+
+            List<TrainClasstrainee> trainClasstraineeList = null;
+            String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2) and classId='";
+            hql += ids;
+            hql += "' order by xm asc";
+            trainClasstraineeList = classTraineeService.doQuery(hql);
+            for (TrainClasstrainee trainTeacher : trainClasstraineeList) {
+                trainTeacher.setXbm(mapDicItem.get(trainTeacher.getXbm() + "XBM"));
+                trainTeacher.setHeadshipLevel(mapDicItem.get(trainTeacher.getHeadshipLevel()+"HEADSHIPLEVEL"));
+            }
+            exportList.addAll(trainClasstraineeList);
+            FastExcel.exportExcel(response, "学员学分", exportList);
+            request.getSession().setAttribute(endFlag, "1");
+        }
+    }
+
+    /**
+     * 检查学分导出是否完成
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping("/checkExportCreditEnd")
+    public void docheckExportCreditEnd(HttpServletRequest request,HttpServletResponse response) throws  IOException{
+        SysUser currentUser = getCurrentSysUser();
+        String endFlag = currentUser.getUserName() + "exportCreditIsEnd";
+        String stateFlag = currentUser.getUserName() + "exportCreditState";
+        Object isEnd = request.getSession().getAttribute(endFlag);
+        Object state = request.getSession().getAttribute(stateFlag);
+        if (isEnd != null) {
+            if ("1".equals(isEnd.toString())) {
+                writeJSON(response, jsonBuilder.returnSuccessJson("\"导出完成！\""));
+            } else if (state != null && state.equals("0")) {
+                writeJSON(response, jsonBuilder.returnFailureJson("0"));
+            } else {
+                writeJSON(response, jsonBuilder.returnFailureJson("\"导出未完成！\""));
+            }
+        } else {
+            writeJSON(response, jsonBuilder.returnFailureJson("\"导出未完成！\""));
+        }
+    }
 }

@@ -53,8 +53,9 @@ Ext.define("core.eduresources.room.controller.RoomController", {
                     var store = baseGrid.getStore();
                     var proxy = store.getProxy();
                     proxy.extraParams = {
-                        whereSql: "and isDelete='0'",
-                        orderSql: ""
+                        whereSql: " and isDelete='0' ",
+                        orderSql: "",
+                        excludes:"checked"
                     };
                     store.load(); //刷新父窗体的grid
                     return false;
@@ -502,7 +503,7 @@ Ext.define("core.eduresources.room.controller.RoomController", {
         var justName = records[0].get("text");
         var justType = records[0].get("areaType");
         //当前节点的上级节点
-        var parent = records[0].get("parentNode");
+        var parent = records[0].get("parent");
         var store = baseGrid.getStore();
         var parentNode = store.getNodeById(parent);
         var parentName = "ROOT";
@@ -512,11 +513,13 @@ Ext.define("core.eduresources.room.controller.RoomController", {
             parentType = parentNode.get("areaType");
         }
         //当前节点的下级类型
-        var childType = "02";
+        var childType = "03";
         switch (justType) {
             case "01":
+/*
                 childType = "02";
                 break;
+*/
             case "02":
                 childType = "03";
                 break;

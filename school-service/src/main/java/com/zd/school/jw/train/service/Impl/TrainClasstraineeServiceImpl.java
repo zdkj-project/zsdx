@@ -1,32 +1,27 @@
 package com.zd.school.jw.train.service.Impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
-import com.zd.school.jw.train.dao.TrainClasstraineeDao ;
+import com.zd.school.jw.train.dao.TrainClasstraineeDao;
 import com.zd.school.jw.train.model.TrainClass;
-import com.zd.school.jw.train.model.TrainClasstrainee ;
+import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.jw.train.model.TrainTrainee;
 import com.zd.school.jw.train.service.TrainClassService;
-import com.zd.school.jw.train.service.TrainClasstraineeService ;
+import com.zd.school.jw.train.service.TrainClasstraineeService;
 import com.zd.school.jw.train.service.TrainTraineeService;
 import com.zd.school.plartform.baseset.model.BaseDicitem;
 import com.zd.school.plartform.baseset.service.BaseDicitemService;
 import com.zd.school.plartform.system.model.SysUser;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 
@@ -378,4 +373,13 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			trainTraineeServie.merge(trainTrainee);
 		}
 	}
+
+    @Override
+    public List<Map<String, Object>> getClassTraineeCreditsList(String classTraineeId) {
+        String sql = MessageFormat.format("SELECT className,courseName,courseDate,courseTime,courseCredits,changeCredits," +
+                "realCredits FROM dbo.TRAIN_V_CLASSTRAINEECREDITS WHERE classTraineeId=''{0}'' \n" +
+                "\t order by courseDate,courseTime",classTraineeId);
+        List<Map<String, Object>> list = this.getForValuesToSql(sql);
+        return list;
+    }
 }
