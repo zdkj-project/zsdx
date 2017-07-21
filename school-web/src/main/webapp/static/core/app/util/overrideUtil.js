@@ -398,3 +398,9 @@ Ext.override(Ext.panel.Panel,{
 Ext.override(Ext.window.Window,{
     closeToolText:'关闭对话框'
 });
+
+
+//修复菜单，鼠标经过时的卡顿，设置延迟时间为20毫秒，之前为100
+Ext.override(Ext.menu.Menu,{
+    mouseLeaveDelay:20,
+});

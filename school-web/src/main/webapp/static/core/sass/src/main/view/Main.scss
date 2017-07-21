@@ -224,3 +224,9 @@
     -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
     opacity: 0.7;
 }
+
+/*关闭点击tab出现的边框*/
+.x-tab-navigation{
+    border:none !important;
+    outline: none !important;
+}
