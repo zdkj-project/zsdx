@@ -3,6 +3,7 @@ Ext.define("core.eduresources.room.view.RoomGrid", {
     alias: "widget.room.RoomGrid",
     dataUrl: comm.get('baseUrl') + "/BuildRoominfo/list",
     model: "com.zd.school.build.define.model.BuildRoominfo",
+    al:false,
     extParams: {
         whereSql: " and isDelete='0' ",
         orderSql: " order by roomName ",
