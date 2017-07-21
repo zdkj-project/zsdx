@@ -25,7 +25,8 @@ Ext.define("core.system.ip.view.ipMainLayout", {
         
         /*7.10 lhy*/
        tabConfig:{
-        reactTitle:'编辑',
+        addTitle:'添加接口',
+        reactTitle:'编辑接口',
         deleteTitle:'删除'
        }
     },
