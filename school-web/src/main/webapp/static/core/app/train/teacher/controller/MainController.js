@@ -20,7 +20,7 @@ Ext.define("core.train.teacher.controller.MainController", {
                 var btnGridImport = grid.down("button[ref=gridImport]");
                 var btnGridDownTemplate = grid.down("button[ref=gridDownTemplate]");
                 var roleKey = comm.get("roleKey");
-                if (roleKey.indexOf("TCMANAGER") == -1) {
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("TCMANAGER") == -1) {
                     btnAdd.setHidden(true);
                     btnDelete.setHidden(true);
                     btnGridImport.setHidden(true);
@@ -28,16 +28,16 @@ Ext.define("core.train.teacher.controller.MainController", {
                 }
             }
         },
-/*        "basegrid[xtype=teacher.maingrid] button[ref=gridAdd_Tab]": {
-            beforeclick: function (btn) {
-                var self = this;
-                var roleKey = comm.get("roleKey");
-                if (roleKey.indexOf("PEIXUNROLE") == -1) {
-                    self.Warning("无权限增加");
-                    return false;
-                }
-            }
-        },*/
+        /*        "basegrid[xtype=teacher.maingrid] button[ref=gridAdd_Tab]": {
+                    beforeclick: function (btn) {
+                        var self = this;
+                        var roleKey = comm.get("roleKey");
+                        if (roleKey.indexOf("PEIXUNROLE") == -1) {
+                            self.Warning("无权限增加");
+                            return false;
+                        }
+                    }
+                },*/
         /*导入*/
         "basegrid[xtype=teacher.maingrid] button[ref=gridImport]": {
             beforeclick: function (btn) {

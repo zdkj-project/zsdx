@@ -5,6 +5,7 @@ import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.util.DateUtil;
 import com.zd.core.util.ModelUtil;
 import com.zd.school.plartform.baseset.service.DictionaryItemCache;
+import com.zd.school.plartform.system.model.SysRole;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.model.SysUserLoginLog;
 import com.zd.school.plartform.system.service.SysUserLoginLogService;
@@ -129,7 +130,15 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 		sysUser.setStudyYearname(studyYeahname);
 
 		session.setAttribute(SESSION_SYS_USER, sysUser);
-		session.setAttribute("ROLE_KEY", sysUser.getSysRoles().iterator().next().getRoleCode());
+        StringBuilder sb = new StringBuilder();
+        for (SysRole s:sysUser.getSysRoles()) {
+            sb.append(s.getRoleCode());
+            sb.append(",");
+        }
+        if(sb.length()>0)
+            sb = sb.deleteCharAt(sb.length()-1);
+		session.setAttribute("ROLE_KEY", sb.toString());
+//		session.setAttribute("ROLE_KEY", sysUser.getSysRoles().iterator().next().getRoleCode());
 		result.put("result", 1);
 		writeJSON(response, jsonBuilder.toJson(result));
 	}
@@ -151,7 +160,14 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 			return new ModelAndView();
 		} else {
 			SysUser sysUser = (SysUser) session.getAttribute(SESSION_SYS_USER);
-			String globalRoleKey = sysUser.getSysRoles().iterator().next().getRoleCode();
+            StringBuilder sb = new StringBuilder();
+            for (SysRole s:sysUser.getSysRoles()) {
+                sb.append(s.getRoleCode());
+                sb.append(",");
+            }
+            if(sb.length()>0)
+                sb = sb.deleteCharAt(sb.length()-1);
+			String globalRoleKey = sb.toString();
 			try {
 				// List<Authority> allMenuList =
 				// authorityService.queryAllMenuList(globalRoleKey);

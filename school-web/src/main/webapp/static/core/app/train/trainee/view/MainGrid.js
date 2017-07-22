@@ -176,6 +176,13 @@ Ext.define("core.train.trainee.view.MainGrid", {
                         record: rec,
                         cmd:"edit"
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("PEIXUNROLE") == -1) {
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             }, {
                 text: '删除',
@@ -188,6 +195,13 @@ Ext.define("core.train.trainee.view.MainGrid", {
                         view: view.grid,
                         record: rec
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("PEIXUNROLE") == -1) {
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             }]
         }]
