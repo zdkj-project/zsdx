@@ -1,22 +1,5 @@
 package com.orcl.sync.controller;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.orcl.sync.model.hibernate.hibernate.HrUser;
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.util.CustomerContextHolder;
@@ -28,9 +11,20 @@ import com.zd.school.oa.meeting.model.OaMeeting;
 import com.zd.school.oa.meeting.model.OaMeetingemp;
 import com.zd.school.oa.meeting.service.OaMeetingService;
 import com.zd.school.oa.meeting.service.OaMeetingempService;
-import com.zd.school.plartform.baseset.model.BaseJob;
 import com.zd.school.plartform.baseset.service.BaseOrgService;
-import com.zd.school.plartform.system.model.SysUser;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 @Controller
 @RequestMapping("/meetingsync")
@@ -57,7 +51,8 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
 	    //4.开启事务  
 	    session.beginTransaction();
 	
-	    Query query = session.createSQLQuery("select MEETING_ID,cast(MEETING_TITLE as VARCHAR2(255)),cast(CONTENT as VARCHAR2(255)),cast(MEETING_CATEGORY as VARCHAR2(255)),BEGIN_TIME,END_TIME,cast(ROOM_NAME as VARCHAR2(255)) from meeting_msg");  
+	    Query query = session.createSQLQuery("select MEETING_ID,cast(MEETING_TITLE as VARCHAR2(255)),cast(CONTENT as VARCHAR2(2048))," +
+                "cast(MEETING_CATEGORY as VARCHAR2(255)),BEGIN_TIME,END_TIME,cast(ROOM_NAME as VARCHAR2(255)) from zsdx_sync.meeting_msg");
 	    //session.createSQLQuery("update dept set dname='SALES1' where deptno=30").executeUpdate();
 	    List<Object[]> list = query.list();
 	    
@@ -109,7 +104,7 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
 	    //4.开启事务  
 	    session.beginTransaction();
 	
-	    Query query = session.createSQLQuery("select MEETING_ID,EMPLOYEE_ID,cast(XM as VARCHAR2(255)) from meeting_user");
+	    Query query = session.createSQLQuery("select MEETING_ID,EMPLOYEE_ID,cast(XM as VARCHAR2(255)) from zsdx_sync.meeting_user");
 	    //session.createSQLQuery("update dept set dname='SALES1' where deptno=30").executeUpdate();
 	    List<Object[]> list = query.list();
 	    
@@ -129,7 +124,7 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
     		m.setEmployeeId(o[1].toString());
     		m.setAttendResult("1");
     		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟    
-    		Query query1 = session.createSQLQuery("select BEGIN_TIME,END_TIME from meeting_msg where MEETING_ID='"+o[0].toString()+"'");  
+    		Query query1 = session.createSQLQuery("select BEGIN_TIME,END_TIME from zsdx_sync.meeting_msg where MEETING_ID='"+o[0].toString()+"'");
     		List<Object[]> list1 = query1.list();
     		if(list1.size()>0){
         		for(Object[] o1:list1){
