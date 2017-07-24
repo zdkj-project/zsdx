@@ -41,7 +41,9 @@
 
 	<mvc:resources location="/diagram-viewer/" mapping="/diagram-viewer/**" />
 	<mvc:resources location="/editor-app/" mapping="/editor-app/**" />
-
+	
+	<mvc:view-controller path="/" view-name="forward:/login/desktop"/>
+	
 	<bean
 		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
 

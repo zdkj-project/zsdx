@@ -109,7 +109,6 @@
 			<value>
 				/SysAppinfo/** = anon
 				/static/** = anon
-				/index.jsp = anon
 				/login.jsp = anon
 				/handcourse.jsp = anon
 				/login/login = anon

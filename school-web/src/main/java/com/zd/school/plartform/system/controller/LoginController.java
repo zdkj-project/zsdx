@@ -9,6 +9,8 @@ import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.model.SysUserLoginLog;
 import com.zd.school.plartform.system.service.SysUserLoginLogService;
 import com.zd.school.plartform.system.service.SysUserService;
+
+import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
@@ -19,6 +21,7 @@ import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,11 +29,16 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 @Controller
 @RequestMapping("/login")
@@ -130,6 +138,10 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 
 		session.setAttribute(SESSION_SYS_USER, sysUser);
 		session.setAttribute("ROLE_KEY", sysUser.getSysRoles().iterator().next().getRoleCode());
+		
+		session.removeAttribute("accessToken");	//非单点登录，清除它
+		session.removeAttribute("accessAccount");	//非单点登录，清除它
+		
 		result.put("result", 1);
 		writeJSON(response, jsonBuilder.toJson(result));
 	}
@@ -148,7 +160,7 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 		Subject subject = SecurityUtils.getSubject();
 		Session session = subject.getSession();
 		if (session.getAttribute(SESSION_SYS_USER) == null) {
-			return new ModelAndView();
+			return new ModelAndView("login");
 		} else {
 			SysUser sysUser = (SysUser) session.getAttribute(SESSION_SYS_USER);
 			String globalRoleKey = sysUser.getSysRoles().iterator().next().getRoleCode();
@@ -158,10 +170,36 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 				return new ModelAndView("redirect:/index.jsp", "authorityList", null);
 			} catch (Exception e) {
 				logger.error(e.toString());
-				return new ModelAndView();
+				return new ModelAndView("login");
 			}
 		}
 	}
+	
+	@RequestMapping("/ssoIndex")
+    public ModelAndView ssoIndex(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    	//System.out.println("进入主界面！");
+        Subject subject = SecurityUtils.getSubject();
+        Session session = subject.getSession();
+    	//System.out.println("session内容："+session.getAttribute(SESSION_SYS_USER));
+    	
+        if (session.getAttribute(SESSION_SYS_USER) == null) {
+            return new ModelAndView("login");
+        } else {
+            SysUser sysUser = (SysUser) session.getAttribute(SESSION_SYS_USER);
+            String globalRoleKey = sysUser.getSysRoles().iterator().next().getRoleCode();
+            try {
+            	//System.out.println("进入到index页面!");
+                // List<Authority> allMenuList =
+                // authorityService.queryAllMenuList(globalRoleKey);
+                return new ModelAndView("redirect:/index.jsp", "authorityList", null);
+            } catch (Exception e) {
+                logger.error(e.toString());
+                //System.out.println("进入到index错误页面!");
+                return new ModelAndView("login");
+            }
+        }
+    }
+	
 
 	@RequestMapping("/changepwd")
 	public void changePwd(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -188,6 +226,41 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 	 * //SecurityUtils.getSubject().logout();
 	 * response.sendRedirect("login.jsp"); }
 	 */
+	@RequestMapping("/loginout")
+    public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		
+		Properties pros = PropertiesLoaderUtils.loadAllProperties("sso.properties");
+		
+		HttpSession session = request.getSession();
+		
+		//清除shiro的登录状态
+		SecurityUtils.getSubject().logout();
+		
+		 //判断是否进行了单点登录 	
+		String accessTokenSession = (String) session.getAttribute("accessToken");
+    	if(StringUtils.isNotEmpty(accessTokenSession)){
+    		
+    		//传accessTokenSession是为了清除认证平台的token；传clientId是为了方便退出成功后可以跳转到所对应客户端的登陆页面。
+    		String ssoServerUrl=pros.getProperty("ssoService");
+    		if(!ssoServerUrl.endsWith("/")){
+    		    ssoServerUrl=ssoServerUrl+"/";
+    		}
+    		String clientId = pros.getProperty("clientId");
+    		String serverDelUrl=ssoServerUrl+"oauth/login_out?access_token="+accessTokenSession+"&client_id="+clientId;
+    		
+    	    /*清除子系统自己的session 开始*/
+    	    session.removeAttribute("accessToken");
+    		session.removeAttribute("accessAccount");		
+    		session.invalidate();
+    		response.sendRedirect(serverDelUrl);
+    		
+    	}else{
+    		//否则，进入自己的登录界面
+    		response.sendRedirect("login.jsp");
+    	}
+    	
+    }
+	
 
 	@RequestMapping("/getOnlineCount")
 	public void getOnlineCount(HttpServletRequest request, HttpServletResponse response) throws IOException {

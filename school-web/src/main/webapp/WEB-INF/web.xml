@@ -12,6 +12,36 @@
 		<small-icon>/images/small.gif</small-icon>
 		<large-icon>/images/large.gir</large-icon>
 	</icon>
+	
+	<filter>
+		<description>单点登录过滤器</description>
+		<filter-name>ssoFilter</filter-name>
+		<filter-class>com.zd.core.security.SSOFilter</filter-class>
+		<init-param>
+			<description>配置白名单</description>
+			<param-name>noCheck</param-name>
+			<param-value></param-value>
+		</init-param>
+		<init-param>
+			<description>sso的服务端地址</description>
+			<param-name>ssoService</param-name>
+			<param-value>http://tyrz.zsswdx.gov.cn/dx_sso/</param-value>
+		</init-param>
+		<init-param>
+			<description>客户端id</description>
+			<param-name>clientId</param-name>
+			<param-value>yikatong</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>ssoFilter</filter-name>
+		<url-pattern>/login/ssoIndex</url-pattern>
+		<dispatcher>REQUEST</dispatcher>	
+	</filter-mapping>
+	
+	
+	
+	
 	<!-- 配置ServletContext(上下文) -->
 	<!-- spring 配置文件路径 -->
 	<context-param>
