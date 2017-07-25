@@ -99,7 +99,12 @@
 				<entry key="authc">
 					<bean class="com.zd.core.security.AjaxRequestAuthorizationFilter" />
 				</entry>
-				
+				<!-- 重写退出的过滤器 -->
+				<entry key="logout">
+					<bean class="com.zd.core.security.MyLogoutFilter">
+						<property name="redirectUrl" value="/login.jsp"/>
+					</bean>
+				</entry>					
 				<!-- 登录人数控制的过滤器 -->
 				<entry key="kickout" value-ref="kickoutSessionControlFilter"/> 
 				
@@ -111,8 +116,7 @@
 				/static/** = anon
 				/login.jsp = anon
 				/handcourse.jsp = anon
-				/login/login = anon
-				/login/loginout = anon 
+				/login/login = anon 
 				/login/ssoIndex = anon 
 				/verifycode/image = anon
 				/verifycode/check=anon

@@ -89,6 +89,7 @@ public class AjaxRequestAuthorizationFilter extends PassThruAuthenticationFilter
 		Session session = subject.getSession();	
 		
 		//System.out.println("开始认证状态："+subject.isAuthenticated());
+		//System.out.println("shiro：sessionId"+session.getId());
 		
 		//当shiro没有登录的时候，判断sso是否登录了
 		if(subject.isAuthenticated()==false){	
@@ -98,11 +99,9 @@ public class AjaxRequestAuthorizationFilter extends PassThruAuthenticationFilter
 			if(session!=null){
 				accessAccountSession = (String) session.getAttribute("accessAccount");
 			}
-			
-			//System.out.println("单点登录数据："+accessAccountSession);
+						
 			if(accessAccountSession!=null){
 				try {
-					//String username ="1107";
 					//System.out.println("单点登录用户名："+accessAccountSession);
 				
 					SysUser sysUser = sysUserService.getByProerties("userName", accessAccountSession);

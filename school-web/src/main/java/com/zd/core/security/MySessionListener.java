@@ -7,7 +7,6 @@ import javax.annotation.Resource;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionListener;
 
-import com.zd.school.plartform.system.dao.SysUserLoginLogDao;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.model.SysUserLoginLog;
 import com.zd.school.plartform.system.service.SysUserLoginLogService;

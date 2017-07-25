@@ -109,12 +109,23 @@ public class SSOFilter implements Filter {
 		String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path
 				+ "/";
 		
+		//如果本平台已经登录，则直接进入主界面
+		if(SecurityUtils.getSubject().isAuthenticated()==true){
+			response.sendRedirect(basePath);
+			return;
+		}
+
 		HttpSession httpSession = request.getSession();
+		
+		//System.out.println("filter：sessionId"+httpSession.getId());
 		
 		String accessTokenSession = (String) httpSession.getAttribute("accessToken");
 		String accessAccountSession = (String) httpSession.getAttribute("accessAccount");
 		String accessTokenRequest = (String) request.getParameter("access_token");
 				
+		//System.out.println("accessTokenSession:"+accessTokenSession);
+		//System.out.println("accessAccountSession:"+accessAccountSession);
+		//System.out.println("accessTokenRequest:"+accessTokenRequest);
 		// 查看当前子系统session中是否有token和account
 		if (StringUtils.isNotEmpty(accessTokenSession) && StringUtils.isNotEmpty(accessAccountSession)) {
 			if (StringUtils.isNotEmpty(accessTokenRequest)) {// 这里检验request里面的token主要是解决从其他子系统跳回当前系统，应该要刷新session为最新的账号
@@ -134,6 +145,9 @@ public class SSOFilter implements Filter {
 						return;
 					}
 				}
+			}else{
+				response.sendRedirect(basePath);
+				return;
 			} 
 			/*这一步在shiro中验证
 			 * else {

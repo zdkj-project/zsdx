@@ -166,9 +166,15 @@
 	<!-- <servlet> <servlet-name>app_client_face</servlet-name> <servlet-class>com.jeefw.app.logic.ClientServerController</servlet-class> 
 		</servlet> <servlet-mapping> <servlet-name>app_client_face</servlet-name> 
 		<url-pattern>/client/face</url-pattern> </servlet-mapping> -->
-	<welcome-file-list>
-		<welcome-file>login.jsp</welcome-file>
+	<welcome-file-list>	   
+		<!-- welcome-file>login.jsp</welcome-file -->
+		<welcome-file>index.html</welcome-file>
+        <welcome-file>index.htm</welcome-file>
+        <!-- 不配置这个页面了，使用springmvc里面的配置 -->
+        <!-- welcome-file>index.jsp</welcome-file-->
 	</welcome-file-list>
+	
+    
 	<error-page>
 		<error-code>401</error-code>
 		<location>/login/callUnauthorized</location>
@@ -222,4 +228,5 @@
 		<url-pattern>/dwr/*</url-pattern>
 
 	</servlet-mapping>
+	
 </web-app>
