@@ -32,6 +32,10 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
+import org.apache.shiro.web.util.WebUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
@@ -104,12 +108,13 @@ public class SSOFilter implements Filter {
 		String path = request.getContextPath();
 		String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path
 				+ "/";
-
+		
 		HttpSession httpSession = request.getSession();
 		
 		String accessTokenSession = (String) httpSession.getAttribute("accessToken");
 		String accessAccountSession = (String) httpSession.getAttribute("accessAccount");
 		String accessTokenRequest = (String) request.getParameter("access_token");
+		
 		// 查看当前子系统session中是否有token和account
 		if (StringUtils.isNotEmpty(accessTokenSession) && StringUtils.isNotEmpty(accessAccountSession)) {
 			if (StringUtils.isNotEmpty(accessTokenRequest)) {// 这里检验request里面的token主要是解决从其他子系统跳回当前系统，应该要刷新session为最新的账号
@@ -144,13 +149,23 @@ public class SSOFilter implements Filter {
 			}*/
 		} else {
 			if (StringUtils.isNotEmpty(accessTokenRequest)) {
+				//System.out.println("filter：已登录： "+accessTokenRequest);
+				
 				// 表示从认证平台有传递accessToken过来。则需要将accessToken提交到认证平台做下验证并获取该token对应的账号。
 				/* 提交到认证平台进行验证开始 */
 				String accessAccountRequest = getAccountFromSSO(accessTokenRequest);
+				
+				//System.out.println("filter：账户名称： "+accessAccountRequest);
+				
 				/* 提交到认证平台进行验证结束 */
 				if (StringUtils.isNotEmpty(accessAccountRequest)) {// account有效,则需要往session插入数据，同时往cookies插入
 					httpSession.setAttribute("accessToken", accessTokenRequest);
 					httpSession.setAttribute("accessAccount", accessAccountRequest);
+					
+					//System.out.println("filter：session中的账户名称： "+httpSession.getAttribute("accessAccount"));
+					
+					//System.out.println("filter：返回路径： "+basePath);
+					
 					response.sendRedirect(basePath);
 					return;
 				} else {// 验证不通过则跳回到验证平台重新申请token

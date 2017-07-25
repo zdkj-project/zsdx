@@ -12,7 +12,64 @@
 		<small-icon>/images/small.gif</small-icon>
 		<large-icon>/images/large.gir</large-icon>
 	</icon>
-	
+
+
+
+
+	<!-- 配置ServletContext(上下文) -->
+	<!-- spring 配置文件路径 -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+        classpath*:spring*.xml
+    </param-value>
+	</context-param>
+	<!-- webApp的根，用来区分部署到同一tomcat的不同应用程序 -->
+	<context-param>
+		<param-name>webAppRootKey</param-name>
+		<param-value>zsdx</param-value>
+	</context-param>
+	<!-- Spring配置 -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+	<!-- 日志文件配置路径 -->
+	<context-param>
+		<param-name>log4jConfigLocation</param-name>
+		<param-value>classpath:log4j.properties</param-value>
+	</context-param>
+	<listener>
+		<listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
+	</listener>
+
+
+
+
+
+	<filter>
+		<filter-name>openSessionInViewFilter</filter-name>
+		<filter-class>org.springframework.orm.hibernate5.support.OpenSessionInViewFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>openSessionInViewFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<filter>
+		<filter-name>shiroFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<init-param>
+			<param-name>targetFilterLifecycle</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>shiroFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<!-- 把此filter放在shiro之下，因为请求的路径要先执行shiro，生成sessionId-->
+	<!-- 并且设置/login/ssoIndex为anon权限，然后才执行这个fiter；否则先执行此filter，再执行shiro的auth验证filter，导致sessionId不一致 -->
+	<!-- 最终若此filter授权成功，会重定向到 / 路径，因此在springMVC-servelet.xml中配置了 / 路径的视图控制器，转发到login/desktop -->
 	<filter>
 		<description>单点登录过滤器</description>
 		<filter-name>ssoFilter</filter-name>
@@ -36,68 +93,19 @@
 	<filter-mapping>
 		<filter-name>ssoFilter</filter-name>
 		<url-pattern>/login/ssoIndex</url-pattern>
-		<dispatcher>REQUEST</dispatcher>	
+		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
-	
-	
-	
-	
-	<!-- 配置ServletContext(上下文) -->
-	<!-- spring 配置文件路径 -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>
-        classpath*:spring*.xml
-    </param-value>
-	</context-param>
-	<!-- webApp的根，用来区分部署到同一tomcat的不同应用程序 -->
-	<context-param>
-		<param-name>webAppRootKey</param-name>
-		<param-value>zsdx</param-value>
-	</context-param>
-	<!-- Spring配置 -->
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
-	<!-- 日志文件配置路径 -->
-    <context-param>
-        <param-name>log4jConfigLocation</param-name>
-        <param-value>classpath:log4j.properties</param-value>
-    </context-param>
-    <listener>
-        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
-    </listener>
+
 	<filter>
-		<filter-name>openSessionInViewFilter</filter-name>
-		<filter-class>org.springframework.orm.hibernate5.support.OpenSessionInViewFilter</filter-class>
+		<filter-name>SpringOpenSessionInViewFilter</filter-name>
+		<filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
 	</filter>
 	<filter-mapping>
-		<filter-name>openSessionInViewFilter</filter-name>
+		<filter-name>SpringOpenSessionInViewFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	<filter>
-		<filter-name>shiroFilter</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-		<init-param>
-			<param-name>targetFilterLifecycle</param-name>
-			<param-value>true</param-value>
-		</init-param>
-	</filter>
-	<filter-mapping>
-		<filter-name>shiroFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
-	<filter>
-        <filter-name>SpringOpenSessionInViewFilter</filter-name>
-        <filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>SpringOpenSessionInViewFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-	
-	
+
+
 	<filter>
 		<filter-name>characterEncoding</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -173,45 +181,45 @@
 		<error-code>500</error-code>
 		<location>/login/callError500</location>
 	</error-page>
-	
-	
-  <listener>
-    <listener-class>org.directwebremoting.servlet.DwrListener</listener-class>
-  </listener>
-	<servlet>  
-  
-    <servlet-name>dwr-invoker</servlet-name>  
-    <servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
-  
-    <init-param>  
-  
-        <description>调试DWR,发布系统时，应将其设为false</description>  
-  
-        <param-name>debug</param-name>  
-  
-        <param-value>true</param-value>  
-  
-    </init-param>  
-  
-    <!-- 使用polling和comet的方式 -->  
-  
-    <init-param>  
-  
-        <param-name>pollAndCometEnabled</param-name>  
-  
-        <param-value>true</param-value>  
-  
-    </init-param>  
-  
-    <load-on-startup>1</load-on-startup>  
-  
-</servlet>  
-  
-<servlet-mapping>  
-  
-    <servlet-name>dwr-invoker</servlet-name>  
-  
-    <url-pattern>/dwr/*</url-pattern>  
-  
-</servlet-mapping>
+
+
+	<listener>
+		<listener-class>org.directwebremoting.servlet.DwrListener</listener-class>
+	</listener>
+	<servlet>
+
+		<servlet-name>dwr-invoker</servlet-name>
+		<servlet-class>org.directwebremoting.servlet.DwrServlet</servlet-class>
+
+		<init-param>
+
+			<description>调试DWR,发布系统时，应将其设为false</description>
+
+			<param-name>debug</param-name>
+
+			<param-value>true</param-value>
+
+		</init-param>
+
+		<!-- 使用polling和comet的方式 -->
+
+		<init-param>
+
+			<param-name>pollAndCometEnabled</param-name>
+
+			<param-value>true</param-value>
+
+		</init-param>
+
+		<load-on-startup>1</load-on-startup>
+
+	</servlet>
+
+	<servlet-mapping>
+
+		<servlet-name>dwr-invoker</servlet-name>
+
+		<url-pattern>/dwr/*</url-pattern>
+
+	</servlet-mapping>
 </web-app>

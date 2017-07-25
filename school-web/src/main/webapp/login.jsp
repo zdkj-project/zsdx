@@ -39,7 +39,7 @@
 
 </head>
 
-<body onkeydown="keyLogin();">
+<body >
 <div class="body_bg">
 	<div class="mg">
 		<div class="top_title">
@@ -56,7 +56,7 @@
 					<div class="input_top">
 						<label class="textName">用户名：</label><input value="" name="name"  id="name"  type="text" placeholder="请输入用户名" /></br>
 						<label class="textName">密　码：</label><input value="" name="psw" id="psw" type="password" placeholder="请输入密码" /></br>
-						<label class="textName">验证码：</label><input type="text" class="yzm" id="yzm" style='width: 80px;' placeholder="验证码" />
+						<label class="textName">验证码：</label><input type="text" class="yzm" id="yzm" style='width: 80px;' placeholder="验证码"  onkeydown="keyLogin();"/>
 						<div class="yzm-m" id="yzm-m">
 							<img src="${contextPath}/verifycode/image" alt="点击重新生成"
 								id="yzz" onclick="yz();">

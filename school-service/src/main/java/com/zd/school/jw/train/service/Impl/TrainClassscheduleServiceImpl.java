@@ -304,8 +304,14 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 		for (int i = 0; i < importData.size(); i++) {
 
 			try {
-
+				
 				List<Object> lo = importData.get(i);
+				
+				//导入的表格会错误的读取空行的内容，所以，当判断第一列为空，就跳过此行。
+				if(!StringUtils.isNotEmpty((String) lo.get(0))){
+					continue;
+				}
+				
 				beginTime = String.valueOf(lo.get(0)) + " " + String.valueOf(lo.get(1));
 				endTime = String.valueOf(lo.get(0)) + " " + String.valueOf(lo.get(2));
 

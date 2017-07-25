@@ -112,6 +112,8 @@
 				/login.jsp = anon
 				/handcourse.jsp = anon
 				/login/login = anon
+				/login/loginout = anon 
+				/login/ssoIndex = anon 
 				/verifycode/image = anon
 				/verifycode/check=anon
 				/app/**=anon

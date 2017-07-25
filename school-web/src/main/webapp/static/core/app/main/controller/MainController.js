@@ -54,7 +54,8 @@ Ext.define('core.main.controller.MainController', {
     onExitSystem:function(){
         Ext.Msg.confirm('提示', '确定要退出系统么?', function(btn, text) {
             if (btn == 'yes') {
-                window.location.href = comm.get("baseUrl") + "/login/logout";
+                //window.location.href = comm.get("baseUrl") + "/login/logout";
+                window.location.href = comm.get("baseUrl") + "/login/loginout";
             }
         });
     },

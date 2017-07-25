@@ -143,7 +143,7 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 		session.removeAttribute("accessAccount");	//非单点登录，清除它
 		
 		result.put("result", 1);
-		writeJSON(response, jsonBuilder.toJson(result));
+		writeJSON(response, jsonBuilder.toJson(result));		
 	}
 
 	@RequestMapping("/getCurrentUser")
@@ -153,14 +153,15 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 			writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(sysUser)));
 		} else
 			writeJSON(response, jsonBuilder.returnFailureJson("'没有得到登录用户'"));
-	}
+	}	
 
 	@RequestMapping("/desktop")
 	public ModelAndView desktop(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Subject subject = SecurityUtils.getSubject();
 		Session session = subject.getSession();
+				
 		if (session.getAttribute(SESSION_SYS_USER) == null) {
-			return new ModelAndView("login");
+			return new ModelAndView("login");	//返回登录页面
 		} else {
 			SysUser sysUser = (SysUser) session.getAttribute(SESSION_SYS_USER);
 			String globalRoleKey = sysUser.getSysRoles().iterator().next().getRoleCode();
@@ -170,7 +171,7 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 				return new ModelAndView("redirect:/index.jsp", "authorityList", null);
 			} catch (Exception e) {
 				logger.error(e.toString());
-				return new ModelAndView("login");
+				return new ModelAndView("login");	//返回登录页面
 			}
 		}
 	}
@@ -183,7 +184,7 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
     	//System.out.println("session内容："+session.getAttribute(SESSION_SYS_USER));
     	
         if (session.getAttribute(SESSION_SYS_USER) == null) {
-            return new ModelAndView("login");
+            return new ModelAndView("login");	//返回登录页面
         } else {
             SysUser sysUser = (SysUser) session.getAttribute(SESSION_SYS_USER);
             String globalRoleKey = sysUser.getSysRoles().iterator().next().getRoleCode();
@@ -195,7 +196,7 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
             } catch (Exception e) {
                 logger.error(e.toString());
                 //System.out.println("进入到index错误页面!");
-                return new ModelAndView("login");
+                return new ModelAndView("login");	//返回登录页面
             }
         }
     }
@@ -232,12 +233,13 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 		Properties pros = PropertiesLoaderUtils.loadAllProperties("sso.properties");
 		
 		HttpSession session = request.getSession();
-		
+		 //判断是否进行了单点登录 	
+		String accessTokenSession = (String) session.getAttribute("accessToken");
+			
 		//清除shiro的登录状态
 		SecurityUtils.getSubject().logout();
 		
-		 //判断是否进行了单点登录 	
-		String accessTokenSession = (String) session.getAttribute("accessToken");
+	
     	if(StringUtils.isNotEmpty(accessTokenSession)){
     		
     		//传accessTokenSession是为了清除认证平台的token；传clientId是为了方便退出成功后可以跳转到所对应客户端的登陆页面。
@@ -247,18 +249,13 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
     		}
     		String clientId = pros.getProperty("clientId");
     		String serverDelUrl=ssoServerUrl+"oauth/login_out?access_token="+accessTokenSession+"&client_id="+clientId;
-    		
-    	    /*清除子系统自己的session 开始*/
-    	    session.removeAttribute("accessToken");
-    		session.removeAttribute("accessAccount");		
-    		session.invalidate();
+    		    
     		response.sendRedirect(serverDelUrl);
     		
     	}else{
     		//否则，进入自己的登录界面
     		response.sendRedirect("login.jsp");
     	}
-    	
     }
 	
 

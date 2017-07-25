@@ -3,6 +3,7 @@ package com.zd.school.jw.train.service.Impl;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
+import com.zd.core.util.StringUtils;
 import com.zd.school.jw.train.dao.TrainClasstraineeDao;
 import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClasstrainee;
@@ -277,6 +278,11 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 		for (int i = 0; i < listObject.size(); i++) {
 			List<Object> lo = listObject.get(i);
 			
+			//导入的表格会错误的读取空行的内容，所以，当判断第一列为空，就跳过此行。
+			if(!StringUtils.isNotEmpty((String) lo.get(0))){
+				continue;
+			}
+					
 			//查询学员库是否存在此学生
 			trainTrainee = trainTraineeServie.getByProerties("sfzjh", lo.get(3));
 			
