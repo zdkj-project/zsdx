@@ -70,7 +70,49 @@ Ext.define('core.main.view.Viewport', {
                         });      
                     }else{
                         me.getViewModel().set('systemMenu' , result);
+                           
+
+                        function searchChild(childObj,code){
+                            for(var i=0;i<childObj.length;i++){
+                                var currentObj=childObj[i];
+                                if(code==currentObj.menuCode){
+                                    return true;
+                                }
+
+                                if(currentObj.children.length>0){
+                                    return searchChild(currentObj.children);                                
+                                }
+                            }
+                            return false;
+                        }
+                        //根据有权限的菜单，来判断这几个菜单，应该显示哪些
+                        var myDeskMenu=me.getViewModel().get('myDeskMenu');
+                        var currentMenu=[];                    
+                        for(var i=0;i<myDeskMenu.length;i++){
+                            var code=myDeskMenu[i].menuCode;
+
+                            for(var j=0;j<result.length;j++){
+                                var currentResult=result[j];
+                                if(code==currentResult.menuCode){
+                                    currentMenu.push(myDeskMenu[i]);
+                                    break;
+                                }
+                                
+                                if(currentResult.children.length>0){
+                                    //递归查询子菜单
+                                    var isExist=searchChild(currentResult.children,code);
+                                    if(isExist==true){
+                                        currentMenu.push(myDeskMenu[i]);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        me.getViewModel().set('myDeskMenu',currentMenu);
+
                     }
+
+                   
                 }catch(err){
                     //如果出现错误，则表明返回的不是json数据，所以，回到登录界面
                     window.location.href = comm.get("baseUrl") + "/login.jsp";
@@ -87,7 +129,7 @@ Ext.define('core.main.view.Viewport', {
         Ext.Ajax.request({
             url: comm.get('baseUrl')+'/login/getOnlineCount',
             method: "POST",
-            async: false,
+            async: true,
             timeout: 60000,                    
             success: function(response, opts) {
                 try{
