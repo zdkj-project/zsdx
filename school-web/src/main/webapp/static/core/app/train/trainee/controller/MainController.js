@@ -14,6 +14,24 @@ Ext.define("core.train.trainee.controller.MainController", {
     },
     control: {
         /**
+         * grid加载后根据权限控制按钮的显示
+         */
+        "basegrid[xtype=trainee.maingrid]": {
+            afterrender: function (grid, eOpts) {
+                var btnAdd = grid.down("button[ref=gridAdd_Tab]");
+                var btnDelete = grid.down("button[ref=gridDelete]");
+                var btnGridImport = grid.down("button[ref=gridImport]");
+                var btnGridDownTemplate = grid.down("button[ref=gridDownTemplate]");
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("PEIXUNROLE") == -1) {
+                    btnAdd.setHidden(true);
+                    btnDelete.setHidden(true);
+                    btnGridImport.setHidden(true);
+                    btnGridDownTemplate.setHidden(true);
+                }
+            }
+        },
+        /**
          * 导入
          */
         "basegrid[xtype=trainee.maingrid] button[ref=gridImport]": {

@@ -235,7 +235,7 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
 		    		for(Object[] o:listDP){
 		    			
 		    		}*/
-		    		Query query1=session.createSQLQuery("select count(*) from hr_department where PARENTID='"+h.getId()+"'");
+		    		Query query1=session.createSQLQuery("select count(*) from ZSDX_SYNC.hr_department where PARENTID='"+h.getId()+"'");
 		    		Integer count1=Integer.parseInt(query1.uniqueResult().toString());
 		    		if(count1==0){
 		    			b.setLeaf(true);
@@ -251,7 +251,7 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
 		    		if (!temp.getParentid().equals("0")) {
 		    			while (true) {
 		    				b.setParentNode(h.getParentid());
-			    			Query query2=session.createSQLQuery("select * from hr_department where ID='"+temp.getParentid()+"'").addEntity(HrDepartment.class);
+			    			Query query2=session.createSQLQuery("select * from ZSDX_SYNC.hr_department where ID='"+temp.getParentid()+"'").addEntity(HrDepartment.class);
 				    		temp=(HrDepartment) query2.list().get(0);
 				    		if (temp.getParentid().equals("0")) {
 				    			treeids=temp.getId()+","+treeids;

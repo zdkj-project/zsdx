@@ -23,6 +23,7 @@ import org.springframework.core.io.support.PropertiesLoaderUtils;
 import com.zd.core.constant.Constant;
 import com.zd.core.util.DateUtil;
 import com.zd.core.util.ModelUtil;
+import com.zd.school.plartform.system.model.SysRole;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.model.SysUserLoginLog;
 import com.zd.school.plartform.system.service.SysUserLoginLogService;
@@ -176,7 +177,16 @@ public class AjaxRequestAuthorizationFilter extends PassThruAuthenticationFilter
 					
 			        //System.out.println("模拟登录成功！");			        
 					session.setAttribute(Constant.SESSION_SYS_USER, sysUser);
-					session.setAttribute("ROLE_KEY", sysUser.getSysRoles().iterator().next().getRoleCode());				
+					//session.setAttribute("ROLE_KEY", sysUser.getSysRoles().iterator().next().getRoleCode());	
+			        StringBuilder sb = new StringBuilder();
+			        for (SysRole s:sysUser.getSysRoles()) {
+			            sb.append(s.getRoleCode());
+			            sb.append(",");
+			        }
+			        if(sb.length()>0)
+			            sb = sb.deleteCharAt(sb.length()-1);
+					session.setAttribute("ROLE_KEY", sb.toString());
+					
 			        //System.out.println("模拟登录完毕！");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block

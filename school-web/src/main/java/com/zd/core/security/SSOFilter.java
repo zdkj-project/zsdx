@@ -114,7 +114,7 @@ public class SSOFilter implements Filter {
 		String accessTokenSession = (String) httpSession.getAttribute("accessToken");
 		String accessAccountSession = (String) httpSession.getAttribute("accessAccount");
 		String accessTokenRequest = (String) request.getParameter("access_token");
-		
+				
 		// 查看当前子系统session中是否有token和account
 		if (StringUtils.isNotEmpty(accessTokenSession) && StringUtils.isNotEmpty(accessAccountSession)) {
 			if (StringUtils.isNotEmpty(accessTokenRequest)) {// 这里检验request里面的token主要是解决从其他子系统跳回当前系统，应该要刷新session为最新的账号
