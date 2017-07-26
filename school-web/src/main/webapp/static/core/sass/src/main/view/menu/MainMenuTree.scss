@@ -15,3 +15,21 @@
 .mainmenutree-cls .x-tree-view {		/*此样式只在mainmenutree-cls的样式容器之下的treeview生效，解决树组件底部拖动条不出来的bug*/
 	overflow:auto !important;
 }
+
+//取消自带的边框
+.mainmenutree-cls .x-grid-body {
+    border: none;
+}
+//设置文字大小和边距
+.mainmenutree-cls .x-grid-item {
+    font-size:14px;
+    padding: 5px;
+}
+//取消点击后的边框
+.mainmenutree-cls .x-grid-item-focused .x-grid-cell-inner:before {
+    border: none !important;    
+}
+//鼠标手型图片
+.mainmenutree-cls .x-grid-item .x-grid-cell{
+    cursor: pointer;
+}
