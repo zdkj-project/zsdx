@@ -145,21 +145,21 @@
 }
 .trainTeacher_teacherInfo .trainTeacher_left span.zp{
     display: block;
-    height: 126px;
+    height: 150px;
     width: 126px;
-    margin: 15px auto;
+    margin: 10px auto;
     padding:0px;
     background-color: #e5e5e5;
-    border-radius: 50%;
+    //border-radius: 50%;
     background-repeat: no-repeat;
     background-position: center center;
-    background-size: cover;
+    background-size: 100% 100%;
 }
 .trainTeacher_teacherInfo .trainTeacher_left span.xm{
     width: 100%;
     display: block;
     text-align: center;
-    margin: 15px 0px;
+    margin: 10px 0px;
     padding:0px;
     font-size: 22px;
     color: #B51509;

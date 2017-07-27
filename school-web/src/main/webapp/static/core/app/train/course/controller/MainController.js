@@ -520,6 +520,12 @@ Ext.define("core.train.course.controller.MainController", {
                                             }
                                             recordData[propNames[i]]=resultVal;
                                         }
+
+                                        //当登录用户不等于这个详细记录的人员，则隐藏身份证
+                                        if(comm.get("xm")!=recordData.xm && recordData.sfzjh){
+                                            recordData.sfzjh="**************"+recordData.sfzjh.substring(14);
+                                        }
+
                                         obj.push(recordData);
                                     }
                                                                                                         

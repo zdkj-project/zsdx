@@ -572,6 +572,11 @@ Ext.define("core.train.teacher.controller.MainController", {
                     insertObj[propNames[i]] = resultVal;
                 }
                 var teacherInfoContainer = item.down("container[ref=teacherInfo]");
+                
+                //当登录用户不等于这个详细记录的人员，则隐藏身份证
+                if(comm.get("xm")!=insertObj.xm && insertObj.sfzjh){
+                    insertObj.sfzjh="**************"+insertObj.sfzjh.substring(14);
+                }
                 teacherInfoContainer.setData(insertObj);
 
                 if (cmd == "detail") {
