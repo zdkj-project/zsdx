@@ -28,7 +28,7 @@ Ext.define("core.train.teacher.view.MainGrid", {
          text: '发送短信',
          ref: 'gridEdit',
          funCode: 'girdFuntionBtn',
-         disabled: true,
+         disabled: false,
          iconCls: 'x-fa fa-pencil-square'
          }, /*{
          xtype: 'button',
