@@ -28,16 +28,20 @@ Ext.define("core.train.teacher.controller.MainController", {
                 }
             }
         },
-        /*        "basegrid[xtype=teacher.maingrid] button[ref=gridAdd_Tab]": {
-                    beforeclick: function (btn) {
-                        var self = this;
-                        var roleKey = comm.get("roleKey");
-                        if (roleKey.indexOf("PEIXUNROLE") == -1) {
-                            self.Warning("无权限增加");
-                            return false;
-                        }
+        "basegrid[xtype=teacher.maingrid] button[ref=gridEdit]": {
+            beforeclick: function (btn) {
+                var self = this;
+                self.asyncAjax({
+                    url: comm.get("baseUrl") + "/TrainTeacher/sendMessage",
+                    //回调代码必须写在里面
+                    success: function (response) {
+                        var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                        console.log(data);
                     }
-                },*/
+                });
+                return false;
+            }
+        },
         /*导入*/
         "basegrid[xtype=teacher.maingrid] button[ref=gridImport]": {
             beforeclick: function (btn) {

@@ -267,12 +267,17 @@
             <version>11.2.0.3</version>
         </dependency>
 
-        <dependency>
+<!--        <dependency>
             <groupId>axis</groupId>
             <artifactId>axis</artifactId>
             <version>1.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>imApi</groupId>
+            <artifactId>imApi</artifactId>
+            <version>1.0</version>
+        </dependency>-->
 
         <!-- redis需要的包，暂时不加入
         <dependency>
@@ -327,6 +332,31 @@
             <version>1.8.9</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>imApi</groupId>
+            <artifactId>imApi</artifactId>
+            <version>2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.0.8</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+        <!--        <dependency>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter-api</artifactId>
+                    <version>RELEASE</version>
+                </dependency>-->
+<!--        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>-->
     </dependencies>
     <build>
         <plugins>

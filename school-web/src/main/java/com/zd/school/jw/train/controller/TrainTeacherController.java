@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.zd.core.util.NotSendUtil.notSendUtil;
+
 /**
  * ClassName: TrainTeacherController
  * Function:  ADD FUNCTION.
@@ -363,21 +365,14 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
         request.getSession().setAttribute("exportTeacherIsEnd","1");
     }
 
-    @RequestMapping("/checkExportEnd")
-    public void checkExportEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String strData = "";
-        Object isEnd = request.getSession().getAttribute("exportTeacherIsEnd");
 
-        if(isEnd!=null){
-            if ("1".equals(isEnd.toString())){
-                writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
-            } else{
-                writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
-                request.getSession().setAttribute("exportTeacherIsEnd","0");
-            }
-        }else {
-            writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
-            request.getSession().setAttribute("exportTeacherIsEnd","0");
-        }
+
+    @RequestMapping("/sendMessage")
+    public void sendMessage(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        String strData = "";
+        String mobileStr = "18018711239";
+        String content = "短信发送测试内容 via  IM JAVA API ";
+        notSendUtil().Send(content,mobileStr);
+        writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导入成功！\""));
     }
 }
