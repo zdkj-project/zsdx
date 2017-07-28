@@ -1365,18 +1365,19 @@ Ext.define("core.base.controller.ButtonController", {
                                     });
                                     self.setFormValue(formObj, insertObj);
 
+                                    /*
                                     var grid = basetab.funData.grid; //此tab是否保存有grid参数
                                     if (!Ext.isEmpty(grid)) {
                                         var store = grid.getStore();
-                                        /* zzk：2017-4-6 直接使用store中自带的条件
-                                         var proxy = store.getProxy();
-                                         proxy.extraParams = {
-                                         whereSql: win.funData.whereSql,
-                                         orderSql: win.funData.orderSql,
-                                         filter: win.funData.filter
-                                         };*/
-                                        store.loadPage(1); //刷新父窗体的grid
-                                    }
+                                         // zzk：2017-4-6 直接使用store中自带的条件
+                                         // var proxy = store.getProxy();
+                                         // proxy.extraParams = {
+                                         // whereSql: win.funData.whereSql,
+                                         // orderSql: win.funData.orderSql,
+                                         // filter: win.funData.filter
+                                         // };
+                                        store.load(); //刷新父窗体的grid                                     
+                                    }*/
 
                                     loading.hide();
                                 } else {
@@ -1451,18 +1452,19 @@ Ext.define("core.base.controller.ButtonController", {
 
                                     self.msgbox("保存成功!");
 
+                                    /*
                                     var grid = basetab.funData.grid; //此tab是否保存有grid参数
                                     if (!Ext.isEmpty(grid)) {
                                         var store = grid.getStore();
-                                        /* zzk：2017-4-6 直接使用store中自带的条件
-                                         var proxy = store.getProxy();
-                                         proxy.extraParams = {
-                                         whereSql: win.funData.whereSql,
-                                         orderSql: win.funData.orderSql,
-                                         filter: win.funData.filter
-                                         };*/
+                                         // zzk：2017-4-6 直接使用store中自带的条件
+                                         // var proxy = store.getProxy();
+                                         // proxy.extraParams = {
+                                         // whereSql: win.funData.whereSql,
+                                         // orderSql: win.funData.orderSql,
+                                         // filter: win.funData.filter
+                                         // };
                                         store.load(); //刷新父窗体的grid                                     
-                                    }
+                                    }*/
 
                                     loading.hide();
                                     tabPanel.remove(tabItem);

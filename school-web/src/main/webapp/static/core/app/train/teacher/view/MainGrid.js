@@ -95,9 +95,6 @@ Ext.define("core.train.teacher.view.MainGrid", {
     defSort: [{
         property: "updateTime", //字段名
         direction: "DESC" //升降序
-    },{
-        property: "createTime", //字段名
-        direction: "DESC" //升降序
     }],
     /** 扩展参数 */
     extParams: {
