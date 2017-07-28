@@ -12,7 +12,36 @@ Ext.define("core.system.role.view.RoleUserGrid", {
 		orderSql: ""
 	},
 	tbar: [],
-	panelTopBar:null,
+    panelTopBar:{
+        xtype:'toolbar',
+        items: [{
+            xtype: 'button',
+            text: '添加',
+            ref: 'gridAdd',
+            funCode: 'girdFuntionBtn',
+            iconCls: 'x-fa fa-plus-circle'
+        },{
+            xtype: 'button',
+            text: '删除',
+            ref: 'gridDelete',
+            funCode: 'girdFuntionBtn',
+            iconCls: 'x-fa fa-clipboard'
+        },'->',{
+            xtype: 'tbtext',
+            html:'快速搜索：'
+        },{
+            xtype:'textfield',
+            name:'courseName',
+            funCode:'girdFastSearchText',
+            isNotForm:true,   //由于文本框重写了baseform下面的funcode值，所以使用这个属性，防止重写这里设定的fundcode值。
+            emptyText: '请输入姓名'
+        },{
+            xtype: 'button',
+            funCode:'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型
+            ref: 'gridFastSearchBtn',
+            iconCls: 'x-fa fa-search'
+        }]
+    },
 	panelBottomBar:false,
 
 	columns: {        
