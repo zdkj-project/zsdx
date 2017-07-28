@@ -9,34 +9,39 @@ import java.util.Properties;
 
 /**
  * 短信操作类
- * 
+ *
  * @author zuyubin
  */
 public class NotSendUtil {
-    private APIClient handler = new APIClient();
+
+    private static NotSendUtil notSendUtil = null;
+
+    private static String host = "172.23.6.2";
+    private static String dbName = "mas";
+    private static String apiId = "dxykt";
+    private static String name = "dxykt";
+    private static String pwd = "xxwlzx88889827";
+    private static String smID = "10";
+    private static String dbPort = "3306";
+    private static APIClient handler = new APIClient();
     BufferedReader in = null;
-    private static NotSendUtil notSendUtil;
-    private String ip, dbPort, dbName, apiCode, loginName, loginPwd, strSmId, strSrcId;
-    private String url;
 
     private NotSendUtil() {
         // 初始化连接信息
         Properties properties = new Properties();
-        System.out.println(getClass().getClassLoader());
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream("notsend.properties");
         try {
             properties.load(inputStream);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ip = properties.getProperty("ip");
-        dbPort = properties.getProperty("dbPort");
-        apiCode = properties.getProperty("apiCode");
-        loginName = properties.getProperty("loginName");
-        loginPwd = properties.getProperty("loginPwd");
-        strSmId = properties.getProperty("strSmId");
-        strSrcId = properties.getProperty("strSrcId");
+        host = properties.getProperty("ip");
+        apiId = properties.getProperty("apiCode");
+        name = properties.getProperty("loginName");
+        pwd = properties.getProperty("loginPwd");
         dbName = properties.getProperty("dbName");
+        smID = properties.getProperty("strSmId");
+        dbPort = properties.getProperty("dbPort");
     }
 
     public static synchronized NotSendUtil notSendUtil() {
@@ -44,55 +49,115 @@ public class NotSendUtil {
             synchronized (NotSendUtil.class) {
                 if (notSendUtil == null) {
                     notSendUtil = new NotSendUtil();
-                    //初始化连接
-                    notSendUtil().init();
                 }
             }
         }
         return notSendUtil;
     }
 
-    public void release()
-    {
+    public boolean isStrNull(String str) {
+        if (str == "" || str == null || str.equals("") || str.equals(null))
+            return true;
+        return false;
+    }
+
+    /**
+     * 初始化连接
+     * @return
+     */
+    private int init() {
+        return handler.init(host, name, pwd, apiId, dbName, Integer.valueOf(dbPort));
+    }
+
+    /**
+     * 关闭连接
+     */
+    private void release() {
         handler.release();
-        Thread.currentThread().interrupt();
     }
 
-    private void init(){
-        int connectRe = handler.init(ip, loginName, loginPwd, apiCode,dbName);
-        if(connectRe == APIClient.IMAPI_SUCC)
-            info("初始化成功");
-        else if(connectRe == APIClient.IMAPI_CONN_ERR)
-            info("连接失败");
-        else if(connectRe == APIClient.IMAPI_API_ERR)
-            info("apiID不存在");
-        if(connectRe != APIClient.IMAPI_SUCC)
-        {
-            System.exit(-1);
+    /**
+     * 单个发送短信
+     * @param mobile 发送的手机号
+     * @param content 消息内容
+     * @return
+     */
+
+
+    public String sendSMS(String mobile, String content) {
+        int status = 1;
+        String sendResult = "";
+        status = init();
+        if (status == APIClient.IMAPI_SUCC) {
+            status = handler.sendSM(mobile, content, Long.valueOf(smID));
+            switch (status) {
+                case APIClient.IMAPI_SUCC:
+                    sendResult = "发送成功";
+                    break;
+                case APIClient.IMAPI_INIT_ERR:
+                    sendResult = "未初始化";
+                    break;
+                case APIClient.IMAPI_CONN_ERR:
+                    sendResult = "连接失败";
+                    break;
+                case APIClient.IMAPI_DATA_ERR:
+                    sendResult = "参数错误";
+                    break;
+                case APIClient.IMAPI_DATA_TOOLONG:
+                    sendResult = "消息内容太长";
+                    break;
+                case APIClient.IMAPI_INS_ERR:
+                    sendResult = "数据库插入错误";
+                    break;
+                default:
+                    sendResult = "其它错误";
+            }
+            release();
+        } else {
+            sendResult = "初始化错误";
         }
+
+        return sendResult;
     }
 
-    public void info(Object obj)
-    {
-        System.out.println(obj);
-    }
-
-    public void Send(String tmpContent,String...mobiles) {
-        //发送短信返回发送结果
-        int result = handler.sendSM(mobiles, tmpContent, Long.valueOf(strSmId));
-        if (result == APIClient.IMAPI_SUCC) {
-            info("发送成功\n");
-        } else if (result == APIClient.IMAPI_INIT_ERR)
-            info("未初始化");
-        else if (result == APIClient.IMAPI_CONN_ERR)
-            info("数据库连接失败");
-        else if (result == APIClient.IMAPI_DATA_ERR)
-            info("参数错误");
-        else if (result == APIClient.IMAPI_DATA_TOOLONG)
-            info("消息内容太长");
-        else if (result == APIClient.IMAPI_INS_ERR)
-            info("数据库插入错误");
-        else
-            info("出现其他错误");
+    /**
+     * 群发短信
+     * @param mobiles 群发的手机号
+     * @param content 发送的信息
+     * @return
+     */
+    public  String sendSMSs(String[] mobiles, String content) {
+        int status = 1;
+        String sendResult = "";
+        status = init();
+        if (status == APIClient.IMAPI_SUCC) {
+            status = handler.sendSM(mobiles, content, Long.valueOf(smID));
+            switch (status) {
+                case APIClient.IMAPI_SUCC:
+                    sendResult = "发送成功";
+                    break;
+                case APIClient.IMAPI_INIT_ERR:
+                    sendResult = "未初始化";
+                    break;
+                case APIClient.IMAPI_CONN_ERR:
+                    sendResult = "连接失败";
+                    break;
+                case APIClient.IMAPI_DATA_ERR:
+                    sendResult = "参数错误";
+                    break;
+                case APIClient.IMAPI_DATA_TOOLONG:
+                    sendResult = "消息内容太长";
+                    break;
+                case APIClient.IMAPI_INS_ERR:
+                    sendResult = "数据库插入错误";
+                    break;
+                default:
+                    sendResult = "其它错误";
+            }
+            release();
+        } else {
+            sendResult = "初始化错误";
+        }
+        return sendResult;
     }
 }
