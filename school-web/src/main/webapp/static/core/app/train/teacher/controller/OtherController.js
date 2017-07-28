@@ -113,12 +113,13 @@ Ext.define("core.train.teacher.controller.OtherController", {
                     formObj.reset();
                     self.msgbox("保存成功!");
 
-                    var grid = basetab.funData.grid; //此tab是否保存有grid参数
-                    if (!Ext.isEmpty(grid)) {
-                        var store = grid.getStore();
-                        store.loadPage(1); //刷新父窗体的grid
-                        tabPanel.remove(tabItem);
-                    }
+                    // var grid = basetab.funData.grid; //此tab是否保存有grid参数
+                    // if (!Ext.isEmpty(grid)) {
+                    //     var store = grid.getStore();
+                    //     store.loadPage(1); //刷新父窗体的grid
+                    //     tabPanel.remove(tabItem);
+                    // }
+                    tabPanel.remove(tabItem);
 
                 },
                 failure: function (form, action) {

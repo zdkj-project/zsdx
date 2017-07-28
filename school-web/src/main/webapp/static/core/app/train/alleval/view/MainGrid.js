@@ -48,10 +48,14 @@ Ext.define("core.train.alleval.view.MainGrid", {
         direction: "ASC" //升降序
     }
         /*, {
-         property: "isEval", //字段名
-         direction: "ASC" //升降序
+         property: "updateTime", //字段名
+         direction: "desc" //升降序
          }*/
     ],
+    defSort: [{
+        property: "updateTime", //字段名
+        direction: "desc" //升降序
+    }],
     /** 扩展参数 */
     extParams: {
         whereSql: "",
@@ -96,7 +100,17 @@ Ext.define("core.train.alleval.view.MainGrid", {
                 metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return html;
             }
-        }]
+        },{
+                    width: 150,
+                    text: "创建时间",
+                    dataIndex: "createTime",
+                    align: 'left'
+                }, {
+                    width: 150,
+                    text: "更新时间",
+                    dataIndex: "updateTime",
+                    align: 'left'
+                }]
     },
     emptyText: '<span style="width:100%;text-align:center;display: block;">暂无数据</span>'
 });

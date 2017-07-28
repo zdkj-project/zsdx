@@ -107,7 +107,7 @@ doSave:function(btn,cmd){
                     orderSql: win.funData.orderSql,
                     filter: win.funData.filter
                 };*/
-                store.loadPage(1); //刷新父窗体的grid
+                // store.loadPage(1); //刷新父窗体的grid
             }
            
         } else {

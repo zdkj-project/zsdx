@@ -148,11 +148,11 @@ Ext.define("core.train.indicator.controller.OtherController", {
         });
         if (resObj.success) {
             self.msgbox(resObj.obj);
-            var grid = basetab.funData.grid; //此tab是否保存有grid参数
-            if (!Ext.isEmpty(grid)) {
-                var store = grid.getStore();
-                store.loadPage(1);
-            }//刷新父窗体的grid
+            // var grid = basetab.funData.grid; //此tab是否保存有grid参数
+            // if (!Ext.isEmpty(grid)) {
+            //     var store = grid.getStore();
+            //     store.loadPage(1);
+            // }//刷新父窗体的grid
             tabPanel.remove(tabItem);
         } else {
             self.Error(resObj.obj);

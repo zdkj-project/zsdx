@@ -78,6 +78,10 @@ Ext.define("core.train.indicator.view.MainGrid", {
         property: "indicatorName", //字段名
         direction: "asc" //升降序
     }],
+     defSort: [{
+       property: "updateTime", //字段名
+       direction: "desc" //升降序
+    }],
     // defGroup:'indicatorName',
     // features: [{ftype:'grouping'}],
     /** 扩展参数 */
@@ -125,6 +129,16 @@ Ext.define("core.train.indicator.view.MainGrid", {
             flex: 1,
             text: "评价标准",
             dataIndex: "indicatorStand",
+        },{
+            width: 150,
+            text: "创建时间",
+            dataIndex: "createTime",
+            align: 'left'
+        }, {
+            width: 150,
+            text: "更新时间",
+            dataIndex: "updateTime",
+            align: 'left'
         }, {
             xtype: 'actiontextcolumn',
             text: "操作",

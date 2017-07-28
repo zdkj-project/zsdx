@@ -15,6 +15,8 @@ Ext.define("core.train.courseeval.view.MainGrid", {
      * 工具栏操作按钮
      * 继承自core.base.view.BaseGrid可以在此覆盖重写
      */
+     
+
     panelTopBar: {
         xtype: 'toolbar',
         items: [{
@@ -47,13 +49,12 @@ Ext.define("core.train.courseeval.view.MainGrid", {
     defSort: [{
             property: "classCategory", //字段名
             direction: "ASC" //升降序
-        }
-        /*, {
-             property: "isEval", //字段名
-             direction: "ASC" //升降序
-             }*/
+        }, {
+              property: "updateTime", //字段名
+              direction: "desc" //升降序
+             }
     ],
-    /** 扩展参数 */
+   
     extParams: {
         whereSql: "",
         //查询的过滤字段
@@ -106,7 +107,17 @@ Ext.define("core.train.courseeval.view.MainGrid", {
                     }
                     return str;
                 }
-            }
+                    },{
+                    width: 150,
+                    text: "创建时间",
+                    dataIndex: "createTime",
+                    align: 'left'
+                }, {
+                    width: 150,
+                    text: "更新时间",
+                    dataIndex: "updateTime",
+                    align: 'left'
+                },
             /*, {
                      width: 100,
                      text: "开始日期",
@@ -141,6 +152,7 @@ Ext.define("core.train.courseeval.view.MainGrid", {
                      return value;
                      }
                      }*/
+
         ]
     },
     emptyText: '<span style="width:100%;text-align:center;display: block;">暂无数据</span>'
