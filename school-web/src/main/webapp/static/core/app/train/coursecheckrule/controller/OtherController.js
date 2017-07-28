@@ -106,7 +106,7 @@ Ext.define("core.train.coursecheckrule.controller.OtherController", {
                         var grid = basetab.funData.grid; //此tab是否保存有grid参数
                         if (!Ext.isEmpty(grid)) {
                             var store = grid.getStore();                           
-                            store.load(); //刷新父窗体的grid
+//                            store.load(); //刷新父窗体的grid
                         }
 
                         loading.hide();
