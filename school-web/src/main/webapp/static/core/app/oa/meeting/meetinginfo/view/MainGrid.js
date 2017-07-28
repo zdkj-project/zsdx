@@ -17,13 +17,13 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
      */
     panelTopBar: {
         xtype: 'toolbar',
-        items: [{
+        items: [/*{
             xtype: 'button',
             text: '添加',
             ref: 'gridAdd_Tab',     //命名规则：后面多加入了一个后缀【_Tab】
             funCode: 'girdFuntionBtn', //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             iconCls: 'x-fa fa-plus-circle'
-        }, /*{
+        }, {
             xtype: 'button',
             text: '编辑',
             ref: 'gridEdit_Tab',
@@ -37,7 +37,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
             funCode: 'girdFuntionBtn',
             disabled: true,
             iconCls: 'x-fa fa-file-text'
-        }, */{
+        }, {
             xtype: 'button',
             text: '删除',
             ref: 'gridDelete',
@@ -51,7 +51,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
             funCode: 'girdFuntionBtn',
             //disabled: true,
             iconCls: 'x-fa fa-clipboard'
-        }, {
+        }, */{
             xtype: 'button',
             text: '导出',
             ref: 'gridExport',
@@ -177,8 +177,8 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
             width: 120,
             fixed: true,
             align: 'center',
-            items: [{
-                //iconCls: 'x-fa fa-pencil-square',
+            items: [/*{
+                iconCls: 'x-fa fa-pencil-square',
             	text:'编辑',  
                 style:'font-size:12px;',
                 tooltip: '编辑',
@@ -190,7 +190,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
                         record: rec
                     });
                 }
-            }, {
+            }, */{
                 //iconCls: 'x-fa fa-file-text',
             	text:'详细',  
                 style:'font-size:12px;',
@@ -203,7 +203,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
                         record: rec
                     });
                 }
-            }, {
+            }/*, {
                 //iconCls: 'x-fa fa-minus-circle',
             	text:'删除',  
                 style:'font-size:12px;',
@@ -216,7 +216,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
                         record: rec
                     });
                 }
-            }]
+            }*/]
         }]
     },
     emptyText: '<span style="width:100%;text-align:center;display: block;">暂无数据</span>'
