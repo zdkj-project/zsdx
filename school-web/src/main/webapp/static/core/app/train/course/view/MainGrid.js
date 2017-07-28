@@ -162,7 +162,7 @@ Ext.define("core.train.course.view.MainGrid", {
                 return html;
             }
         }, {
-            width: 200,
+            width: 160,
             text: "手机号码",
             dataIndex: "mobilePhone",
             align:'left',
@@ -172,6 +172,16 @@ Ext.define("core.train.course.view.MainGrid", {
                 metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return html;
             }
+        }, {
+            width: 150,
+            text: "创建时间",
+            dataIndex: "createTime",
+            align:'left',
+        },{
+            width: 150,
+            text: "更新时间",
+            dataIndex: "updateTime",
+            align:'left',
         },{
             xtype:'actiontextcolumn',
             text: "操作",

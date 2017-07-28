@@ -1,32 +1,19 @@
 package com.zd.core.util;
 
-import java.io.OutputStream;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.shiro.web.session.HttpServletSession;
-
-import java.lang.reflect.Field;
-
-import jxl.CellView;
 import jxl.Workbook;
-import jxl.biff.Type;
 import jxl.format.Alignment;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
 import jxl.format.VerticalAlignment;
-import jxl.write.Label;
-import jxl.write.Number;
-import jxl.write.NumberFormats;
-import jxl.write.WritableCellFormat;
-import jxl.write.WritableFont;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
+import jxl.write.*;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ExportExcel {
 
@@ -94,7 +81,7 @@ public class ExportExcel {
 			wcf_right.setBorder(Border.NONE, BorderLineStyle.THIN); // 线条
 			wcf_right.setVerticalAlignment(VerticalAlignment.CENTRE); // 文字垂直对齐
 			wcf_right.setAlignment(Alignment.RIGHT); // 文字水平对齐
-			wcf_right.setWrap(false); // 文字是否换行
+			wcf_right.setWrap(true); // 文字是否换行
 
 			/** ***************以下是EXCEL开头大标题********************* */
 			sheet.mergeCells(0, 0, Title.length, 0);

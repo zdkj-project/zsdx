@@ -69,10 +69,16 @@ Ext.define("core.train.arrange.view.MainGrid", {
         }]
     },
     /** 排序字段定义 */
-    defSort: [{
-        property: "createTime", //字段名
+    defSort: [
+//    	{
+//        property: "createTime", //字段名
+//        direction: "DESC" //升降序
+//    },
+    {
+        property: "updateTime", //字段名
         direction: "DESC" //升降序
-    }],
+    }
+    	],
     /** 扩展参数 */
     extParams: {
         whereSql: "",
@@ -176,6 +182,16 @@ Ext.define("core.train.arrange.view.MainGrid", {
                 else
                     return "<span style='color:red'>未安排</span>";
             }
+        },{
+            width: 150,
+            text: "创建时间",
+            dataIndex: "createTime",
+            align:'left',
+        },{
+            width: 150,
+            text: "更新时间",
+            dataIndex: "updateTime",
+            align:'left',
         },{
             xtype: 'actiontextcolumn',
             text: "操作",
