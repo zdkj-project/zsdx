@@ -4,7 +4,7 @@ Ext.define("core.train.teacher.view.DetailForm", {
     xtype: 'teacherdeailform',
     layout: "form", //从上往下布局
     autoHeight: true,
-    frame: false,
+    frame: false, 
     //bodyPadding: '0 10 10 0',
     fieldDefaults: { // 统一设置表单字段默认属性
         labelSeparator: "：", // 分隔符
@@ -20,7 +20,7 @@ Ext.define("core.train.teacher.view.DetailForm", {
     }, {
         xtype: "container",
         layout: "column",
-        labelAlign: "right",
+        //labelAlign: "right",
         items: [{
             beforeLabelTextTpl: comm.get("required"),
             allowBlank: false,
@@ -182,6 +182,21 @@ Ext.define("core.train.teacher.view.DetailForm", {
         xtype: "container",
         layout: "column",
         labelAlign: "right",
+        items: [{            
+            fieldLabel: "基本信息",        
+            columnWidth:1,
+            grow: true,
+            height:90,
+            name: "teaDesc",
+            xtype: "textarea",
+            emptyText: "请输入基本信息",
+            maxLength: 256,
+            maxLengthText: "最多256个字符,汉字占2个字符",
+        }]
+    }, {
+        xtype: "container",
+        layout: "column",
+        labelAlign: "right",
         items: [{           
             fieldLabel: "主要研究方向",
             xtype: "textarea",
@@ -197,28 +212,23 @@ Ext.define("core.train.teacher.view.DetailForm", {
         xtype: "container",
         layout: "column",
         labelAlign: "right",
-        items: [{           
-            fieldLabel: "主要研究成果",
-            columnWidth:1,
-            grow: true,
-            height:90,
-            name: "researchResult",
-            xtype: "textarea",
-            emptyText: "请输入主要研究成果",
-            maxLength: 1024,
-            maxLengthText: "最多1024个字符,汉字占2个字符"
-        }]
-    },  {
-        xtype: "container",
-        layout: "column",
-        labelAlign: "right",
         items: [{
             //width:450,
             columnWidth:1, 
             xtype: "container",
             layout: "vbox",
             labelAlign: "right",
-            items: [ {           
+            items: [{           
+                fieldLabel: "主要研究成果",
+                width:'100%',
+                grow: true,
+                height:100,
+                name: "researchResult",
+                xtype: "textarea",
+                emptyText: "请输入主要研究成果",
+                maxLength: 1024,
+                maxLengthText: "最多1024个字符,汉字占2个字符"
+            }, {           
                 fieldLabel: "主要讲授专题",
                 width:'100%',
                 grow: true,
@@ -228,17 +238,6 @@ Ext.define("core.train.teacher.view.DetailForm", {
                 emptyText: "请输入主要讲授专题",
                 maxLength: 1024,
                 maxLengthText: "最多1024个字符,汉字占2个字符"
-            },{            
-                fieldLabel: "教师简介",
-                width:'100%',
-                //height:80,
-                grow: true,
-                height:100,
-                name: "teaDesc",
-                xtype: "textarea",
-                emptyText: "请输入教师简介",
-                maxLength: 256,
-                maxLengthText: "最多256个字符,汉字占2个字符",
             },{
                 fieldLabel: "照片地址", //用于表单提交时，提交此数据
                 name: "zp",

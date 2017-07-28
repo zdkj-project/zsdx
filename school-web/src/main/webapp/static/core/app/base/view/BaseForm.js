@@ -10,7 +10,7 @@ Ext.define("core.base.view.BaseForm",{
 	bodyPadding : '10 20 0 5',
 	defaults:{
 		width:'100%',
-		margin:"10 5 0 5",
+		margin:"10 5",
 		xtype : 'textfield',
 		labelAlign : 'right',
 		//columnWidth : 0.5,
