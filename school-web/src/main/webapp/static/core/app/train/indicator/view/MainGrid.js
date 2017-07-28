@@ -72,16 +72,15 @@ Ext.define("core.train.indicator.view.MainGrid", {
     },
     /** 排序字段定义 */
     defSort: [{
+       property: "updateTime", //字段名
+       direction: "DESC" //升降序
+    }/*,{
         property: "indicatorObject", //字段名
-        direction: "asc" //升降序
+        direction: "EDSC" //升降序
     },{
         property: "indicatorName", //字段名
-        direction: "asc" //升降序
-    }],
-     defSort: [{
-       property: "updateTime", //字段名
-       direction: "desc" //升降序
-    }],
+        direction: "DESC" //升降序
+    }*/],
     // defGroup:'indicatorName',
     // features: [{ftype:'grouping'}],
     /** 扩展参数 */

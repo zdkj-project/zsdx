@@ -60,7 +60,7 @@ Ext.define("core.oa.meeting.checkresult.view.MainGrid", {
     /** 排序字段定义 */
     defSort: [{
        property: "updateTime", //字段名
-       direction: "desc" //升降序
+       direction: "DESC" //升降序
     }],
     /** 扩展参数 */
     extParams: {

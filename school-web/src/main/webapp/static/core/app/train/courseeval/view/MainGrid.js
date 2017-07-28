@@ -49,10 +49,7 @@ Ext.define("core.train.courseeval.view.MainGrid", {
     defSort: [{
             property: "classCategory", //字段名
             direction: "ASC" //升降序
-        }, {
-              property: "updateTime", //字段名
-              direction: "desc" //升降序
-             }
+        }
     ],
    
     extParams: {
@@ -107,17 +104,7 @@ Ext.define("core.train.courseeval.view.MainGrid", {
                     }
                     return str;
                 }
-                    },{
-                    width: 150,
-                    text: "创建时间",
-                    dataIndex: "createTime",
-                    align: 'left'
-                }, {
-                    width: 150,
-                    text: "更新时间",
-                    dataIndex: "updateTime",
-                    align: 'left'
-                },
+                    }
             /*, {
                      width: 100,
                      text: "开始日期",
