@@ -313,6 +313,7 @@ public final class FastExcel implements Closeable {
                                 Field field = data.getValue();
                                 field.setAccessible(true);
                                 cell.setCellValue(field.get(list.get(i)).toString());
+                                cell.getCellStyle().setWrapText(true);
                                 break;
                             }
                         }
@@ -409,6 +410,7 @@ public final class FastExcel implements Closeable {
                                 field.setAccessible(true);
                                 cell.setCellValue(
                                         field.get(list.get(i)) != null ? field.get(list.get(i)).toString() : "");
+                                cell.getCellStyle().setWrapText(true);
                                 break;
                             }
                         }
@@ -488,6 +490,7 @@ public final class FastExcel implements Closeable {
                                 field.setAccessible(true);
                                 cell.setCellValue(
                                         field.get(list.get(i)) != null ? field.get(list.get(i)).toString() : "");
+                                cell.getCellStyle().setWrapText(true);
                                 break;
                             }
                         }

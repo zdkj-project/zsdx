@@ -403,6 +403,7 @@ public class PoiExportExcel {
         style.setBorderLeft(BorderStyle.THIN);
         style.setBorderTop(BorderStyle.THIN);
         style.setBorderRight(BorderStyle.THIN);
+        style.setWrapText(true);
 
         return style;
     }
