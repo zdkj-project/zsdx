@@ -280,19 +280,6 @@
 			<version>11.2.0.3</version>
 		</dependency>
 
-
-		<dependency>
-			<groupId>axis</groupId>
-			<artifactId>axis</artifactId>
-			<version>1.4</version>
-		</dependency>
-
-        <dependency>
-            <groupId>imApi</groupId>
-            <artifactId>imApi</artifactId>
-            <version>1.0</version>
-        </dependency>
-
 		<!-- redis需要的包，暂时不加入
 		<dependency>
 			<groupId>redis.clients</groupId>
@@ -360,7 +347,7 @@
 			<version>1.8.9</version>
 			<scope>test</scope>
 		</dependency>
-			
+		<!-- 短信平台的依赖包-->
 		<dependency>
             <groupId>imApi</groupId>
             <artifactId>imApi</artifactId>

@@ -5,6 +5,7 @@ import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.ImportExcelUtil;
+import com.zd.core.util.NotSendUtil;
 import com.zd.core.util.StringUtils;
 import com.zd.school.excel.FastExcel;
 import com.zd.school.jw.train.model.TrainTeacher;
@@ -32,7 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.zd.core.util.NotSendUtil.notSendUtil;
 
 /**
  * ClassName: TrainTeacherController
@@ -370,9 +370,12 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
     @RequestMapping("/sendMessage")
     public void sendMessage(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String strData = "";
-        String mobileStr = "18018711239";
+        String[] mobileStr = {"18018711239","13682353948"};
         String content = "短信发送测试内容 via  IM JAVA API ";
-        notSendUtil().Send(content,mobileStr);
-        writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导入成功！\""));
+        strData = NotSendUtil.notSendUtil().sendSMSs(mobileStr, content);
+        if("发送成功".equals(strData))
+            writeJSON(response, jsonBuilder.returnSuccessJson("\"发送成功！\""));
+        else
+            writeJSON(response, jsonBuilder.returnFailureJson(strData));
     }
 }
