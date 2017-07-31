@@ -23,16 +23,18 @@ Ext.define("core.system.role.view.SelectUserGrid", {
         },{
             xtype:'textfield',
             name:'deptId',
-            hidden:true
+            hidden:true,
+            funCode:"girdFastSearchText"
         },{
             width:200,
             emptyText: '请选择部门',
             xtype: "basetreefield",
             ddCode: "DEPTTREE",
+            name:"deptName",
             rootId: "ROOT",
-           // controller: 'role.OtherController',
+            funCode:'girdFastSearchText',
             configInfo: {
-                controller: 'role.OtherController',
+                //controller: 'role.OtherController',
                 multiSelect: false,
                 fieldInfo: "deptName~deptId,text~id",
                 whereSql: " and isDelete='0' ",
