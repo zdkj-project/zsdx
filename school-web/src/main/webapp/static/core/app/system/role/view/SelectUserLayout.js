@@ -1,10 +1,8 @@
-/**
- * Created by luoyibo on 2017-05-26.
- */
-Ext.define("core.train.class.view.SelectTeacherLayout", {
+
+Ext.define("core.system.role.view.SelectUserLayout", {
     extend: "core.base.view.BasePanel",
-    alias: 'widget.class.selectteacher.mainlayout',
-    funCode: "selectteacher_detail",
+    alias: 'widget.role.selectuserlayout',
+    funCode: "selectuser_detail",
     border: false,
     //funData用来定义一些常规的参数
     funData: {
@@ -17,15 +15,16 @@ Ext.define("core.train.class.view.SelectTeacherLayout", {
         defaultObj: {
         }
     },
+    controller: 'role.OtherController',
     layout: 'border',
     items: [{
-        xtype:'class.selectteachergrid',
+        xtype:'role.selectusergrid',
         width: 800,
         region: "west",
-        margin:'5',
+        margin:'5'
     }, {
-        xtype: "class.isselectedteachergrid",
+        xtype: "role.isselectusergrid",
         region: "center",
-        margin:'5',
+        margin:'5'
     }]
 })

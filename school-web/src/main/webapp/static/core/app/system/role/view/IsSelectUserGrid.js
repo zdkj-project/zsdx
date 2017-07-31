@@ -1,41 +1,61 @@
 /**
  * Created by luoyibo on 2017-05-26.
  */
-Ext.define("core.train.class.view.IsSelectTeacherGrid", {
+Ext.define("ccore.system.role.view.IsSelectUserGrid", {
     extend: "Ext.grid.Panel",
-    alias: "widget.class.isselectedteachergrid",
-    ref:'isselectedteachergrid',
-    title: "<font color='#ffeb00'>已选教师(选中后向左拖动或双击移除）</font>",
+    alias: "widget.role.isselectusergrid",
+    ref: 'isselectusergrid',
+    title: "<font color='#ffeb00'>已选用户(选中后向左拖动或双击移除）</font>",
     columnLines: true,
     loadMask: true,
     multiSelect: true,
     selModel: {
         selType: "checkboxmodel",
-        width:10
+        width: 10
     },
     viewConfig: {
         stripeRows: true
     },
-    store:{
-        type:"class.isselectedteacherStore"
+    store: {
+        type: "class.isselectedteacherStore"
     },
-    columns: [
-        { text: '教师ID',  dataIndex: 'uuid', hidden:true },
-        { text: '电话号码',  dataIndex: 'mobilePhone', hidden:true },
-        { text: '身份证号码',  dataIndex: 'sfzjh', hidden:true },
-        { text: '姓名', dataIndex: 'xm', flex: 1 },
-        { text: '性别',  dataIndex: 'xbm', flex: 1,
-            renderer:function(value){
-                if(value=="1")
-                    return "男";
-                else if(value=="2")
-                    return "女";
-                else
-                    return "";
-            }
-        },
-        { text: '工作单位', dataIndex: 'workUnits', flex: 2 },
-    ],
+    columns: [{
+        xtype: "rownumberer",
+        flex: 0,
+        width: 50,
+        text: '序号',
+        align: 'center'
+    }, {
+        width: 120,
+        text: "用户名",
+        dataIndex: "userName"
+    }, {
+        width: 100,
+        text: "姓名",
+        dataIndex: "xm"
+    }, {
+        width: 50,
+        text: "性别",
+        dataIndex: "xbm",
+        columnType: "basecombobox",
+        ddCode: "XBM"
+    }, {
+        width: 150,
+        text: "部门",
+        dataIndex: "deptName"
+    }, {
+        width: 120,
+        text: "岗位",
+        dataIndex: "jobName"
+    }, {
+        text: "编制",
+        dataIndex: "zxxbzlb",
+        ddCode: "ZXXBZLB",
+        columnType: "basecombobox",
+        minWidth: 120,
+        flex: 1,
+        align: 'left'
+    }],
     viewConfig: {
         plugins: {
             ptype: 'gridviewdragdrop',
@@ -44,18 +64,18 @@ Ext.define("core.train.class.view.IsSelectTeacherGrid", {
             //dropGroup: 'firstGridDDGroup'
         },
         listeners: {
-            drop: function(node, data, dropRec, dropPosition) {
+            drop: function (node, data, dropRec, dropPosition) {
                 //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
                 //Ext.example.msg("Drag from right to left", 'Dropped ' + data.records[0].get('name') + dropOn);
             },
-            beforeitemdblclick: function(grid, record, item, index, e, eOpts) {
-                selectStore = grid.getStore();
-                selectStore.removeAt(index);
+            beforeitemdblclick: function (grid, record, item, index, e, eOpts) {
+                IsSelectStore = grid.getStore();
+                IsSelectStore.removeAt(index);
 
-                var basePanel = grid.up("panel[xtype=class.selectteacher.mainlayout]");
-                var isSelectGrid = basePanel.down("panel[xtype=class.selectteachergrid]");
-                var isSelectStore = isSelectGrid.getStore();
-                isSelectStore.insert(0, [record]);
+                var basePanel = grid.up("panel[xtype=role.selectuserlayout]");
+                var selectGrid = basePanel.down("panel[xtype=role.selectusergrid]");
+                var selectStore = selectGrid.getStore();
+                selectStore.insert(0, [record]);
                 return false;
             }
         }

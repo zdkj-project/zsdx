@@ -6,14 +6,15 @@ import com.zd.core.constant.StatuVeriable;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.ExtDataFilter;
 import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.util.BeanUtils;
 import com.zd.core.util.JsonBuilder;
+import com.zd.core.util.ModelUtil;
 import com.zd.core.util.StringUtils;
 import com.zd.school.plartform.system.model.SysRole;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.service.SysMenuService;
 import com.zd.school.plartform.system.service.SysRoleService;
 import com.zd.school.plartform.system.service.SysUserService;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,14 +23,11 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
 /**
- * 
  * ClassName: BaseTRoleController Function: TODO ADD FUNCTION. Reason: TODO ADD
  * REASON(可选). Description: 角色管理实体Controller. date: 2016-07-17
  *
@@ -41,6 +39,8 @@ import java.util.Set;
 @RequestMapping("/sysrole")
 public class SysRoleController extends FrameWorkController<SysRole> implements Constant {
 
+    private static Logger logger = Logger.getLogger(SysRoleController.class);
+
     @Resource
     private SysRoleService thisService; // service层接口
 
@@ -51,13 +51,13 @@ public class SysRoleController extends FrameWorkController<SysRole> implements C
     private SysMenuService menuService;
 
     /**
-     * list查询 @Title: list @Description: TODO @param @param entity
+     * list查询 @Title: list
      * 实体类 @param @param request @param @param response @param @throws
      * IOException 设定参数 @return void 返回类型 @throws
      */
     @SuppressWarnings("unchecked")
-    @RequestMapping(value = { "/list" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
-            org.springframework.web.bind.annotation.RequestMethod.POST })
+    @RequestMapping(value = {"/list"}, method = {org.springframework.web.bind.annotation.RequestMethod.GET,
+            org.springframework.web.bind.annotation.RequestMethod.POST})
     public void list(@ModelAttribute SysRole entity, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String strData = ""; // 返回给js的数据
@@ -84,48 +84,40 @@ public class SysRoleController extends FrameWorkController<SysRole> implements C
     }
 
     /**
-     * 
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     * @Title: 增加新实体信息至数据库 @Description: TODO @param @param BaseTRole
-     *         实体类 @param @param request @param @param response @param @throws
-     *         IOException 设定参数 @return void 返回类型 @throws
+     * 增加记录
+     * @param entity
+     * @param request
+     * @param response
+     * @throws IOException
      */
     @RequestMapping("/doadd")
-    public void doAdd(SysRole entity, HttpServletRequest request, HttpServletResponse response)
-            throws IOException, IllegalAccessException, InvocationTargetException {
-
+    public void doAdd(SysRole entity, HttpServletRequest request, HttpServletResponse response) throws IOException {
         String roleName = entity.getRoleName();
         String roleCode = entity.getRoleCode();
-        //此处为放在入库前的一些检查的代码，如唯一校验等
-        String hql = " o.isDelete='0'";
-        if (thisService.IsFieldExist("roleName", roleName, "-1", hql)) {
-            writeJSON(response, jsonBuilder.returnFailureJson("'角色名称不能重复！'"));
-            return;
+        try {
+            //此处为放在入库前的一些检查的代码，如唯一校验等
+            String hql = " o.isDelete='0'";
+            if (thisService.IsFieldExist("roleName", roleName, "-1", hql)) {
+                writeJSON(response, jsonBuilder.returnFailureJson("'角色名称不能重复！'"));
+                return;
+            }
+            if (thisService.IsFieldExist("roleCode", roleCode, "-1", hql)) {
+                writeJSON(response, jsonBuilder.returnFailureJson("'角色编码不能重复！'"));
+                return;
+            }
+            //获取当前的操作用户
+            SysUser currentUser = getCurrentSysUser();
+            //插入数据
+            entity = thisService.doAddEntity(entity, currentUser);// 执行增加方法
+            if (ModelUtil.isNotNull(entity))
+                writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
+            else {
+                writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
         }
-        if (thisService.IsFieldExist("roleCode", roleCode, "-1", hql)) {
-            writeJSON(response, jsonBuilder.returnFailureJson("'角色编码不能重复！'"));
-            return;
-        }
-        //获取当前操作用户
-        String userCh = "超级管理员";
-        SysUser currentUser = getCurrentSysUser();
-        if (currentUser != null)
-            userCh = currentUser.getXm();
-
-        SysRole saveEntity = new SysRole();
-        BeanUtils.copyPropertiesExceptNull(entity, saveEntity);
-
-        //增加时要设置创建人
-        entity.setCreateUser(userCh); //创建人
-        entity.setIsHidden("0");
-        entity.setIssystem(0);
-
-        //持久化到数据库
-        entity = thisService.merge(entity);
-
-        //返回实体到前端界面
-        writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
     }
 
     /**
@@ -150,82 +142,58 @@ public class SysRoleController extends FrameWorkController<SysRole> implements C
     }
 
     /**
-     * doRestore还原删除的记录 @Title: doRestore @Description: TODO @param @param
-     * request @param @param response @param @throws IOException 设定参数 @return
-     * void 返回类型 @throws
-     */
-    @RequestMapping("/dorestore")
-    public void doRestore(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String delIds = request.getParameter("ids");
-        if (StringUtils.isEmpty(delIds)) {
-            writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
-            return;
-        } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
-            if (flag) {
-                writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
-            } else {
-                writeJSON(response, jsonBuilder.returnFailureJson("'还原失败'"));
-            }
-        }
-    }
-
-    /**
-     * doUpdate编辑记录 @Title: doUpdate @Description: TODO @param @param
-     * BaseTRole @param @param request @param @param response @param @throws
-     * IOException 设定参数 @return void 返回类型 @throws
-     */
-    @RequestMapping("/doupdate")
-    public void doUpdates(SysRole entity, HttpServletRequest request, HttpServletResponse response)
-            throws IOException, IllegalAccessException, InvocationTargetException {
-        String roleName = entity.getRoleName();
-        String roleCode = entity.getRoleCode();
-        String roleId = entity.getUuid();
-        //入库前检查代码
-        String hql = " o.isDelete='0'";
-        if (thisService.IsFieldExist("roleName", roleName, roleId, hql)) {
-            writeJSON(response, jsonBuilder.returnFailureJson("'角色名称不能重复！'"));
-            return;
-        }
-        if (thisService.IsFieldExist("roleCode", roleCode, roleId, hql)) {
-            writeJSON(response, jsonBuilder.returnFailureJson("'角色编码不能重复！'"));
-            return;
-        }
-        //获取当前的操作用户
-        String userCh = "超级管理员";
-        SysUser currentUser = getCurrentSysUser();
-        if (currentUser != null)
-            userCh = currentUser.getXm();
-
-        //先拿到已持久化的实体
-        SysRole perEntity = thisService.get(entity.getUuid());
-
-        //将entity中不为空的字段动态加入到perEntity中去。
-        BeanUtils.copyPropertiesExceptNull(perEntity, entity);
-
-        perEntity.setUpdateTime(new Date()); //设置修改时间
-        perEntity.setUpdateUser(userCh); //设置修改人的中文名
-        entity = thisService.merge(perEntity);//执行修改方法
-
-        writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
-
-    }
-
-    /**
-     * 
-     * selectList:用户所属角色选择时的可选择角色.
-     *
-     * @author luoyibo
+     * 更新记录
      * @param entity
      * @param request
      * @param response
      * @throws IOException
-     *             void
-     * @throws @since
-     *             JDK 1.8
      */
-    @RequestMapping(value = { "/selectlist" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
-            org.springframework.web.bind.annotation.RequestMethod.POST })
+
+    @RequestMapping("/doupdate")
+    public void doUpdates(SysRole entity, HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        String roleName = entity.getRoleName();
+        String roleCode = entity.getRoleCode();
+        String roleId = entity.getUuid();
+        try {
+            //入库前检查代码
+            String hql = " o.isDelete='0'";
+            if (thisService.IsFieldExist("roleName", roleName, roleId, hql)) {
+                writeJSON(response, jsonBuilder.returnFailureJson("'角色名称不能重复！'"));
+                return;
+            }
+            if (thisService.IsFieldExist("roleCode", roleCode, roleId, hql)) {
+                writeJSON(response, jsonBuilder.returnFailureJson("'角色编码不能重复！'"));
+                return;
+            }
+
+            //获取当前的操作用户
+            SysUser currentUser = getCurrentSysUser();
+            //更新数据
+            entity = thisService.doUpdateEntity(entity, currentUser);// 执行修改方法
+            if (ModelUtil.isNotNull(entity))
+                writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
+            else
+                writeJSON(response, jsonBuilder.returnFailureJson("'数据修改失败,详情见错误日志'"));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            writeJSON(response, jsonBuilder.returnFailureJson("'数据修改失败,详情见错误日志'"));
+        }
+
+    }
+
+    /**
+     * selectList:用户所属角色选择时的可选择角色.
+     *
+     * @param entity
+     * @param request
+     * @param response
+     * @throws IOException void
+     * @throws @since      JDK 1.8
+     * @author luoyibo
+     */
+    @RequestMapping(value = {"/selectlist"}, method = {org.springframework.web.bind.annotation.RequestMethod.GET,
+            org.springframework.web.bind.annotation.RequestMethod.POST})
     public void selectList(@ModelAttribute SysRole entity, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String strData = ""; // 返回给js的数据
@@ -255,16 +223,13 @@ public class SysRoleController extends FrameWorkController<SysRole> implements C
     }
 
     /**
-     * 
      * cancelRoleRightMenu:取消指定用户的授权菜单.
      *
-     * @author luoyibo
      * @param request
      * @param response
-     * @throws IOException
-     *             void
-     * @throws @since
-     *             JDK 1.8
+     * @throws IOException void
+     * @throws @since      JDK 1.8
+     * @author luoyibo
      */
     @RequestMapping("/deleteright")
     public void cancelRoleRightMenu(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -285,16 +250,13 @@ public class SysRoleController extends FrameWorkController<SysRole> implements C
     }
 
     /**
-     * 
      * addRoleRightMenu:增加指定角色的授权菜单.
      *
-     * @author luoyibo
      * @param request
      * @param response
-     * @throws IOException
-     *             void
-     * @throws @since
-     *             JDK 1.8
+     * @throws IOException void
+     * @throws @since      JDK 1.8
+     * @author luoyibo
      */
     @RequestMapping("/addright")
     public void addRoleRightMenu(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -311,6 +273,75 @@ public class SysRoleController extends FrameWorkController<SysRole> implements C
             } else {
                 writeJSON(response, jsonBuilder.returnFailureJson("'增加权限失败'"));
             }
+        }
+    }
+
+    /**
+     * 获取指定角色的用户列表
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping("/getRoleUser")
+    public void  getRoleUser(HttpServletRequest request, HttpServletResponse response) throws  IOException{
+        String strData = "";
+        Integer start = super.start(request);
+        Integer limit = super.limit(request);
+        String roleId = request.getParameter("ids");
+        QueryResult<SysUser> qResult = thisService.getRoleUser(roleId, start, limit);
+        strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
+        writeJSON(response, strData);// 返回数据
+    }
+
+    /**
+     * 删除指定角色的用户
+     * @param ids 要删除用户的角色
+     * @param userId 删除的用户Id,多个Id用英文逗号隔开
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping("/doDeleteRoleUser")
+    public void doDeleteRoleUser(String ids, String userId,HttpServletRequest request, HttpServletResponse response) throws IOException{
+        if(StringUtils.isEmpty(ids) || StringUtils.isEmpty(userId)){
+            writeJSON(response,jsonBuilder.returnFailureJson("'没有传入相关的参数:角色标识或删除的用户标识'"));
+            return;
+        }
+        try {
+            Boolean flag = thisService.doDeleteRoleUser(ids,userId);
+            if(flag)
+                writeJSON(response,jsonBuilder.returnSuccessJson("'角色用户删除成功'"));
+            else
+                writeJSON(response,jsonBuilder.returnFailureJson("角色用户删除失败，详情请见错误日志"));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            writeJSON(response,jsonBuilder.returnFailureJson("角色用户删除失败，详情请见错误日志"));
+        }
+    }
+
+    /**
+     * 给指定的角色添加用户
+     * @param ids 要添加用户的角色Id
+     * @param userId 添加的用户Id,多个Id用英文逗号隔开
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping("/doAddRoleUser")
+    public void doAddRoleUser(String ids, String userId,HttpServletRequest request, HttpServletResponse response) throws IOException{
+        if(StringUtils.isEmpty(ids) || StringUtils.isEmpty(userId)){
+            writeJSON(response,jsonBuilder.returnFailureJson("'没有传入相关的参数:角色标识或s要添加的用户标识'"));
+            return;
+        }
+        try {
+            Boolean flag = thisService.doAddRoleUser(ids,userId);
+            if(flag)
+                writeJSON(response,jsonBuilder.returnSuccessJson("'角色用户添加成功'"));
+            else
+                writeJSON(response,jsonBuilder.returnFailureJson("角色用户添加失败，详情请见错误日志"));
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            writeJSON(response,jsonBuilder.returnFailureJson("角色用户添加失败，详情请见错误日志"));
         }
     }
 }

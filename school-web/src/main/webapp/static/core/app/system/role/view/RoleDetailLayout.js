@@ -13,9 +13,11 @@ Ext.define("core.system.role.view.RoleDetailLayout",{
 			orderIndex:'1'
 		}
 	},
-	
-	 /*设置最小宽度，并且自动滚动*/
-    minWidth:1200,
+    /*关联此视图控制器*/
+    controller: 'role.roleController',
+    otherController: 'role.OtherController',
+	/*设置最小宽度，并且自动滚动*/
+    minWidth:1000,
     scrollable:true,
     
 	items: [{

@@ -1,12 +1,9 @@
 Ext.define("core.system.role.view.RoleUserGrid", {
 	extend: "core.base.view.BaseGrid",
 	alias: "widget.role.roleusergrid",
-	dataUrl: comm.get('baseUrl') + "/teacher/roleteacherlist",
-	al:false,
-//	dataUrl: comm.get('baseUrl') + "/sysuser/list",
+	dataUrl: comm.get('baseUrl') + "/sysrole/getRoleUser",
 	model: factory.ModelFactory.getModelByName("com.zd.school.plartform.system.model.SysUser", "checked").modelName,
-    selModel:null,	
-	noPagging: true,
+    al:false,
 	extParams: {
 		whereSql: "",
 		orderSql: ""
@@ -17,13 +14,13 @@ Ext.define("core.system.role.view.RoleUserGrid", {
         items: [{
             xtype: 'button',
             text: '添加',
-            ref: 'gridAdd',
+            ref: 'gridAddUser',
             funCode: 'girdFuntionBtn',
             iconCls: 'x-fa fa-plus-circle'
         },{
             xtype: 'button',
             text: '删除',
-            ref: 'gridDelete',
+            ref: 'gridDelUser',
             funCode: 'girdFuntionBtn',
             iconCls: 'x-fa fa-clipboard'
         },'->',{
@@ -46,37 +43,50 @@ Ext.define("core.system.role.view.RoleUserGrid", {
 
 	columns: {        
         defaults:{
-            flex:1,    	//【若使用了 selType: "checkboxmodel"；则不要在这设定此属性了，否则多选框的宽度也会变大 】
             align:'center',
             titleAlign:"center"
         },
         items:[{
+            text: "主键",
+            dataIndex: "uuid",
+            hidden: true
+        },{
             xtype: "rownumberer",
             flex:0,
-            width: 60,
+            width: 50,
             text: '序号',
             align: 'center'
-        },{
-			text: "主键",
-			dataIndex: "uuid",
-			hidden: true 
-		}, {
-			text: "编号",
-			dataIndex: "userNumb"
-		}, {
-			text: "用户名",
+        }, {
+			width:120,
+            text: "用户名",
 			dataIndex: "userName"
 		},{
-			text: "姓名",
+            width:100,
+            text: "姓名",
 			dataIndex: "xm"
 		}, {
-			text: "性别",
+            width:50,
+            text: "性别",
 			dataIndex: "xbm",
 			columnType: "basecombobox",
 			ddCode: "XBM"
-		}/*, {
-			text: "岗位",
-			dataIndex: "jobName"
-		}*/]
+		}, {
+            width:120,
+			text: "部门",
+			dataIndex: "deptName"
+		}, {
+            width:120,
+            text: "岗位",
+            dataIndex: "jobName"
+        }, {
+            width:100,
+            text: "账户状态",
+            dataIndex: "state",
+            width:100,
+            align:'left',
+            renderer: function(value) {
+                return (value == '0') ? '<font color=green>正常</font>' : '<font color=red>锁定</font>';
+            }
+        }]
 	}
 });

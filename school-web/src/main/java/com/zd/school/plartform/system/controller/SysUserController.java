@@ -1,29 +1,6 @@
 
 package com.zd.school.plartform.system.controller;
 
-import java.awt.CardLayout;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.crypto.hash.Sha256Hash;
-import org.apache.shiro.session.Session;
-import org.apache.shiro.subject.Subject;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
 import com.zd.core.constant.AuthorType;
 import com.zd.core.constant.Constant;
 import com.zd.core.constant.TreeVeriable;
@@ -34,14 +11,23 @@ import com.zd.core.util.ModelUtil;
 import com.zd.core.util.StringUtils;
 import com.zd.school.plartform.baseset.model.BaseUserdeptjob;
 import com.zd.school.plartform.baseset.service.BaseUserdeptjobService;
-import com.zd.school.plartform.system.model.CardUserInfoToUP;
-import com.zd.school.plartform.system.model.SysDatapermission;
-import com.zd.school.plartform.system.model.SysMenuTree;
-import com.zd.school.plartform.system.model.SysRole;
-import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.plartform.system.model.SysUserToUP;
+import com.zd.school.plartform.system.model.*;
 import com.zd.school.plartform.system.service.SysMenuService;
 import com.zd.school.plartform.system.service.SysUserService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * 
@@ -658,4 +644,23 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 
 		writeAppJSON(response, returnJson.toString());
 	}
+
+    @RequestMapping(value = {"/getUserNotInRoleId"}, method = {org.springframework.web.bind.annotation.RequestMethod.GET,
+            org.springframework.web.bind.annotation.RequestMethod.POST})
+    public void getUserNotInRoleId(String roleId,HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        String strData = ""; // 返回给js的数据
+        int start = super.start(request); // 起始记录数
+        int limit = super.limit(request);// 每页记录数
+        String sort = StringUtils.convertSortToSql(super.sort(request));
+        String filter = StringUtils.convertFilterToSql(super.filter(request));
+        try {
+            QueryResult<SysUser> qr = thisService.getUserNotInRoleId(roleId, start, limit, sort, filter);
+            strData = jsonBuilder.buildObjListToJson(new Long(qr.getTotalCount()), qr.getResultList(), true);// 处理数据
+            writeJSON(response, strData);// 返回数据
+        } catch (IOException e) {
+            e.printStackTrace();
+            writeJSON(response, jsonBuilder.returnSuccessJson("'数据查询失败'"));
+        }
+    }
 }

@@ -1,32 +1,11 @@
 package com.zd.school.plartform.system.service.Impl;
 
-import java.awt.geom.Area;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.annotation.Resource;
-
-import org.apache.shiro.crypto.hash.Sha256Hash;
-import org.omg.CORBA.DATA_CONVERSION;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
-import com.zd.core.util.DBContextHolder;
 import com.zd.core.util.DateUtil;
 import com.zd.core.util.SortListUtil;
 import com.zd.core.util.StringUtils;
-import com.zd.school.plartform.baseset.model.BaseJob;
-import com.zd.school.plartform.baseset.model.BaseOrg;
 import com.zd.school.plartform.baseset.service.BaseOrgService;
 import com.zd.school.plartform.system.dao.SysUserDao;
 import com.zd.school.plartform.system.model.CardUserInfoToUP;
@@ -35,8 +14,18 @@ import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.model.SysUserToUP;
 import com.zd.school.plartform.system.service.SysRoleService;
 import com.zd.school.plartform.system.service.SysUserService;
-import com.zd.school.teacher.teacherinfo.model.TeaTeacherbase;
 import com.zd.school.teacher.teacherinfo.service.TeaTeacherbaseService;
+import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
+import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * 
@@ -205,51 +194,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		}
 	}
 
-	/**
-	 * 
-	 * batchSetDept:批量设置用户的所属部门.
-	 *
-	 * @author luoyibo
-	 * @param deptId
-	 * @param userIds
-	 * @param cuurentUser
-	 * @return Boolean
-	 * @throws @since
-	 *             JDK 1.8
-	 */
-	// @Override
-	// public Boolean batchSetDept(String deptId, String userIds, SysUser
-	// cuurentUser) {
-	// Boolean reResult = false;
-	// String[] delId = userIds.split(",");
-	// List<SysUser> listUser = this.queryByProerties("uuid", delId);
-	// for (SysUser sysUser : listUser) {
-	// Set<BaseOrg> userDept = sysUser.getUserDepts();
-	// BaseOrg org = orgService.get(deptId);
-	// BaseOrg tempOrg = orgService.get("058b21fe-b37f-41c9-ad71-091f97201ff8");
-	// userDept.remove(tempOrg);
-	// userDept.add(org);
-	//
-	// sysUser.setUserDepts(userDept);
-	// sysUser.setUpdateTime(new Date());
-	// sysUser.setUpdateUser(cuurentUser.getXm());
-	//
-	// this.merge(sysUser);
-	// reResult = true;
-	// }
-	// return reResult;
-	// }
-
 	@Override
 	public List<SysUser> getUserByRoleName(String roleName) {
-		/*
-		 * String sql =
-		 * "SELECT USER_ID FROM SYS_T_USER WHERE USER_ID IN(SELECT USER_ID FROM SYS_T_ROLEUSER WHERE ROLE_ID IN(SELECT ROLE_ID FROM SYS_T_ROLE WHERE ROLE_NAME='"
-		 * + roleName + "'))"; List<Object[]> list = this.ObjectQuerySql(sql);
-		 * List<SysUser> users = new ArrayList<SysUser>(); for (int i = 0; i <
-		 * list.size(); i++) { String userid = list.get(i) + "";
-		 * users.add(this.get(userid)); }
-		 */
 		String hql = "from SysUser as u inner join fetch u.sysRoles as r where r.roleName='" + roleName
 				+ "' and r.isDelete=0 and u.isDelete=0";
 		return this.doQuery(hql);
@@ -288,29 +234,46 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		qr.setTotalCount((long) list.size());
 
 		return qr;
-		// List<SysUser> newList = new ArrayList<SysUser>();
-		// if (list.size() > 0) {
-		// StringBuffer sbJobName = new StringBuffer();
-		// for (SysUser user : list) {
-		// TeaTeacherbase teacherbase = teacherService.get(user.getUuid());
-		// String jobInfo = teacherService.getTeacherJobs(teacherbase);
-		// String[] strings = jobInfo.split(",");
-		// user.setJobId(strings[0]);
-		// user.setJobName(strings[1]);
-		//
-		// String deptInfo = teacherService.getTeacherDepts(teacherbase);
-		// strings = deptInfo.split(",");
-		// user.setDeptName(strings[1]);
-		// newList.add(user);
-		// }
-		// qr.setResultList(newList);
-		// qr.setTotalCount((long) list.size());
-		// return qr;
-		// } else
-		// return null;
 	}
 
-	@Override
+    @Override
+    public QueryResult<SysUser> getUserByRoleId(String roleId, Integer start, Integer limit, String sort, String filter) {
+        String hql = "from SysUser as u inner join fetch u.sysRoles as r where r.uuid='" + roleId
+                + "' and r.isDelete=0 and u.isDelete=0 ";
+        QueryResult<SysUser> qr = this.doQueryResult(hql, start, limit);
+        return qr;
+    }
+
+    @Override
+    public QueryResult<SysUser> getUserNotInRoleId(String roleId, Integer start, Integer limit, String sort, String filter) {
+        String hql = "from SysUser as o where o.isDelete=0  and state='0' "; //只列出状态正常的用户
+        if(StringUtils.isNotEmpty(roleId)){
+            String hql1=  " from SysUser as u inner join fetch u.sysRoles as k where k.uuid='" + roleId
+                    + "' and k.isDelete=0 and u.isDelete=0 ";
+            List<SysUser> tempList = this.doQuery(hql1);
+            if(tempList.size()>0){
+                StringBuilder sb = new StringBuilder();
+                for (SysUser sysUser : tempList) {
+                    sb.append(sysUser.getUuid());
+                    sb.append(",");
+                }
+                sb = sb.deleteCharAt(sb.length()-1);
+                String str = sb.toString().replace(",", "','");
+                hql += " and o.uuid not in ('" + str + "')";
+            }
+        }
+        if(StringUtils.isNotEmpty(filter)){
+            hql += filter;
+        }
+        if(StringUtils.isNotEmpty(sort)){
+            hql += " order by ";
+            hql+= sort;
+        }
+        QueryResult<SysUser> qr = this.doQueryResult(hql, start, limit);
+        return qr;
+    }
+
+    @Override
 	public int syncUserInfoToUP(SysUserToUP sysUserInfo, String userId) {
 		int row = 0;
 		try {
