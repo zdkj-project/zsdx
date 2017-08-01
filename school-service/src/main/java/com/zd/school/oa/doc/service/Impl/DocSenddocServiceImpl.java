@@ -7,14 +7,12 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.sun.swing.internal.plaf.metal.resources.metal_es;
 import com.zd.core.constant.StringVeriable;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.StringUtils;
-import com.zd.school.jw.push.service.PushInfoService;
+import com.zd.school.push.service.PushInfoService;
 import com.zd.school.oa.doc.dao.DocSenddocDao ;
-import com.zd.school.oa.doc.model.DocRecexamines;
 import com.zd.school.oa.doc.model.DocSendcheck;
 import com.zd.school.oa.doc.model.DocSenddoc ;
 import com.zd.school.oa.doc.service.DocSendcheckService;

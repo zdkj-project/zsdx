@@ -1,4 +1,4 @@
-package com.zd.school.jw.push.model;
+package com.zd.school.push.model;
 
 import java.io.Serializable;
 import java.util.Date;

@@ -10,18 +10,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.zd.core.constant.StringVeriable;
-import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.DateUtil;
 import com.zd.school.oa.doc.model.AllUserDoc;
 import com.zd.school.oa.doc.model.DocSendcheck;
 import com.zd.school.oa.doc.model.DocSenddoc;
-import com.zd.school.jw.push.service.PushInfoService;
+import com.zd.school.push.service.PushInfoService;
 import com.zd.school.oa.doc.dao.DocSendcheckDao;
 import com.zd.school.oa.doc.service.DocSendcheckService;
 import com.zd.school.oa.doc.service.DocSenddocService;
-import com.zd.school.plartform.comm.model.FacultyClass;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.service.SysUserService;
 

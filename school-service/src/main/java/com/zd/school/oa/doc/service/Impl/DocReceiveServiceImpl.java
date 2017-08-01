@@ -14,7 +14,7 @@ import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.StringUtils;
-import com.zd.school.jw.push.service.PushInfoService;
+import com.zd.school.push.service.PushInfoService;
 import com.zd.school.oa.doc.dao.DocReceiveDao ;
 import com.zd.school.oa.doc.model.DocReceive ;
 import com.zd.school.oa.doc.model.DocRecexamines;
