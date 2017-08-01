@@ -30,7 +30,7 @@ Ext.define("core.system.role.view.DetailHtml", {
             '<ul class="trainClass_gridUl">',
             '<li><span style="width:5%">序号</span><span style="width:10%" data-align="center">用户名</span>' +
             '<span style="width:10%" data-align="center">姓 名</span><span style="width:10%" data-align="center">性 别</span>' +
-            '<span style="width:10%" data-align="center">部 门</span><span style="width:10%" data-align="center">岗 位</span>' +
+            '<span style="width:15%" data-align="center">部 门</span><span style="width:15%" data-align="center">岗 位</span>' +
             '<span style="width:10%" data-align="center">账户状态</span></li>',
             '{% if (values.length == 0) %}',
             '<li style="width:100%;font-size: 20px;font-weight: 400;text-align: center;line-height: 100px;">此指标暂无评价标准...</li>',
@@ -43,7 +43,7 @@ Ext.define("core.system.role.view.DetailHtml", {
             '<tpl elseif="xbm==2">'+
             '<span style="width: 10%;text-align:left;" >女</span>'+
             '</tpl>' +
-            '<span style="width: 10%;text-align:left;" >{deptName}</span><span style="width: 10%;text-align:left;" >{jobName}</span>' +
+            '<span style="width: 15%;text-align:left;" >{deptName}</span><span style="width: 15%;text-align:left;" >{jobName}</span>' +
             '<tpl if="state==0">'+
             '<span style="width: 10%;text-align:left;" >正常</span>' +
             '<tpl else>'+

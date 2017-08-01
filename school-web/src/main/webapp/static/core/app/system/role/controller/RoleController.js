@@ -71,8 +71,8 @@ Ext.define("core.system.role.controller.RoleController", {
                     roleId: tabFunData.roleId,
                     roleName: tabFunData.roleName
                 });
-                var width = 1600;
-                var height = 900;
+                var width = 1200;
+                var height = 600;
                 var win = Ext.create('core.base.view.BaseFormWin', {
                     iconCls: 'x-fa fa-plus-circle',
                     operType: 'add',
