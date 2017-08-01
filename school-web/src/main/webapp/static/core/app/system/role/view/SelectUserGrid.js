@@ -104,7 +104,7 @@ Ext.define("core.system.role.view.SelectUserGrid", {
             text: "用户名",
             dataIndex: "userName"
         },{
-            width:100,
+            width:70,
             text: "姓名",
             dataIndex: "xm"
         }, {
@@ -118,7 +118,7 @@ Ext.define("core.system.role.view.SelectUserGrid", {
             text: "部门",
             dataIndex: "deptName"
         }, {
-            width:120,
+            width:110,
             text: "岗位",
             dataIndex: "jobName"
         }, {
@@ -126,7 +126,7 @@ Ext.define("core.system.role.view.SelectUserGrid", {
             dataIndex: "zxxbzlb",
             ddCode: "ZXXBZLB",
             columnType: "basecombobox",
-            minWidth:120,
+            minWidth:100,
             flex:1,
             align:'left'
         }]

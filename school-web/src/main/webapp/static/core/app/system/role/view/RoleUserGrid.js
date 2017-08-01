@@ -71,11 +71,11 @@ Ext.define("core.system.role.view.RoleUserGrid", {
 			columnType: "basecombobox",
 			ddCode: "XBM"
 		}, {
-            width:120,
+            width:160,
 			text: "部门",
 			dataIndex: "deptName"
 		}, {
-            width:120,
+            width:160,
             text: "岗位",
             dataIndex: "jobName"
         }, {

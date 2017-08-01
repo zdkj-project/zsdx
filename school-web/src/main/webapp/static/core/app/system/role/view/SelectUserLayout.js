@@ -19,7 +19,7 @@ Ext.define("core.system.role.view.SelectUserLayout", {
     layout: 'border',
     items: [{
         xtype:'role.selectusergrid',
-        width: 800,
+        width:comm.get("clientWidth")*0.5,
         region: "west",
         margin:'5'
     }, {
