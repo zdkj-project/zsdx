@@ -33,7 +33,6 @@ import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.StringUtils;
-import com.zd.school.jw.push.service.PushInfoService;
 import com.zd.school.oa.doc.model.DocSenddoc;
 import com.zd.school.oa.doc.service.DocDoctypeService;
 import com.zd.school.oa.doc.service.DocSendcheckService;

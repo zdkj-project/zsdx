@@ -1,25 +1,10 @@
 
 package com.zd.school.oa.doc.controller;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.StringUtils;
-import com.zd.school.jw.push.service.PushInfoService;
 import com.zd.school.oa.doc.model.AllUserDoc;
 import com.zd.school.oa.doc.model.DocSendcheck;
 import com.zd.school.oa.doc.model.DocSenddoc;
@@ -27,6 +12,18 @@ import com.zd.school.oa.doc.service.DocSendcheckService;
 import com.zd.school.oa.doc.service.DocSenddocService;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.service.SysUserService;
+import com.zd.school.push.service.PushInfoService;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 /**
  * 
  * ClassName: DocSendcheckController Function: TODO ADD FUNCTION. Reason: TODO

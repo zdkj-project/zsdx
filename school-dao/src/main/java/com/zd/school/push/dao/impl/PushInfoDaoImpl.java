@@ -1,10 +1,10 @@
-package com.zd.school.jw.push.dao.impl;
+package com.zd.school.push.dao.impl;
 
+import com.zd.school.push.dao.PushInfoDao;
 import org.springframework.stereotype.Repository;
 
 import com.zd.core.dao.BaseDaoImpl;
-import com.zd.school.jw.push.dao.PushInfoDao;
-import com.zd.school.jw.push.model.PushInfo;
+import com.zd.school.push.model.PushInfo;
 
 @Repository
 public class PushInfoDaoImpl extends BaseDaoImpl<PushInfo> implements PushInfoDao {
