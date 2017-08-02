@@ -316,8 +316,8 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
 
                 var detailhtmlpanel = item.down("container[xtype=meetinginfo.DetailPanel]");
 
-                //处理数据字段的值
-/*                var ddItem = factory.DDCache.getItemByDDCode("MEETINGCATEGORY");
+                //处理数据字典的值
+                var ddItem = factory.DDCache.getItemByDDCode("MEETINGCATEGORY");
                 var resultVal = "";
                 var value = recordData["meetingCategory"];
                 for (var i = 0; i < ddItem.length; i++) {
@@ -327,7 +327,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                         break;
                     }
                 }
-                recordData.meetingCategory = resultVal;*/
+                recordData.meetingCategory = resultVal;
                 recordData.needChecking = recordData.needChecking == 1 ? "需要考勤" : "不考勤";
                 detailhtmlpanel.setData(recordData);
 
