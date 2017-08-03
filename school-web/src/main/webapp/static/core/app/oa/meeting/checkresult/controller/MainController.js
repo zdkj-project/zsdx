@@ -23,8 +23,8 @@ Ext.define("core.oa.meeting.checkresult.controller.MainController", {
 
         "basegrid button[ref=gridDetail_Tab]": {
             beforeclick: function(btn) {
-                console.log(btn);
-                //return false;
+                this.doDetail_Tab(btn,"detail");
+                return false;
             }
         },
         
@@ -34,6 +34,81 @@ Ext.define("core.oa.meeting.checkresult.controller.MainController", {
                 //return false;
             }
         },
+        /**
+         * 导出住宿信息
+         */
+        "basegrid button[ref=gridExport]": {
+            beforeclick: function (btn) {
+                var self = this;
+                //得到组件
+                var baseGrid = btn.up("basegrid");
+                var funCode = baseGrid.funCode;
+                var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+                //得到配置信息
+                var funData = basePanel.funData;
+                var pkName = funData.pkName;
+                //得到选中数据
+                var records = baseGrid.getSelectionModel().getSelection();              
+                var title = "将导出所有的会议信息";
+                var ids = new Array();
+                if (records.length > 0) {
+                    title = "将导出所选会议的信息";
+                    Ext.each(records, function (rec) {
+                        var pkValue = rec.get(pkName);
+                        ids.push(pkValue);
+                    });
+
+                }
+            
+                Ext.Msg.confirm('提示', title, function (btn, text) {
+                    if (btn == "yes") {
+                        Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
+                        //window.location.href = comm.get('baseUrl') + "/TrainClass/exportExcel?ids=" + ids.join(",");
+                        var component=Ext.create('Ext.Component', {
+                            title: 'HelloWorld',
+                            width: 0,
+                            height:0,
+                            hidden:true,
+                            html: '<iframe src="' + comm.get('baseUrl') + '/OaMeeting/exportMeetingExcel?ids=' + ids.join(",") + '"></iframe>',
+                            renderTo: Ext.getBody()
+                        });
+                        
+                       
+                        var time=function(){
+                            self.syncAjax({
+                                url: comm.get('baseUrl') + '/OaMeeting/checkExportMeetingEnd',
+                                timeout: 1000*60*30,        //半个小时         
+                                //回调代码必须写在里面
+                                success: function(response) {
+                                    data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                    if(data.success){
+                                        Ext.Msg.hide();
+                                        self.msgbox(data.obj);
+                                        component.destroy();                                
+                                    }else{                                    
+                                        if(data.obj==0){    //当为此值，则表明导出失败
+                                            Ext.Msg.hide();
+                                            self.Error("导出失败，请重试或联系管理员！");
+                                            component.destroy();                                        
+                                        }else{
+                                            setTimeout(function(){time()},1000);
+                                        }
+                                    }               
+                                },
+                                failure: function(response) {
+                                    Ext.Msg.hide();
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    component.destroy();
+                                }
+                            });
+                        }
+                        setTimeout(function(){time()},1000);    //延迟1秒执行
+                    }
+                });
+                return false;
+            }
+        },
+
 
         "basegrid  actioncolumn": {
             editClick: function(data) {
