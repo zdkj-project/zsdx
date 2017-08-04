@@ -1,25 +1,9 @@
 package com.zd.school.app;
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.ModelUtil;
-import com.zd.school.control.device.model.Ptcard;
 import com.zd.school.jw.model.app.MeetCheckApp;
 import com.zd.school.jw.model.app.MeetingApp;
-import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.oa.meeting.model.MeetingCheck;
 import com.zd.school.oa.meeting.model.OaMeeting;
 import com.zd.school.oa.meeting.model.OaMeetingcheckrule;
@@ -29,6 +13,17 @@ import com.zd.school.oa.meeting.service.OaMeetingcheckruleService;
 import com.zd.school.oa.meeting.service.OaMeetingempService;
 import com.zd.school.oa.terminal.model.OaInfoterm;
 import com.zd.school.oa.terminal.service.OaInfotermService;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
 
 @Controller
 @RequestMapping("/app/meeting/")
@@ -59,15 +54,16 @@ public class MeetingAppController {
 				o.setBegin(dateFormat.format(o.getBeginTime()));
 				o.setEnd(dateFormat.format(o.getEndTime()));
 				List<OaMeetingemp> emplist=empService.queryByProerties("meetingId", o.getUuid());
-				for(OaMeetingemp e:emplist){
-					obj=empService.ObjectQuerySql("select cardno,FACTORYFIXID from dbo.PT_CARD where USER_ID='"+e.getEmployeeId()+"'");
+/*				for(OaMeetingemp e:emplist){
+					obj=empService.ObjectQuerySql(" SELECT UP_CARD_ID,FACT_NUMB FROM dbo.CARD_T_USEINFO WHERE USER_ID='"+e.getEmployeeId()+"'");
+//					obj=empService.ObjectQuerySql("select cardno,FACTORYFIXID from dbo.PT_CARD where USER_ID='"+e.getEmployeeId()+"'");
 					if(obj!=null){
 						for(Object[] ob:obj){
 							e.setCardNo(ob[0].toString());
 							e.setFactoryfixId(ob[1].toString());
 						}
 					}
-				}
+				}*/
 				o.setMeetingemp(emplist);
 			}
 		} else {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.zd.core.annotation.FieldInfo;
 import com.zd.core.model.BaseEntity;
 import com.zd.core.util.DateTimeSerializer;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -157,27 +158,36 @@ public class OaMeetingemp extends BaseEntity implements Serializable{
 		super(uuid);
 		// TODO Auto-generated constructor stub
 	}
-     
-	@Transient
-	private String cardNo;
-	public String getCardNo() {
-		return cardNo;
-	}
-	public void setCardNo(String cardNo) {
-		this.cardNo = cardNo;
-	}
-	
-	@Transient
-	private String factoryfixId;
-	public String getFactoryfixId() {
-		return factoryfixId;
-	}
-	public void setFactoryfixId(String factoryfixId) {
-		this.factoryfixId = factoryfixId;
-	}
-	
 
-    /** 以下为不需要持久化到数据库中的字段,根据项目的需要手工增加 
+/*    @FieldInfo(name = "UP卡流水号")
+    @Transient
+    @Formula("(SELECT top 1 a.UP_CARD_ID FROM CARD_T_USEINFO a where a.USER_ID=USER_ID order by a.CREATE_TIME desc)")
+    private Long upCardId;*/
+
+    @FieldInfo(name = "UP卡流水号")
+    @Formula("(SELECT top 1 a.UP_CARD_ID FROM CARD_T_USEINFO a where a.USER_ID=EMPLOYEE_ID order by a.CREATE_TIME desc)")
+	private Long cardNo;
+
+    public Long getCardNo() {
+        return cardNo;
+    }
+
+    public void setCardNo(Long cardNo) {
+        this.cardNo = cardNo;
+    }
+
+    @FieldInfo(name = "UP物理卡号")
+    @Formula("(SELECT top 1 a.FACT_NUMB FROM CARD_T_USEINFO a where a.USER_ID=EMPLOYEE_ID order by a.CREATE_TIME desc)")
+	private Long factoryfixId;
+
+    public Long getFactoryfixId() {
+        return factoryfixId;
+    }
+
+    public void setFactoryfixId(Long factoryfixId) {
+        this.factoryfixId = factoryfixId;
+    }
+/** 以下为不需要持久化到数据库中的字段,根据项目的需要手工增加
     *@Transient
     *@FieldInfo(name = "")
     *private String field1;

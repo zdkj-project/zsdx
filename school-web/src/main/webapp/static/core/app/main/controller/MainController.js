@@ -98,6 +98,61 @@ Ext.define('core.main.controller.MainController', {
     onChangeMainHeader:function(btn){
         this.getView().getViewModel().set("headerType.value",btn.changeType);
     },
+    onShowSystemPanel:function(btn,e){
+        var id= sessionStorage.systemMenuWindowId;
+        
+        var win=Ext.getCmp(id); 
+        if(!win){
+            win = Ext.create("Ext.window.Window", {
+                //bodyPadding: '0 10 10 0',
+                width:570,
+                //height:200,
+                margin:'0 0 0 10',
+                scrollable:true, 
+                title:null,
+                draggable :false,
+                resizable :false,
+                closable:false,
+                tpl:new Ext.XTemplate(
+                    '<tpl for=".">',
+                        '<tpl if="url== \'\'">',
+                            '<a href="javascript:Ext.Msg.alert(\'温馨提示\',\'此系统暂无超链接！\');" target="_bank" style="color: #000;">',
+                                 '<div class="mainMenuIcon-wrap" style="padding: 10px 0px;margin:0px;width: 80px;">',                                    
+                                '<img src="{bigIcon}" class="mainMenuIcon-img" style="width:50px;height:50px;"/>',                                
+                                '<br/><span class="mainMenuIcon-text" style="padding-top: 0px;">{text}</span>',
+                                '</div>',
+                            '</a>',
+                        '<tpl else>',
+                            '<a href="{url}" target="_bank" style="color: #000;">',
+                                '<div class="mainMenuIcon-wrap" style="padding: 10px 0px;margin:0px;width: 80px;">',                                    
+                                '<img src="{bigIcon}" class="mainMenuIcon-img" style="width:50px;height:50px;"/>',                                
+                                '<br/><span class="mainMenuIcon-text" style="padding-top: 0px;">{text}</span>',
+                            '</div>',
+                            '</a>',
+                        '</tpl>',           
+                    '</tpl>'
+                ),
+                data:this.getView().getViewModel().get("otherSystemList") 
+            }); 
+        
+            var x=btn.getXY()[0];
+            var y=btn.getXY()[1]+40;
+            win.showAt(x,y);
+
+
+            sessionStorage.systemMenuWindowId=win.getId();
+        } else{
+            if(win.hidden){
+                var x=btn.getXY()[0];
+                var y=btn.getXY()[1]+40;
+                win.showAt(x,y);
+            }else{
+                win.hide();
+            }
+            
+        }
+
+    },
 
 
     /*

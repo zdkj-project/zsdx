@@ -131,55 +131,49 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                 Ext.Msg.confirm('提示', title, function (btn, text) {
                     if (btn == "yes") {
                         Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
-                        window.location.href = comm.get('baseUrl') + "/OaMeeting/exportExcel?ids=" + ids.join(",");
-                        /*                  Ext.create('Ext.panel.Panel', {
-                         title: 'HelloWorld',
-                         width: 200,
-                         html: '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + comm.get('baseUrl') + '/TrainTeacher/exportExcel?ids=' + ids.join(",") + '"></iframe>',
-                         renderTo: Ext.getBody()
-                         });*/
-                        // var task = new Ext.util.DelayedTask(function () {
-                        //     Ext.Msg.hide();
-                        // });
-                        Ext.Ajax.request({
-                            url: comm.get('baseUrl') + "/OaMeeting/exportExcel?ids=" + ids.join(","),
-                            success: function (resp, opts) {
-                                Ext.Ajax.request({
-                                    url: comm.get('baseUrl') + '/OaMeeting/checkExportEnd',
-                                    success: function (resp, opts) {
-                                        //task.delay(1200);
-                                        Ext.Msg.hide();
-                                        Ext.Msg.alert("消息", "导出数据成功");
-                                    },
-                                    failure: function (resp, opts) {
-                                        task.delay(1200);
-                                        var respText = Ext.util.JSON.decode(resp.responseText);
-                                        Ext.Msg.alert('错误', respText.error);
-                                    }
-                                });
-                            },
-                            failure: function (resp, opts) {
-                                task.delay(1200);
-                                //var respText = Ext.util.JSON.decode(resp.responseText);
-                                Ext.Msg.alert('错误');
-                            }
+                        //window.location.href = comm.get('baseUrl') + "/TrainClass/exportExcel?ids=" + ids.join(",");
+                        var component=Ext.create('Ext.Component', {
+                            title: 'HelloWorld',
+                            width: 0,
+                            height:0,
+                            hidden:true,
+                            html: '<iframe src="' + comm.get('baseUrl') + '/OaMeeting/exportMeetingExcel?ids=' + ids.join(",") + '"></iframe>',
+                            renderTo: Ext.getBody()
                         });
-
-//                        Ext.Ajax.request({
-//                            url: comm.get('baseUrl') + '/OaMeeting/checkExportEnd',
-//                            success: function (resp, opts) {
-//                                //task.delay(1200);
-//                                Ext.Msg.hide();
-//                            },
-//                            failure: function (resp, opts) {
-//                                task.delay(1200);
-//                                var respText = Ext.util.JSON.decode(resp.responseText);
-//                                Ext.Msg.alert('错误', respText.error);
-//                            }
-//                        });
-
+                        
+                       
+                        var time=function(){
+                            self.syncAjax({
+                                url: comm.get('baseUrl') + '/OaMeeting/checkExportMeetingEnd',
+                                timeout: 1000*60*30,        //半个小时         
+                                //回调代码必须写在里面
+                                success: function(response) {
+                                    data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                    if(data.success){
+                                        Ext.Msg.hide();
+                                        self.msgbox(data.obj);
+                                        component.destroy();                                
+                                    }else{                                    
+                                        if(data.obj==0){    //当为此值，则表明导出失败
+                                            Ext.Msg.hide();
+                                            self.Error("导出失败，请重试或联系管理员！");
+                                            component.destroy();                                        
+                                        }else{
+                                            setTimeout(function(){time()},1000);
+                                        }
+                                    }               
+                                },
+                                failure: function(response) {
+                                    Ext.Msg.hide();
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    component.destroy();
+                                }
+                            });
+                        }
+                        setTimeout(function(){time()},1000);    //延迟1秒执行
                     }
                 });
+                
                 return false;
             }
         },
@@ -316,8 +310,8 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
 
                 var detailhtmlpanel = item.down("container[xtype=meetinginfo.DetailPanel]");
 
-                //处理数据字段的值
-/*                var ddItem = factory.DDCache.getItemByDDCode("MEETINGCATEGORY");
+                //处理数据字典的值
+                var ddItem = factory.DDCache.getItemByDDCode("MEETINGCATEGORY");
                 var resultVal = "";
                 var value = recordData["meetingCategory"];
                 for (var i = 0; i < ddItem.length; i++) {
@@ -327,7 +321,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                         break;
                     }
                 }
-                recordData.meetingCategory = resultVal;*/
+                recordData.meetingCategory = resultVal;
                 recordData.needChecking = recordData.needChecking == 1 ? "需要考勤" : "不考勤";
                 detailhtmlpanel.setData(recordData);
 

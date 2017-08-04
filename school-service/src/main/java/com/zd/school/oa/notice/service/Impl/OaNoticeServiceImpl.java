@@ -5,7 +5,7 @@ import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.DateUtil;
 import com.zd.core.util.StringUtils;
-import com.zd.school.jw.push.service.PushInfoService;
+import com.zd.school.push.service.PushInfoService;
 import com.zd.school.oa.notice.dao.OaNoticeDao;
 import com.zd.school.oa.notice.model.OaNotice;
 import com.zd.school.oa.notice.model.OaNoticeOther;

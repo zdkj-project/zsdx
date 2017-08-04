@@ -26,7 +26,7 @@ Ext.define("core.base.view.BaseGrid", {
     defSort: [],
     emptyText:'<span style="display: block;text-align:center">没有需要显示的数据！</span>',
     //分组字段
-    defGroup: [],
+    defGroup: null,
     //扩展参数
     extParams: {},
     
@@ -176,7 +176,7 @@ Ext.define("core.base.view.BaseGrid", {
                 model: factory.ModelFactory.getModelByName(this.model, "checked").modelName,
                 sorters: this.defSort,
                 //grouper: this.defGroup,
-                groupField:this.defGroup,
+                //groupField:this.defGroup,
                 proxy: {
                     type: 'ajax',
                     url: this.dataUrl,
@@ -211,7 +211,7 @@ Ext.define("core.base.view.BaseGrid", {
                                 buttons: Ext.MessageBox.OK,
                                 icon: Ext.MessageBox.WARNING,
                                 fn: function(btn) {
-                                    location.reload()                                 
+                                    location.reload()       
                                 }
                             });
                             
@@ -219,6 +219,11 @@ Ext.define("core.base.view.BaseGrid", {
                     }    
                 }
             });
+
+             //处理store分组的时候，但是autoLoad失效，会立即加载
+            if(this.defGroup!=null){
+                this.store.setGroupField(this.defGroup);
+            }
         }
         
         if (this.noPagging == false) {

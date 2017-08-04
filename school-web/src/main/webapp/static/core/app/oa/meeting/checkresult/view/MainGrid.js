@@ -35,7 +35,6 @@ Ext.define("core.oa.meeting.checkresult.view.MainGrid", {
             text: '导出',
             ref: 'gridExport',
             funCode: 'girdFuntionBtn',
-            disabled: true,
             iconCls: 'x-fa fa-file'
         }, '->', {
             xtype: 'tbtext',

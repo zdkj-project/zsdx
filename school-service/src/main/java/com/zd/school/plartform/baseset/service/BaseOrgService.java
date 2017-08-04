@@ -162,4 +162,6 @@ public interface BaseOrgService extends BaseService<BaseOrg> {
     public Map<String, BaseOrg> getOrgChildMaps(String OrgId, boolean isSelf);
 
 	public int syncDeptInfoToUP(BaseOrgToUP baseOrgToUP, String smallDeptId);
+
+	public int syncAllDeptInfoToUP(List<BaseOrgToUP> deptInfo);
 }

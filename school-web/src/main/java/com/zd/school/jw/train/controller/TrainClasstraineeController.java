@@ -363,7 +363,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
 					+ " convert(int,a.CardStatusIDXF) as useState,"
 					+ " b.SID as sid,b.EmployeeStatusID as employeeStatusID "
-					+ " from Tc_Employee b left join TC_Card a on b.CardID=a.CardID"
+					+ " from Tc_Employee b join TC_Card a on b.CardID=a.CardID"
 					+ " where b.DepartmentID='"+departmentId+"'"
 					+ "	order by a.CardID asc,a.ModifyDate asc";
 			

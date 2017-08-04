@@ -178,6 +178,64 @@ Ext.define('core.main.model.MainModel', {
             "issystem": 1
         }],
 
+        otherSystemList:[{ 
+            text:'门户网站',
+            bigIcon:'/static/core/resources/images/icon/menhuwangzhan_icon.png',
+            url:'http://www.zsswdx.gov.cn/'
+        },{ 
+            text:'干部培训',
+            bigIcon:'/static/core/resources/images/icon/ganbupeixun_icon.png',
+            url:'http://gbpx.zsswdx.gov.cn/'
+        },{ 
+            text:'科研工作',
+            bigIcon:'/static/core/resources/images/icon/keyangongzuo_icon.png',
+            url:'http://kygz.zsswdx.gov.cn/dxkygl/'
+        },{ 
+            text:'教育学历',
+            bigIcon:'/static/core/resources/images/icon/xuelijiaoyun_icon.png',
+            url:'http://xljy.zsswdx.gov.cn/'
+        },{ 
+            text:'对外培训',
+            bigIcon:'/static/core/resources/images/icon/duiwaipeixun_icon.png',
+            url:'http://dwpx.zsswdx.gov.cn/'
+        },{ 
+            text:'数字图书',
+            bigIcon:'/static/core/resources/images/icon/shuzitushu_icon.png',
+            url:'http://sztsg.zsswdx.gov.cn/'
+        },{ 
+            text:'后勤服务',
+            bigIcon:'/static/core/resources/images/icon/houqinfuwu_icon.png',
+            url:'http://hqgl.zsswdx.gov.cn/'
+        },{ 
+            text:'基层党校',
+            bigIcon:'/static/core/resources/images/icon/jicendangxiao_icon.png',
+            url:''
+        },{ 
+            text:'信息发布',
+            bigIcon:'/static/core/resources/images/icon/xinxifabu_icon.png',
+            url:'http://www.zsswdx.gov.cn/'
+        },{ 
+            text:'用户中心',
+            bigIcon:'/static/core/resources/images/icon/yonghuzhongxin_icon.png',
+            url:''
+        },{ 
+            text:'移动短信',
+            bigIcon:'/static/core/resources/images/icon/yidongduanxin_icon.png',
+            url:'http://172.18.249.180:8394/'
+        },{ 
+            text:'电信短信',
+            bigIcon:'/static/core/resources/images/icon/dianxinduanxin_icon.png',
+            url:'http://zs.jxt189.com/zsdx/'
+        },{ 
+            text:'学员助手',
+            bigIcon:'/static/core/resources/images/icon/xueyuanzhushou_icon.png',
+            url:''
+        },{ 
+            text:'党校系统',
+            bigIcon:'/static/core/resources/images/icon/dangxiaoxitong_icon.png',
+            url:''
+        }],
+
         menuType:{
             value:'mainmenu'
         },

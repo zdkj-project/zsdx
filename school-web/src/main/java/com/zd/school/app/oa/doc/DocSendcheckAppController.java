@@ -25,7 +25,7 @@ import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.StringUtils;
-import com.zd.school.jw.push.service.PushInfoService;
+import com.zd.school.push.service.PushInfoService;
 import com.zd.school.oa.doc.model.AllUserDoc;
 import com.zd.school.oa.doc.model.DocRecexamines;
 import com.zd.school.oa.doc.model.DocSendcheck;

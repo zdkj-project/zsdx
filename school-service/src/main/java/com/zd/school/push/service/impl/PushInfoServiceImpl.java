@@ -1,17 +1,15 @@
-package com.zd.school.jw.push.service.impl;
-
-import java.util.Date;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+package com.zd.school.push.service.impl;
 
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.StringUtils;
-import com.zd.school.jw.push.dao.PushInfoDao;
-import com.zd.school.jw.push.model.PushInfo;
-import com.zd.school.jw.push.service.PushInfoService;
+import com.zd.school.push.dao.PushInfoDao;
+import com.zd.school.push.model.PushInfo;
+import com.zd.school.push.service.PushInfoService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.util.Date;
 
 @Service
 @Transactional

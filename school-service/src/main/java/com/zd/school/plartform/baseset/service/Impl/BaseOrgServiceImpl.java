@@ -19,9 +19,11 @@ import com.zd.school.plartform.baseset.model.BaseOrgToUP;
 import com.zd.school.plartform.baseset.model.BaseOrgTree;
 import com.zd.school.plartform.baseset.service.BaseOrgService;
 import com.zd.school.plartform.system.model.SysUser;
+import com.zd.school.plartform.system.model.SysUserToUP;
 import com.zd.school.plartform.system.service.SysDatapermissionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
@@ -559,9 +561,90 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 			}
 
 		} catch (Exception e) {
+			// 捕获了异常后，要手动进行回滚； 还需要进行验证测试是否完全正确。
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			row = -1;
 		}
 
 		return row;
+	}
+
+	@Override
+	public int syncAllDeptInfoToUP(List<BaseOrgToUP> deptInfos) {
+		// TODO Auto-generated method stub
+		int row = 0;
+		try {
+			// 1.查询该数据源中的此部门的信息(排除班级部门Train)
+			String sql = "SELECT departmentId,parentDepartmentId,convert(varchar(1),DepartmentStatus) departmentStatus,"
+					+ " convert(varchar(36),departmentName) as departmentName,"
+					+ " convert(varchar,layer) as layer,convert(varchar,layerorder) as layerorder "
+					+ " FROM TC_Department " + " where DepartmentID not like 'Train%'"	
+					+ " order by DepartmentID asc";
+
+			List<BaseOrgToUP> upDeptInfos = this.doQuerySqlObject(sql, BaseOrgToUP.class);
+			
+			// 循环对比
+			BaseOrgToUP currentDept = null;
+			BaseOrgToUP upDept = null;
+			boolean isExist = false;
+			StringBuffer sqlSb = new StringBuffer();
+			for(int i=0;i<deptInfos.size();i++){			
+				currentDept = deptInfos.get(i);
+				isExist = false;
+				
+				if(currentDept.getDepartmentId()==null)	//若此部门没有这个id，则不处理他
+					continue;
+				
+				for (int j = 0; j < upDeptInfos.size(); j++) {
+					upDept = upDeptInfos.get(j);
+					
+					if(currentDept.getDepartmentId().equals(upDept.getDepartmentId())){
+						isExist = true;
+						
+						if (!currentDept.equals(upDept)) { // 对比部分数据是否一致
+							sqlSb.append(" update TC_Department set ParentDepartmentID='"
+									+ currentDept.getParentDepartmentId() + "',DepartmentStatus='1'," + " DepartmentName='"
+									+ currentDept.getDepartmentName() + "',layer='" + currentDept.getLayer() + "',"
+									+ "layerorder='" + currentDept.getLayerorder() + "'" + " where DepartmentID='"
+									+ currentDept.getDepartmentId() + "'");
+						
+						} else if (upDept.getDepartmentStatus().equals("0")) { // 若状态为0，则置为1
+							sqlSb.append(" update TC_Department set DepartmentStatus='1'" 
+									+ " where DepartmentID='" + currentDept.getDepartmentId() + "'");
+				
+						}		
+						upDeptInfos.remove(j);
+						break; // 跳出
+					}
+								
+				}
+							
+				if (!isExist) {
+					sqlSb.append(" insert into TC_Department(DepartmentID,ParentDepartmentID,DepartmentName,DepartmentStatus,layer,layerorder) "
+							+ " values('" + currentDept.getDepartmentId() + "','" + currentDept.getParentDepartmentId()
+							+ "'," + "'" + currentDept.getDepartmentName() + "',1,'" + currentDept.getLayer() + "','"
+							+ currentDept.getLayerorder() + "')");
+				
+				}
+
+				// 若积累的语句长度大于2000（大约50条语句左右），则执行
+				if (sqlSb.length() > 2000) {
+					row += this.executeSql(sqlSb.toString());
+					sqlSb.setLength(0); // 清空
+				}
+			}
+			
+			// 最后执行一次
+			if (sqlSb.length() > 0)
+				row += this.executeSql(sqlSb.toString());
+			
+		} catch (Exception e) {
+			// 捕获了异常后，要手动进行回滚； 还需要进行验证测试是否完全正确。
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			row = -1;
+		}
+
+		return row;
+		
 	}
 }

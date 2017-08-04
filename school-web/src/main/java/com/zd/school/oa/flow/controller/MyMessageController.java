@@ -1,24 +1,19 @@
 package com.zd.school.oa.flow.controller;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zd.core.constant.Constant;
+import com.zd.core.controller.core.FrameWorkController;
+import com.zd.school.plartform.system.model.SysUser;
+import com.zd.school.push.model.PushInfo;
+import com.zd.school.push.service.PushInfoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.zd.core.constant.Constant;
-import com.zd.core.controller.core.FrameWorkController;
-import com.zd.core.util.JsonBuilder;
-import com.zd.school.jw.push.model.PushInfo;
-import com.zd.school.jw.push.service.PushInfoService;
-import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.teacher.teacherinfo.model.TeaTeacherbase;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequestMapping("/MyMessage")

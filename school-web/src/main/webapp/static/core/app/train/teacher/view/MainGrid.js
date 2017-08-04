@@ -23,14 +23,14 @@ Ext.define("core.train.teacher.view.MainGrid", {
             ref: 'gridAdd_Tab',
             funCode: 'girdFuntionBtn', //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             iconCls: 'x-fa fa-plus-circle'
-        }, {
+        },/* {
          xtype: 'button',
          text: '发送短信',
          ref: 'gridEdit',
          funCode: 'girdFuntionBtn',
          disabled: false,
          iconCls: 'x-fa fa-pencil-square'
-         }, /*{
+         },*/ /*{
          xtype: 'button',
          text: '主讲课程',
          ref: 'gridCourseDetail',

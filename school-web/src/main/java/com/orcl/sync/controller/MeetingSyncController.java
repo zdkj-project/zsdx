@@ -3,7 +3,6 @@ package com.orcl.sync.controller;
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.util.CustomerContextHolder;
-import com.zd.core.util.ModelUtil;
 import com.zd.school.build.define.model.BuildRoominfo;
 import com.zd.school.build.define.service.BuildRoominfoService;
 import com.zd.school.oa.doc.model.DocSendcheck;
@@ -11,6 +10,8 @@ import com.zd.school.oa.meeting.model.OaMeeting;
 import com.zd.school.oa.meeting.model.OaMeetingemp;
 import com.zd.school.oa.meeting.service.OaMeetingService;
 import com.zd.school.oa.meeting.service.OaMeetingempService;
+import com.zd.school.plartform.baseset.model.BaseDicitem;
+import com.zd.school.plartform.baseset.service.BaseDicitemService;
 import com.zd.school.plartform.baseset.service.BaseOrgService;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -24,7 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/meetingsync")
@@ -40,6 +43,8 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
     private OaMeetingempService empService;
     @Resource
     private BuildRoominfoService buildService;
+    @Resource
+    private BaseDicitemService dicitemService;
 
     @RequestMapping(value = "meeting")
     public void meeting(HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
@@ -66,7 +71,21 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
         CustomerContextHolder.setCustomerType(CustomerContextHolder.SESSION_FACTORY_MYSQL);
         OaMeeting m = null;
         //获取房间实体，拿到roomid
+        //会议类型数据字典
+        String mapKey = null;
+        String[] propValue = {"MEETINGCATEGORY"};
+        Map<String, String> mapDicItem = new HashMap<>();
+        List<BaseDicitem> listDicItem = dicitemService.queryByProerties("dicCode", propValue);
+        for (BaseDicitem baseDicitem : listDicItem) {
+            mapKey = baseDicitem.getItemName() + baseDicitem.getDicCode();
+            mapDicItem.put(mapKey, baseDicitem.getItemCode());
+        }
         BuildRoominfo build = null;
+        Map<String, String> mapRoomInfo = new HashMap<>();
+        List<BuildRoominfo> roominfoList = buildService.doQueryAll();
+        for (BuildRoominfo buildRoominfo : roominfoList) {
+            mapRoomInfo.put(buildRoominfo.getRoomName(), buildRoominfo.getUuid());
+        }
         for (Object[] o : list) {
             m = meetingService.get(o[0].toString());
             if (m == null) {
@@ -75,18 +94,22 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
             m.setMeetingTitle(o[1].toString());
             m.setMeetingName(o[1].toString());
             m.setMeetingContent(o[2].toString());
-            m.setMeetingCategory(o[3].toString());
+            //会议类型数据字典转换
+            if (o[3] != null)
+                m.setMeetingCategory(mapDicItem.get(o[3].toString() + "MEETINGCATEGORY"));
+            //m.setMeetingCategory(o[3].toString());
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
             m.setBeginTime(sdf.parse(o[4].toString()));
             m.setEndTime(sdf.parse(o[5].toString()));
             //m.setRoomId(o[7].toString());
             m.setRoomName(o[6].toString());
-
-            build = buildService.getByProerties("roomName", o[6].toString());
+            if (mapRoomInfo.get(o[6]) != null)
+                m.setRoomId(mapRoomInfo.get(o[6]));
+/*            build = buildService.getByProerties("roomName", o[6].toString());
             if (ModelUtil.isNotNull(build)) {
                 m.setRoomId(build.getUuid());
-            }
+            }*/
 
             m.setNeedChecking((short) 1);
             meetingService.merge(m);

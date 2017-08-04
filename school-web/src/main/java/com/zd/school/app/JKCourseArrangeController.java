@@ -32,7 +32,7 @@ import com.zd.school.jw.eduresources.service.JwTGradeclassService;
 import com.zd.school.jw.model.app.JKCourse;
 import com.zd.school.jw.model.app.JKCourseToDayArray;
 import com.zd.school.jw.model.app.JwTcourseArrangeForApp;
-import com.zd.school.jw.push.service.PushInfoService;
+import com.zd.school.push.service.PushInfoService;
 
 @Controller
 @RequestMapping("/app/JKCourseArrange")
