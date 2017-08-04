@@ -1,16 +1,14 @@
 package com.zd.school.plartform.baseset.model;
 
-import java.io.Serializable;
+import com.zd.core.annotation.FieldInfo;
+import com.zd.core.model.BaseEntity;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Formula;
-
-import com.zd.core.annotation.FieldInfo;
-import com.zd.core.model.BaseEntity;
+import java.io.Serializable;
 
 /**
  * 
@@ -41,7 +39,7 @@ public class BaseUserdeptjob extends BaseEntity implements Serializable {
 	}
 
 	@FieldInfo(name = "部门岗位ID")
-	@Column(name = "DEPTJOB_ID", length = 36, nullable = false)
+	@Column(name = "DEPTJOB_ID", length = 36, nullable = true)
 	private String deptjobId;
 
 	public void setDeptjobId(String deptjobId) {
@@ -53,7 +51,7 @@ public class BaseUserdeptjob extends BaseEntity implements Serializable {
 	}
 
 	@FieldInfo(name = "部门ID")
-	@Column(name = "DEPT_ID", length = 36, nullable = false)
+	@Column(name = "DEPT_ID", length = 36, nullable = true)
 	private String deptId;
 
 	public void setDeptId(String deptId) {
@@ -65,7 +63,7 @@ public class BaseUserdeptjob extends BaseEntity implements Serializable {
 	}
 
 	@FieldInfo(name = "岗位ID")
-	@Column(name = "JOB_ID", length = 36, nullable = false)
+	@Column(name = "JOB_ID", length = 36, nullable = true)
 	private String jobId;
 
 	public void setJobId(String jobId) {
@@ -77,7 +75,7 @@ public class BaseUserdeptjob extends BaseEntity implements Serializable {
 	}
 
 	@FieldInfo(name = "是否主部门 0-不是 1-是")
-	@Column(name = "MASTER_DEPT", length = 5, nullable = false)
+	@Column(name = "MASTER_DEPT", length = 5, nullable = true)
 	private Integer masterDept;
 
 	public void setMasterDept(Integer masterDept) {

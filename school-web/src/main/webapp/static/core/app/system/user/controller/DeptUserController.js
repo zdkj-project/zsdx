@@ -125,10 +125,67 @@ Ext.define("core.system.user.controller.DeptUserController", {
                     return false;
                 }
             },
-            
+
+            /**
+             * 从oa同步人员信息到系统
+             */
             "panel[xtype=user.usergrid] button[ref=sync]": {
                 beforeclick: function(btn) {
-                	 var resObj = self.ajax({
+                    var userGrid = btn.up("basegrid[xtype=user.usergrid]");
+                    var basePanel = userGrid.up("panel[xtype=user.mainlayout]");
+                    var deptGrid = basePanel.down("basetreerid[xtype=user.depttree]");
+                    var title = "确定要从OA同步人员信息吗？";
+                    Ext.Msg.confirm('提示', title, function (btnOper, text) {
+                        if (btnOper == "yes") {
+                            Ext.Msg.wait('正在同步中,请稍后...', '温馨提示');
+                            var component = Ext.create('Ext.Component', {
+                                title: 'HelloWorld',
+                                width: 0,
+                                height: 0,
+                                hidden: true,
+                                html: '<iframe src="' + comm.get('baseUrl') + '/usersync/list"></iframe>',
+                                renderTo: Ext.getBody()
+                            });
+
+                            var time = function () {
+                                self.syncAjax({
+                                    url: comm.get('baseUrl') + '/usersync/checkUserSyncEnd',
+                                    timeout: 1000 * 60 * 30, //半个小时
+                                    //回调代码必须写在里面
+                                    success: function (response) {
+                                        data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                        if (data.success) {
+                                            Ext.Msg.hide();
+                                            self.msgbox(data.obj);
+                                            component.destroy();
+                                            userGrid.getStore().load();
+                                            deptGrid.getScore().load();
+                                            //转汇总结果显示的tab页面
+                                        } else {
+                                            if (data.obj == 0) { //当为此值，则表明导出失败
+                                                Ext.Msg.hide();
+                                                self.Error("同步失败，请重试或联系管理员！");
+                                                component.destroy();
+                                            } else {
+                                                setTimeout(function () {
+                                                    time()
+                                                }, 1000);
+                                            }
+                                        }
+                                    },
+                                    failure: function (response) {
+                                        Ext.Msg.hide();
+                                        Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                        component.destroy();
+                                    }
+                                });
+                            };
+                            setTimeout(function () {
+                                time()
+                            }, 1000); //延迟1秒执行
+                        }
+                    });
+ /*               	 var resObj = self.ajax({
                          url: "/usersync" + "/list"
                      });
                      if (resObj.success) {
@@ -137,7 +194,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
                      }else{
                     	 //self.msgbox("同步成功!");
                     	 self.msgbox("请先同步部门和岗位数据!");
-                     }
+                     }*/
                      return false;
                 }
             },
