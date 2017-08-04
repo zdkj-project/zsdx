@@ -12,6 +12,11 @@ import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.LogoutFilter;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
+/**
+ * 最新修改：退出，一律返回单点登录界面
+ * @author Administrator
+ *
+ */
 public class MyLogoutFilter extends LogoutFilter {
 	@Override
 	protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {
@@ -21,11 +26,11 @@ public class MyLogoutFilter extends LogoutFilter {
 		try {		
 			Properties pros = PropertiesLoaderUtils.loadAllProperties("sso.properties");		
 			Session session = subject.getSession();		
-			//System.out.println("loginout：sessionId"+session.getId());			
-			 //判断是否进行了单点登录，更换响应的地址	
+				
+			//判断是否进行了单点登录，更换响应的地址	
 			String accessTokenSession = (String) session.getAttribute("accessToken");
-			//System.out.println("loginout：TOKEN:"+accessTokenSession);					
-	    	if(StringUtils.isNotEmpty(accessTokenSession)){	    		
+							
+	    	//if(StringUtils.isNotEmpty(accessTokenSession)){	    		
 	    		//传accessTokenSession是为了清除认证平台的token；传clientId是为了方便退出成功后可以跳转到所对应客户端的登陆页面。
 	    		String ssoServerUrl=pros.getProperty("ssoService");
 	    		if(!ssoServerUrl.endsWith("/")){
@@ -37,7 +42,7 @@ public class MyLogoutFilter extends LogoutFilter {
 	    		//System.out.println("loginout：ssoUrl:"+serverDelUrl);
 	    		
 	    		redirectUrl=serverDelUrl;	    		    	
-	    	}	   
+	    	//}   
 	    	
 	    	session.removeAttribute("accessToken");	//清除单点登录数据
 			session.removeAttribute("accessAccount");	//清除单点登录数据

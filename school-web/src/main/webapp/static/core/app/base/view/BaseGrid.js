@@ -211,7 +211,7 @@ Ext.define("core.base.view.BaseGrid", {
                                 buttons: Ext.MessageBox.OK,
                                 icon: Ext.MessageBox.WARNING,
                                 fn: function(btn) {
-                                    location.reload()                                 
+                                    location.reload()       
                                 }
                             });
                             

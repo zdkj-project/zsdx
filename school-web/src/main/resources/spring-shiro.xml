@@ -90,7 +90,8 @@
     
     <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
         <property name="securityManager" ref="securityManager"/>
-        <property name="loginUrl" value="/login.jsp"/>
+        <!-- property name="loginUrl" value="/login.jsp"/> -->
+        <property name="loginUrl" value="http://tyrz.zsswdx.gov.cn/dx_sso/sso/tologin?client_id=yikatong"/>
         <property name="successUrl" value="/login/desktop"/>
         <property name="unauthorizedUrl" value="/login/callUnauthorized"/>
         <property name="filters">
