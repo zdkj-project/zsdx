@@ -1,5 +1,19 @@
 package com.zd.school.jw.train.service.Impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.zd.core.constant.CharConvertType;
 import com.zd.core.constant.TreeVeriable;
 import com.zd.core.model.extjs.QueryResult;
@@ -12,15 +26,9 @@ import com.zd.school.jw.train.model.TrainCoursecategory;
 import com.zd.school.jw.train.model.TrainCoursecategoryTree;
 import com.zd.school.jw.train.service.TrainCoursecategoryService;
 import com.zd.school.jw.train.service.TrainCourseinfoService;
+import com.zd.school.plartform.baseset.model.BaseDicitem;
+import com.zd.school.plartform.baseset.service.BaseDicitemService;
 import com.zd.school.plartform.system.model.SysUser;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
-import java.util.*;
 
 /**
  * ClassName: TrainCoursecategoryServiceImpl
@@ -42,6 +50,9 @@ public class TrainCoursecategoryServiceImpl extends BaseServiceImpl<TrainCoursec
         this.dao = dao;
     }
 
+    @Resource
+    private BaseDicitemService dicitemService;
+    
     @Resource
     private TrainCourseinfoService courseinfoService;
 
@@ -372,5 +383,41 @@ public class TrainCoursecategoryServiceImpl extends BaseServiceImpl<TrainCoursec
         } else {
             return nodeCode;
         }
+    }
+    
+    @Override
+    public List<TrainCoursecategory> listExport(String ids,String orderSql) {
+        String hql = " from TrainCoursecategory where isDelete=0 ";
+        if (StringUtils.isNotEmpty(ids)) {
+            hql += " and uuid in ('" + ids.replace(",", "','") + "')";
+        }
+        if("".equals(orderSql))
+            hql += " order by parentNode,orderIndex asc";
+        else
+            hql += orderSql;
+        List<TrainCoursecategory> list = this.doQuery(hql);
+        List<TrainCoursecategory> exportList = new ArrayList<>();
+
+        //导出时要转换字典项
+        String mapKey = null;
+        String[] propValue = {"HEADSHIPLEVEL", "XBM", "TRAINEECATEGORY", "XWM", "XLM", "ZZMMM", "MZM"};
+        Map<String, String> mapDicItem = new HashMap<>();
+        List<BaseDicitem> listDicItem = dicitemService.queryByProerties("dicCode", propValue);
+//        for (BaseDicitem baseDicitem : listDicItem) {
+//            mapKey = baseDicitem.getItemCode() + baseDicitem.getDicCode();
+//            mapDicItem.put(mapKey, baseDicitem.getItemName());
+//        }
+//        for (TrainCoursecategory trainee : list) {
+//            trainee.setHeadshipLevelName(mapDicItem.get(trainee.getHeadshipLevel() + "HEADSHIPLEVEL"));
+//            trainee.setXbmName(mapDicItem.get(trainee.getXbm() + "XBM"));
+//            trainee.setTraineeCategoryName(mapDicItem.get(trainee.getTraineeCategory() + "TRAINEECATEGORY"));
+//            trainee.setXwmName(mapDicItem.get(trainee.getXwm() + "XWM"));
+//            trainee.setXlmName(mapDicItem.get(trainee.getXlm() + "XLM"));
+//            trainee.setZzmmmName(mapDicItem.get(trainee.getZzmmm() + "ZZMMM"));
+//            trainee.setMzmName(mapDicItem.get(trainee.getMzm() + "MZM"));
+//        }
+        exportList.addAll(list);
+
+        return exportList;
     }
 }

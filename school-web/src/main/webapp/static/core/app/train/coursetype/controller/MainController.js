@@ -13,6 +13,83 @@ Ext.define("core.train.coursetype.controller.MainController", {
     init: function () {
     },
     control: {
+    	/**
+         * 导出
+         */
+        "basetreegrid[xtype=coursetype.coursecategorytree] button[ref=gridExport]": {
+            beforeclick: function (btn) {
+            	 var self = this;
+                //得到组件
+                var baseGrid = btn.up("basetreegrid");
+                var funCode = baseGrid.funCode;
+                var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+                //得到配置信息
+                var funData = basePanel.funData;
+                var pkName = funData.pkName;
+                //得到选中数据
+                var records = baseGrid.getSelectionModel().getSelection();
+                var title = "将导出所有的课程分类";
+                var ids = new Array();
+                if (records.length > 0) {
+                    title = "将导出所有的课程分类";
+                    Ext.each(records, function (rec) {
+                        var pkValue = rec.get(pkName);
+                        ids.push(pkValue);
+                    });
+
+                }
+                Ext.Msg.confirm('提示', title, function (btn, text) {
+                    if (btn == "yes") {
+                        Ext.Msg.wait('正在导出,请稍后...', '温馨提示');
+                        //window.location.href = comm.get('baseUrl') + "/TrainClass/exportExcel?ids=" + ids.join(",");
+                        var component=Ext.create('Ext.Component', {
+                            title: 'HelloWorld',
+                            width: 0,
+                            height:0,
+                            hidden:true,
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainCoursecategory/exportExcel?ids=' + ids.join(",") + '&orderSql= order by parentNode,orderIndex asc"></iframe>',
+                            renderTo: Ext.getBody()
+                        });
+                        
+                       
+                        var time=function(){
+                            self.syncAjax({
+                                url: comm.get('baseUrl') + '/TrainCoursecategory/checkExportEnd',
+                                timeout: 1000*60*30,        //半个小时         
+                                //回调代码必须写在里面
+                                success: function(response) {
+                                    data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                    if(data.success){
+                                        Ext.Msg.hide();
+                                        self.msgbox(data.obj);
+                                        component.destroy();                                
+                                    }else{                                    
+                                        if(data.obj==0){    //当为此值，则表明导出失败
+                                            Ext.Msg.hide();
+                                            self.Error("导出失败，请重试或联系管理员！");
+                                            component.destroy();                                        
+                                        }else{
+                                            setTimeout(function(){time()},1000);
+                                        }
+                                    }               
+                                },
+                                failure: function(response) {
+                                    Ext.Msg.hide();
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    component.destroy();
+                                }
+                            });
+                        }
+                        setTimeout(function(){time()},1000);    //延迟1秒执行
+                    }
+                });
+            
+                return false;
+            }
+        },
+    	
+    	
+    	
         /**
          * 列表增加事件
          */

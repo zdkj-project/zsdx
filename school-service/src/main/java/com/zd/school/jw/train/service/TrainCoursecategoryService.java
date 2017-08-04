@@ -89,4 +89,13 @@ public interface TrainCoursecategoryService extends BaseService<TrainCoursecateg
 	 * @param currentUser 当前操作者
 	 */
 	public void doChangeOrder(String ids, String orders,SysUser currentUser);
+	
+	/**
+     * 导出课程分类信息
+     *
+     * @param ids 要导出的课程分类的Id,如果ids为空则为导出所有课程分类
+     * @param  orderSql 导出时的排序条件
+     * @return
+     */
+    public List<TrainCoursecategory> listExport(String ids,String orderSql);
 }

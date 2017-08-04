@@ -405,7 +405,8 @@ Ext.define("core.train.course.controller.MainController", {
                     break;
                 case "teacherDesc":
                     tabTitle = "教师简介_" + insertObj.courseName;
-                    tabItemId = funCode + "_gridDeacherDesc";
+//                    tabItemId = funCode + "_gridDeacherDesc";
+                    tabItemId ="";
                     itemXtype = "course.detailhtmlpanel";
                     break
             }

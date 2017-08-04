@@ -59,7 +59,7 @@ Ext.define("core.train.teacher.view.DetailHtmlPanel", {
                     '</ul>',
                     '<div class="trainTeacher_desc">',
                         '<div class="wrap">',
-                            '<strong>基本信息：</strong>',
+                            '<strong>老师基本信息：</strong>',
                             '<span>{teaDesc}</span>',
                         '</div>',    
                         '<div class="wrap">',

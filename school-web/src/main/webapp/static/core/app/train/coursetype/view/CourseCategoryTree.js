@@ -37,7 +37,14 @@ Ext.define("core.train.coursetype.view.CourseCategoryTree", {
         text: '刷新',
         ref: 'gridRefresh',
         iconCls: 'x-fa fa-refresh'
-    }],
+    },{
+        xtype: 'button',
+        text: '导出',
+        ref: 'gridExport',
+        funCode: 'girdFuntionBtn',
+        disabled: false,
+        iconCls: 'x-fa fa-file'
+    },],
     columns: {
         defaults: {
             //flex:1,     //不设定此属性了，否则多选框的宽度也会变大

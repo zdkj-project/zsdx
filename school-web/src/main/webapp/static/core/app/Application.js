@@ -50,14 +50,14 @@ Ext.define('core.Application', {
         ]);
         // TODO - Launch the application
     },
-
     onAppUpdate: function () {
-        Ext.Msg.confirm('应用更新', '这个应用有更新，你要重新加载吗?',
-            function (choice) {
-                if (choice === 'yes') {
-                    window.location.reload();
-                }
-            }
-        );
+    	 window.location.reload();
+//        Ext.Msg.confirm('应用更新', '这个应用有更新，你要重新加载吗?',
+//            function (choice) {
+//                if (choice === 'yes') {
+//                    window.location.reload();
+//                }
+//            }
+//        );
     }
 });

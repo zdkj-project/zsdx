@@ -26,7 +26,7 @@ import java.io.Serializable;
 public class TrainCoursecategory extends TreeNodeEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
-/*	@FieldInfo(name = "分类名称")
+/* 	@FieldInfo(name = "分类名称")
     @Column(name = "CATEGORY_NAME", length = 36, nullable = false)
 	private String categoryName;
 

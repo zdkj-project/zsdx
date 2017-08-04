@@ -115,38 +115,38 @@ Ext.define("core.train.teacher.view.MainGrid", {
             text: '序号',
             align: 'center'
         }, {
-            width: 100,
+            width: 90,
             text: "姓名",
             dataIndex: "xm",
             align: 'left'
         }, {
-            width: 80,
+            width: 60,
             text: "性别",
             dataIndex: "xbm",
             columnType: "basecombobox", //列类型
             ddCode: "XBM", //字典代码
             align: 'left'
         }, {
-            width: 160,
+            width: 100,
             text: "职务",
             dataIndex: "position",
             align: 'left'
         }, {
-            width: 120,
+            width: 100,
             text: "职称",
             dataIndex: "technical",
             columnType: "basecombobox", //列类型
             ddCode: "TECHNICAL", //字典代码
             align: 'left'
         }, {
-            width: 150,
+            width: 100,
             text: "学历",
             dataIndex: "xlm",
             columnType: "basecombobox", //列类型
             ddCode: "XLM", //字典代码
             align: 'left'
         }, {
-            width: 150,
+            width: 100,
             text: "手机号码",
             dataIndex: "mobilePhone",
             align: 'left'
@@ -159,7 +159,7 @@ Ext.define("core.train.teacher.view.MainGrid", {
             align: 'left'
         }, {
             flex: 1,
-            minWidth: 100,
+            minWidth: 120,
             text: "工作单位",
             dataIndex: "workUnits",
             align: 'left'

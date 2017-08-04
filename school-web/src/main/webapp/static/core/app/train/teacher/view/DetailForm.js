@@ -183,7 +183,7 @@ Ext.define("core.train.teacher.view.DetailForm", {
         layout: "column",
         labelAlign: "right",
         items: [{            
-            fieldLabel: "基本信息",        
+            fieldLabel: "老师基本信息",        
             columnWidth:1,
             grow: true,
             height:90,

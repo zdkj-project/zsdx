@@ -115,6 +115,7 @@ Ext.define("core.train.course.view.MainGrid", {
             width: 100,
             text: "课程编码",
             dataIndex: "courseCode",
+            hidden:true,
             align:'left'
         },{
             flex:1,
@@ -129,7 +130,7 @@ Ext.define("core.train.course.view.MainGrid", {
                 return html;
             }
         },{
-            width: 150,
+            width: 120,
             text: "所属类别",
             dataIndex: "categoryName",
             align:'left'
@@ -144,14 +145,16 @@ Ext.define("core.train.course.view.MainGrid", {
             width: 80,
             text: "教学时长",
 			dataIndex: "periodTime",
+			hidden:true,
             align:'left'
 		}, {
             width: 80,
             text: "课程学分",
 			dataIndex: "credits",
+			hidden:true,
             align:'left'
 	    }, {
-            width: 160,
+            width: 80,
             text: "主讲教师",
             dataIndex: "mainTeacherName",
             align:'left',
@@ -162,9 +165,10 @@ Ext.define("core.train.course.view.MainGrid", {
                 return html;
             }
         }, {
-            width: 160,
+            width: 100,
             text: "手机号码",
             dataIndex: "mobilePhone",
+            hidden:true,
             align:'left',
             renderer: function (value, metaData) {
                 var title = "手机号码";
@@ -176,6 +180,7 @@ Ext.define("core.train.course.view.MainGrid", {
             width: 150,
             text: "创建时间",
             dataIndex: "createTime",
+            hidden:true,
             align:'left',
         },{
             width: 150,
