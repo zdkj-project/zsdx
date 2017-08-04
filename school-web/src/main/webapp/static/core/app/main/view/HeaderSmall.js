@@ -19,6 +19,20 @@ Ext.define("core.main.view.HeaderSmall",{
         	},*/
          
          	id: 'app-header-small-title' 
+        },{
+            // xtype: 'button', // default for Toolbars
+            tooltip: '点击打开/关闭面板', 
+            text:null,
+            //text: '<span style="color:#fff;font-size: 14px;">收起</span>',
+            iconCls: 'x-fa fa-chevron-circle-down header-button-color header-button-icon-size', 
+            cls: 'core-header-button', 
+            //overCls: '', 
+            focusCls : '',    
+            width:40,
+            height:40,   
+            listeners:{
+                click:'onShowSystemPanel' 
+            }
         },
         '->',{ 
             tooltip: '展开', 

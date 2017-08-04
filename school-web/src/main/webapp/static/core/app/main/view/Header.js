@@ -8,7 +8,8 @@ Ext.define("core.main.view.Header",{
 
     xtype: 'app-header',
     items: [{ 
-        	xtype: 'tbtext',           
+        	xtype: 'tbtext',  
+            width:410,         
             html:'<div class="top_title">'+
                 '<img class="index_logo" src="static/core/resources/images/login_logo.png" />'+
                 '<img class="index_title" src="static/core/resources/images/index_title.png" />'+
@@ -19,6 +20,20 @@ Ext.define("core.main.view.Header",{
         	},*/
          
          	id: 'app-header-title' 
+        }, {
+            // xtype: 'button', // default for Toolbars
+            tooltip: '点击打开/关闭面板', 
+            text:null,
+            //text: '<span style="color:#fff;font-size: 14px;">收起</span>',
+            iconCls: 'x-fa fa-chevron-circle-down header-button-color header-button-icon-size', 
+            cls: 'core-header-button', 
+            //overCls: '', 
+            focusCls : '',    
+            width:40,
+            height:40,   
+            listeners:{
+                click:'onShowSystemPanel' 
+            }
         },
         '->',{
             xtype:'container',
