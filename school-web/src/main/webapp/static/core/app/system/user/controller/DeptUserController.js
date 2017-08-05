@@ -7,35 +7,35 @@ Ext.define("core.system.user.controller.DeptUserController", {
         treeUtil: "core.util.TreeUtil",
         gridActionUtil: "core.util.GridActionUtil"
     },
-    
+
     alias: 'controller.user.deptUserController',
 
-    init: function() {
+    init: function () {
         var self = this
-            //事件注册
+        //事件注册
         this.control({
             "panel[xtype=user.usergrid] actiontextcolumn": {
-                gridUserRoleClick:function(data){
+                gridUserRoleClick: function (data) {
                     var baseGrid = data.view;
                     var record = data.record;
 
                     this.doDetail_Tab(null, data.cmd, baseGrid, record);
-                 
+
                     return false;
                 },
-                gridDeptJobClick:function(data){
+                gridDeptJobClick: function (data) {
                     var baseGrid = data.view;
                     var record = data.record;
 
                     this.doDetail_Tab(null, data.cmd, baseGrid, record);
-                 
+
                     return false;
                 }
             },
 
             //点击用户事件响应,刷新用户所属的角色
             "panel[xtype=user.usergrid]": {
-                beforeitemclick: function(grid, record, item, index, e, eOpts) {
+                beforeitemclick: function (grid, record, item, index, e, eOpts) {
                     /*
                     var basePanel = grid.up("panel[xtype=user.mainlayout]");
                     var records = grid.getSelectionModel().getSelection();
@@ -52,7 +52,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
             },
             //添加用户事件
             "panel[xtype=user.usergrid] button[ref=gridAdd]": {
-                beforeclick: function(btn) {
+                beforeclick: function (btn) {
                     var self = this;
                     var baseGrid = btn.up("basegrid");
                     var funCode = baseGrid.funCode;
@@ -62,18 +62,18 @@ Ext.define("core.system.user.controller.DeptUserController", {
                     var detLayout = "selectsysuser.mainlayout";
                     var deptId = funData.deptId;
                     var isRight = funData.isRight;
-                    var deptType = funData.deptType; 
-                    if (!deptId){
+                    var deptType = funData.deptType;
+                    if (!deptId) {
                         self.Warning("请选择一个部门");
                         return false;
                     }
-                    if (isRight=="1"){
+                    if (isRight == "1") {
                         self.Warning("您无权限给此部门添加用户，请重新选择");
-                        return false;                        
+                        return false;
                     }
-                    if (deptType=="04"||deptType=="05"||deptType=="06"){
+                    if (deptType == "04" || deptType == "05" || deptType == "06") {
                         self.Warning("年级、班级及学科的教师由其它模块维护");
-                        return false;                         
+                        return false;
                     }
                     // var filterArry = new Array();
                     // filterArry.push("{'type':'string','comparison':'=','value':'" + funData.deptId + "','field':'deptId'}");
@@ -109,7 +109,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
                         win = Ext.create('core.app.base.BaseFormWin', {
                             id: winId,
                             title: title,
-                            width: comm.get("clientWidth")*0.6,
+                            width: comm.get("clientWidth") * 0.6,
                             height: 768,
                             resizable: false,
                             iconCls: iconCls,
@@ -130,7 +130,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
              * 从oa同步人员信息到系统
              */
             "panel[xtype=user.usergrid] button[ref=sync]": {
-                beforeclick: function(btn) {
+                beforeclick: function (btn) {
                     var userGrid = btn.up("basegrid[xtype=user.usergrid]");
                     var basePanel = userGrid.up("panel[xtype=user.mainlayout]");
                     var deptGrid = basePanel.down("basetreerid[xtype=user.depttree]");
@@ -185,119 +185,118 @@ Ext.define("core.system.user.controller.DeptUserController", {
                             }, 1000); //延迟1秒执行
                         }
                     });
- /*               	 var resObj = self.ajax({
-                         url: "/usersync" + "/list"
-                     });
-                     if (resObj.success) {
-                    	 self.msgbox("同步成功!");
-                    	 btn.up("basegrid").getStore().load();
-                     }else{
-                    	 //self.msgbox("同步成功!");
-                    	 self.msgbox("请先同步部门和岗位数据!");
-                     }*/
-                     return false;
+                    /*               	 var resObj = self.ajax({
+                                            url: "/usersync" + "/list"
+                                        });
+                                        if (resObj.success) {
+                                            self.msgbox("同步成功!");
+                                            btn.up("basegrid").getStore().load();
+                                        }else{
+                                            //self.msgbox("同步成功!");
+                                            self.msgbox("请先同步部门和岗位数据!");
+                                        }*/
+                    return false;
                 }
             },
 
             "panel[xtype=user.usergrid] button[ref=syncToUP]": {
-                beforeclick: function(btn) {         
-                     //同步人员数据事件                        
+                beforeclick: function (btn) {
+                    //同步人员数据事件
                     var baseGrid = btn.up("grid");
-                   
-                    Ext.MessageBox.confirm('同步人员数据到UP', '您确定要执行同步人员数据到UP操作吗？', function(btn, text) {                  
+
+                    Ext.MessageBox.confirm('同步人员数据到UP', '您确定要执行同步人员数据到UP操作吗？', function (btn, text) {
                         if (btn == 'yes') {
-                            
-                            Ext.Msg.wait('正在同步人员数据，请等待...','提示');
-                            
-                            setTimeout(function(){
+
+                            Ext.Msg.wait('正在同步人员数据，请等待...', '提示');
+
+                            setTimeout(function () {
 
                                 //异步ajax加载
                                 Ext.Ajax.request({
                                     url: comm.get('baseUrl') + "/sysuser/doSyncAllUserInfoToUp",
-                                    params: { },
-                                    timeout:1000*60*60*10,     //10个小时
-                                    success: function(response){
-                                        var result=JSON.parse(response.responseText);
+                                    params: {},
+                                    timeout: 1000 * 60 * 60 * 10,     //10个小时
+                                    success: function (response) {
+                                        var result = JSON.parse(response.responseText);
 
-                                        if (result.success) {   
-                                            Ext.Msg.hide();                               
+                                        if (result.success) {
+                                            Ext.Msg.hide();
                                             self.msgbox(result.msg);
                                             baseGrid.getStore().loadPage(1);
 
-                                                                                  
+
                                         } else {
-                                            Ext.Msg.hide();  
-                                            self.Error(result.msg);                                        
+                                            Ext.Msg.hide();
+                                            self.Error(result.msg);
                                         }
-                                       
-                                       
+
+
                                     },
-                                    failure: function(response, opts) {
-                                        Ext.Msg.hide();  
+                                    failure: function (response, opts) {
+                                        Ext.Msg.hide();
                                         self.Error("请求失败，请联系管理员！");
-                                      
+
                                     }
-                                });                              
-                            },100);                           
+                                });
+                            }, 100);
                         }
                     });
 
                     return false;
                 }
             },
-            
+
             "panel[xtype=user.usergrid] button[ref=syncCardInfoFromUP]": {
-                beforeclick: function(btn) {         
-                     //同步人员数据事件                        
+                beforeclick: function (btn) {
+                    //同步人员数据事件
                     var baseGrid = btn.up("grid");
-                   
-                    Ext.MessageBox.confirm('从UP同步发卡信息', '您确定要执行从UP同步发卡信息操作吗？', function(btn, text) {                  
+
+                    Ext.MessageBox.confirm('从UP同步发卡信息', '您确定要执行从UP同步发卡信息操作吗？', function (btn, text) {
                         if (btn == 'yes') {
-                            
-                            Ext.Msg.wait('正在从UP同步发卡信息，请等待...','提示');
-                            
-                            setTimeout(function(){
+
+                            Ext.Msg.wait('正在从UP同步发卡信息，请等待...', '提示');
+
+                            setTimeout(function () {
 
                                 //异步ajax加载
                                 Ext.Ajax.request({
                                     url: comm.get('baseUrl') + "/sysuser/doSyncAllCardInfoFromUp",
-                                    params: { },
-                                    timeout:1000*60*60*10,     //10个小时
-                                    success: function(response){
-                                        var result=JSON.parse(response.responseText);
+                                    params: {},
+                                    timeout: 1000 * 60 * 60 * 10,     //10个小时
+                                    success: function (response) {
+                                        var result = JSON.parse(response.responseText);
 
-                                        if (result.success) {  
-                                            Ext.Msg.hide();                                
+                                        if (result.success) {
+                                            Ext.Msg.hide();
                                             self.msgbox(result.msg);
                                             baseGrid.getStore().loadPage(1);
 
-                                                                                
+
                                         } else {
-                                            Ext.Msg.hide(); 
+                                            Ext.Msg.hide();
                                             self.Error(result.msg);
-                                          
+
                                         }
-                                        
-                                        
+
+
                                     },
-                                    failure: function(response, opts) {
-                                        Ext.Msg.hide();  
-                                        self.Error("请求失败，请联系管理员！");                                       
+                                    failure: function (response, opts) {
+                                        Ext.Msg.hide();
+                                        self.Error("请求失败，请联系管理员！");
                                     }
-                                });                              
-                            },100);                           
+                                });
+                            }, 100);
                         }
                     });
 
                     return false;
                 }
             },
-            
 
 
             //添加用户选择后确定事件
             "baseformwin[funCode=selectsysuser_main] button[ref=formSave]": {
-                beforeclick: function(btn) {
+                beforeclick: function (btn) {
                     var win = btn.up('window');
                     var funCode = win.funCode;
                     var funData = win.funData;
@@ -352,7 +351,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
 
             //修改用户事件
             "panel[xtype=user.usergrid] button[ref=gridEdit]": {
-                beforeclick: function(btn) {
+                beforeclick: function (btn) {
                     self.doDetail(btn, "edit");
                     return false;
                 }
@@ -360,7 +359,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
 
             //删除用户事件
             "panel[xtype=user.usergrid] button[ref=gridDelete]": {
-                beforeclick: function(btn) {
+                beforeclick: function (btn) {
                     var userGrid = btn.up("basegrid");
                     var mainLayout = userGrid.up("panel[xtype=user.mainlayout]");
                     var funData = mainLayout.funData;
@@ -376,19 +375,19 @@ Ext.define("core.system.user.controller.DeptUserController", {
 
                     //拼装所选择的用户
                     var ids = new Array();
-                    Ext.each(selectUser, function(rec) {
+                    Ext.each(selectUser, function (rec) {
                         var pkValue = rec.get("uuid");
                         ids.push(pkValue);
                     });
                     var title = "确定删除所选择的用户吗？";
-                    Ext.Msg.confirm('信息', title, function(btn, text) {
+                    Ext.Msg.confirm('信息', title, function (btn, text) {
                         if (btn == 'yes') {
                             //发送ajax请求
                             var resObj = self.ajax({
                                 url: funData.action + "/dodelete",
                                 params: {
                                     ids: ids.join(","),
-                                    deptId:deptId
+                                    deptId: deptId
                                 }
                             });
                             if (resObj.success) {
@@ -408,7 +407,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
                                 filterArry.push("{'type':'numeric','comparison':'=','value':0,'field':'isDelete'}");
                                 userPoxy.extraParams = {
                                     filter: "[" + filterArry.join(",") + "]",
-                                    deptId:deptId
+                                    deptId: deptId
                                 };
                                 userStore.load();
 
@@ -428,7 +427,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
 
             //锁定账户事件
             "panel[xtype=user.usergrid] button[ref=gridLock]": {
-                click: function(btn) {
+                click: function (btn) {
                     self.doList(btn, "lock");
                     return false;
                 }
@@ -436,7 +435,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
 
             //解锁账户事件
             "panel[xtype=user.usergrid] button[ref=gridUnLock]": {
-                click: function(btn) {
+                click: function (btn) {
                     self.doList(btn, "unlock");
                     return false;
                 }
@@ -444,46 +443,51 @@ Ext.define("core.system.user.controller.DeptUserController", {
 
             //重置密码事件
             "panel[xtype=user.usergrid] button[ref=gridSetPwd]": {
-                click: function(btn) {
+                click: function (btn) {
                     self.doList(btn, "setpwd");
                     return false;
                 }
             },
 
-            
-
-            
 
             //待选人员列表的事件
-            "panel[xtype=selectsysuser.selectusergrid]":{
-                beforeitemdblclick:function(grid, record, item, index, e, eOpts) {
+            "panel[xtype=selectsysuser.selectusergrid]": {
+                beforeitemdblclick: function (grid, record, item, index, e, eOpts) {
                     selectStore = grid.getStore();
                     selectStore.removeAt(index);
 
                     var basePanel = grid.up("panel[xtype=selectsysuser.mainlayout]");
                     var isSelectGrid = basePanel.down("panel[xtype=selectsysuser.isselectusergrid]");
                     var isSelectStore = isSelectGrid.getStore();
-                    isSelectStore.insert(0,[record]);
+                    isSelectStore.insert(0, [record]);
                     return false;
                 }
             },
             //已选人员列表的事件
-            "panel[xtype=selectsysuser.isselectusergrid]":{
-                beforeitemdblclick:function(grid, record, item, index, e, eOpts) {
+            "panel[xtype=selectsysuser.isselectusergrid]": {
+                beforeitemdblclick: function (grid, record, item, index, e, eOpts) {
                     isSelectStore = grid.getStore();
                     isSelectStore.removeAt(index);
 
                     var basePanel = grid.up("panel[xtype=selectsysuser.mainlayout]");
                     var selectGrid = basePanel.down("panel[xtype=selectsysuser.selectusergrid]");
                     var selectStore = selectGrid.getStore();
-                    selectStore.insert(0,[record]);
+                    selectStore.insert(0, [record]);
                     return false;
                 }
-            }            
+            },
+
+            "panel basegrid[xtype=user.usergrid] button[ref=gridFastSearchBtn]": {
+                beforeclick: function (btn) {
+                    var self = this;
+                    self.doFastSearch(btn);
+                    return false;
+                }
+            }
         });
     },
     //用户增加、修改处理
-    doDetail: function(btn, cmd) {
+    doDetail: function (btn, cmd) {
         var self = this;
         var baseGrid = btn.up("basegrid");
         var funCode = baseGrid.funCode;
@@ -560,7 +564,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
     },
 
     //锁定账户、解锁账户及重置密码
-    doList: function(btn, cmd) {
+    doList: function (btn, cmd) {
         var self = this;
         var userGrid = btn.up("basegrid");
         var mainLayout = userGrid.up("panel[xtype=user.mainlayout]");
@@ -595,13 +599,13 @@ Ext.define("core.system.user.controller.DeptUserController", {
         }
         //拼装所选择的用户
         var ids = new Array();
-        Ext.each(selectUser, function(rec) {
+        Ext.each(selectUser, function (rec) {
             var pkValue = rec.get("uuid");
             ids.push(pkValue);
         });
 
         //ajax的方式提交数据
-        Ext.Msg.confirm('信息', title, function(btn, text) {
+        Ext.Msg.confirm('信息', title, function (btn, text) {
             if (btn == 'yes') {
                 //发送ajax请求
                 var resObj = self.ajax({
@@ -623,7 +627,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
                     var userStore = userGrid.getStore();
                     var userPoxy = userStore.getProxy();
                     userPoxy.extraParams = {
-                        deptId:deptId
+                        deptId: deptId
                     };
                     userStore.load();
 
@@ -639,7 +643,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
         }
     },
 
-    doDetail_Tab:function(btn, cmd, grid, record) {
+    doDetail_Tab: function (btn, cmd, grid, record) {
 
         var self = this;
         var baseGrid;
@@ -655,15 +659,15 @@ Ext.define("core.system.user.controller.DeptUserController", {
 
         //得到组件
         var funCode = baseGrid.funCode;
-        var basePanel = baseGrid.up("basepanel[funCode=" + funCode +"]");
-        var tabPanel=baseGrid.up("tabpanel[xtype=app-main]");
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+        var tabPanel = baseGrid.up("tabpanel[xtype=app-main]");
 
         //得到配置信息
         var funData = basePanel.funData;
-        var detCode =  basePanel.detCode;  
+        var detCode = basePanel.detCode;
         var detLayout = basePanel.detLayout;
         var defaultObj = funData.defaultObj;
-                
+
         //关键：window的视图控制器
         var otherController = basePanel.otherController;
         if (!otherController)
@@ -675,7 +679,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
             grid: baseGrid
         });
 
-        
+
         if (btn) {
             var rescords = baseGrid.getSelectionModel().getSelection();
             if (rescords.length != 1) {
@@ -687,84 +691,83 @@ Ext.define("core.system.user.controller.DeptUserController", {
 
         insertObj = recordData;
 
-         //本方法只提供班级详情页使用
-        var tabTitle =insertObj.xm+"-角色管理";
+        //本方法只提供班级详情页使用
+        var tabTitle = insertObj.xm + "-角色管理";
         //设置tab页的itemId
-        var pkValue= null;
+        var pkValue = null;
         var operType = "detail";    // 只显示关闭按钮
-        var tabItemId=funCode+"_gridUserRole"+insertObj.classNumb;    //详细界面可以打开多个
-        items=[{
-            xtype:detLayout,
-            defaults:null,
-            items:[{
-                xtype:'user.userrolegrid',
-                title:null
+        var tabItemId = funCode + "_gridUserRole" + insertObj.classNumb;    //详细界面可以打开多个
+        items = [{
+            xtype: detLayout,
+            defaults: null,
+            items: [{
+                xtype: 'user.userrolegrid',
+                title: null
             }]
         }];
-        switch(cmd){
+        switch (cmd) {
             case 'userRole':
-                var tabTitle =insertObj.xm+"-角色管理";
+                var tabTitle = insertObj.xm + "-角色管理";
                 //设置tab页的itemId
                 var operType = "detail";    // 只显示关闭按钮
-                var tabItemId=funCode+"_gridUserRole"+insertObj.uuid;    //详细界面可以打开多个
-                items=[{
-                    xtype:detLayout,
-                    defaults:null,
-                    items:[{
-                        xtype:'user.userrolegrid',
-                        title:null
+                var tabItemId = funCode + "_gridUserRole" + insertObj.uuid;    //详细界面可以打开多个
+                items = [{
+                    xtype: detLayout,
+                    defaults: null,
+                    items: [{
+                        xtype: 'user.userrolegrid',
+                        title: null
                     }]
                 }];
                 break;
             case 'deptJob':
-                var tabTitle =insertObj.xm+"-部门岗位";
+                var tabTitle = insertObj.xm + "-部门岗位";
                 //设置tab页的itemId
                 var operType = "detail";    // 只显示关闭按钮
-                var tabItemId=funCode+"_gridDeptJob"+insertObj.uuid;    //详细界面可以打开多个
-                items=[{
-                    xtype:detLayout,
-                    defaults:null,
-                    items:[{
-                        xtype:'user.userdeptjobgrid',
-                        title:null
+                var tabItemId = funCode + "_gridDeptJob" + insertObj.uuid;    //详细界面可以打开多个
+                items = [{
+                    xtype: detLayout,
+                    defaults: null,
+                    items: [{
+                        xtype: 'user.userdeptjobgrid',
+                        title: null
                     }]
                 }];
                 break;
         }
 
-        
 
         //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
-        var tabItem=tabPanel.getComponent(tabItemId);
-        if(!tabItem){
-    
-            tabItem=Ext.create({
-                xtype:'container',
+        var tabItem = tabPanel.getComponent(tabItemId);
+        if (!tabItem) {
+
+            tabItem = Ext.create({
+                xtype: 'container',
                 title: tabTitle,
                 //iconCls: 'x-fa fa-clipboard',
-                scrollable :true, 
-                itemId:tabItemId,
-                itemPKV:pkValue,      //保存主键值
-                layout:'fit', 
+                scrollable: true,
+                itemId: tabItemId,
+                itemPKV: pkValue,      //保存主键值
+                layout: 'fit',
             });
-            tabPanel.add(tabItem); 
+            tabPanel.add(tabItem);
 
             //延迟放入到tab中
-            setTimeout(function(){
+            setTimeout(function () {
                 //创建组件
-                var item=Ext.widget("baseformtab",{
-                    operType:operType,                            
-                    controller:otherController,         //指定重写事件的控制器
-                    funCode:funCode,                    //指定mainLayout的funcode
-                    detCode:detCode,                    //指定detailLayout的funcode
-                    tabItemId:tabItemId,                //指定tab页的itemId
-                    insertObj:insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                var item = Ext.widget("baseformtab", {
+                    operType: operType,
+                    controller: otherController,         //指定重写事件的控制器
+                    funCode: funCode,                    //指定mainLayout的funcode
+                    detCode: detCode,                    //指定detailLayout的funcode
+                    tabItemId: tabItemId,                //指定tab页的itemId
+                    insertObj: insertObj,                //保存一些需要默认值，提供给提交事件中使用
                     funData: popFunData,                //保存funData数据，提供给提交事件中使用
-                    items:items
-                }); 
-                tabItem.add(item);  
-                
-                switch(cmd){
+                    items: items
+                });
+                tabItem.add(item);
+
+                switch (cmd) {
                     case 'userRole':
 
                         var roleGrid = item.down("panel[xtype=user.userrolegrid]");
@@ -787,18 +790,50 @@ Ext.define("core.system.user.controller.DeptUserController", {
                         break;
                 }
 
-                
 
-            },30);
-                           
-        }else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据
+            }, 30);
+
+        } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue) {     //判断是否点击的是同一条数据
             self.Warning("您当前已经打开了一个编辑窗口了！");
             return;
         }
 
-        tabPanel.setActiveTab( tabItem);
-        
-        
+        tabPanel.setActiveTab(tabItem);
+
+
+    },
+
+    /**
+     * 执行快速搜索
+     * @param component
+     * @returns {boolean}
+     */
+    doFastSearch: function (component) {
+        //得到组件
+        var baseGrid = component.up("basegrid");
+        if (!baseGrid)
+            return false;
+
+        var toolBar = component.up("toolbar");
+        if (!toolBar)
+            return false;
+
+        var girdSearchTexts = toolBar.query("field[funCode=girdFastSearchText]");
+        //这里快速搜索就姓名与部门，固定写死查询的条件
+        var filter = new Array();
+        if (girdSearchTexts[0].getValue() != "")
+            filter.push("{'type': 'string', 'comparison': '', 'value':'" + girdSearchTexts[0].getValue() + "', 'field': 'userName'}");
+        if (girdSearchTexts[1].getValue() != "")
+            filter.push("{'type': 'string', 'comparison': '', 'value':'" + girdSearchTexts[1].getValue() + "', 'field': 'xm'}");
+        filter = "[" + filter.join(",") + "]";
+
+        var selectStore = baseGrid.getStore();
+        var selectProxy = selectStore.getProxy();
+        selectProxy.extraParams = {
+            filter: filter
+        };
+        selectStore.loadPage(1);
     }
 
-});
+})
+;

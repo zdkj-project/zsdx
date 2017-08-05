@@ -1,9 +1,6 @@
-/**
- * Created by luoyibo on 2017-05-26.
- */
-Ext.define("ccore.system.role.view.IsSelectUserGrid", {
+Ext.define("ccore.public.selectuser.view.IsSelectUserGrid", {
     extend: "Ext.grid.Panel",
-    alias: "widget.role.isselectusergrid",
+    alias: "widget.pubselect.isselectusergrid",
     ref: 'isselectusergrid',
     title: "<font color='#ffeb00'>已选用户(选中后向左拖动或双击移除）</font>",
     columnLines: true,
@@ -37,14 +34,8 @@ Ext.define("ccore.system.role.view.IsSelectUserGrid", {
         width: 50,
         text: "性别",
         dataIndex: "xbm",
-        renderer:function(value){
-            if(value=="1")
-                return "男";
-            else if(value=="2")
-                return "女";
-            else
-                return "";
-        }
+        columnType: "basecombobox",
+        ddCode: "XBM"
     }, {
         width: 150,
         text: "部门",

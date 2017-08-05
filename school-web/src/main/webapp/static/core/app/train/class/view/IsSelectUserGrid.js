@@ -1,9 +1,6 @@
-/**
- * Created by luoyibo on 2017-05-26.
- */
-Ext.define("ccore.system.role.view.IsSelectUserGrid", {
+Ext.define("ccore.train.class.view.IsSelectUserGrid", {
     extend: "Ext.grid.Panel",
-    alias: "widget.role.isselectusergrid",
+    alias: "widget.selectuser.isselectusergrid",
     ref: 'isselectusergrid',
     title: "<font color='#ffeb00'>已选用户(选中后向左拖动或双击移除）</font>",
     columnLines: true,
@@ -78,8 +75,8 @@ Ext.define("ccore.system.role.view.IsSelectUserGrid", {
                 IsSelectStore = grid.getStore();
                 IsSelectStore.removeAt(index);
 
-                var basePanel = grid.up("panel[xtype=role.selectuserlayout]");
-                var selectGrid = basePanel.down("panel[xtype=role.selectusergrid]");
+                var basePanel = grid.up("panel[xtype=selectuser.selectuserlayout]");
+                var selectGrid = basePanel.down("panel[xtype=selectuser.selectusergrid]");
                 var selectStore = selectGrid.getStore();
                 selectStore.insert(0, [record]);
                 return false;

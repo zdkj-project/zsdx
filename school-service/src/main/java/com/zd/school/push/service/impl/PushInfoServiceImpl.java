@@ -21,12 +21,24 @@ public class PushInfoServiceImpl extends BaseServiceImpl<PushInfo> implements Pu
     }
 
     @Override
-    public boolean pushInfo(String empName, String empNo, String eventType, String regStatus) {
-        return this.pushInfo(empName, empNo, eventType, regStatus, null);
+    public boolean pushInfo(String empName, String mobile, String eventType, String info, Integer pushWay) {
+        Boolean br = false;
+        PushInfo pushInfo = new PushInfo();
+        pushInfo.setEmplName(empName);
+        pushInfo.setEmplNo(mobile);
+        pushInfo.setRegTime(new Date());
+        pushInfo.setEventType(eventType);
+        pushInfo.setPushStatus(0);
+        pushInfo.setPushWay(pushWay);
+        pushInfo.setRegStatus(info);
+        pushInfo.setPushUrl("");
+        this.persist(pushInfo);
+        br = true;
+        return br;
     }
 
     @Override
-    public boolean pushInfo(String empName, String empNo, String eventType, String regStatus, String pushUrl) {
+    public boolean pushInfo(String empName, String empNo, String eventType, String regStatus, Integer pushWay, String pushUrl) {
         Boolean br = false;
         PushInfo pushInfo = new PushInfo();
         pushInfo.setEmplName(empName);
@@ -34,7 +46,7 @@ public class PushInfoServiceImpl extends BaseServiceImpl<PushInfo> implements Pu
         pushInfo.setRegTime(new Date());
         pushInfo.setEventType(eventType);
         pushInfo.setPushStatus(0);
-        pushInfo.setPushWay(1);
+        pushInfo.setPushWay(pushWay);
         pushInfo.setRegStatus(regStatus);
         if (StringUtils.isEmpty(pushUrl))
             pushInfo.setPushUrl("");

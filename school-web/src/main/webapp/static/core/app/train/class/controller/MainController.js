@@ -2,7 +2,6 @@ Ext.define("core.train.class.controller.MainController", {
     extend: "Ext.app.ViewController",
     alias: 'controller.class.mainController',
     mixins: {
-
         suppleUtil: "core.util.SuppleUtil",
         messageUtil: "core.util.MessageUtil",
         formUtil: "core.util.FormUtil",
@@ -10,9 +9,10 @@ Ext.define("core.train.class.controller.MainController", {
         dateUtil: 'core.util.DateUtil'
 
     },
-    init: function() {},
+    init: function () {
+    },
     control: {
-        
+
         /**
          * 导出班级信息（学员、课程、住宿、用餐)
          */
@@ -28,18 +28,18 @@ Ext.define("core.train.class.controller.MainController", {
                 var pkName = funData.pkName;
                 //得到选中数据
                 var records = baseGrid.getSelectionModel().getSelection();
-                if(records.length!=1){
+                if (records.length != 1) {
                     self.Warning("请选择一个班级进行导出操作！");
                     return;
                 }
 
-                var rec=records[0];
+                var rec = records[0];
 
-                var title = "确定要导出【"+rec.get("className")+"】班级信息吗？";
-            
+                var title = "确定要导出【" + rec.get("className") + "】班级信息吗？";
+
                 var ids = new Array();
                 var pkValue = rec.get(pkName);
-                ids.push(pkValue);            
+                ids.push(pkValue);
                 // if (records.length > 0) {
                 //     title = "将导出所选师资的信息";
                 //     Ext.each(records, function (rec) {
@@ -52,45 +52,49 @@ Ext.define("core.train.class.controller.MainController", {
                     if (btn == "yes") {
                         Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
                         //window.location.href = comm.get('baseUrl') + "/TrainClass/exportExcel?ids=" + ids.join(",");
-                        var component=Ext.create('Ext.Component', {
+                        var component = Ext.create('Ext.Component', {
                             title: 'HelloWorld',
                             width: 0,
-                            height:0,
-                            hidden:true,
+                            height: 0,
+                            hidden: true,
                             html: '<iframe src="' + comm.get('baseUrl') + '/TrainClass/exportExcel?ids=' + ids.join(",") + '"></iframe>',
                             renderTo: Ext.getBody()
                         });
-                        
-                       
-                        var time=function(){
+
+
+                        var time = function () {
                             self.syncAjax({
                                 url: comm.get('baseUrl') + '/TrainClass/checkExportEnd',
-                                timeout: 1000*60*30,        //半个小时         
+                                timeout: 1000 * 60 * 30,        //半个小时
                                 //回调代码必须写在里面
-                                success: function(response) {
+                                success: function (response) {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                                    if(data.success){
+                                    if (data.success) {
                                         Ext.Msg.hide();
                                         self.msgbox(data.obj);
-                                        component.destroy();                                
-                                    }else{                                    
-                                        if(data.obj==0){    //当为此值，则表明导出失败
+                                        component.destroy();
+                                    } else {
+                                        if (data.obj == 0) {    //当为此值，则表明导出失败
                                             Ext.Msg.hide();
                                             self.Error("导出失败，请重试或联系管理员！");
-                                            component.destroy();                                        
-                                        }else{
-                                            setTimeout(function(){time()},1000);
+                                            component.destroy();
+                                        } else {
+                                            setTimeout(function () {
+                                                time()
+                                            }, 1000);
                                         }
-                                    }               
+                                    }
                                 },
-                                failure: function(response) {
+                                failure: function (response) {
                                     Ext.Msg.hide();
                                     Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
                                     component.destroy();
                                 }
                             });
                         }
-                        setTimeout(function(){time()},1000);    //延迟1秒执行
+                        setTimeout(function () {
+                            time()
+                        }, 1000);    //延迟1秒执行
                     }
                 });
                 return false;
@@ -99,93 +103,121 @@ Ext.define("core.train.class.controller.MainController", {
 
         //maingrid的表格按钮事件
         "basegrid[xtype=class.maingrid] button[ref=gridAdd_Tab]": {
-            beforeclick: function(btn) {
-                
+            beforeclick: function (btn) {
+
                 this.doClassDetail_Tab(btn, "add");
 
                 return false;
             }
         },
         "basegrid[xtype=class.maingrid] button[ref=gridEdit_Tab]": {
-            beforeclick: function(btn) {
-                
+            beforeclick: function (btn) {
+
                 this.doClassDetail_Tab(btn, "edit");
-            
+
                 return false;
             }
         },
         "basegrid[xtype=class.maingrid] button[ref=gridDetail_Tab]": {
-            beforeclick: function(btn) {
-                
+            beforeclick: function (btn) {
+
                 this.doClassDetail_Tab(btn, "detail");
-          
+
                 return false;
             }
         },
-        
+        /**
+         * 提交按钮事件
+         */
         "basegrid[xtype=class.maingrid] button[ref=gridUse]": {
-            beforeclick: function(btn) {
+            beforeclick: function (btn) {
                 var self = this;
-
+                this.doSendUserDetail_Tab(btn, "add");
                 //得到组件
-                var baseGrid = btn.up("basegrid");
+                /*                var baseGrid = btn.up("basegrid");
+                                var funCode = baseGrid.funCode;
+                                var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+                                var funData = basePanel.funData;
+                                var detCode = basePanel.detCode;
+                                var detLayout = basePanel.detLayout;
 
-                var records = baseGrid.getSelectionModel().getSelection();
-                if (records.length != 1) {
-                    self.Warning("请选择数据!");
-                    return;
-                }
-
-                var classId = records[0].get("uuid");
-                var className = records[0].get("className");;
-
-                if (!classId) {
-                    self.Warning("信息有误，请选择班级！");
-                    return false;
-                }
-                if(records[0].get("isuse")==1||records[0].get("isuse")==3){
-                    self.Warning("此班级已是提交状态，不必重复提交！");
-                    return false;
-                }
-
-                Ext.MessageBox.confirm('温馨提示', '<p>提交此班级信息之后，将会自动通知总务去安排培训信息！</p><p style="color:red;font-size:14px;font-weight: 400;">你确定要提交吗？</p>', function(btn, text) {
-                    if (btn == 'yes') {
-                        Ext.Msg.wait('正在执行中,请稍后...', '温馨提示');
-                        self.asyncAjax({
-                            url: comm.get("baseUrl")  + "/TrainClass/doClassUse",
-                            params: {
-                                classId:classId                             
-                            },
-                            timeout:1000*60*60, //1个小时
-                            //回调代码必须写在里面
-                            success: function(response) {
-                                var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                                                           
-                                if(data.success){ 
-                                    baseGrid.getStore().load();
-                                    Ext.Msg.hide();
-                                    self.Info(data.obj);   
-                                }else{
-                                    Ext.Msg.hide();
-                                    self.Error(data.obj);
+                                var records = baseGrid.getSelectionModel().getSelection();
+                                if (records.length != 1) {
+                                    self.Warning("请选择数据!");
+                                    return;
                                 }
-                            },
-                            failure: function(response) {
-                                Ext.Msg.hide();
-                                Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);                            
-                            }
-                        });  
-                    }
-                });
+                                var classId = records[0].get("uuid");
+                                var className = records[0].get("className");
 
-        
+                                if (!classId) {
+                                    self.Warning("信息有误，请选择班级！");
+                                    return false;
+                                }
+                                if(records[0].get("isuse")==1||records[0].get("isuse")==3){
+                                    self.Warning("此班级已是提交状态，不必重复提交！");
+                                    return false;
+                                }
+                                var popFunData = Ext.apply(funData, {
+                                    grid: baseGrid,
+                                    classId: classId,
+                                    className: className
+                                });
+                                var win = Ext.create('core.base.view.BaseFormWin', {
+                                    iconCls: 'x-fa fa-plus-circle',
+                                    operType: "addReutn",
+                                    funData: popFunData,
+                                    funCode: detCode,
+                                    width:600,
+                                    height:450,
+                                    items: [{
+                                        xtype:detLayout,
+                                        defaults:null,
+                                        items:[{
+                                            xtype:'class.sendinfoform'
+                                        }]
+                                    }]
+                                });
+                                win.show();*/
+
+                /*
+                                Ext.MessageBox.confirm('温馨提示', '<p>提交此班级信息之后，将会自动通知总务去安排培训信息！</p><p style="color:red;font-size:14px;font-weight: 400;">你确定要提交吗？</p>', function(btn, text) {
+                                    if (btn == 'yes') {
+                                        Ext.Msg.wait('正在执行中,请稍后...', '温馨提示');
+                                        self.asyncAjax({
+                                            url: comm.get("baseUrl")  + "/TrainClass/doClassUse",
+                                            params: {
+                                                classId:classId
+                                            },
+                                            timeout:1000*60*60, //1个小时
+                                            //回调代码必须写在里面
+                                            success: function(response) {
+                                                var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                                                if(data.success){
+                                                    baseGrid.getStore().load();
+                                                    Ext.Msg.hide();
+                                                    self.Info(data.obj);
+                                                }else{
+                                                    Ext.Msg.hide();
+                                                    self.Error(data.obj);
+                                                }
+                                            },
+                                            failure: function(response) {
+                                                Ext.Msg.hide();
+                                                Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                            }
+                                        });
+                                    }
+                                });*/
+
+
                 return false;
             }
         },
 
         /*导入*/
         "basegrid[xtype=class.maingrid] button[ref=gridImport]": {
-            beforeclick: function(btn) {
+            beforeclick: function (btn) {
                 var self = this;
 
                 //判断是否选择了班级，判断是添加新班级 或是 编辑班级
@@ -215,7 +247,7 @@ Ext.define("core.train.class.controller.MainController", {
             }
         },
         "basegrid[xtype=class.maingrid] button[ref=gridImportTrainee]": {
-            beforeclick: function(btn) {
+            beforeclick: function (btn) {
                 var self = this;
 
                 //判断是否选择了班级，判断是添加新班级 或是 编辑班级
@@ -230,7 +262,8 @@ Ext.define("core.train.class.controller.MainController", {
                 }
 
                 var classId = records[0].get("uuid");
-                var className = records[0].get("className");;
+                var className = records[0].get("className");
+                ;
 
                 if (!classId) {
                     self.Warning("信息有误，请选择班级！");
@@ -266,7 +299,7 @@ Ext.define("core.train.class.controller.MainController", {
             }
         },
         "basegrid[xtype=class.maingrid] button[ref=gridImportCourse]": {
-            beforeclick: function(btn) {
+            beforeclick: function (btn) {
                 var self = this;
 
                 //判断是否选择了班级，判断是添加新班级 或是 编辑班级
@@ -281,7 +314,8 @@ Ext.define("core.train.class.controller.MainController", {
                 }
 
                 var classId = records[0].get("uuid");
-                var className = records[0].get("className");;
+                var className = records[0].get("className");
+                ;
 
                 if (!classId) {
                     self.Warning("信息有误，请选择班级！");
@@ -317,98 +351,98 @@ Ext.define("core.train.class.controller.MainController", {
             }
         },
         "basegrid[xtype=class.maingrid]": {
-            itemclick: function(grid, record, item, index, e, eOpts) {
-                    var basePanel = grid.up("basepanel");
-                    var funCode = basePanel.funCode;
-                    var baseGrid = basePanel.down("basegrid[funCode=" +
-                        funCode + "]");
-                    var records = baseGrid.getSelectionModel().getSelection();
-                    var btnImportTrainee = baseGrid.down("button[ref=gridImportTrainee]");
-                    var btnImportCourse = baseGrid.down("button[ref=gridImportCourse]");
-                    var btnUse = baseGrid.down("button[ref=gridUse]");
-                    
-                    var btnEdit = baseGrid.down("button[ref=gridEdit_Tab]");
-                    var btnDelete = baseGrid.down("button[ref=gridDelete]");
+            itemclick: function (grid, record, item, index, e, eOpts) {
+                var basePanel = grid.up("basepanel");
+                var funCode = basePanel.funCode;
+                var baseGrid = basePanel.down("basegrid[funCode=" +
+                    funCode + "]");
+                var records = baseGrid.getSelectionModel().getSelection();
+                var btnImportTrainee = baseGrid.down("button[ref=gridImportTrainee]");
+                var btnImportCourse = baseGrid.down("button[ref=gridImportCourse]");
+                var btnUse = baseGrid.down("button[ref=gridUse]");
 
-                    if (records.length == 0) {
+                var btnEdit = baseGrid.down("button[ref=gridEdit_Tab]");
+                var btnDelete = baseGrid.down("button[ref=gridDelete]");
+
+                if (records.length == 0) {
+                    if (btnImportTrainee)
+                        btnImportTrainee.setDisabled(true);
+                    if (btnImportCourse)
+                        btnImportCourse.setDisabled(true);
+                    if (btnUse)
+                        btnUse.setDisabled(true);
+
+                } else if (records.length == 1) {
+
+                    if (record.get("isuse") == 1 || record.get("isuse") == 3) {
                         if (btnImportTrainee)
                             btnImportTrainee.setDisabled(true);
                         if (btnImportCourse)
                             btnImportCourse.setDisabled(true);
                         if (btnUse)
                             btnUse.setDisabled(true);
-
-                    } else if (records.length == 1) {
-                        
-                        if(record.get("isuse")==1||record.get("isuse")==3){
-                            if (btnImportTrainee)
-                                btnImportTrainee.setDisabled(true);
-                            if (btnImportCourse)
-                                btnImportCourse.setDisabled(true);
-                            if (btnUse)
-                                btnUse.setDisabled(true);                    
-                            if(btnDelete)
-                                btnDelete.setDisabled(true);
-                            if(btnEdit)
-                                btnEdit.setDisabled(false);
-                        }else if(record.get("isuse")==2){
-                            if (btnImportTrainee)
-                                btnImportTrainee.setDisabled(true);
-                            if (btnImportCourse)
-                                btnImportCourse.setDisabled(true);                                                
-                            if(btnDelete)
-                                btnDelete.setDisabled(true);
-                            if (btnUse)
-                                btnUse.setDisabled(false);
-                              if(btnEdit)
-                                btnEdit.setDisabled(false);
-                        }else{
-                            if (btnImportTrainee)
-                                btnImportTrainee.setDisabled(false);
-                            if (btnImportCourse)
-                                btnImportCourse.setDisabled(false);
-                            if (btnUse)
-                                btnUse.setDisabled(false);
-                        }
-                        
-
+                        if (btnDelete)
+                            btnDelete.setDisabled(true);
+                        if (btnEdit)
+                            btnEdit.setDisabled(false);
+                    } else if (record.get("isuse") == 2) {
+                        if (btnImportTrainee)
+                            btnImportTrainee.setDisabled(true);
+                        if (btnImportCourse)
+                            btnImportCourse.setDisabled(true);
+                        if (btnDelete)
+                            btnDelete.setDisabled(true);
+                        if (btnUse)
+                            btnUse.setDisabled(false);
+                        if (btnEdit)
+                            btnEdit.setDisabled(false);
                     } else {
                         if (btnImportTrainee)
-                            btnImportTrainee.setDisabled(true);
+                            btnImportTrainee.setDisabled(false);
                         if (btnImportCourse)
-                            btnImportCourse.setDisabled(true);
+                            btnImportCourse.setDisabled(false);
                         if (btnUse)
-                            btnUse.setDisabled(true);
+                            btnUse.setDisabled(false);
                     }
-                    //console.log(1231);
+
+
+                } else {
+                    if (btnImportTrainee)
+                        btnImportTrainee.setDisabled(true);
+                    if (btnImportCourse)
+                        btnImportCourse.setDisabled(true);
+                    if (btnUse)
+                        btnUse.setDisabled(true);
                 }
-                /* 已不使用
-            itemclick:function(grid,record){
-                var basePanel = grid.up("basepanel");
-                var courseGrid = basePanel.down("basegrid[xtype=class.coursegrid]");
-                var studentGrid= basePanel.down("basegrid[xtype=class.studentgrid]");
+                //console.log(1231);
+            }
+            /* 已不使用
+        itemclick:function(grid,record){
+            var basePanel = grid.up("basepanel");
+            var courseGrid = basePanel.down("basegrid[xtype=class.coursegrid]");
+            var studentGrid= basePanel.down("basegrid[xtype=class.studentgrid]");
 
-                var filter = "[{'type':'string','comparison':'=','value':'" + record.get("uuid") + "','field':'classId'}]"
+            var filter = "[{'type':'string','comparison':'=','value':'" + record.get("uuid") + "','field':'classId'}]"
 
 
-                var courseStore = courseGrid.getStore();
-                var courseProxy = courseStore.getProxy();
-                courseProxy.extraParams = {
-                    filter: filter
-                };
-                courseStore.loadPage(1); // 给form赋值
+            var courseStore = courseGrid.getStore();
+            var courseProxy = courseStore.getProxy();
+            courseProxy.extraParams = {
+                filter: filter
+            };
+            courseStore.loadPage(1); // 给form赋值
 
-                var studentStore = studentGrid.getStore();
-                var studentProxy = studentStore.getProxy();
-                studentProxy.extraParams = {
-                    filter: filter
-                };
-                studentStore.loadPage(1); // 给form赋值
-            }*/
+            var studentStore = studentGrid.getStore();
+            var studentProxy = studentStore.getProxy();
+            studentProxy.extraParams = {
+                filter: filter
+            };
+            studentStore.loadPage(1); // 给form赋值
+        }*/
         },
 
         "basegrid[xtype=class.coursegrid] button[ref=gridAdd]": {
-            beforeclick: function(btn) {
+            beforeclick: function (btn) {
                 var self = this;
                 //得到组件
                 var baseGrid = btn.up("basegrid");
@@ -457,8 +491,8 @@ Ext.define("core.train.class.controller.MainController", {
                 var popFunData = Ext.apply(funData, {
                     grid: baseGrid,
                     filter: "[{'type':'string','comparison':'=','value':'" +
-                        insertObj.classId +
-                        "','field':'classId'}]"
+                    insertObj.classId +
+                    "','field':'classId'}]"
                 });
                 var win = Ext.create('core.base.view.BaseFormWin', {
                     iconCls: 'x-fa fa-plus-circle',
@@ -474,8 +508,8 @@ Ext.define("core.train.class.controller.MainController", {
                         funCode: detCode, //这里将funcode修改为刚刚的detcode值
                         funData: {
                             action: comm.get(
-                                    "baseUrl") +
-                                "/TrainClassschedule", //请求Action
+                                "baseUrl") +
+                            "/TrainClassschedule", //请求Action
                             whereSql: "", //表格查询条件
                             orderSql: "", //表格排序条件
                             pkName: "uuid",
@@ -504,7 +538,7 @@ Ext.define("core.train.class.controller.MainController", {
             }
         },
         "basegrid[xtype=class.studentgrid]  button[ref=gridAdd]": {
-            beforeclick: function(btn) {
+            beforeclick: function (btn) {
                 var self = this;
                 //得到组件
                 var baseGrid = btn.up("basegrid");
@@ -550,8 +584,8 @@ Ext.define("core.train.class.controller.MainController", {
                 var popFunData = Ext.apply(funData, {
                     grid: baseGrid,
                     filter: "[{'type':'string','comparison':'=','value':'" +
-                        insertObj.classId +
-                        "','field':'classId'}]"
+                    insertObj.classId +
+                    "','field':'classId'}]"
                 });
                 var win = Ext.create('core.base.view.BaseFormWin', {
                     iconCls: 'x-fa fa-plus-circle',
@@ -567,8 +601,8 @@ Ext.define("core.train.class.controller.MainController", {
                         funCode: detCode, //这里将funcode修改为刚刚的detcode值
                         funData: {
                             action: comm.get(
-                                    "baseUrl") +
-                                "/TrainClasstrainee", //请求Action
+                                "baseUrl") +
+                            "/TrainClasstrainee", //请求Action
                             whereSql: "", //表格查询条件
                             orderSql: "", //表格排序条件
                             pkName: "uuid",
@@ -597,7 +631,7 @@ Ext.define("core.train.class.controller.MainController", {
             }
         },
         "basegrid[xtype=class.studentgrid] button[ref=gridDelete]": {
-            beforeclick: function(btn) {
+            beforeclick: function (btn) {
                 var self = this;
 
                 //得到组件
@@ -612,11 +646,11 @@ Ext.define("core.train.class.controller.MainController", {
                 var records = baseGrid.getSelectionModel().getSelection();
                 if (records.length > 0) {
                     //封装ids数组
-                    Ext.Msg.confirm('提示', '是否删除数据?', function(btn,
-                        text) {
+                    Ext.Msg.confirm('提示', '是否删除数据?', function (btn,
+                                                               text) {
                         if (btn == 'yes') {
                             var ids = new Array();
-                            Ext.each(records, function(rec) {
+                            Ext.each(records, function (rec) {
                                 var pkValue = rec.get(
                                     pkName);
                                 ids.push(pkValue);
@@ -624,8 +658,8 @@ Ext.define("core.train.class.controller.MainController", {
                             //发送ajax请求
                             var resObj = self.ajax({
                                 url: comm.get(
-                                        "baseUrl") +
-                                    "/TrainClasstrainee/dodelete",
+                                    "baseUrl") +
+                                "/TrainClasstrainee/dodelete",
                                 params: {
                                     ids: ids.join(
                                         ","),
@@ -647,7 +681,7 @@ Ext.define("core.train.class.controller.MainController", {
             }
         },
         "basegrid[xtype=class.coursegrid] button[ref=gridDelete]": {
-            beforeclick: function(btn) {
+            beforeclick: function (btn) {
                 var self = this;
 
                 //得到组件
@@ -662,11 +696,11 @@ Ext.define("core.train.class.controller.MainController", {
                 var records = baseGrid.getSelectionModel().getSelection();
                 if (records.length > 0) {
                     //封装ids数组
-                    Ext.Msg.confirm('提示', '是否删除数据?', function(btn,
-                        text) {
+                    Ext.Msg.confirm('提示', '是否删除数据?', function (btn,
+                                                               text) {
                         if (btn == 'yes') {
                             var ids = new Array();
-                            Ext.each(records, function(rec) {
+                            Ext.each(records, function (rec) {
                                 var pkValue = rec.get(
                                     pkName);
                                 ids.push(pkValue);
@@ -674,8 +708,8 @@ Ext.define("core.train.class.controller.MainController", {
                             //发送ajax请求
                             var resObj = self.ajax({
                                 url: comm.get(
-                                        "baseUrl") +
-                                    "/TrainClassschedule/dodelete",
+                                    "baseUrl") +
+                                "/TrainClassschedule/dodelete",
                                 params: {
                                     ids: ids.join(
                                         ","),
@@ -699,7 +733,7 @@ Ext.define("core.train.class.controller.MainController", {
 
 
         "basegrid[xtype=class.maingrid] button[ref=gridDelete]": {
-            beforeclick: function(btn) {
+            beforeclick: function (btn) {
                 var self = this;
 
                 //得到组件
@@ -713,11 +747,11 @@ Ext.define("core.train.class.controller.MainController", {
                 var records = baseGrid.getSelectionModel().getSelection();
                 if (records.length > 0) {
                     //封装ids数组
-                    Ext.Msg.confirm('温馨提示', '是否删除数据？（已提交的班级，不会被删除）', function(btn, text) {
+                    Ext.Msg.confirm('温馨提示', '是否删除数据？（已提交的班级，不会被删除）', function (btn, text) {
                         if (btn == 'yes') {
                             var ids = new Array();
-                            Ext.each(records, function(rec) {
-                                if(rec.get("isuse")!=1){
+                            Ext.each(records, function (rec) {
+                                if (rec.get("isuse") != 1) {
                                     var pkValue = rec.get(pkName);
                                     ids.push(pkValue);
                                 }
@@ -745,7 +779,7 @@ Ext.define("core.train.class.controller.MainController", {
             }
         },
         "basegrid[xtype=class.maingrid]  button[ref=gridDetail]": {
-            beforeclick: function(btn) {
+            beforeclick: function (btn) {
 
                 this.doDetail(btn, "detail");
 
@@ -753,7 +787,7 @@ Ext.define("core.train.class.controller.MainController", {
             }
         },
         "basegrid[xtype=class.maingrid]  button[ref=gridEdit]": {
-            beforeclick: function(btn) {
+            beforeclick: function (btn) {
 
                 this.doDetail(btn, "edit");
 
@@ -761,15 +795,15 @@ Ext.define("core.train.class.controller.MainController", {
             }
         },
         "basegrid[xtype=class.maingrid]  actioncolumn": {
-            gridTranieeClick_Tab:function(data){
+            gridTranieeClick_Tab: function (data) {
                 var baseGrid = data.view;
                 var record = data.record;
                 var cmd = data.cmd
-                this.doTranieeDetail_Tab(null,cmd, baseGrid, record);
+                this.doTranieeDetail_Tab(null, cmd, baseGrid, record);
 
                 return false;
             },
-            gridCourseClick_Tab:function(data){
+            gridCourseClick_Tab: function (data) {
                 var baseGrid = data.view;
                 var record = data.record;
                 var cmd = data.cmd
@@ -777,7 +811,7 @@ Ext.define("core.train.class.controller.MainController", {
 
                 return false;
             },
-            gridRoomClick: function(data) {              
+            gridRoomClick: function (data) {
                 var baseGrid = data.view;
                 var record = data.record;
                 var cmd = data.cmd
@@ -786,7 +820,7 @@ Ext.define("core.train.class.controller.MainController", {
                 return false;
             },
 
-            gridFoodClick: function(data) {              
+            gridFoodClick: function (data) {
                 var baseGrid = data.view;
                 var record = data.record;
                 var cmd = data.cmd
@@ -794,7 +828,7 @@ Ext.define("core.train.class.controller.MainController", {
 
                 return false;
             },
-            editClick: function(data) {
+            editClick: function (data) {
 
                 var baseGrid = data.view;
                 var record = data.record;
@@ -803,7 +837,7 @@ Ext.define("core.train.class.controller.MainController", {
 
                 return false;
             },
-            detailClick: function(data) {
+            detailClick: function (data) {
 
                 var baseGrid = data.view;
                 var record = data.record;
@@ -812,7 +846,7 @@ Ext.define("core.train.class.controller.MainController", {
 
                 return false
             },
-            editClick_Tab: function(data) {
+            editClick_Tab: function (data) {
 
                 var baseGrid = data.view;
                 var record = data.record;
@@ -821,7 +855,7 @@ Ext.define("core.train.class.controller.MainController", {
 
                 return false;
             },
-            detailClick_Tab: function(data) {
+            detailClick_Tab: function (data) {
 
                 var baseGrid = data.view;
                 var record = data.record;
@@ -830,7 +864,7 @@ Ext.define("core.train.class.controller.MainController", {
 
                 return false
             },
-            gridRoomClick_Tab: function(data) {              
+            gridRoomClick_Tab: function (data) {
                 var baseGrid = data.view;
                 var record = data.record;
                 var cmd = data.cmd
@@ -838,7 +872,7 @@ Ext.define("core.train.class.controller.MainController", {
 
                 return false;
             },
-            gridFoodClick_Tab: function(data) {              
+            gridFoodClick_Tab: function (data) {
                 var baseGrid = data.view;
                 var record = data.record;
                 var cmd = data.cmd
@@ -850,13 +884,13 @@ Ext.define("core.train.class.controller.MainController", {
 
 
         "basegrid[xtype=class.coursegrid]  actioncolumn": {
-            editClick: function(data) {
+            editClick: function (data) {
                 //console.log(data);
             },
-            detailClick: function(data) {
-               // console.log(data);
+            detailClick: function (data) {
+                // console.log(data);
             },
-            deleteClick: function(data) {
+            deleteClick: function (data) {
                 var self = this;
 
                 var baseGrid = data.view;
@@ -869,12 +903,12 @@ Ext.define("core.train.class.controller.MainController", {
                 var pkName = funData.pkName;
 
 
-                Ext.Msg.confirm('提示', '是否删除数据?', function(btn, text) {
+                Ext.Msg.confirm('提示', '是否删除数据?', function (btn, text) {
                     if (btn == 'yes') {
                         //发送ajax请求
                         var resObj = self.ajax({
                             url: comm.get("baseUrl") +
-                                "/TrainClassschedule/dodelete",
+                            "/TrainClassschedule/dodelete",
                             params: {
                                 ids: record.get(
                                     pkName),
@@ -898,15 +932,15 @@ Ext.define("core.train.class.controller.MainController", {
                 return false;
             },
         },
-        "basegrid[xtype=class.studentgrid]  actioncolumn": {            
-            editClick: function(data) {
+        "basegrid[xtype=class.studentgrid]  actioncolumn": {
+            editClick: function (data) {
                 console.log(data);
 
             },
-            detailClick: function(data) {
+            detailClick: function (data) {
                 console.log(data);
             },
-            deleteClick: function(data) {
+            deleteClick: function (data) {
                 var self = this;
 
                 var baseGrid = data.view;
@@ -919,16 +953,16 @@ Ext.define("core.train.class.controller.MainController", {
                 var pkName = funData.pkName;
 
 
-                Ext.Msg.confirm('提示', '是否删除数据?', function(btn, text) {
+                Ext.Msg.confirm('提示', '是否删除数据?', function (btn, text) {
                     if (btn == 'yes') {
                         //发送ajax请求
                         var resObj = self.ajax({
                             url: comm.get("baseUrl") +
-                                "/TrainClasstrainee/dodelete",
+                            "/TrainClasstrainee/dodelete",
                             params: {
                                 ids: record.get(
                                     pkName),
-                                classId:record.get("classId"),
+                                classId: record.get("classId"),
                                 pkName: pkName
                             }
                         });
@@ -952,7 +986,7 @@ Ext.define("core.train.class.controller.MainController", {
 
     },
 
-    doDetail: function(btn, cmd, grid, record) {
+    doDetail: function (btn, cmd, grid, record) {
 
         var self = this;
         var baseGrid;
@@ -1067,7 +1101,7 @@ Ext.define("core.train.class.controller.MainController", {
                 classId: insertObj.uuid
             },
             timeout: 1000 * 30 * 60,
-            success: function(response) {
+            success: function (response) {
                 resObj = Ext.decode(Ext.valueFrom(
                     response.responseText, '{}'
                 ));
@@ -1110,7 +1144,7 @@ Ext.define("core.train.class.controller.MainController", {
         }
     },
 
-    doFoodDetail: function(btn, cmd, grid, record) {
+    doFoodDetail: function (btn, cmd, grid, record) {
         var self = this;
         var baseGrid;
         var recordData;
@@ -1126,7 +1160,7 @@ Ext.define("core.train.class.controller.MainController", {
         var store = baseGrid.getStore();
         var Model = store.model;
         var funCode = baseGrid.funCode;
-        var basePanel = baseGrid.up("basepanel[funCode=" + funCode +"]");
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
         //得到配置信息
         var funData = basePanel.funData;
         var detCode = "class_footDetail";   //修改此funCode，方便用于捕获window的确定按钮
@@ -1145,7 +1179,7 @@ Ext.define("core.train.class.controller.MainController", {
         });
 
         var width = 700;
-        var height = 650;      
+        var height = 650;
 
         var iconCls = 'x-fa fa-plus-circle';
         var operType = cmd;
@@ -1200,7 +1234,7 @@ Ext.define("core.train.class.controller.MainController", {
             insertObj: insertObj,
             items: [{
                 xtype: detLayout,
-                funCode: detCode, 
+                funCode: detCode,
                 items: [{
                     xtype: "class.fooddetailform"
                 }]
@@ -1214,38 +1248,38 @@ Ext.define("core.train.class.controller.MainController", {
         var objDetForm = detPanel.down("baseform[funCode=" +
             detCode + "]");
         var formDeptObj = objDetForm.getForm();
-             
-        /*默认金额，在model中设置默认值比较好些*/       
-        if(insertObj.breakfastStand==0){
-            insertObj.breakfastStand=20;
+
+        /*默认金额，在model中设置默认值比较好些*/
+        if (insertObj.breakfastStand == 0) {
+            insertObj.breakfastStand = 20;
         }
-        if(insertObj.lunchStand==0){
-            insertObj.lunchStand=50;
+        if (insertObj.lunchStand == 0) {
+            insertObj.lunchStand = 50;
         }
-        if(insertObj.dinnerStand==0){
-            insertObj.dinnerStand=50;
+        if (insertObj.dinnerStand == 0) {
+            insertObj.dinnerStand = 50;
         }
 
-        self.setFormValue(formDeptObj,insertObj);
-                
+        self.setFormValue(formDeptObj, insertObj);
+
         //查询班级的学员信息
         self.asyncAjax({
-            url: comm.get("baseUrl")  + "/TrainClasstrainee/getClassFoodTrainees",
+            url: comm.get("baseUrl") + "/TrainClasstrainee/getClassFoodTrainees",
             params: {
                 classId: insertObj.uuid,
-                page:1,
-                start:0,
-                limit:-1    //-1表示不分页
+                page: 1,
+                start: 0,
+                limit: -1    //-1表示不分页
             },
             //回调代码必须写在里面
-            success: function(response) {
+            success: function (response) {
                 var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
-                var rows=data.rows;
+                var rows = data.rows;
                 //console.log(rows);
-                if(rows!=undefined){ //若存在rows数据，则表明请求正常
+                if (rows != undefined) { //若存在rows数据，则表明请求正常
                     //获取班级学员列表信息
-                    var traineeFoodGrid=win.down("grid[ref=traineeFoodGrid]");
+                    var traineeFoodGrid = win.down("grid[ref=traineeFoodGrid]");
                     /*
                     traineeFoodGrid.getStore().loadData ([
                         { name: '张三', traineeId: '111', breakfast: false,lunch: true,dinner: false },
@@ -1255,11 +1289,11 @@ Ext.define("core.train.class.controller.MainController", {
                     ]);*/
                     traineeFoodGrid.getStore().loadData(rows);
 
-                }else{
+                } else {
                     self.Error(data.obj);
                 }
             }
-        });    
+        });
 
         if (cmd == "detail") {
             self.setFuncReadOnly(funData, objDetForm, true);
@@ -1267,7 +1301,7 @@ Ext.define("core.train.class.controller.MainController", {
         }
     },
 
-    doRoomDetail: function(btn, cmd, grid, record) {
+    doRoomDetail: function (btn, cmd, grid, record) {
 
         var self = this;
         var baseGrid;
@@ -1284,7 +1318,7 @@ Ext.define("core.train.class.controller.MainController", {
         var store = baseGrid.getStore();
         var Model = store.model;
         var funCode = baseGrid.funCode;
-        var basePanel = baseGrid.up("basepanel[funCode=" + funCode +"]");
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
         //得到配置信息
         var funData = basePanel.funData;
         var detCode = "class_roomDetail";   //修改此funCode，方便用于捕获window的确定按钮
@@ -1303,7 +1337,7 @@ Ext.define("core.train.class.controller.MainController", {
         });
 
         var width = 600;
-        var height = 500;      
+        var height = 500;
 
         var iconCls = 'x-fa fa-plus-circle';
         var operType = cmd;
@@ -1358,7 +1392,7 @@ Ext.define("core.train.class.controller.MainController", {
             insertObj: insertObj,
             items: [{
                 xtype: detLayout,
-                funCode: detCode, 
+                funCode: detCode,
                 items: [{
                     xtype: "class.roomdetailform"
                 }]
@@ -1367,33 +1401,31 @@ Ext.define("core.train.class.controller.MainController", {
         win.show();
 
 
-
         var detPanel = win.down("basepanel[funCode=" + detCode +
             "]");
         var objDetForm = detPanel.down("baseform[funCode=" +
             detCode + "]");
         var formDeptObj = objDetForm.getForm();
 
-        
 
         //查询班级的学员信息
         self.asyncAjax({
-            url: comm.get("baseUrl")  + "/TrainClasstrainee/getClassRoomTrainees",
+            url: comm.get("baseUrl") + "/TrainClasstrainee/getClassRoomTrainees",
             params: {
                 classId: insertObj.uuid,
-                page:1,
-                start:0,
-                limit:-1    //-1表示不分页
+                page: 1,
+                start: 0,
+                limit: -1    //-1表示不分页
             },
             //回调代码必须写在里面
-            success: function(response) {
+            success: function (response) {
                 var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
-                var rows=data.rows;
+                var rows = data.rows;
                 //console.log(rows);
-                if(rows!=undefined){  //若存在rows数据，则表明请求正常
+                if (rows != undefined) {  //若存在rows数据，则表明请求正常
                     //获取班级学员列表信息
-                    var traineeRoomGrid=win.down("grid[ref=traineeRoomGrid]");
+                    var traineeRoomGrid = win.down("grid[ref=traineeRoomGrid]");
                     /*                
                     //获取班级学员列表信息
                     var traineeRoomGrid=win.down("grid[ref=traineeRoomGrid]");
@@ -1405,13 +1437,13 @@ Ext.define("core.train.class.controller.MainController", {
                     ]);*/
                     traineeRoomGrid.getStore().loadData(rows);
 
-                }else{
+                } else {
                     self.Error(data.obj);
                 }
             }
-        });    
+        });
 
-        self.setFormValue(formDeptObj,insertObj);             
+        self.setFormValue(formDeptObj, insertObj);
 
         if (cmd == "detail") {
             self.setFuncReadOnly(funData, objDetForm, true);
@@ -1419,7 +1451,7 @@ Ext.define("core.train.class.controller.MainController", {
         }
     },
 
-    doTranieeDetail_Tab:function(btn, cmd, grid, record) {
+    doTranieeDetail_Tab: function (btn, cmd, grid, record) {
 
         var self = this;
         var baseGrid;
@@ -1435,15 +1467,15 @@ Ext.define("core.train.class.controller.MainController", {
 
         //得到组件
         var funCode = baseGrid.funCode;
-        var basePanel = baseGrid.up("basepanel[funCode=" + funCode +"]");
-        var tabPanel=baseGrid.up("tabpanel[xtype=app-main]");
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+        var tabPanel = baseGrid.up("tabpanel[xtype=app-main]");
 
         //得到配置信息
         var funData = basePanel.funData;
         var detCode = "class_traineeDetail";   //修改此funCode，方便用于捕获window的确定按钮
         var detLayout = basePanel.detLayout;
         var defaultObj = funData.defaultObj;
-                
+
         //关键：window的视图控制器
         var otherController = basePanel.otherController;
         if (!otherController)
@@ -1456,11 +1488,11 @@ Ext.define("core.train.class.controller.MainController", {
         });
 
         //根据cmd操作类型，来设置不同的值
-        var tabTitle = "班级学员管理"; 
+        var tabTitle = "班级学员管理";
         //设置tab页的itemId
-        var tabItemId=funCode+"_gridTraineeDetail";     //命名规则：funCode+'_ref名称',确保不重复
-        var pkValue= null;
-        var operType=cmd;
+        var tabItemId = funCode + "_gridTraineeDetail";     //命名规则：funCode+'_ref名称',确保不重复
+        var pkValue = null;
+        var operType = cmd;
 
         switch (cmd) {
             case "edit":
@@ -1476,14 +1508,14 @@ Ext.define("core.train.class.controller.MainController", {
 
                 insertObj = recordData;
                 tabTitle = "班级学员管理";
-                tabItemId=funCode+"_gridTraineeEdit"; 
+                tabItemId = funCode + "_gridTraineeEdit";
 
                 //获取主键值
                 var pkName = funData.pkName;
-                pkValue= recordData[pkName];
+                pkValue = recordData[pkName];
 
                 break;
-            case "detail":                
+            case "detail":
                 if (btn) {
                     var rescords = baseGrid.getSelectionModel().getSelection();
                     if (rescords.length != 1) {
@@ -1495,96 +1527,95 @@ Ext.define("core.train.class.controller.MainController", {
 
                 insertObj = recordData;
                 tabTitle = "班级学员管理";
-                tabItemId=funCode+"_gridTraineeDetail"+insertObj.classNumb; 
+                tabItemId = funCode + "_gridTraineeDetail" + insertObj.classNumb;
                 break;
         }
 
         //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
-        var tabItem=tabPanel.getComponent(tabItemId);
-        if(!tabItem){
-    
-            tabItem=Ext.create({
-                xtype:'container',
+        var tabItem = tabPanel.getComponent(tabItemId);
+        if (!tabItem) {
+
+            tabItem = Ext.create({
+                xtype: 'container',
                 title: tabTitle,
                 //iconCls: 'x-fa fa-clipboard',
-                scrollable :true, 
-                itemId:tabItemId,
-                itemPKV:pkValue,      //保存主键值
-                layout:'fit', 
+                scrollable: true,
+                itemId: tabItemId,
+                itemPKV: pkValue,      //保存主键值
+                layout: 'fit',
             });
-            tabPanel.add(tabItem); 
+            tabPanel.add(tabItem);
 
             //延迟放入到tab中
-            setTimeout(function(){
+            setTimeout(function () {
                 //创建组件
-                var item=Ext.widget("baseformtab",{
-                    operType:operType,                            
-                    controller:otherController,         //指定重写事件的控制器
-                    funCode:funCode,                    //指定mainLayout的funcode
-                    detCode:detCode,                    //指定detailLayout的funcode
-                    tabItemId:tabItemId,                //指定tab页的itemId
-                    insertObj:insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                var item = Ext.widget("baseformtab", {
+                    operType: operType,
+                    controller: otherController,         //指定重写事件的控制器
+                    funCode: funCode,                    //指定mainLayout的funcode
+                    detCode: detCode,                    //指定detailLayout的funcode
+                    tabItemId: tabItemId,                //指定tab页的itemId
+                    insertObj: insertObj,                //保存一些需要默认值，提供给提交事件中使用
                     funData: popFunData,                //保存funData数据，提供给提交事件中使用
-                    items:[{
-                        xtype:detLayout,
-                        funCode: detCode, 
-                        layout:'border',
+                    items: [{
+                        xtype: detLayout,
+                        funCode: detCode,
+                        layout: 'border',
                         items: [{
-                            xtype:'baseform',
-                            height:40,
-                            region:'north',
-                            bodyPadding:0,
-                            bodyStyle:{
+                            xtype: 'baseform',
+                            height: 40,
+                            region: 'north',
+                            bodyPadding: 0,
+                            bodyStyle: {
                                 backgroundColor: '#Fafafa'
                             },
-                            items:[{
+                            items: [{
                                 fieldLabel: "所属班级id",
                                 name: "uuid",
                                 xtype: "textfield",
                                 hidden: true,
-                                value:insertObj.uuid
-                            }, {                            
+                                value: insertObj.uuid
+                            }, {
                                 name: "className",
                                 xtype: "textfield",
                                 hidden: true,
-                                value:insertObj.className
+                                value: insertObj.className
                             }, {
                                 fieldLabel: "<span style='font-weight:400;font-size:14px'>所属班级</span>",
                                 name: "classNameShow",
                                 xtype: "displayfield",
-                                width:300,
-                                labelWidth:80,
-                                margin:5,
-                                value:"<span style='font-weight:400;font-size:14px'>"+insertObj.className+"</span>"
-                            }]                        
-                        },{
+                                width: 300,
+                                labelWidth: 80,
+                                margin: 5,
+                                value: "<span style='font-weight:400;font-size:14px'>" + insertObj.className + "</span>"
+                            }]
+                        }, {
                             xtype: "class.classstudentgrid",
-                            region:'center',
+                            region: 'center',
                             extParams: {
                                 whereSql: "",
                                 //查询的过滤字段
                                 //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
-                                filter: "[{'type':'string','comparison':'=','value':'"+insertObj.uuid+"','field':'classId'}]" 
+                                filter: "[{'type':'string','comparison':'=','value':'" + insertObj.uuid + "','field':'classId'}]"
                             }
                         }]
                     }]
-                }); 
-                tabItem.add(item);  
-            
-            
-            },30);
-                           
-        }else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据
+                });
+                tabItem.add(item);
+
+
+            }, 30);
+
+        } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue) {     //判断是否点击的是同一条数据
             self.Warning("您当前已经打开了一个编辑窗口了！");
             return;
         }
 
-        tabPanel.setActiveTab( tabItem);
+        tabPanel.setActiveTab(tabItem);
 
     },
 
-
-    doCourseDetail_Tab:function(btn, cmd, grid, record) {
+    doCourseDetail_Tab: function (btn, cmd, grid, record) {
 
         var self = this;
         var baseGrid;
@@ -1600,15 +1631,15 @@ Ext.define("core.train.class.controller.MainController", {
 
         //得到组件
         var funCode = baseGrid.funCode;
-        var basePanel = baseGrid.up("basepanel[funCode=" + funCode +"]");
-        var tabPanel=baseGrid.up("tabpanel[xtype=app-main]");
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+        var tabPanel = baseGrid.up("tabpanel[xtype=app-main]");
 
         //得到配置信息
         var funData = basePanel.funData;
         var detCode = "class_courseDetail";   //修改此funCode，方便用于捕获window的确定按钮
         var detLayout = basePanel.detLayout;
         var defaultObj = funData.defaultObj;
-            
+
         //关键：window的视图控制器
         var otherController = basePanel.otherController;
         if (!otherController)
@@ -1621,11 +1652,11 @@ Ext.define("core.train.class.controller.MainController", {
         });
 
         //根据cmd操作类型，来设置不同的值
-        var tabTitle = "班级课程管理"; 
+        var tabTitle = "班级课程管理";
         //设置tab页的itemId
-        var tabItemId=funCode+"_gridCourseDetail";     //命名规则：funCode+'_ref名称',确保不重复
-        var pkValue= null;
-        var operType=cmd;
+        var tabItemId = funCode + "_gridCourseDetail";     //命名规则：funCode+'_ref名称',确保不重复
+        var pkValue = null;
+        var operType = cmd;
 
         switch (cmd) {
             case "edit":
@@ -1641,14 +1672,14 @@ Ext.define("core.train.class.controller.MainController", {
 
                 insertObj = recordData;
                 tabTitle = "班级课程管理";
-                tabItemId=funCode+"_gridCourseEdit"; 
+                tabItemId = funCode + "_gridCourseEdit";
 
                 //获取主键值
                 var pkName = funData.pkName;
-                pkValue= recordData[pkName];
+                pkValue = recordData[pkName];
 
                 break;
-            case "detail":                
+            case "detail":
                 if (btn) {
                     var rescords = baseGrid.getSelectionModel().getSelection();
                     if (rescords.length != 1) {
@@ -1660,96 +1691,95 @@ Ext.define("core.train.class.controller.MainController", {
 
                 insertObj = recordData;
                 tabTitle = "班级课程管理";
-                tabItemId=funCode+"_gridCourseDetail"+insertObj.classNumb; 
+                tabItemId = funCode + "_gridCourseDetail" + insertObj.classNumb;
                 break;
         }
 
         //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
-        var tabItem=tabPanel.getComponent(tabItemId);
-        if(!tabItem){
-    
-            tabItem=Ext.create({
-                xtype:'container',
+        var tabItem = tabPanel.getComponent(tabItemId);
+        if (!tabItem) {
+
+            tabItem = Ext.create({
+                xtype: 'container',
                 title: tabTitle,
                 //iconCls: 'x-fa fa-clipboard',
-                scrollable :true, 
-                itemId:tabItemId,
-                itemPKV:pkValue,      //保存主键值
-                layout:'fit', 
+                scrollable: true,
+                itemId: tabItemId,
+                itemPKV: pkValue,      //保存主键值
+                layout: 'fit',
             });
-            tabPanel.add(tabItem); 
+            tabPanel.add(tabItem);
 
             //延迟放入到tab中
-            setTimeout(function(){
+            setTimeout(function () {
                 //创建组件
-                var item=Ext.widget("baseformtab",{
-                    operType:operType,                            
-                    controller:otherController,         //指定重写事件的控制器
-                    funCode:funCode,                    //指定mainLayout的funcode
-                    detCode:detCode,                    //指定detailLayout的funcode
-                    tabItemId:tabItemId,                //指定tab页的itemId
-                    insertObj:insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                var item = Ext.widget("baseformtab", {
+                    operType: operType,
+                    controller: otherController,         //指定重写事件的控制器
+                    funCode: funCode,                    //指定mainLayout的funcode
+                    detCode: detCode,                    //指定detailLayout的funcode
+                    tabItemId: tabItemId,                //指定tab页的itemId
+                    insertObj: insertObj,                //保存一些需要默认值，提供给提交事件中使用
                     funData: popFunData,                //保存funData数据，提供给提交事件中使用
-                    items:[{
-                        xtype:detLayout,
-                        funCode: detCode, 
-                        layout:'border',
+                    items: [{
+                        xtype: detLayout,
+                        funCode: detCode,
+                        layout: 'border',
                         items: [{
-                            xtype:'baseform',
-                            height:40,
-                            region:'north',
-                            bodyPadding:0,
-                            bodyStyle:{
+                            xtype: 'baseform',
+                            height: 40,
+                            region: 'north',
+                            bodyPadding: 0,
+                            bodyStyle: {
                                 backgroundColor: '#Fafafa'
                             },
-                            items:[{
+                            items: [{
                                 fieldLabel: "所属班级id",
                                 name: "uuid",
                                 xtype: "textfield",
                                 hidden: true,
-                                value:insertObj.uuid
-                            }, {                            
+                                value: insertObj.uuid
+                            }, {
                                 name: "className",
                                 xtype: "textfield",
                                 hidden: true,
-                                value:insertObj.className
+                                value: insertObj.className
                             }, {
                                 fieldLabel: "<span style='font-weight:400;font-size:14px'>所属班级</span>",
                                 name: "classNameShow",
                                 xtype: "displayfield",
-                                width:300,
-                                labelWidth:80,
-                                margin:5,
-                                value:"<span style='font-weight:400;font-size:14px'>"+insertObj.className+"</span>"
-                            }]                        
-                        },{
+                                width: 300,
+                                labelWidth: 80,
+                                margin: 5,
+                                value: "<span style='font-weight:400;font-size:14px'>" + insertObj.className + "</span>"
+                            }]
+                        }, {
                             xtype: "class.classcoursegrid",
-                            region:'center',
+                            region: 'center',
                             extParams: {
                                 whereSql: "",
                                 //查询的过滤字段
                                 //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
-                                filter: "[{'type':'string','comparison':'=','value':'"+insertObj.uuid+"','field':'classId'}]" 
+                                filter: "[{'type':'string','comparison':'=','value':'" + insertObj.uuid + "','field':'classId'}]"
                             }
                         }]
                     }]
-                }); 
-                tabItem.add(item);  
-            
-            
-            },30);
-                           
-        }else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据
+                });
+                tabItem.add(item);
+
+
+            }, 30);
+
+        } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue) {     //判断是否点击的是同一条数据
             self.Warning("您当前已经打开了一个编辑窗口了！");
             return;
         }
 
-        tabPanel.setActiveTab( tabItem);
+        tabPanel.setActiveTab(tabItem);
 
     },
 
-
-    doClassDetail_Tab:function(btn, cmd, grid, record) {
+    doClassDetail_Tab: function (btn, cmd, grid, record) {
 
         var self = this;
         var baseGrid;
@@ -1765,15 +1795,15 @@ Ext.define("core.train.class.controller.MainController", {
 
         //得到组件
         var funCode = baseGrid.funCode;
-        var basePanel = baseGrid.up("basepanel[funCode=" + funCode +"]");
-        var tabPanel=baseGrid.up("tabpanel[xtype=app-main]");
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+        var tabPanel = baseGrid.up("tabpanel[xtype=app-main]");
 
         //得到配置信息
         var funData = basePanel.funData;
-        var detCode =  'class_classdetail' ; // basePanel.detCode;  
-        var detLayout ='class.classdetaillayout' ;// basePanel.detLayout;\
+        var detCode = 'class_classdetail'; // basePanel.detCode;
+        var detLayout = 'class.classdetaillayout';// basePanel.detLayout;\
         var defaultObj = funData.defaultObj;
-                
+
         //关键：window的视图控制器
         var otherController = basePanel.otherController;
         if (!otherController)
@@ -1786,17 +1816,16 @@ Ext.define("core.train.class.controller.MainController", {
         });
 
         //根据cmd操作类型，来设置不同的值
-        var tabTitle = funData.tabConfig.addTitle; 
+        var tabTitle = funData.tabConfig.addTitle;
         //设置tab页的itemId
-        var tabItemId=funCode+"_gridAdd";     //命名规则：funCode+'_ref名称',确保不重复
-        var pkValue= null;
+        var tabItemId = funCode + "_gridAdd";     //命名规则：funCode+'_ref名称',确保不重复
+        var pkValue = null;
         var operType = "detail";    // 只显示关闭按钮
-        var items=[{
-            xtype:detLayout
+        var items = [{
+            xtype: detLayout
         }];
         switch (cmd) {
             case "edit":
-
                 if (btn) {
                     var rescords = baseGrid.getSelectionModel().getSelection();
                     if (rescords.length != 1) {
@@ -1804,21 +1833,21 @@ Ext.define("core.train.class.controller.MainController", {
                         return;
                     }
                     recordData = rescords[0].data;
-                }            
+                }
                 // if(recordData.isuse==1){
                 //     self.msgbox("班级已经启用，无法再修改！");
                 //     return;
                 // }
                 insertObj = recordData;
                 tabTitle = funData.tabConfig.editTitle;
-                tabItemId=funCode+"_gridEdit"; 
+                tabItemId = funCode + "_gridEdit";
 
                 //获取主键值
                 var pkName = funData.pkName;
-                pkValue= recordData[pkName];
+                pkValue = recordData[pkName];
 
                 break;
-            case "detail":                
+            case "detail":
                 if (btn) {
                     var rescords = baseGrid.getSelectionModel().getSelection();
                     if (rescords.length != 1) {
@@ -1830,12 +1859,12 @@ Ext.define("core.train.class.controller.MainController", {
 
                 insertObj = recordData;
                 tabTitle = funData.tabConfig.detailTitle;
-                tabItemId=funCode+"_gridDetail"+insertObj.classNumb;    //详细界面可以打开多个
-                items=[{
-                    xtype:detLayout,
-                    defaults:null,
-                    items:[{
-                        xtype:'class.classdetailhtmlpanel'
+                tabItemId = funCode + "_senduser" + insertObj.classNumb;    //详细界面可以打开多个
+                items = [{
+                    xtype: detLayout,
+                    defaults: null,
+                    items: [{
+                        xtype: 'class.classdetailhtmlpanel'
                     }]
                 }];
                 break;
@@ -1843,76 +1872,76 @@ Ext.define("core.train.class.controller.MainController", {
 
 
         //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
-        var tabItem=tabPanel.getComponent(tabItemId);
-        if(!tabItem){
-    
-            tabItem=Ext.create({
-                xtype:'container',
+        var tabItem = tabPanel.getComponent(tabItemId);
+        if (!tabItem) {
+
+            tabItem = Ext.create({
+                xtype: 'container',
                 title: tabTitle,
                 //iconCls: 'x-fa fa-clipboard',
-                scrollable :true, 
-                itemId:tabItemId,
-                itemPKV:pkValue,      //保存主键值
-                layout:'fit', 
+                scrollable: true,
+                itemId: tabItemId,
+                itemPKV: pkValue,      //保存主键值
+                layout: 'fit'
             });
-            tabPanel.add(tabItem); 
+            tabPanel.add(tabItem);
 
             //延迟放入到tab中
-            setTimeout(function(){
+            setTimeout(function () {
                 //创建组件
-                var item=Ext.widget("baseformtab",{
-                    operType:operType,                            
-                    controller:otherController,         //指定重写事件的控制器
-                    funCode:funCode,                    //指定mainLayout的funcode
-                    detCode:detCode,                    //指定detailLayout的funcode
-                    tabItemId:tabItemId,                //指定tab页的itemId
-                    insertObj:insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                var item = Ext.widget("baseformtab", {
+                    operType: operType,
+                    controller: otherController,         //指定重写事件的控制器
+                    funCode: funCode,                    //指定mainLayout的funcode
+                    detCode: detCode,                    //指定detailLayout的funcode
+                    tabItemId: tabItemId,                //指定tab页的itemId
+                    insertObj: insertObj,                //保存一些需要默认值，提供给提交事件中使用
                     funData: popFunData,                //保存funData数据，提供给提交事件中使用
-                    items:items
-                }); 
-                tabItem.add(item);  
+                    items: items
+                });
+                tabItem.add(item);
 
-                if(cmd!="detail"){
+                if (cmd != "detail") {
                     var objDetForm = item.down("baseform[funCode=" + detCode + "]");
                     var formDeptObj = objDetForm.getForm();
 
                     self.setFormValue(formDeptObj, insertObj);
                 }
 
-                if(cmd=="edit" || cmd=="detail"){
-                    if(cmd=="edit"){
+                if (cmd == "edit" || cmd == "detail") {
+                    if (cmd == "edit") {
                         //初始化一些数据
                         var classCourseGrid = tabItem.down("basegrid[xtype=class.classcoursegrid]");
-                        classCourseGrid.getStore().getProxy().extraParams.filter='[{"type":"string","comparison":"=","value":"'+insertObj.uuid+'","field":"classId"}]';
+                        classCourseGrid.getStore().getProxy().extraParams.filter = '[{"type":"string","comparison":"=","value":"' + insertObj.uuid + '","field":"classId"}]';
 
                         var classStudentGrid = tabItem.down("basegrid[xtype=class.classstudentgrid]");
-                        classStudentGrid.getStore().getProxy().extraParams.filter='[{"type":"string","comparison":"=","value":"'+insertObj.uuid+'","field":"classId"}]';
-                        
-                            
+                        classStudentGrid.getStore().getProxy().extraParams.filter = '[{"type":"string","comparison":"=","value":"' + insertObj.uuid + '","field":"classId"}]';
+
+
                         var foodDetailForm = tabItem.down("baseform[xtype=class.fooddetailform]");
                         self.setFormValue(foodDetailForm.getForm(), insertObj);
-                        
+
                         var roomDetailForm = tabItem.down("baseform[xtype=class.roomdetailform]");
                         roomDetailForm.getForm().findField("uuid").setValue(insertObj.uuid);
 
                         //查询班级的就餐信息
                         self.asyncAjax({
-                            url: comm.get("baseUrl")  + "/TrainClasstrainee/getClassFoodTrainees",
+                            url: comm.get("baseUrl") + "/TrainClasstrainee/getClassFoodTrainees",
                             params: {
                                 classId: insertObj.uuid,
-                                page:1,
-                                start:0,
-                                limit:-1    //-1表示不分页
+                                page: 1,
+                                start: 0,
+                                limit: -1    //-1表示不分页
                             },
                             //回调代码必须写在里面
-                            success: function(response) {
+                            success: function (response) {
                                 var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
-                                var rows=data.rows;
+                                var rows = data.rows;
                                 //console.log(rows);
-                                if(rows!=undefined){ //若存在rows数据，则表明请求正常
+                                if (rows != undefined) { //若存在rows数据，则表明请求正常
                                     //获取班级学员列表信息
-                                    var traineeFoodGrid=tabItem.down("grid[ref=traineeFoodGrid]");
+                                    var traineeFoodGrid = tabItem.down("grid[ref=traineeFoodGrid]");
                                     /*
                                     traineeFoodGrid.getStore().loadData ([
                                         { name: '张三', traineeId: '111', breakfast: false,lunch: true,dinner: false },
@@ -1922,30 +1951,30 @@ Ext.define("core.train.class.controller.MainController", {
                                     ]);*/
                                     traineeFoodGrid.getStore().loadData(rows);
 
-                                }else{
+                                } else {
                                     self.Error(data.obj);
                                 }
                             }
-                        });    
-                        
+                        });
+
                         //查询班级的住宿信息
                         self.asyncAjax({
-                            url: comm.get("baseUrl")  + "/TrainClasstrainee/getClassRoomTrainees",
+                            url: comm.get("baseUrl") + "/TrainClasstrainee/getClassRoomTrainees",
                             params: {
                                 classId: insertObj.uuid,
-                                page:1,
-                                start:0,
-                                limit:-1    //-1表示不分页
+                                page: 1,
+                                start: 0,
+                                limit: -1    //-1表示不分页
                             },
                             //回调代码必须写在里面
-                            success: function(response) {
+                            success: function (response) {
                                 var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
-                                var rows=data.rows;
+                                var rows = data.rows;
                                 //console.log(rows);
-                                if(rows!=undefined){  //若存在rows数据，则表明请求正常
+                                if (rows != undefined) {  //若存在rows数据，则表明请求正常
                                     //获取班级学员列表信息
-                                    var traineeRoomGrid=tabItem.down("grid[ref=traineeRoomGrid]");
+                                    var traineeRoomGrid = tabItem.down("grid[ref=traineeRoomGrid]");
                                     /*                
                                     //获取班级学员列表信息
                                     var traineeRoomGrid=win.down("grid[ref=traineeRoomGrid]");
@@ -1957,139 +1986,134 @@ Ext.define("core.train.class.controller.MainController", {
                                     ]);*/
                                     traineeRoomGrid.getStore().loadData(rows);
 
-                                }else{
+                                } else {
                                     self.Error(data.obj);
                                 }
                             }
-                        });  
+                        });
 
-                    }else{
+                    } else {
                         //读取班级信息
                         //读取学员信息
                         //读取课程信息
-                        
+
                         self.asyncAjax({
-                            url: comm.get("baseUrl")  + "/TrainClass/getClassAllInfo",
+                            url: comm.get("baseUrl") + "/TrainClass/getClassAllInfo",
                             params: {
                                 classId: insertObj.uuid
                             },
                             //回调代码必须写在里面
-                            success: function(response) {
+                            success: function (response) {
                                 var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                                if(data.success){
-                                    var obj=data.obj;
-                                    var classInfoContainer=tabItem.down("container[ref=classInfo]");
+                                if (data.success) {
+                                    var obj = data.obj;
+                                    var classInfoContainer = tabItem.down("container[ref=classInfo]");
                                     classInfoContainer.setData(obj.classInfo);
 
-                                    var classTraineeInfoContainer=tabItem.down("container[ref=classTraineeInfo]");
+                                    var classTraineeInfoContainer = tabItem.down("container[ref=classTraineeInfo]");
                                     classTraineeInfoContainer.setData(obj.classTrainee);
 
-                                    var classCourseInfoContainer=tabItem.down("container[ref=classCourseInfo]");
+                                    var classCourseInfoContainer = tabItem.down("container[ref=classCourseInfo]");
                                     classCourseInfoContainer.setData(obj.classCourse);
-                                    
-                                    var classFoodInfoContainer=tabItem.down("container[ref=classFoodInfo]");                                        
-                                    var classFoodObj={};
-                                    classFoodObj.dinnerType=obj.classInfo.dinnerType;
-                                    if(obj.classInfo.dinnerType==1)
-                                        classFoodObj.dinnerTypeName="围餐";
-                                    else if(obj.classInfo.dinnerType==2)
-                                        classFoodObj.dinnerTypeName="自助餐";
-                                    else 
-                                        classFoodObj.dinnerTypeName="快餐";
-                                    classFoodObj.avgNumber=obj.classInfo.avgNumber;
-                                    classFoodObj.breakfastStand=obj.classInfo.breakfastStand;
-                                    classFoodObj.breakfastCount=obj.classInfo.breakfastCount;
-                                    classFoodObj.lunchStand=obj.classInfo.lunchStand;
-                                    classFoodObj.lunchCount=obj.classInfo.lunchCount;
-                                    classFoodObj.dinnerStand=obj.classInfo.dinnerStand;
-                                    classFoodObj.dinnerCount=obj.classInfo.dinnerCount;
+
+                                    var classFoodInfoContainer = tabItem.down("container[ref=classFoodInfo]");
+                                    var classFoodObj = {};
+                                    classFoodObj.dinnerType = obj.classInfo.dinnerType;
+                                    if (obj.classInfo.dinnerType == 1)
+                                        classFoodObj.dinnerTypeName = "围餐";
+                                    else if (obj.classInfo.dinnerType == 2)
+                                        classFoodObj.dinnerTypeName = "自助餐";
+                                    else
+                                        classFoodObj.dinnerTypeName = "快餐";
+                                    classFoodObj.avgNumber = obj.classInfo.avgNumber;
+                                    classFoodObj.breakfastStand = obj.classInfo.breakfastStand;
+                                    classFoodObj.breakfastCount = obj.classInfo.breakfastCount;
+                                    classFoodObj.lunchStand = obj.classInfo.lunchStand;
+                                    classFoodObj.lunchCount = obj.classInfo.lunchCount;
+                                    classFoodObj.dinnerStand = obj.classInfo.dinnerStand;
+                                    classFoodObj.dinnerCount = obj.classInfo.dinnerCount;
                                     //默认为快餐，则显示学员数据   
-                                    if(obj.classInfo.dinnerType!="1" && obj.classInfo.dinnerType!="2"){                 
+                                    if (obj.classInfo.dinnerType != "1" && obj.classInfo.dinnerType != "2") {
 
                                         //查询班级的就餐信息
                                         self.asyncAjax({
-                                            url: comm.get("baseUrl")  + "/TrainClasstrainee/getClassFoodTrainees",
+                                            url: comm.get("baseUrl") + "/TrainClasstrainee/getClassFoodTrainees",
                                             params: {
                                                 classId: insertObj.uuid,
-                                                page:1,
-                                                start:0,
-                                                limit:-1    //-1表示不分页
+                                                page: 1,
+                                                start: 0,
+                                                limit: -1    //-1表示不分页
                                             },
                                             //回调代码必须写在里面
-                                            success: function(response) {
+                                            success: function (response) {
                                                 var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                                                var rows=data.rows;
-                                                if(rows!=undefined){ //若存在rows数据，则表明请求正常
-                                                    classFoodObj.rows=rows;                                   
-                                                    classFoodInfoContainer.setData(classFoodObj);  
-                                                }else{
+                                                var rows = data.rows;
+                                                if (rows != undefined) { //若存在rows数据，则表明请求正常
+                                                    classFoodObj.rows = rows;
+                                                    classFoodInfoContainer.setData(classFoodObj);
+                                                } else {
                                                     self.Error(data.obj);
                                                 }
                                             }
-                                        });  
-                                    }else{
-                                        classFoodInfoContainer.setData(classFoodObj);   
-                                    }      
-                                        
-                                                                 
+                                        });
+                                    } else {
+                                        classFoodInfoContainer.setData(classFoodObj);
+                                    }
+
+
                                     //查询班级的住宿信息
                                     self.asyncAjax({
-                                        url: comm.get("baseUrl")  + "/TrainClasstrainee/getClassRoomTrainees",
+                                        url: comm.get("baseUrl") + "/TrainClasstrainee/getClassRoomTrainees",
                                         params: {
                                             classId: insertObj.uuid,
-                                            page:1,
-                                            start:0,
-                                            limit:-1    //-1表示不分页
+                                            page: 1,
+                                            start: 0,
+                                            limit: -1    //-1表示不分页
                                         },
                                         //回调代码必须写在里面
-                                        success: function(response) {
+                                        success: function (response) {
                                             var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                                            var rows=data.rows;
+                                            var rows = data.rows;
                                             //console.log(rows);
-                                            if(rows!=undefined){  //若存在rows数据，则表明请求正常
-                                                var classRoomInfoContainer=tabItem.down("container[ref=classRoomInfo]");  
-                                                classRoomInfoContainer.setData(rows);     
-                                            }else{
+                                            if (rows != undefined) {  //若存在rows数据，则表明请求正常
+                                                var classRoomInfoContainer = tabItem.down("container[ref=classRoomInfo]");
+                                                classRoomInfoContainer.setData(rows);
+                                            } else {
                                                 self.Error(data.obj);
                                             }
                                         }
-                                    });  
-                                }else{
+                                    });
+                                } else {
                                     self.Error(data.obj);
                                 }
-                               
+
                             }
-                        });    
+                        });
                     }
-                    
-
                 }
-               
+            }, 30);
 
-            },30);
-                           
-        }else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据
+        } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue) {     //判断是否点击的是同一条数据
             self.Warning("您当前已经打开了一个编辑窗口了！");
             return;
         }
 
-        tabPanel.setActiveTab( tabItem);
-        
-        
-       
+        tabPanel.setActiveTab(tabItem);
+
+
         /*隐藏操作列*/
         /*
         var actioncolumn=coursegrid.query("actioncolumn");
         for(var i in actioncolumn){
             actioncolumn[i].setVisible(false);
-        } */ 
+        } */
 
-/*
-        coursegrid.extParams.filter ="[{'type':'string','comparison':'=','value':'" + insertObj.uuid + "','field':'classId'}]";           
-*/
+        /*
+                coursegrid.extParams.filter ="[{'type':'string','comparison':'=','value':'" + insertObj.uuid + "','field':'classId'}]";
+        */
     },
 
-    doRoomDetail_Tab: function(btn, cmd, grid, record) {
+    doRoomDetail_Tab: function (btn, cmd, grid, record) {
 
         var self = this;
         var baseGrid;
@@ -2104,15 +2128,15 @@ Ext.define("core.train.class.controller.MainController", {
 
         //得到组件
         var funCode = baseGrid.funCode;
-        var basePanel = baseGrid.up("basepanel[funCode=" + funCode +"]");
-        var tabPanel=baseGrid.up("tabpanel[xtype=app-main]");
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+        var tabPanel = baseGrid.up("tabpanel[xtype=app-main]");
 
         //得到配置信息
         var funData = basePanel.funData;
         var detCode = "class_roomDetail";   //修改此funCode，方便用于捕获window的确定按钮
         var detLayout = basePanel.detLayout;
         var defaultObj = funData.defaultObj;
-                
+
         //关键：window的视图控制器
         var otherController = basePanel.otherController;
         if (!otherController)
@@ -2125,11 +2149,11 @@ Ext.define("core.train.class.controller.MainController", {
         });
 
         //根据cmd操作类型，来设置不同的值
-        var tabTitle = "住宿申请"; 
+        var tabTitle = "住宿申请";
         //设置tab页的itemId
-        var tabItemId=funCode+"_gridRoomDetail";     //命名规则：funCode+'_ref名称',确保不重复
-        var pkValue= null;
-        var operType=cmd;
+        var tabItemId = funCode + "_gridRoomDetail";     //命名规则：funCode+'_ref名称',确保不重复
+        var pkValue = null;
+        var operType = cmd;
 
         switch (cmd) {
             case "edit":
@@ -2145,14 +2169,14 @@ Ext.define("core.train.class.controller.MainController", {
 
                 insertObj = recordData;
                 tabTitle = "编辑住宿信息";
-                tabItemId=funCode+"_gridRoomEdit"; 
+                tabItemId = funCode + "_gridRoomEdit";
 
                 //获取主键值
                 var pkName = funData.pkName;
-                pkValue= recordData[pkName];
+                pkValue = recordData[pkName];
 
                 break;
-            case "detail":                
+            case "detail":
                 if (btn) {
                     var rescords = baseGrid.getSelectionModel().getSelection();
                     if (rescords.length != 1) {
@@ -2164,45 +2188,45 @@ Ext.define("core.train.class.controller.MainController", {
 
                 insertObj = recordData;
                 tabTitle = "查看住宿信息";
-                tabItemId=funCode+"_gridRoomDetail"+insertObj.classNumb; 
+                tabItemId = funCode + "_gridRoomDetail" + insertObj.classNumb;
                 break;
         }
 
         //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
-        var tabItem=tabPanel.getComponent(tabItemId);
-        if(!tabItem){
-    
-            tabItem=Ext.create({
-                xtype:'container',
+        var tabItem = tabPanel.getComponent(tabItemId);
+        if (!tabItem) {
+
+            tabItem = Ext.create({
+                xtype: 'container',
                 title: tabTitle,
                 //iconCls: 'x-fa fa-clipboard',
-                scrollable :true, 
-                itemId:tabItemId,
-                itemPKV:pkValue,      //保存主键值
-                layout:'fit', 
+                scrollable: true,
+                itemId: tabItemId,
+                itemPKV: pkValue,      //保存主键值
+                layout: 'fit',
             });
-            tabPanel.add(tabItem); 
+            tabPanel.add(tabItem);
 
             //延迟放入到tab中
-            setTimeout(function(){
+            setTimeout(function () {
                 //创建组件
-                var item=Ext.widget("baseformtab",{
-                    operType:operType,                            
-                    controller:otherController,         //指定重写事件的控制器
-                    funCode:funCode,                    //指定mainLayout的funcode
-                    detCode:detCode,                    //指定detailLayout的funcode
-                    tabItemId:tabItemId,                //指定tab页的itemId
-                    insertObj:insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                var item = Ext.widget("baseformtab", {
+                    operType: operType,
+                    controller: otherController,         //指定重写事件的控制器
+                    funCode: funCode,                    //指定mainLayout的funcode
+                    detCode: detCode,                    //指定detailLayout的funcode
+                    tabItemId: tabItemId,                //指定tab页的itemId
+                    insertObj: insertObj,                //保存一些需要默认值，提供给提交事件中使用
                     funData: popFunData,                //保存funData数据，提供给提交事件中使用
-                    items:[{
-                        xtype:detLayout,
-                        funCode: detCode, 
+                    items: [{
+                        xtype: detLayout,
+                        funCode: detCode,
                         items: [{
                             xtype: "class.roomdetailform"
                         }]
                     }]
-                }); 
-                tabItem.add(item);  
+                });
+                tabItem.add(item);
 
                 var objDetForm = item.down("baseform[funCode=" + detCode + "]");
                 var formDeptObj = objDetForm.getForm();
@@ -2213,25 +2237,25 @@ Ext.define("core.train.class.controller.MainController", {
 
                 self.setFormValue(formDeptObj, insertObj);
 
-                
+
                 //查询班级的住宿信息
                 self.asyncAjax({
-                    url: comm.get("baseUrl")  + "/TrainClasstrainee/getClassRoomTrainees",
+                    url: comm.get("baseUrl") + "/TrainClasstrainee/getClassRoomTrainees",
                     params: {
                         classId: insertObj.uuid,
-                        page:1,
-                        start:0,
-                        limit:-1    //-1表示不分页
+                        page: 1,
+                        start: 0,
+                        limit: -1    //-1表示不分页
                     },
                     //回调代码必须写在里面
-                    success: function(response) {
+                    success: function (response) {
                         var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
-                        var rows=data.rows;
+                        var rows = data.rows;
                         //console.log(rows);
-                        if(rows!=undefined){  //若存在rows数据，则表明请求正常
+                        if (rows != undefined) {  //若存在rows数据，则表明请求正常
                             //获取班级学员列表信息
-                            var traineeRoomGrid=tabItem.down("grid[ref=traineeRoomGrid]");
+                            var traineeRoomGrid = tabItem.down("grid[ref=traineeRoomGrid]");
                             /*                
                             //获取班级学员列表信息
                             var traineeRoomGrid=win.down("grid[ref=traineeRoomGrid]");
@@ -2243,25 +2267,24 @@ Ext.define("core.train.class.controller.MainController", {
                             ]);*/
                             traineeRoomGrid.getStore().loadData(rows);
 
-                        }else{
+                        } else {
                             self.Error(data.obj);
                         }
                     }
-                });  
+                });
 
-                
 
-            },30);
-                           
-        }else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据
+            }, 30);
+
+        } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue) {     //判断是否点击的是同一条数据
             self.Warning("您当前已经打开了一个编辑窗口了！");
             return;
         }
 
-        tabPanel.setActiveTab( tabItem);
+        tabPanel.setActiveTab(tabItem);
     },
 
-    doFoodDetail_Tab : function(btn, cmd, grid, record) {
+    doFoodDetail_Tab: function (btn, cmd, grid, record) {
 
         var self = this;
         var baseGrid;
@@ -2276,15 +2299,15 @@ Ext.define("core.train.class.controller.MainController", {
 
         //得到组件
         var funCode = baseGrid.funCode;
-        var basePanel = baseGrid.up("basepanel[funCode=" + funCode +"]");
-        var tabPanel=baseGrid.up("tabpanel[xtype=app-main]");
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+        var tabPanel = baseGrid.up("tabpanel[xtype=app-main]");
 
         //得到配置信息
         var funData = basePanel.funData;
         var detCode = "class_foodDetail";   //修改此funCode，方便用于捕获window的确定按钮
         var detLayout = basePanel.detLayout;
         var defaultObj = funData.defaultObj;
-                
+
         //关键：window的视图控制器
         var otherController = basePanel.otherController;
         if (!otherController)
@@ -2297,11 +2320,11 @@ Ext.define("core.train.class.controller.MainController", {
         });
 
         //根据cmd操作类型，来设置不同的值
-        var tabTitle = "就餐申请"; 
+        var tabTitle = "就餐申请";
         //设置tab页的itemId
-        var tabItemId=funCode+"_gridFoodDetail";     //命名规则：funCode+'_ref名称',确保不重复
-        var pkValue= null;
-        var operType=cmd;
+        var tabItemId = funCode + "_gridFoodDetail";     //命名规则：funCode+'_ref名称',确保不重复
+        var pkValue = null;
+        var operType = cmd;
 
         switch (cmd) {
             case "edit":
@@ -2317,14 +2340,14 @@ Ext.define("core.train.class.controller.MainController", {
 
                 insertObj = recordData;
                 tabTitle = "编辑就餐信息";
-                tabItemId=funCode+"_gridFoodEdit"; 
+                tabItemId = funCode + "_gridFoodEdit";
 
                 //获取主键值
                 var pkName = funData.pkName;
-                pkValue= recordData[pkName];
+                pkValue = recordData[pkName];
 
                 break;
-            case "detail":                
+            case "detail":
                 if (btn) {
                     var rescords = baseGrid.getSelectionModel().getSelection();
                     if (rescords.length != 1) {
@@ -2336,45 +2359,45 @@ Ext.define("core.train.class.controller.MainController", {
 
                 insertObj = recordData;
                 tabTitle = "查看就餐信息";
-                tabItemId=funCode+"_gridFoodDetail"+insertObj.classNumb; 
+                tabItemId = funCode + "_gridFoodDetail" + insertObj.classNumb;
                 break;
         }
 
         //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
-        var tabItem=tabPanel.getComponent(tabItemId);
-        if(!tabItem){
-    
-            tabItem=Ext.create({
-                xtype:'container',
+        var tabItem = tabPanel.getComponent(tabItemId);
+        if (!tabItem) {
+
+            tabItem = Ext.create({
+                xtype: 'container',
                 title: tabTitle,
                 //iconCls: 'x-fa fa-clipboard',
-                scrollable :true, 
-                itemId:tabItemId,
-                itemPKV:pkValue,      //保存主键值
-                layout:'fit', 
+                scrollable: true,
+                itemId: tabItemId,
+                itemPKV: pkValue,      //保存主键值
+                layout: 'fit',
             });
-            tabPanel.add(tabItem); 
+            tabPanel.add(tabItem);
 
             //延迟放入到tab中
-            setTimeout(function(){
+            setTimeout(function () {
                 //创建组件
-                var item=Ext.widget("baseformtab",{
-                    operType:operType,                            
-                    controller:otherController,         //指定重写事件的控制器
-                    funCode:funCode,                    //指定mainLayout的funcode
-                    detCode:detCode,                    //指定detailLayout的funcode
-                    tabItemId:tabItemId,                //指定tab页的itemId
-                    insertObj:insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                var item = Ext.widget("baseformtab", {
+                    operType: operType,
+                    controller: otherController,         //指定重写事件的控制器
+                    funCode: funCode,                    //指定mainLayout的funcode
+                    detCode: detCode,                    //指定detailLayout的funcode
+                    tabItemId: tabItemId,                //指定tab页的itemId
+                    insertObj: insertObj,                //保存一些需要默认值，提供给提交事件中使用
                     funData: popFunData,                //保存funData数据，提供给提交事件中使用
-                    items:[{
-                        xtype:detLayout,
-                        funCode: detCode, 
+                    items: [{
+                        xtype: detLayout,
+                        funCode: detCode,
                         items: [{
                             xtype: "class.fooddetailform"
                         }]
                     }]
-                }); 
-                tabItem.add(item);  
+                });
+                tabItem.add(item);
 
                 var objDetForm = item.down("baseform[funCode=" + detCode + "]");
                 var formDeptObj = objDetForm.getForm();
@@ -2386,41 +2409,150 @@ Ext.define("core.train.class.controller.MainController", {
                 if (cmd == "detail") {
                     self.setFuncReadOnly(funData, objDetForm, true);
                 }
-                
+
                 //查询班级的住宿信息
                 self.asyncAjax({
-                    url: comm.get("baseUrl")  + "/TrainClasstrainee/getClassFoodTrainees",
+                    url: comm.get("baseUrl") + "/TrainClasstrainee/getClassFoodTrainees",
                     params: {
                         classId: insertObj.uuid,
-                        page:1,
-                        start:0,
-                        limit:-1    //-1表示不分页
+                        page: 1,
+                        start: 0,
+                        limit: -1    //-1表示不分页
                     },
                     //回调代码必须写在里面
-                    success: function(response) {
+                    success: function (response) {
                         var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
-                        var rows=data.rows;
+                        var rows = data.rows;
                         //console.log(rows);
-                        if(rows!=undefined){  //若存在rows数据，则表明请求正常
+                        if (rows != undefined) {  //若存在rows数据，则表明请求正常
                             //获取班级学员就餐信息
-                            var traineeRoomGrid=tabItem.down("grid[ref=traineeFoodGrid]");
+                            var traineeRoomGrid = tabItem.down("grid[ref=traineeFoodGrid]");
                             traineeRoomGrid.getStore().loadData(rows);
 
-                        }else{
+                        } else {
                             self.Error(data.obj);
                         }
                     }
-                });  
+                });
 
-            },30);
-                           
-        }else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据
+            }, 30);
+
+        } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue) {     //判断是否点击的是同一条数据
             self.Warning("您当前已经打开了一个编辑窗口了！");
             return;
         }
 
-        tabPanel.setActiveTab( tabItem);
-        
+        tabPanel.setActiveTab(tabItem);
+
     },
+
+    doSendUserDetail_Tab: function (btn, cmd, grid, record) {
+        var self = this;
+        var baseGrid;
+        var recordData;
+
+        if (btn) {
+            baseGrid = btn.up("basegrid");
+        } else {
+            baseGrid = grid;
+            recordData = record.data;
+        }
+
+        //得到组件
+        var funCode = baseGrid.funCode;
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+        var tabPanel = baseGrid.up("tabpanel[xtype=app-main]");
+
+        //得到配置信息
+        var funData = basePanel.funData;
+        var detCode = "class_sendUserDetail";   //修改此funCode，方便用于捕获window的确定按钮
+        var detLayout = basePanel.detLayout;
+        var defaultObj = funData.defaultObj;
+
+        //关键：window的视图控制器
+        var otherController = basePanel.otherController;
+        if (!otherController)
+            otherController = '';
+
+        //处理特殊默认值
+        var insertObj = self.getDefaultValue(defaultObj);
+        var popFunData = Ext.apply(funData, {
+            grid: baseGrid
+        });
+
+        //根据cmd操作类型，来设置不同的值
+        var tabTitle = "短信通知设置";
+        //设置tab页的itemId
+        var tabItemId = funCode + "_gridSendUser";     //命名规则：funCode+'_ref名称',确保不重复
+        var pkValue = null;
+        var items = [{
+            xtype: detLayout
+        }];
+        if (btn) {
+            var rescords = baseGrid.getSelectionModel().getSelection();
+            if (rescords.length != 1) {
+                self.msgbox("请选择1条数据！");
+                return;
+            }
+            recordData = rescords[0].data;
+        }
+
+        insertObj = recordData;
+        insertObj = Ext.apply(insertObj,{
+            sendInfo:"请安排培训班:[" + recordData.className + "]的场地及住宿"
+        });
+        tabTitle = funData.tabConfig.detailTitle;
+        tabItemId = funCode + "_gridDetail" + insertObj.classNumb;    //详细界面可以打开多个
+        operType = "edit";
+        items = [{
+            xtype: detLayout,
+            defaults: null,
+            items: [{
+                xtype: 'class.sendinfoform'
+            }]
+        }];
+
+        //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
+        var tabItem = tabPanel.getComponent(tabItemId);
+        if (!tabItem) {
+            tabItem = Ext.create({
+                xtype: 'container',
+                title: tabTitle,
+                //iconCls: 'x-fa fa-clipboard',
+                scrollable: true,
+                itemId: tabItemId,
+                itemPKV: pkValue,      //保存主键值
+                layout: 'fit'
+            });
+            tabPanel.add(tabItem);
+
+            //延迟放入到tab中
+            setTimeout(function () {
+                //创建组件
+                var item = Ext.widget("baseformtab", {
+                    operType: operType,
+                    controller: otherController,         //指定重写事件的控制器
+                    funCode: detCode,                    //指定mainLayout的funcode
+                    detCode: detCode,                    //指定detailLayout的funcode
+                    tabItemId: tabItemId,                //指定tab页的itemId
+                    insertObj: insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                    funData: popFunData,                //保存funData数据，提供给提交事件中使用
+                    items: items
+                });
+                tabItem.add(item);
+                var objDetForm = item.down("baseform[xtype=class.sendinfoform]");
+                var formDeptObj = objDetForm.getForm();
+
+                self.setFormValue(formDeptObj, insertObj);
+            }, 30);
+
+        } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue) {     //判断是否点击的是同一条数据
+            self.Warning("您当前已经打开了一个编辑窗口了！");
+            return;
+        }
+
+        tabPanel.setActiveTab(tabItem);
+    }
+
 });

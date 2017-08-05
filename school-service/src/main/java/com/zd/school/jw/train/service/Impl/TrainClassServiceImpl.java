@@ -1,5 +1,6 @@
 package com.zd.school.jw.train.service.Impl;
 
+import com.zd.core.constant.InfoPushWay;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
@@ -16,6 +17,7 @@ import com.zd.school.plartform.baseset.service.BaseOrgService;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.model.SysUserToUP;
 import com.zd.school.plartform.system.service.SysUserService;
+import com.zd.school.push.service.PushInfoService;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,13 +58,19 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 	private TrainClassscheduleService trainClassscheduleService;
 
 	@Resource
-	BaseOrgService baseOrgService;
+	private BaseOrgService baseOrgService;
 
 	@Resource
-	SysUserService sysUserService;
+	private SysUserService sysUserService;
 
 	@Resource
 	private TrainIndicatorStandService standService;
+
+    @Resource
+    private PushInfoService pushService;
+
+    @Resource
+    private  SysUserService userService;
 
 	private static Logger logger = Logger.getLogger(TrainClassServiceImpl.class);
 
@@ -777,6 +785,17 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
             return  evalClassList.get(0);
         else
             return  null;
+    }
+
+    @Override
+    public Boolean doSendInfoUser(String sendUserId, String sendInfo, SysUser currentUser) {
+        String[] sendUserIds = sendUserId.split(",");
+        List<SysUser> sendUserList =  userService.queryByProerties("uuid", sendUserIds);
+        for (SysUser sysUser : sendUserList) {
+            pushService.pushInfo(sysUser.getXm(), sysUser.getMobile(), "培训安排通知", sendInfo, InfoPushWay.DX.getCode());
+        }
+
+        return true;
     }
 
     public Boolean doSumCredit(String classId){

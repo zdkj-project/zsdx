@@ -1,27 +1,26 @@
 package com.zd.school.oa.doc.service.Impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.zd.core.constant.InfoPushWay;
 import com.zd.core.constant.StringVeriable;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.StringUtils;
-import com.zd.school.push.service.PushInfoService;
-import com.zd.school.oa.doc.dao.DocReceiveDao ;
-import com.zd.school.oa.doc.model.DocReceive ;
+import com.zd.school.oa.doc.dao.DocReceiveDao;
+import com.zd.school.oa.doc.model.DocReceive;
 import com.zd.school.oa.doc.model.DocRecexamines;
-import com.zd.school.oa.doc.service.DocReceiveService ;
+import com.zd.school.oa.doc.service.DocReceiveService;
 import com.zd.school.oa.doc.service.DocRecexaminesService;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.service.SysUserService;
+import com.zd.school.push.service.PushInfoService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -95,7 +94,7 @@ public class DocReceiveServiceImpl extends BaseServiceImpl<DocReceive> implement
     		url.append("id=" + exam.getUuid());
     		url.append("&personUserId=" + s);        	
         	String regStatus="您好," + user.getXm() + "老师,有公文需要您尽快处理!";
-        	pushService.pushInfo(user.getXm(), user.getUserNumb(), eventType, regStatus,url.toString());
+        	pushService.pushInfo(user.getXm(), user.getUserNumb(), eventType, regStatus, InfoPushWay.WX.getCode(),url.toString());
 		}
         
         return executeCount;

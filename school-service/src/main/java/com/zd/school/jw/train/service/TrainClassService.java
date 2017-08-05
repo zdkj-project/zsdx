@@ -110,4 +110,5 @@ public interface TrainClassService extends BaseService<TrainClass> {
      */
     public Boolean doSumCredit(String classId);
 
+    public Boolean doSendInfoUser( String sendUserId,  String sendInfo, SysUser currentUser);
 }

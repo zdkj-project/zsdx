@@ -83,7 +83,7 @@ Ext.define("core.system.user.view.UserGrid", {
             xtype: 'button',
             funCode:'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型
             ref: 'gridFastSearchBtn',   
-            iconCls: 'x-fa fa-search',  
+            iconCls: 'x-fa fa-search'
         }],
     },
 

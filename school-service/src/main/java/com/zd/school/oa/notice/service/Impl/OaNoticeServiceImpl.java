@@ -1,5 +1,6 @@
 package com.zd.school.oa.notice.service.Impl;
 
+import com.zd.core.constant.InfoPushWay;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
@@ -268,7 +269,7 @@ public class OaNoticeServiceImpl extends BaseServiceImpl<OaNotice> implements Oa
 				auditor.setOaNotice(saveEntity);
 				auditorService.merge(auditor);
 				String regStatus = "您好," + approveUser.getXm() + "老师,有通知公告需要您尽快处理!";
-				pushService.pushInfo(approveUser.getXm(), approveUser.getUserNumb(), "通知公告审批", regStatus);
+				pushService.pushInfo(approveUser.getXm(), approveUser.getUserNumb(), "通知公告审批", regStatus, InfoPushWay.WX.getCode());
 				return entity;
 			}
 			entity = this.merge(saveEntity);// 执行修改方法

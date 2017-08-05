@@ -18,6 +18,7 @@ import com.zd.school.plartform.baseset.model.BaseDicitem;
 import com.zd.school.plartform.baseset.service.BaseDicitemService;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.model.SysUserToUP;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,6 +48,8 @@ import java.util.*;
 @RequestMapping("/TrainClass")
 public class TrainClassController extends FrameWorkController<TrainClass> implements Constant {
 
+    private static Logger logger = Logger.getLogger(TrainClassController.class);
+
 	@Resource
 	TrainClassService thisService; // service层接口
 
@@ -61,6 +64,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 
 	@Resource
 	TrainClassrealdinnerService classrealdinnerService; // service层接口
+
 
 	/**
 	 * @Title: list
@@ -1497,6 +1501,30 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
             }
         } else {
             writeJSON(response, jsonBuilder.returnFailureJson("\"导出未完成！\""));
+        }
+    }
+
+    @RequestMapping("/addSendUser")
+    public void doaddSendUser(HttpServletRequest request,HttpServletResponse response) throws  IOException{
+        SysUser currentUser = getCurrentSysUser();
+        String ids = request.getParameter("uuid");
+        String sendUserId = request.getParameter("sendUserId");
+        String sendUserName = request.getParameter("sendUserName");
+        String sendInfo = request.getParameter("sendInfo");
+        if (StringUtils.isEmpty(ids) || StringUtils.isEmpty(sendInfo)) {
+            writeJSON(response, jsonBuilder.returnFailureJson("\"没有传入发送消息的参数！\""));
+            return;
+        }
+
+        try {
+            Boolean br = thisService.doSendInfoUser(sendUserId, sendInfo, currentUser);
+            if(br)
+                writeJSON(response, jsonBuilder.returnSuccessJson("\"消息发送成功！\""));
+            else
+                writeJSON(response, jsonBuilder.returnFailureJson("\"消息发送失败！\""));
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+            writeJSON(response, jsonBuilder.returnFailureJson("\"消息发送失败！\""));
         }
     }
 }

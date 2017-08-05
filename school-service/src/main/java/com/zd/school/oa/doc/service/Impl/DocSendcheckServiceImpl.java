@@ -1,27 +1,26 @@
 package com.zd.school.oa.doc.service.Impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import com.zd.core.constant.InfoPushWay;
 import com.zd.core.constant.StringVeriable;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.DateUtil;
+import com.zd.school.oa.doc.dao.DocSendcheckDao;
 import com.zd.school.oa.doc.model.AllUserDoc;
 import com.zd.school.oa.doc.model.DocSendcheck;
 import com.zd.school.oa.doc.model.DocSenddoc;
-import com.zd.school.push.service.PushInfoService;
-import com.zd.school.oa.doc.dao.DocSendcheckDao;
 import com.zd.school.oa.doc.service.DocSendcheckService;
 import com.zd.school.oa.doc.service.DocSenddocService;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.service.SysUserService;
+import com.zd.school.push.service.PushInfoService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -130,7 +129,7 @@ public class DocSendcheckServiceImpl extends BaseServiceImpl<DocSendcheck> imple
 	    		url.append("id=" + saveEntity.getUuid());
 	    		url.append("&personUserId=" + st);        	
 	        	regStatus="您好," + user.getXm() + "老师,有公文需要您尽快处理!";
-	        	pushService.pushInfo(user.getXm(), user.getUserNumb(), "公文核稿提醒", regStatus,url.toString());	
+	        	pushService.pushInfo(user.getXm(), user.getUserNumb(), "公文核稿提醒", regStatus, InfoPushWay.WX.getCode(),url.toString());
 			}
 			//设置公文的状态为核稿中
 			hql = "update DocSenddoc set docsendState=1 where uuid='" + sendId + "'";
@@ -140,7 +139,7 @@ public class DocSendcheckServiceImpl extends BaseServiceImpl<DocSendcheck> imple
 			user = userService.get(doc.getDrafterId());
 			//通知拟稿人
 			regStatus="您好," + user.getXm() + "老师,您的公文已核稿通过!";
-			pushService.pushInfo(user.getXm(), user.getUserNumb(), "公文核稿提醒", regStatus);
+			pushService.pushInfo(user.getXm(), user.getUserNumb(), "公文核稿提醒", regStatus,InfoPushWay.WX.getCode());
 			
 			//通知盖章人
 			List<SysUser> listSealUser = userService.getUserByRoleName("公文盖章管理员");
@@ -149,7 +148,7 @@ public class DocSendcheckServiceImpl extends BaseServiceImpl<DocSendcheck> imple
 //	    		url.append("id=" + sendId);
 //	    		url.append("&personUserId=" + sealUser.getUuid());      				
 				regStatus="您好," + sealUser.getXm() + "老师,有公文需要您盖章，请尽快处理!";
-				pushService.pushInfo(sealUser.getXm(), sealUser.getUserNumb(), "公文盖章提醒", regStatus);				
+				pushService.pushInfo(sealUser.getXm(), sealUser.getUserNumb(), "公文盖章提醒", regStatus,InfoPushWay.WX.getCode());
 			}
 			//设置公文状态 为盖章中
 			hql = "update DocSenddoc set docsendState=2 where uuid='" + sendId + "'";
@@ -159,7 +158,7 @@ public class DocSendcheckServiceImpl extends BaseServiceImpl<DocSendcheck> imple
 			//通知拟稿人
 			user = userService.get(doc.getDrafterId());
 			regStatus="您好," + user.getXm() + "老师,您的公文核稿未通过!请重新修改";
-			pushService.pushInfo(user.getXm(), user.getUserNumb(), "公文核稿提醒", regStatus);
+			pushService.pushInfo(user.getXm(), user.getUserNumb(), "公文核稿提醒", regStatus,InfoPushWay.WX.getCode());
 			
 			//设置公文状态为核稿不通过
 			hql = "update DocSenddoc set docsendState=3 where uuid='" + sendId + "'";

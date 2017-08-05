@@ -4,12 +4,11 @@ import com.orcl.sync.model.hibernate.hibernate.*;
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.util.CustomerContextHolder;
-import com.zd.school.jw.train.controller.TrainClassevalresultController;
+import com.zd.core.util.DBContextHolder;
+import com.zd.core.util.DateUtil;
+import com.zd.core.util.StringUtils;
 import com.zd.school.oa.doc.model.DocSendcheck;
-import com.zd.school.plartform.baseset.model.BaseDeptjob;
-import com.zd.school.plartform.baseset.model.BaseJob;
-import com.zd.school.plartform.baseset.model.BaseOrg;
-import com.zd.school.plartform.baseset.model.BaseUserdeptjob;
+import com.zd.school.plartform.baseset.model.*;
 import com.zd.school.plartform.baseset.service.BaseDeptjobService;
 import com.zd.school.plartform.baseset.service.BaseJobService;
 import com.zd.school.plartform.baseset.service.BaseOrgService;
@@ -31,10 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @RequestMapping("/usersync")
@@ -112,26 +108,30 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
             CustomerContextHolder.setCustomerType(CustomerContextHolder.SESSION_FACTORY_MYSQL);
             userservice.executeSql("delete BASE_T_USERDEPTJOB where user_id!='8a8a8834533a065601533a065ae80000' and user_id!='f111ebab-933b-4e48-b328-c731ae792ca0'");
             userservice.executeSql("delete SYS_T_ROLEUSER where user_id!='8a8a8834533a065601533a065ae80000' and user_id!='f111ebab-933b-4e48-b328-c731ae792ca0'");
+            Date justDate = new Date();
+            String justYear = DateUtil.formatDate(justDate,"yyyy");
+            Integer integer = 1;
+            String userNumb = "";
             for (HrUser d : list) {
-        /*	    	Integer count=userservice.getCountSql("select count(*) from SYS_T_USER where user_id='"+d.getId()+"'");
-                    if(count==0){*/
+                userNumb = "";
                 u = userservice.get(d.getId());
                 if (u == null) {
                     u = new SysUser(d.getId());
                 }
+                userNumb = justYear + StringUtils.addString(integer.toString(), "0", 6,"L");
                 u.setXm(d.getUserName());
                 u.setUserName(d.getAccounts());
                 u.setUserPwd(defaultPwd);
-                u.setIsDelete(d.getIsEnable() == 0 ? 1 : 0);
+                u.setUserNumb(userNumb);
+                u.setIsDelete(d.getIsOnthejob() == 0 ? 1 : 0);
                 u.setCategory("1");
-                u.setState("0");
+                u.setState(d.getIsEnable() == 0 ? "1" : "0");
                 u.setIssystem(1);
                 u.setIsHidden("0");
                 if (d.getUserSex() != null) {
                     u.setXbm(mapDicItme.get(d.getUserSex()));
                 }
                 u.setSchoolId("2851655E-3390-4B80-B00C-52C7CA62CB39");
-                u.setUserNumb(d.getJobNumber());
                 u.setCreateTime(d.getCreateDate());
                 u.setCreateUser(d.getCreateName());
 
@@ -140,11 +140,13 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
                 u.setSysRoles(theUserRole);
 
                 userservice.merge(u);
+                integer++;
             }
 
             //}
 
             userdeptjob(HttpServletRequestUserDeptJob, HttpServletResponseUserDeptJob);
+            syncDeptToUp(HttpServletRequestUserDeptJob, HttpServletResponseUserDeptJob);
             request.getSession().setAttribute("UserSyncIsEnd", "1");
             writeJSON(response, jsonBuilder.returnSuccessJson("'同步成功'"));
         } catch (IOException e) {
@@ -357,6 +359,37 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
         } else {
             writeJSON(response, jsonBuilder.returnFailureJson("\"同步未完成！\""));
         }
+    }
+
+    @RequestMapping(value = "deptToUp")
+    public void syncDeptToUp(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        StringBuffer returnJson = null;
+        // 1.查询这个smallDeptId的最新的部门信息
+        String sql = "select EXT_FIELD04 as departmentId,EXT_FIELD05 as parentDepartmentId,"
+                + "	NODE_TEXT as departmentName,convert(varchar,NODE_LEVEL) as layer,"
+                + " convert(varchar,ORDER_INDEX) as layerorder  "
+                + " from BASE_T_ORG"
+                + " where isdelete=0"
+                + " order by DepartmentID asc";
+
+        List<BaseOrgToUP> deptInfo = orgService.doQuerySqlObject(sql, BaseOrgToUP.class);
+
+        //2.进入事物之前切换数据源
+        DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
+        int row = 0;
+        if(deptInfo.size()!=0){
+            row = orgService.syncAllDeptInfoToUP(deptInfo);
+        }
+        DBContextHolder.clearDBType();
+        if(row==0){
+            returnJson = new StringBuffer("{ \"succes\" : true, \"msg\":\"未有部门数据需要同步！\"}");
+        }else if(row>0){
+            returnJson = new StringBuffer("{ \"succes\" : true, \"msg\":\"同步部门数据成功！\"}");
+        }else{
+            returnJson = new StringBuffer("{ \"succes\" : false, \"msg\":\"同步部门数据到UP失败，请联系管理员！\"}");
+        }
+
+        writeJSON(response, returnJson.toString());
     }
 
 }
