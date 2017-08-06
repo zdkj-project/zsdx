@@ -29,7 +29,10 @@ Ext.define("core.oa.meeting.checkrule.view.MainLayout", {
         defaultObj: {
             inBefore: "30",
             beLate: "5",
-            absenteeism: "10"
+            absenteeism: "10",
+            outBefore: "0",
+            outLate: "30",
+            leaveEarly: "10"
         },
         tabConfig:{         //zzk：2017-6-1加入，用于对tab操作提供基本配置数据
             addTitle:'添加规则',

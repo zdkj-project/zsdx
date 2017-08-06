@@ -2,8 +2,8 @@ package com.zd.school.oa.meeting.service;
 
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseService;
+import com.zd.school.oa.meeting.model.OaMeeting;
 import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.oa.meeting.model.OaMeeting ;
 
 
 /**
@@ -70,4 +70,5 @@ public interface OaMeetingService extends BaseService<OaMeeting> {
 	 * @return
 	 */
 	public OaMeeting doAddEntity(OaMeeting entity, SysUser currentUser);
+
 }

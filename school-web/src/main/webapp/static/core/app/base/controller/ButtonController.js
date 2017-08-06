@@ -1309,7 +1309,6 @@ Ext.define("core.base.controller.ButtonController", {
              */
             "baseformtab button[ref=formContinue]": {
                 click: function (btn) {
-
                     var basetab = btn.up('baseformtab');
                     var tabPanel = btn.up("tabpanel[xtype=app-main]");
                     var tabItemId = basetab.tabItemId;
@@ -1404,7 +1403,6 @@ Ext.define("core.base.controller.ButtonController", {
             },
             "baseformtab button[ref=formSave]": {
                 click: function (btn) {
-
                     var basetab = btn.up('baseformtab');
                     var tabPanel = btn.up("tabpanel[xtype=app-main]");
                     var tabItemId = basetab.tabItemId;

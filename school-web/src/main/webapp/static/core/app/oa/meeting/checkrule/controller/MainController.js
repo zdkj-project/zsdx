@@ -14,28 +14,9 @@ Ext.define("core.oa.meeting.checkrule.controller.MainController", {
     init: function() {
     },
     control: {
-        "basegrid button[ref=gridAdd_Tab]": {
-            beforeclick: function(btn) {
-                console.log(btn);
-                // return false;
-            }
-        },
-
-         "basegrid button[ref=gridDetail_tab]": {
-            beforeclick: function(btn) {
-                console.log(btn);
-                //return false;
-            }
-        },
-
-
-        "basegrid button[ref=gridEdit_tab]": {
-            beforeclick: function(btn) {
-                console.log(btn);
-                //return false;
-            }
-        },
-
+        /**
+         * 设置规则的启用与禁用
+         */
         "basegrid[xtype=checkrule.maingrid] button[ref=gridSetUse]": {
             beforeclick: function(btn) {
                 var self = this;
@@ -52,7 +33,7 @@ Ext.define("core.oa.meeting.checkrule.controller.MainController", {
                 var uuid = records[0].get("uuid");
                 var startUsing=records[0].get("startUsing");
                 
-                Ext.MessageBox.confirm('温馨提示', '你确定要设置启用状态吗？', function(btn, text) {
+                Ext.MessageBox.confirm('温馨提示', '你确定要设置启用/禁用状态吗？', function(btn, text) {
                     if (btn == 'yes') {
                         Ext.Msg.wait('正在执行中,请稍后...', '温馨提示');
                         self.asyncAjax({
@@ -69,7 +50,7 @@ Ext.define("core.oa.meeting.checkrule.controller.MainController", {
                                 if(data.success){ 
                                     baseGrid.getStore().load();
                                     Ext.Msg.hide();
-                                    self.Info(data.obj);   
+                                    self.msgbox(data.obj);
                                 }else{
                                     Ext.Msg.hide();
                                     self.Error(data.obj);

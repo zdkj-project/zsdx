@@ -1,24 +1,21 @@
 package com.zd.school.oa.meeting.service.Impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.zd.core.model.extjs.QueryResult;
+import com.zd.core.service.BaseServiceImpl;
+import com.zd.core.util.BeanUtils;
+import com.zd.school.oa.meeting.dao.OaMeetingDao;
+import com.zd.school.oa.meeting.model.OaMeeting;
+import com.zd.school.oa.meeting.service.OaMeetingService;
+import com.zd.school.plartform.system.model.SysUser;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.service.BaseServiceImpl;
-import com.zd.core.util.BeanUtils;
-import com.zd.core.util.StringUtils;
-import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.oa.meeting.model.OaMeeting ;
-import com.zd.school.oa.meeting.dao.OaMeetingDao ;
-import com.zd.school.oa.meeting.service.OaMeetingService ;
+import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -41,7 +38,7 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
         this.dao = dao;
     }
 	private static Logger logger = Logger.getLogger(OaMeetingServiceImpl.class);
-	
+
 	@Override
 	public QueryResult<OaMeeting> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
         QueryResult<OaMeeting> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
@@ -130,4 +127,5 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 			return null;
 		}
 	}
+
 }

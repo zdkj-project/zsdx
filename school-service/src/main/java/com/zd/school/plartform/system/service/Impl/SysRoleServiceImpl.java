@@ -45,6 +45,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRole> implements SysR
         List<String> excludedProp = new ArrayList<>();
         excludedProp.add("uuid");
         BeanUtils.copyProperties(saveEntity, entity, excludedProp);
+        saveEntity.setIsHidden("0");
         saveEntity.setCreateUser(currentUser.getUuid());
         saveEntity.setUpdateTime(new Date());
         entity = this.merge(saveEntity);// 执行修改方法

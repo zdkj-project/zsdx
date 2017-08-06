@@ -57,7 +57,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             name: "meetingCategory",
             xtype: "basecombobox",
             ddCode: "MEETINGCATEGORY",
-            emptyText: "请选择会议类型",
+            emptyText: "请选择会议类型"
         }, {
             beforeLabelTextTpl: comm.get("required"),
             fieldLabel: "是否考勤",
@@ -66,7 +66,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             xtype: "checkbox",
             boxLabel: "考勤",
             inputValue:"1",
-            checked: true,
+            checked: true
         }]
     }, {
         xtype: "container",
@@ -82,7 +82,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             xtype: "datetimefield",
             dateType: 'datetime',
             format: "Y-m-d H:i:s",
-            emptyText: "请选择开始时间",
+            emptyText: "请选择开始时间"
         }, {
             beforeLabelTextTpl: comm.get("required"),
             allowBlank: false,
@@ -93,7 +93,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             xtype: "datetimefield",
             dateType: 'datetime',
             format: "Y-m-d H:i:s",
-            emptyText: "请选择结束时间",
+            emptyText: "请选择结束时间"
         }]
     }, {
         xtype: "container",
@@ -122,7 +122,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             },
             fieldLabel: '主持人',
             emptyText: "请选择主持人",
-            name: "emcee",     
+            name: "emcee"
 
         }, {
             beforeLabelTextTpl: comm.get("required"),
@@ -136,7 +136,6 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             formPanel:"meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
             funcTitle: "会议地点选择", //查询窗口的标题
             configInfo: {
-                //width:comm.get("clientWidth")*0.8,
                 width:1200,
                 height:650,
                 fieldInfo: "roomId~roomName,uuid~roomName",
@@ -146,7 +145,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             },
             fieldLabel: "会议地点",
             emptyText: "请选择会议地点",
-            name: "roomName",     
+            name: "roomName"
     
         }, {
             fieldLabel: "房间ID",

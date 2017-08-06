@@ -9,7 +9,7 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
      * 高级查询面板
      */
     panelButtomBar: {
-        xtype: 'checkrule.mainquerypanel',
+        xtype: 'checkrule.mainquerypanel'
     },
     /**
      * 工具栏操作按钮
@@ -23,21 +23,7 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
             ref: 'gridAdd_Tab',
             funCode: 'girdFuntionBtn', //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             iconCls: 'x-fa fa-plus-circle'
-        },/* {
-            xtype: 'button',
-            text: '编辑',
-            ref: 'gridEdit_Tab',
-            funCode: 'girdFuntionBtn',
-            disabled: true,
-            iconCls: 'x-fa fa-pencil-square'
         }, {
-            xtype: 'button',
-            text: '详细',
-            ref: 'gridDetail_Tab',
-            funCode: 'girdFuntionBtn',
-            disabled: true,
-            iconCls: 'x-fa fa-file-text'
-        },*/ {
             xtype: 'button',
             text: '删除',
             ref: 'gridDelete',
@@ -46,7 +32,7 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
             iconCls: 'x-fa fa-minus-circle'
         }, {
             xtype: 'button',
-            text: '启用/取消启用',
+            text: '启用/禁用',
             ref: 'gridSetUse',
             funCode: 'girdFuntionBtn',
             //disabled: true,
@@ -69,20 +55,15 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
             text: '高级搜索',
             ref: 'gridHignSearch',
             iconCls: 'x-fa fa-sliders'
-        }],
+        }]
     },
     /** 排序字段定义 */
     defSort: [{
-       property: "updateTime", //字段名
-       direction: "DESC" //升降序
+        property: "updateTime", //字段名
+        direction: "DESC" //升降序
     }],
     /** 扩展参数 */
-    extParams: {
-        whereSql: "",
-        //查询的过滤字段
-        //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
-        //filter: "[{'type':'string','comparison':'=','value':'','field':'claiId'}]"
-    },
+    extParams: {},
     columns: {
         defaults: {
             align: 'center',
@@ -91,88 +72,78 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
         items: [{
             xtype: "rownumberer",
             flex: 0,
-            width: 60,
+            width: 50,
             text: '序号',
             align: 'center'
         }, {
             flex: 1,
-        	minWidth:150,
+            minWidth: 150,
             text: "规则名称",
             dataIndex: "ruleName",
-            align: 'left',
+            align: 'left'
         }, {
-            //flex: 1,
-        	width:120,
+            width: 120,
             text: "签到提前分钟",
             dataIndex: "inBefore",
-            align: 'left',
+            align: 'left'
         }, {
-            //flex: 1,
-        	width:100,
+            width: 100,
             text: "迟到分钟",
             dataIndex: "beLate",
-            align: 'left',
+            align: 'left'
         }, {
-            //flex: 1,
-        	width:100,
+            width: 100,
             text: "缺勤分钟",
             dataIndex: "absenteeism",
-            align: 'left',
-        },{
-            width: 150,
-            text: "创建时间",
-            dataIndex: "createTime",
             align: 'left'
+        }, {
+            width: 100,
+            text: "是否需要签退",
+            dataIndex: "needCheckout",
+            renderer: function (value, metaData) {
+                if (value == 1)
+                    return "<span style='color:green'>是</span>";
+                else
+                    return "<span style='color:red'>否</span>";
+            }
+        }, {
+            width: 80,
+            text: "启用状态",
+            dataIndex: "startUsing",
+            renderer: function (value, metaData) {
+                if (value == 1)
+                    return "<span style='color:green'>启用</span>";
+                else
+                    return "<span style='color:red'>禁用</span>";
+            }
+        }, {
+            flex: 1,
+            minWidth: 150,
+            text: "规则说明",
+            dataIndex: "ruleDesc",
+            renderer: function (value, metaData) {
+                var html = value;
+                var title = '规则说明';
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                return value;
+            }
         }, {
             width: 150,
             text: "更新时间",
             dataIndex: "updateTime",
             align: 'left'
-        },{
-            flex: 1,
-            minWidth:150,
-            text: "规则说明",
-            dataIndex: "ruleDesc",
-            renderer: function(value, metaData) {
-                var html = value;
-                var title='规则说明';
-                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
-                return value;
-            }
         }, {
-            //flex: 1,
-        	width:100,
-            text: "是否需要签退",
-            dataIndex: "needCheckout",
-            renderer: function(value, metaData) {
-                if(value==1)
-                    return "<span style='color:green'>需要</span>";
-                else
-                    return "<span style='color:red'>不需要</span>";
-            }
-        }, {
-            //flex: 1,
-            width:80,
-            text: "是否启用",
-            dataIndex: "startUsing",        
-            renderer: function(value, metaData) {
-                if(value==1)
-                    return "<span style='color:green'>已启用</span>";
-                else
-                    return "<span style='color:red'>未启用</span>";
-            }
-        },  {
             xtype: 'actiontextcolumn',
             text: "操作",
             width: 120,
             fixed: true,
             items: [{
                 //iconCls: 'x-fa fa-pencil-square',
-            	text:'编辑',  
-                style:'font-size:12px;',
+                text: '编辑',
+                style: 'font-size:12px;',
                 tooltip: '编辑',
                 ref: 'gridEdit',
-                handler: function(view, rowIndex, colIndex, item) {
+                handler: function (view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
                     this.fireEvent('editClick_Tab', {
                         view: view.grid,
@@ -181,11 +152,11 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
                 }
             }, {
                 //iconCls: 'x-fa fa-file-text',
-            	text:'详细',  
-                style:'font-size:12px;',
+                text: '详细',
+                style: 'font-size:12px;',
                 tooltip: '详细',
                 ref: 'gridDetail',
-                handler: function(view, rowIndex, colIndex, item) {
+                handler: function (view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
                     this.fireEvent('detailClick_Tab', {
                         view: view.grid,
@@ -194,11 +165,11 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
                 }
             }, {
                 //iconCls: 'x-fa fa-minus-circle',
-            	text:'删除',  
-                style:'font-size:12px;',
+                text: '删除',
+                style: 'font-size:12px;',
                 tooltip: '删除',
                 ref: 'gridDelete',
-                handler: function(view, rowIndex, colIndex, item) {
+                handler: function (view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
                     this.fireEvent('deleteClick', {
                         view: view.grid,

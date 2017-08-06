@@ -1,24 +1,21 @@
 package com.zd.school.oa.meeting.service.Impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.zd.core.model.extjs.QueryResult;
+import com.zd.core.service.BaseServiceImpl;
+import com.zd.core.util.BeanUtils;
+import com.zd.school.oa.meeting.dao.OaMeetingcheckruleDao;
+import com.zd.school.oa.meeting.model.OaMeetingcheckrule;
+import com.zd.school.oa.meeting.service.OaMeetingcheckruleService;
+import com.zd.school.plartform.system.model.SysUser;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.service.BaseServiceImpl;
-import com.zd.core.util.BeanUtils;
-import com.zd.core.util.StringUtils;
-import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.oa.meeting.model.OaMeetingcheckrule ;
-import com.zd.school.oa.meeting.dao.OaMeetingcheckruleDao ;
-import com.zd.school.oa.meeting.service.OaMeetingcheckruleService ;
+import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -116,7 +113,8 @@ public class OaMeetingcheckruleServiceImpl extends BaseServiceImpl<OaMeetingchec
 			List<String> excludedProp = new ArrayList<>();
 			excludedProp.add("uuid");
 			BeanUtils.copyProperties(saveEntity, entity,excludedProp);
-			saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
+			saveEntity.setCreateUser(currentUser.getUuid()); // 设置修改人的中文名
+            saveEntity.setUpdateUser(currentUser.getUuid());
 			entity = this.merge(saveEntity);// 执行修改方法
 
 			return entity;

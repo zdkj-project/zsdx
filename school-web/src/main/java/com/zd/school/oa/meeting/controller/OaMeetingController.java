@@ -1,21 +1,23 @@
 
 package com.zd.school.oa.meeting.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zd.core.constant.Constant;
+import com.zd.core.controller.core.FrameWorkController;
+import com.zd.core.model.extjs.QueryResult;
+import com.zd.core.util.ImportExcelUtil;
+import com.zd.core.util.ModelUtil;
+import com.zd.core.util.PoiExportExcel;
+import com.zd.core.util.StringUtils;
+import com.zd.school.build.define.model.BuildRoominfo;
+import com.zd.school.build.define.service.BuildRoominfoService;
+import com.zd.school.excel.FastExcel;
+import com.zd.school.oa.meeting.model.OaMeeting;
+import com.zd.school.oa.meeting.model.OaMeetingemp;
+import com.zd.school.oa.meeting.service.OaMeetingService;
+import com.zd.school.oa.meeting.service.OaMeetingempService;
+import com.zd.school.plartform.baseset.model.BaseDicitem;
+import com.zd.school.plartform.baseset.service.BaseDicitemService;
+import com.zd.school.plartform.system.model.SysUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,27 +25,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.zd.core.constant.Constant;
-import com.zd.core.constant.StatuVeriable;
-import com.zd.core.controller.core.FrameWorkController;
-import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.util.ModelUtil;
-import com.zd.core.util.PoiExportExcel;
-import com.zd.core.util.BeanUtils;
-import com.zd.core.util.ImportExcelUtil;
-import com.zd.core.util.StringUtils;
-import com.zd.school.plartform.baseset.model.BaseDicitem;
-import com.zd.school.plartform.baseset.service.BaseDicitemService;
-import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.oa.meeting.model.OaMeeting;
-import com.zd.school.build.define.model.BuildRoominfo;
-import com.zd.school.build.define.service.BuildRoominfoService;
-import com.zd.school.excel.FastExcel;
-import com.zd.school.jw.train.model.TrainClass;
-import com.zd.school.jw.train.model.TrainClasstrainee;
-import com.zd.school.jw.train.model.TrainTeacher;
-import com.zd.school.oa.meeting.dao.OaMeetingDao;
-import com.zd.school.oa.meeting.service.OaMeetingService;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 
@@ -65,6 +54,9 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
 	private BaseDicitemService dicitemService;
 	@Resource
 	private BuildRoominfoService roominfoService;
+
+	@Resource
+    private OaMeetingempService meetingempService;
 
 	/**
 	 * @Title: list
@@ -91,18 +83,15 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
 		writeJSON(response, strData);// 返回数据
 	}
 
-	/**
-	 * 
-	 * @Title: doadd
-	 * @Description: 增加新实体信息至数据库
-	 * @param OaMeeting
-	 *            实体类
-	 * @param request
-	 * @param response
-	 * @return void 返回类型
-	 * @throws IOException
-	 *             抛出异常
-	 */
+    /**
+     *
+     * @param entity
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
 	@RequestMapping("/doadd")
 	public void doAdd(OaMeeting entity, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, IllegalAccessException, InvocationTargetException {
@@ -153,16 +142,15 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
 		}
 	}
 
-	/**
-	 * @Title: doUpdate
-	 * @Description: 编辑指定记录
-	 * @param OaMeeting
-	 * @param request
-	 * @param response
-	 * @return void 返回类型
-	 * @throws IOException
-	 *             抛出异常
-	 */
+    /**
+     *
+     * @param entity
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
 	@RequestMapping("/doupdate")
 	public void doUpdates(OaMeeting entity, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, IllegalAccessException, InvocationTargetException {
@@ -402,5 +390,20 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
 			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
 		}
 	}
+
+	@RequestMapping("/meetinguserlist")
+    public void meetingUserList(HttpServletRequest request, HttpServletResponse response) throws Exception{
+        String strData = "";
+        String ids = request.getParameter("ids");
+        String sort = request.getParameter("sort");
+        String filter = request.getParameter("filter");
+        if(StringUtils.isEmpty(ids)){
+            writeJSON(response,jsonBuilder.returnFailureJson("'没有传入会议参数'"));
+            return;
+        }
+        QueryResult<OaMeetingemp> qResult = meetingempService.doPaginationQuery(0, 0, sort, filter, true);
+        strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
+        writeJSON(response, strData);// 返回数据
+    }
 
 }

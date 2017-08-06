@@ -39,7 +39,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainLayout", {
     },
 
     /*设置最小宽度，并且自动滚动*/
-    minWidth:1200,
+    minWidth:comm.get("minWidth"),
     scrollable:true,
 
     items: [{

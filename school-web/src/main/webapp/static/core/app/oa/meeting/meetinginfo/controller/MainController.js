@@ -11,6 +11,9 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
     init: function () {
     },
     control: {
+        /**
+         * 从OA同步会议按钮事件
+         */
         "panel[xtype=meetinginfo.maingrid] button[ref=sync]": {
             beforeclick: function (btn) {
                 var self = this;
@@ -58,53 +61,22 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                         }, 1000);    //延迟1秒执行
                     }
                 });
-/*                var resObj = this.ajax({
-                    url: "/meetingsync" + "/meeting"
-                });
-                if (resObj.success) {
-                    this.msgbox("同步成功!");
-                    btn.up("basegrid").getStore().load();
-                } else {
-                    //self.msgbox("同步成功!");
-                    this.msgbox("同步失败！");
-                }*/
-                return false;
-            }
-        },
-
-        //导入
-        "basegrid[xtype=meetinginfo.maingrid] button[ref=gridImport]": {
-            beforeclick: function (btn) {
-                var self = this;
-
-                //判断是否选择了班级，判断是添加新班级 或是 编辑班级
-
-                //得到组件
-                var baseGrid = btn.up("basegrid");
-
-                var win = Ext.create('Ext.Window', {
-                    title: "导入会议数据",
-                    iconCls: 'x-fa fa-clipboard',
-                    width: 400,
-                    resizable: false,
-                    constrain: true,
-                    autoHeight: true,
-                    modal: true,
-                    controller: 'meetinginfo.otherController',
-                    closeAction: 'close',
-                    plain: true,
-                    grid: baseGrid,
-                    items: [{
-                        xtype: "meetinginfo.meetingimportform"
-                    }]
-                });
-                win.show();
+                /*                var resObj = this.ajax({
+                                    url: "/meetingsync" + "/meeting"
+                                });
+                                if (resObj.success) {
+                                    this.msgbox("同步成功!");
+                                    btn.up("basegrid").getStore().load();
+                                } else {
+                                    //self.msgbox("同步成功!");
+                                    this.msgbox("同步失败！");
+                                }*/
                 return false;
             }
         },
 
         /**
-         * 导出
+         * 导出按钮事件
          */
         "basegrid[xtype=meetinginfo.maingrid] button[ref=gridExport]": {
             beforeclick: function (btn) {
@@ -132,59 +104,53 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                     if (btn == "yes") {
                         Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
                         //window.location.href = comm.get('baseUrl') + "/TrainClass/exportExcel?ids=" + ids.join(",");
-                        var component=Ext.create('Ext.Component', {
+                        var component = Ext.create('Ext.Component', {
                             title: 'HelloWorld',
                             width: 0,
-                            height:0,
-                            hidden:true,
+                            height: 0,
+                            hidden: true,
                             html: '<iframe src="' + comm.get('baseUrl') + '/OaMeeting/exportMeetingExcel?ids=' + ids.join(",") + '"></iframe>',
                             renderTo: Ext.getBody()
                         });
-                        
-                       
-                        var time=function(){
+
+
+                        var time = function () {
                             self.syncAjax({
                                 url: comm.get('baseUrl') + '/OaMeeting/checkExportMeetingEnd',
-                                timeout: 1000*60*30,        //半个小时         
+                                timeout: 1000 * 60 * 30,        //半个小时
                                 //回调代码必须写在里面
-                                success: function(response) {
+                                success: function (response) {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                                    if(data.success){
+                                    if (data.success) {
                                         Ext.Msg.hide();
                                         self.msgbox(data.obj);
-                                        component.destroy();                                
-                                    }else{                                    
-                                        if(data.obj==0){    //当为此值，则表明导出失败
+                                        component.destroy();
+                                    } else {
+                                        if (data.obj == 0) {    //当为此值，则表明导出失败
                                             Ext.Msg.hide();
                                             self.Error("导出失败，请重试或联系管理员！");
-                                            component.destroy();                                        
-                                        }else{
-                                            setTimeout(function(){time()},1000);
+                                            component.destroy();
+                                        } else {
+                                            setTimeout(function () {
+                                                time()
+                                            }, 1000);
                                         }
-                                    }               
+                                    }
                                 },
-                                failure: function(response) {
+                                failure: function (response) {
                                     Ext.Msg.hide();
                                     Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
                                     component.destroy();
                                 }
                             });
                         }
-                        setTimeout(function(){time()},1000);    //延迟1秒执行
+                        setTimeout(function () {
+                            time()
+                        }, 1000);    //延迟1秒执行
                     }
                 });
-                
-                return false;
-            }
-        },
 
-        /**
-         * 增加按钮事件
-         */
-        "basegrid button[ref=gridAdd_Tab]": {
-            beforeclick: function (btn) {
-                console.log(btn);
-                //return false;
+                return false;
             }
         },
 
@@ -192,23 +158,32 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
          * 操作列事件
          */
         "basegrid  actioncolumn": {
-            editClick: function (data) {
-                console.log(data);
-
+            //编辑
+            editClick_Tab: function (data) {
+                var baseGrid = data.view;
+                var record = data.record;
+                var cmd = data.cmd;
+                this.doDetail_Tab(null, cmd, baseGrid, record);
+                return false;
             },
+            // 详细
             detailClick_Tab: function (data) {
                 var baseGrid = data.view;
                 var record = data.record;
-                this.doDetail_Tab(null, "detail", baseGrid, record);
+                var cmd = data.cmd;
+                this.doDetail_Tab(null, cmd, baseGrid, record);
                 return false;
             },
-            deleteClick: function (data) {
-                console.log(data);
-            },
+            // 会议人员
+            meetingUserClick_Tab: function (data) {
+                var baseGrid = data.view;
+                var record = data.record;
+                var cmd = data.cmd;
+                this.doDetail_Tab(null, cmd, baseGrid, record);
+                return false;
+            }
         }
     },
-
-
     /**
      * 详细操作的处理
      * @param btn
@@ -223,6 +198,16 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
 
         if (btn) {
             baseGrid = btn.up("basegrid");
+            var rescords = baseGrid.getSelectionModel().getSelection();
+            var indexAdd = cmd.IndexOf("add");
+            if (indexAdd != -1) {
+                //不是增加的操作，只能选择一条记录
+                if (rescords.length != 1) {
+                    self.msgbox("请选择1条数据！");
+                    return;
+                }
+                recordData = rescords[0].getData();
+            }
         } else {
             baseGrid = grid;
             recordData = record.getData();
@@ -232,48 +217,52 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
         var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
         var tabPanel = baseGrid.up("tabpanel[xtype=app-main]");
 
-
         var funData = basePanel.funData;
         var detCode = basePanel.detCode;
         var detLayout = basePanel.detLayout;
         var defaultObj = funData.defaultObj;
-
 
         var otherController = basePanel.otherController;
         if (!otherController)
             otherController = '';
 
         var insertObj = self.getDefaultValue(defaultObj);
-        var popFunData = Ext.apply(funData, {
-            grid: baseGrid
-        });
-
 
         var tabTitle = funData.tabConfig.addTitle;
         var tabItemId = funCode + "_gridDetail";
+        var pkName = funData.pkName;
         var pkValue = null;
         var operType = cmd;
+        var itemXtype = "meetinginfo.detailform";
+        //根据不同的操作对数据进行组装
         switch (cmd) {
-            case "detail":
-                if (btn) {
-                    var rescords = baseGrid.getSelectionModel().getSelection();
-                    if (rescords.length != 1) {
-                        self.msgbox("请选择一条数据！");
-                        return;
-                    }
-                    recordData = rescords[0].getData();
-                }
-                var pkName = funData.pkName;
+            case "edit":
+                insertObj = Ext.apply(insertObj, recordData);
+                tabTitle = funData.tabConfig.editTitle;
+                tabItemId = funCode + "_gridEdit";
+                //获取主键值
                 pkValue = recordData[pkName];
-
-                insertObj = recordData;
+                break;
+            case "detail":
+                insertObj = Ext.apply(insertObj, recordData);
                 tabTitle = funData.tabConfig.detailTitle;
-                tabItemId = funCode + "_gridDetail" + insertObj.uuid;
-                operType = "Detail";
+                tabItemId = funCode + "_gridDetail";
+                itemXtype = "meetinginfo.DetailPanel";
+                //获取主键值
+                pkValue = recordData[pkName];
+                break;
+            case "meetingEmp": //参会人员
+                insertObj = Ext.apply(insertObj, recordData);
+                tabTitle = "参会人员";
+                tabItemId = funCode + "_gridMeetingUser";
+                itemXtype = "meetinginfo.meetingusergrid";
+                //获取主键值
+                pkValue = recordData[pkName];
                 break;
         }
-
-
+        var popFunData = Ext.apply(funData, {
+            grid: baseGrid
+        });
         var tabItem = tabPanel.getComponent(tabItemId);
         if (!tabItem) {
             tabItem = Ext.create({
@@ -282,10 +271,9 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                 scrollable: true,
                 itemId: tabItemId,
                 itemPKV: pkValue,
-                layout: 'fit',
+                layout: 'fit'
             });
             tabPanel.add(tabItem);
-
 
             setTimeout(function () {
                 var item = Ext.widget("baseformtab", {
@@ -300,37 +288,50 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                         xtype: detLayout,
                         funCode: detCode,
                         items: [{
-                            xtype: "meetinginfo.DetailPanel"
+                            xtype: itemXtype
                         }]
                     }]
                 });
 
                 tabItem.add(item);
-
-
-                var detailhtmlpanel = item.down("container[xtype=meetinginfo.DetailPanel]");
-
-                //处理数据字典的值
-                var ddItem = factory.DDCache.getItemByDDCode("MEETINGCATEGORY");
-                var resultVal = "";
-                var value = recordData["meetingCategory"];
-                for (var i = 0; i < ddItem.length; i++) {
-                    var ddObj = ddItem[i];
-                    if (value == ddObj["itemCode"]) {
-                        resultVal = ddObj["itemName"];
+                //根据需要初始化详情页面数据
+                switch (cmd) {
+                    case "edit":
+                        var objDetailForm = item.down("baseform[funCode=" + detCode + "]");
+                        var formDetailObj = objDetailForm.getForm();
+                        self.setFormValue(formDetailObj, insertObj);
                         break;
-                    }
+                    case "detail":
+                        var detailhtmlpanel = item.down("container[xtype=meetinginfo.DetailPanel]");
+                        //处理数据字典的值
+                        var ddItem = factory.DDCache.getItemByDDCode("MEETINGCATEGORY");
+                        var resultVal = "";
+                        var value = recordData["meetingCategory"];
+                        for (var i = 0; i < ddItem.length; i++) {
+                            var ddObj = ddItem[i];
+                            if (value == ddObj["itemCode"]) {
+                                resultVal = ddObj["itemName"];
+                                break;
+                            }
+                        }
+                        recordData.meetingCategory = resultVal;
+                        recordData.needChecking = recordData.needChecking == 1 ? "需要考勤" : "不考勤";
+                        detailhtmlpanel.setData(recordData);
+                        break;
+                    case "meetingEmp":
+                        var filter="[{'type':'string','value':'"+insertObj.uuid+"','field':'meetingId','comparison':'='}]";
+                        var meetingUserGrid = tabItem.down("basegrid[xtype=meetinginfo.meetingusergrid]");
+                        var proxy = meetingUserGrid.getStore().getProxy();
+                        proxy.extraParams.filter = filter;
+                        meetingUserGrid.getStore().load();
+                        break;
                 }
-                recordData.meetingCategory = resultVal;
-                recordData.needChecking = recordData.needChecking == 1 ? "需要考勤" : "不考勤";
-                detailhtmlpanel.setData(recordData);
-
             }, 30);
 
-        } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue) {
+        } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue && cmd!="detail") {
             self.Warning("你已经打开一个编辑窗口了");
             return;
         }
         tabPanel.setActiveTab(tabItem);
-    },
+    }
 });

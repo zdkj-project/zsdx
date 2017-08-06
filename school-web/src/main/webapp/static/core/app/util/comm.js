@@ -14,6 +14,7 @@ var pathName = document.location.pathname;
  var result = pathName.substr(0, index + 1);
 
  comm.add("baseUrl", result);
+ comm.add("minWidth",1000);
 
  //** Excel文件导出目录*/
  comm.add("uploadUrl","e:\\workspace\\jw\\jw-web\\src\\main\\webapp\\static\\upload\\tem\\");

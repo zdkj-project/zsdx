@@ -115,7 +115,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.OtherController", {
             }
         },
 
-        "window[funcPanel=room.mainlayout] button[ref=ssOkBtn]":{
+/*        "window[funcPanel=room.mainlayout] button[ref=ssOkBtn]":{
             beforeclick: function(btn) {               
                 var self=this;
 
@@ -144,12 +144,12 @@ Ext.define("core.oa.meeting.meetinginfo.controller.OtherController", {
                 var roomName=records[0].get("roomName");
                 
                 formpanel.getForm().findField("roomId").setValue(roomId);
-                formpanel.getForm().findField("roomName").setValue(areaUpName+"-"+areaName+"-"+roomName);             
+                formpanel.getForm().findField("roomName").setValue(roomName);
 
                 win.close();
                 return false;
             }
-        },
+        },*/
 
         //选择班主任，界面加载事件
         "window[funcPanel=meetinginfo.selectsysuser.mainlayout]":{
@@ -170,6 +170,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.OtherController", {
                 return false;
             }
         },
+
         //选择班主任，勾选后提交事件
         "window[funcPanel=meetinginfo.selectsysuser.mainlayout] button[ref=ssOkBtn]":{
             beforeclick: function(btn) {
