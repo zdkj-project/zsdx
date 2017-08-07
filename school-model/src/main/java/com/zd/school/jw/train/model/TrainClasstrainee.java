@@ -417,18 +417,30 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
-    
-    
+
+
     @FieldInfo(name = "UP卡流水号")
     @Formula("(SELECT top 1 a.UP_CARD_ID FROM CARD_T_USEINFO a where a.USER_ID=CLASS_TRAINEE_ID order by a.CREATE_TIME desc)")
-    private Long upCardId;
+    private Long cardNo;
 
-    public Long getUpCardId() {
-        return upCardId;
+    public Long getCardNo() {
+        return cardNo;
     }
 
-    public void setUpCardId(Long upCardId) {
-        this.upCardId = upCardId;
+    public void setCardNo(Long cardNo) {
+        this.cardNo = cardNo;
+    }
+
+    @FieldInfo(name = "UP物理卡号")
+    @Formula("(SELECT top 1 a.FACT_NUMB FROM CARD_T_USEINFO a where a.USER_ID=CLASS_TRAINEE_ID order by a.CREATE_TIME desc)")
+    private Long factoryfixId;
+
+    public Long getFactoryfixId() {
+        return factoryfixId;
+    }
+
+    public void setFactoryfixId(Long factoryfixId) {
+        this.factoryfixId = factoryfixId;
     }
     
     @FieldInfo(name = "UP卡状态")
