@@ -1,33 +1,15 @@
 package com.zd.school.oa.meeting.model;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.math.BigDecimal;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.zd.core.annotation.FieldInfo;
 import com.zd.core.model.BaseEntity;
 import com.zd.core.util.DateTimeSerializer;
 import com.zd.school.excel.annotation.MapperCell;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -209,9 +191,32 @@ public class OaMeeting extends BaseEntity implements Serializable{
     public Date getEndTime() {
         return endTime;
     }
-    
 
-	public OaMeeting() {
+    @FieldInfo(name = "考勤规则Id")
+    @Column(name = "CHECKRULE_ID",length =36,nullable = true)
+    private String checkruleId;
+
+    public String getCheckruleId() {
+        return checkruleId;
+    }
+
+    public void setCheckruleId(String checkruleId) {
+        this.checkruleId = checkruleId;
+    }
+
+    @FieldInfo(name = "考勤规则名称")
+    @Column(name = "CHECKRULE_NAME",length = 128,nullable = true)
+    private String checkruleName;
+
+    public String getCheckruleName() {
+        return checkruleName;
+    }
+
+    public void setCheckruleName(String checkruleName) {
+        this.checkruleName = checkruleName;
+    }
+
+    public OaMeeting() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
@@ -251,7 +256,18 @@ public class OaMeeting extends BaseEntity implements Serializable{
 	public void setMeetingemp(List<OaMeetingemp> meetingemp) {
 		this.meetingemp = meetingemp;
 	}
-	
+
+	@Transient
+    private OaMeetingcheckrule oaMeetingcheckrule;
+
+    public OaMeetingcheckrule getOaMeetingcheckrule() {
+        return oaMeetingcheckrule;
+    }
+
+    public void setOaMeetingcheckrule(OaMeetingcheckrule oaMeetingcheckrule) {
+        this.oaMeetingcheckrule = oaMeetingcheckrule;
+    }
+
     @MapperCell(cellName = "会议类型", order = 4)
     @Transient
     @FieldInfo(name = "会议类型")

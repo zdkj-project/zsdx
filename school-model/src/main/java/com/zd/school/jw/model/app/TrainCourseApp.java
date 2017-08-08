@@ -1,8 +1,9 @@
 package com.zd.school.jw.model.app;
 
-import java.util.List;
-
+import com.zd.school.jw.train.model.TrainCheckrule;
 import com.zd.school.jw.train.model.TrainClassschedule;
+
+import java.util.List;
 
 public class TrainCourseApp {
 	//判断是否调用成功，true为调用成功,false为失败。默认为false
@@ -29,12 +30,11 @@ public class TrainCourseApp {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
-	//封装数据list实体
+
+    /**
+     * 考勤课程列表
+     */
 	private List<TrainClassschedule> course;
-
-
-
 	public List<TrainClassschedule> getCourse() {
 		return course;
 	}
@@ -42,6 +42,17 @@ public class TrainCourseApp {
 	public void setCourse(List<TrainClassschedule> course) {
 		this.course = course;
 	}
-	
-	
+
+    /**
+     * 课程考勤规则
+     */
+	private TrainCheckrule checkrule;
+
+    public TrainCheckrule getCheckrule() {
+        return checkrule;
+    }
+
+    public void setCheckrule(TrainCheckrule checkrule) {
+        this.checkrule = checkrule;
+    }
 }

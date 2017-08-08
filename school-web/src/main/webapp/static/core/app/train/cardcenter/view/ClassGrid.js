@@ -5,7 +5,7 @@ Ext.define('core.train.cardcenter.view.ClassGrid', {
     columnLines: false,
     dataUrl: comm.get("baseUrl") + "/TrainClass/list", //数据获取地址
     model: "com.zd.school.jw.train.model.TrainClass", //对应的数据模型
-    al: false,
+    al: true,
     
     selModel: {
         type: "checkboxmodel",   

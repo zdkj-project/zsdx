@@ -47,6 +47,7 @@ public class MeetingAppController {
 		OaInfoterm roomTerm = termService.getByProerties("termCode", termCode);
 
 		List<OaMeeting> meeting = null;
+        OaMeetingcheckrule checkrule=null;
 		List<Object[]> obj=null;
 		if (ModelUtil.isNotNull(roomTerm)) {
 			meeting = meetingService.doQuery("from OaMeeting where roomId='"+roomTerm.getRoomId()+"' and Convert(varchar,beginTime,120) like'"+time+"%' order by beginTime asc");
@@ -54,17 +55,9 @@ public class MeetingAppController {
 				o.setBegin(dateFormat.format(o.getBeginTime()));
 				o.setEnd(dateFormat.format(o.getEndTime()));
 				List<OaMeetingemp> emplist=empService.queryByProerties("meetingId", o.getUuid());
-/*				for(OaMeetingemp e:emplist){
-					obj=empService.ObjectQuerySql(" SELECT UP_CARD_ID,FACT_NUMB FROM dbo.CARD_T_USEINFO WHERE USER_ID='"+e.getEmployeeId()+"'");
-//					obj=empService.ObjectQuerySql("select cardno,FACTORYFIXID from dbo.PT_CARD where USER_ID='"+e.getEmployeeId()+"'");
-					if(obj!=null){
-						for(Object[] ob:obj){
-							e.setCardNo(ob[0].toString());
-							e.setFactoryfixId(ob[1].toString());
-						}
-					}
-				}*/
 				o.setMeetingemp(emplist);
+                checkrule = ruleService.get(o.getCheckruleId());
+                o.setOaMeetingcheckrule(checkrule);
 			}
 		} else {
 			info.setCode(false);
@@ -105,7 +98,7 @@ public class MeetingAppController {
 						OaMeeting meeting=meetingService.get(mc.getMeetingId());
 						//考勤人员id
 						String uid="";
-						List<Object[]> obj=empService.ObjectQuerySql("select USER_ID,CARDNO from dbo.PT_CARD where FACTORYFIXID='"+mc.getWlkh()+"'");
+						List<Object[]> obj=empService.ObjectQuerySql("select USER_ID,CARDNO from dbo.CARD_T_USEINFO where FACT_NUMB='"+mc.getWlkh()+"'");
 						uid=obj.get(0)[0].toString();
 			    		String[] param={"meetingId","employeeId"};
 		                Object[] values={mc.getMeetingId(),uid};		
