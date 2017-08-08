@@ -739,7 +739,9 @@ public class BaseDaoImpl<E> implements BaseDao<E> {
         Criteria criteria = getSession().createCriteria(this.entityClass);
         // 如果isDlete 为true 则为只列出未删除的数据
         if (isDelete) {
-            criteria.add(Restrictions.eq("isDelete", Integer.parseInt(StatuVeriable.ISNOTDELETE)));
+            //criteria.add(Restrictions.eq("isDelete", Integer.parseInt(StatuVeriable.ISNOTDELETE)));
+        	//修改为，不等于1
+        	criteria.add(Restrictions.ne("isDelete", Integer.parseInt(StatuVeriable.ISDELETE)));
         }
         // 设置 了过滤条件，需要组装这些过滤条件
         if (StringUtils.isNotEmpty(filter)) {

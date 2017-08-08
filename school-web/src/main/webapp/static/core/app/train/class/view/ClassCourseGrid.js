@@ -36,6 +36,20 @@ Ext.define("core.train.class.view.ClassCourseGrid", {
             ref: 'gridDownTemplate',
             funCode: 'girdFuntionBtn',
             iconCls: 'x-fa fa-file-text'
+        }, {
+            xtype: 'button',
+            text: '打开/关闭评价',
+            ref: 'gridIsEval',
+            funCode: 'girdFuntionBtn',
+            //disabled: true,
+            iconCls: 'x-fa fa-pencil-square'
+        },{
+            xtype: 'button',
+            text: '删除',
+            ref: 'gridDelete',
+            funCode: 'girdFuntionBtn',
+            //disabled: true,
+            iconCls: 'x-fa fa-minus-circle'
         },'->',{
             xtype: 'tbtext', 
             html:'快速搜索：'
@@ -62,7 +76,7 @@ Ext.define("core.train.class.view.ClassCourseGrid", {
         whereSql: "",
         //查询的过滤字段
         //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
-        filter: "[{'type':'string','comparison':'=','value':'null','field':'classId'}]" //默认是查不出数据的
+        filter: "[{\"type\":\"string\",\"comparison\":\"=\",\"value\":\"null\",\"field\":\"classId\"}]" //默认是查不出数据的    
     },
     columns: {
         defaults: {

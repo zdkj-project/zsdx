@@ -48,7 +48,7 @@ import java.util.*;
 @RequestMapping("/TrainClass")
 public class TrainClassController extends FrameWorkController<TrainClass> implements Constant {
 
-    private static Logger logger = Logger.getLogger(TrainClassController.class);
+	private static Logger logger = Logger.getLogger(TrainClassController.class);
 
 	@Resource
 	TrainClassService thisService; // service层接口
@@ -64,7 +64,6 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 
 	@Resource
 	TrainClassrealdinnerService classrealdinnerService; // service层接口
-
 
 	/**
 	 * @Title: list
@@ -91,15 +90,15 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		writeJSON(response, strData);// 返回数据
 	}
 
-    /**
-     *
-     * @param entity
-     * @param request
-     * @param response
-     * @throws IOException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     */
+	/**
+	 *
+	 * @param entity
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
 	@RequestMapping(value = { "/doadd" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
 			org.springframework.web.bind.annotation.RequestMethod.POST })
 	public void doAdd(TrainClass entity, HttpServletRequest request, HttpServletResponse response)
@@ -162,15 +161,15 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		}
 	}
 
-    /**
-     *
-     * @param entity
-     * @param request
-     * @param response
-     * @throws IOException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     */
+	/**
+	 *
+	 * @param entity
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
 	@RequestMapping("/doupdate")
 	public void doUpdates(TrainClass entity, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, IllegalAccessException, InvocationTargetException {
@@ -209,12 +208,12 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		}
 	}
 
-    /**
-     *
-     * @param request
-     * @param response
-     * @throws IOException
-     */
+	/**
+	 *
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
 	@RequestMapping("/getClassInfo")
 	public void getClassInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String strData = "";
@@ -485,11 +484,11 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				String hql = "select new TrainClasstrainee(g.uuid,g.xm,g.xbm,g.breakfast,g.lunch,g.dinner,g.isDelete) from TrainClasstrainee g where g.classId='"
 						+ classId + "' order by g.breakfast desc,g.lunch desc,g.dinner desc";
 				List<TrainClasstrainee> traineeFoods = classTraineeService.doQuery(hql);
-				
+
 				if (traineeFoods.size() > 0) {
 					// 5.切换数据源
 					DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
-					
+
 					// 6.执行同步代码
 					result = thisService.syncClassTraineeFoodsToUP(trainClass, traineeFoods);
 				} else {
@@ -610,14 +609,29 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				// 处理学员基本数据
 				List<Map<String, String>> traineeList = new ArrayList<>();
 				Map<String, String> traineeMap = null;
-				int traineeNum = trainClasstraineeList.size(); // 学员人数
+				int traineeNum = 0; // 学员人数
 				int foodBreakfastNum = 0; // 早餐人数
 				int foodLunchNum = 0; // 午餐人数
 				int foodDinnerNum = 0; // 晚餐人数
 				int roomSiestaNum = 0; // 午休人数
 				int roomSleepNum = 0; // 晚宿人数
-				if (trainClass.getDinnerType() != null && trainClass.getDinnerType() != 3) // 若就餐类型不为快餐，则就餐人数为学员总数
-					foodBreakfastNum = foodLunchNum = foodDinnerNum = traineeNum;
+				int traineeManNum=0;	//男学员人数
+				int traineeWomenNum=0;	//女学员人数
+				int isEvalNum=0;	//需要评价的课程数
+				int roomSiestaManNum = 0; // 男生午休人数
+				int roomSleepManNum = 0; // 男生晚宿人数
+				int roomSiestaWomenNum = 0; // 女生午休人数
+				int roomSleepWomenNum = 0; // 女生晚宿人数
+				int roomNoSiestaNum = 0; // 不午休人数
+				int roomNoSleepNum = 0; // 不晚宿人数
+				
+				if (trainClass.getDinnerType() != null && trainClass.getDinnerType() != 3){ 
+					//foodBreakfastNum = foodLunchNum = foodDinnerNum = traineeNum;// 若就餐类型不为快餐，则就餐人数为学员总数
+					//就餐人数从这个参数里面取
+					foodBreakfastNum=trainClass.getBreakfastCount() == null ? 0 : trainClass.getBreakfastCount();
+					foodLunchNum=trainClass.getLunchCount() == null ? 0 : trainClass.getLunchCount();
+					foodDinnerNum=trainClass.getDinnerCount() == null ? 0 : trainClass.getDinnerCount();				
+				}
 
 				for (TrainClasstrainee classTrainee : trainClasstraineeList) {
 					traineeMap = new LinkedHashMap<>();
@@ -637,21 +651,48 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 					else if (classTrainee.getIsDelete() == 2)
 						isDelete = "新增";
 					traineeMap.put("isDelete", isDelete);
-					// 若就餐类型为快餐，则统计
-					if (trainClass.getDinnerType() != null && trainClass.getDinnerType() == 3) {
-						if (classTrainee.getBreakfast() != null && classTrainee.getBreakfast() == 1)
-							foodBreakfastNum++;
-						if (classTrainee.getLunch() != null && classTrainee.getLunch() == 1)
-							foodLunchNum++;
-						if (classTrainee.getDinner() != null && classTrainee.getDinner() == 1)
-							foodDinnerNum++;
-					}
+					
+					//只统计状态不为1的数据
+					if(classTrainee.getIsDelete()!=1){
+						// 若就餐类型为快餐，则统计
+						if (trainClass.getDinnerType() != null && trainClass.getDinnerType() == 3) {
+							if (classTrainee.getBreakfast() != null && classTrainee.getBreakfast() == 1)
+								foodBreakfastNum++;
+							if (classTrainee.getLunch() != null && classTrainee.getLunch() == 1)
+								foodLunchNum++;
+							if (classTrainee.getDinner() != null && classTrainee.getDinner() == 1)
+								foodDinnerNum++;
+						}
 
-					if (classTrainee.getSiesta() != null && classTrainee.getSiesta() == 1)
-						roomSiestaNum++;
-					if (classTrainee.getSleep() != null && classTrainee.getSleep() == 1)
-						roomSleepNum++;
-
+						if (classTrainee.getSiesta() != null && classTrainee.getSiesta() == 1){
+							roomSiestaNum++;
+							if("1".equals(classTrainee.getXbm()))
+								roomSiestaManNum++;
+							else
+								roomSiestaWomenNum++;
+						}else{
+							roomNoSiestaNum++;
+						}
+							
+						if (classTrainee.getSleep() != null && classTrainee.getSleep() == 1){
+							roomSleepNum++;
+							if("1".equals(classTrainee.getXbm()))
+								roomSleepManNum++;
+							else
+								roomSleepWomenNum++;
+						}else{
+							roomNoSleepNum++;
+						}
+							
+						
+						if("1".equals(classTrainee.getXbm()))
+							traineeManNum++;
+						else
+							traineeWomenNum++;
+						
+						traineeNum++;
+					}								
+					
 					traineeList.add(traineeMap);
 				}
 
@@ -682,7 +723,13 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 					else if (classSchedule.getIsDelete() == 2)
 						isDelete = "新增";
 					courseMap.put("isDelete", isDelete);
-
+					
+					//只统计状态不为1的数据
+					if(classSchedule.getIsDelete()!=1){
+						if(classSchedule.getIsEval()==1)
+							isEvalNum++;
+					}
+									
 					courseList.add(courseMap);
 				}
 
@@ -700,7 +747,19 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				classMap.put("foodDinnerNum", String.valueOf(foodDinnerNum));
 				classMap.put("roomSiestaNum", String.valueOf(roomSiestaNum));
 				classMap.put("roomSleepNum", String.valueOf(roomSleepNum));
-
+				classMap.put("traineeManNum", String.valueOf(traineeManNum));
+				classMap.put("traineeWomenNum", String.valueOf(traineeWomenNum));
+				classMap.put("isEvalNum", String.valueOf(isEvalNum));
+				classMap.put("roomSiestaManNum", String.valueOf(roomSiestaManNum));
+				classMap.put("roomSleepManNum", String.valueOf(roomSleepManNum));
+				classMap.put("roomSiestaWomenNum", String.valueOf(roomSiestaWomenNum));
+				classMap.put("roomSleepWomenNum", String.valueOf(roomSleepWomenNum));
+				classMap.put("roomNoSiestaNum", String.valueOf(roomNoSiestaNum));
+				classMap.put("roomNoSleepNum", String.valueOf(roomNoSleepNum));
+				
+				Long time=trainClass.getEndDate().getTime() - trainClass.getBeginDate().getTime();
+				classMap.put("classDay",String.valueOf(time/(1000*60*60*24)+1));
+				
 				String isUse = "";
 				if (trainClass.getIsuse() == null || trainClass.getIsuse() == 0)
 					isUse = "未提交";
@@ -801,7 +860,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		if (StringUtils.isNotEmpty(ids)) {
 			hql += " and classId = '" + ids + "'";
 		}
-		hql += " order by siesta desc,sleep desc,roomName desc ";
+		hql += " order by siesta desc,sleep desc,xbm asc,roomName desc ";
 		roomClasstraineeList = classTraineeService.doQuery(hql);
 		// 处理学员基本数据
 		List<Map<String, String>> roomList = new ArrayList<>();
@@ -1021,14 +1080,19 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		// 处理学员基本数据
 		List<Map<String, String>> traineeList = new ArrayList<>();
 		Map<String, String> traineeMap = null;
-		int traineeNum = trainClasstraineeList.size(); // 学员人数
+		int traineeNum =0; // 学员人数
 		int foodBreakfastNum = 0; // 早餐人数
 		int foodLunchNum = 0; // 午餐人数
 		int foodDinnerNum = 0; // 晚餐人数
 		int roomSiestaNum = 0; // 午休人数
 		int roomSleepNum = 0; // 晚宿人数
-		if (trainClass.getDinnerType() != null && trainClass.getDinnerType() != 3) // 若就餐类型不为快餐，则就餐人数为学员总数
-			foodBreakfastNum = foodLunchNum = foodDinnerNum = traineeNum;
+		if (trainClass.getDinnerType() != null && trainClass.getDinnerType() != 3) {
+			// 若就餐类型不为快餐，则就餐人数为学员总数		
+			// foodBreakfastNum = foodLunchNum = foodDinnerNum = traineeNum; //		
+			foodBreakfastNum=trainClass.getBreakfastCount() == null ? 0 : trainClass.getBreakfastCount();
+			foodLunchNum=trainClass.getLunchCount() == null ? 0 : trainClass.getLunchCount();
+			foodDinnerNum=trainClass.getDinnerCount() == null ? 0 : trainClass.getDinnerCount();
+		}
 
 		for (TrainClasstrainee classTrainee : trainClasstraineeList) {
 			traineeMap = new LinkedHashMap<>();
@@ -1040,22 +1104,26 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			traineeMap.put("workUnit", classTrainee.getWorkUnit());
 			traineeMap.put("position", classTrainee.getPosition());
 			traineeMap.put("headshipLevel", mapHeadshipLevel.get(classTrainee.getHeadshipLevel()));
-
-			// 若就餐类型为快餐，则统计
-			if (trainClass.getDinnerType() != null && trainClass.getDinnerType() == 3) {
-				if (classTrainee.getBreakfast() != null && classTrainee.getBreakfast() == 1)
-					foodBreakfastNum++;
-				if (classTrainee.getLunch() != null && classTrainee.getLunch() == 1)
-					foodLunchNum++;
-				if (classTrainee.getDinner() != null && classTrainee.getDinner() == 1)
-					foodDinnerNum++;
+			
+			//只统计不为1的数据
+			if(classTrainee.getIsDelete()!=1){
+				// 若就餐类型为快餐，则统计
+				if (trainClass.getDinnerType() != null && trainClass.getDinnerType() == 3) {
+					if (classTrainee.getBreakfast() != null && classTrainee.getBreakfast() == 1)
+						foodBreakfastNum++;
+					if (classTrainee.getLunch() != null && classTrainee.getLunch() == 1)
+						foodLunchNum++;
+					if (classTrainee.getDinner() != null && classTrainee.getDinner() == 1)
+						foodDinnerNum++;
+				}
+	
+				if (classTrainee.getSiesta() != null && classTrainee.getSiesta() == 1)
+					roomSiestaNum++;
+				if (classTrainee.getSleep() != null && classTrainee.getSleep() == 1)
+					roomSleepNum++;
+				
+				traineeNum++;
 			}
-
-			if (classTrainee.getSiesta() != null && classTrainee.getSiesta() == 1)
-				roomSiestaNum++;
-			if (classTrainee.getSleep() != null && classTrainee.getSleep() == 1)
-				roomSleepNum++;
-
 			traineeList.add(traineeMap);
 		}
 
@@ -1297,7 +1365,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		if (StringUtils.isNotEmpty(ids)) {
 			hql += " and classId in ('" + ids.replace(",", "','") + "')";
 		}
-		hql += " order by siesta desc,sleep desc";
+		hql += " order by siesta desc,sleep desc,xbm asc";
 		roomClasstraineeList = classTraineeService.doQuery(hql);
 		// 处理学员基本数据
 		List<Map<String, String>> roomList = new ArrayList<>();
@@ -1378,153 +1446,157 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			return "晚上";
 	}
 
-    /**
-     * 汇总班级学员的学分
-     * @param request
-     * @param response
-     * @throws IOException
-     */
+	/**
+	 * 汇总班级学员的学分
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
 	@RequestMapping("/sumcredit")
-    public void doSumCredit(HttpServletRequest request,HttpServletResponse response) throws  IOException{
-	    SysUser currentUser = getCurrentSysUser();
-	    String endFlag = currentUser.getUserName() + "sumCreditIsEnd";
-	    String stateFlag = currentUser.getUserName() + "sumCreditState";
-        String ids = request.getParameter("ids");
-        request.getSession().setAttribute(endFlag, "0");
-        request.getSession().removeAttribute(stateFlag);
+	public void doSumCredit(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		SysUser currentUser = getCurrentSysUser();
+		String endFlag = currentUser.getUserName() + "sumCreditIsEnd";
+		String stateFlag = currentUser.getUserName() + "sumCreditState";
+		String ids = request.getParameter("ids");
+		request.getSession().setAttribute(endFlag, "0");
+		request.getSession().removeAttribute(stateFlag);
 
-        if(StringUtils.isEmpty(ids)){
-            request.getSession().setAttribute(endFlag, "0");
-            request.getSession().setAttribute(stateFlag, "0");
-        } else {
-            boolean result = thisService.doSumCredit(ids);
-            if (result == true) {
-                request.getSession().setAttribute(endFlag, "1");
-            } else {
-                request.getSession().setAttribute(endFlag, "0");
-                request.getSession().setAttribute(stateFlag, "0");
-            }
-        }
-    }
+		if (StringUtils.isEmpty(ids)) {
+			request.getSession().setAttribute(endFlag, "0");
+			request.getSession().setAttribute(stateFlag, "0");
+		} else {
+			boolean result = thisService.doSumCredit(ids);
+			if (result == true) {
+				request.getSession().setAttribute(endFlag, "1");
+			} else {
+				request.getSession().setAttribute(endFlag, "0");
+				request.getSession().setAttribute(stateFlag, "0");
+			}
+		}
+	}
 
-    /**
-     * 检查学分汇总是否完成
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    @RequestMapping("/checkSumCreditEnd")
-    public void docheckSumCreditEnd(HttpServletRequest request,HttpServletResponse response) throws  IOException{
-        SysUser currentUser = getCurrentSysUser();
-        String endFlag = currentUser.getUserName() + "sumCreditIsEnd";
-        String stateFlag = currentUser.getUserName() + "sumCreditState";
-        Object isEnd = request.getSession().getAttribute(endFlag);
-        Object state = request.getSession().getAttribute(stateFlag);
-        if (isEnd != null) {
-            if ("1".equals(isEnd.toString())) {
-                writeJSON(response, jsonBuilder.returnSuccessJson("\"学分汇总完成！\""));
-            } else if (state != null && state.equals("0")) {
-                writeJSON(response, jsonBuilder.returnFailureJson("0"));
-            } else {
-                writeJSON(response, jsonBuilder.returnFailureJson("\"学分汇总未完成！\""));
-            }
-        } else {
-            writeJSON(response, jsonBuilder.returnFailureJson("\"学分汇总未完成！\""));
-        }
-    }
+	/**
+	 * 检查学分汇总是否完成
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping("/checkSumCreditEnd")
+	public void docheckSumCreditEnd(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		SysUser currentUser = getCurrentSysUser();
+		String endFlag = currentUser.getUserName() + "sumCreditIsEnd";
+		String stateFlag = currentUser.getUserName() + "sumCreditState";
+		Object isEnd = request.getSession().getAttribute(endFlag);
+		Object state = request.getSession().getAttribute(stateFlag);
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"学分汇总完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"学分汇总未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"学分汇总未完成！\""));
+		}
+	}
 
-    /**
-     * 导出指定班级的学员学分
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    @RequestMapping("/exportCredit")
-    public void doexportCredit(HttpServletRequest request,HttpServletResponse response) throws  IOException{
-        SysUser currentUser = getCurrentSysUser();
-        String endFlag = currentUser.getUserName() + "exportCreditIsEnd";
-        String stateFlag = currentUser.getUserName() + "exportCreditState";
-        String ids = request.getParameter("ids");
-        request.getSession().setAttribute(endFlag, "0");
-        request.getSession().removeAttribute(stateFlag);
+	/**
+	 * 导出指定班级的学员学分
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping("/exportCredit")
+	public void doexportCredit(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		SysUser currentUser = getCurrentSysUser();
+		String endFlag = currentUser.getUserName() + "exportCreditIsEnd";
+		String stateFlag = currentUser.getUserName() + "exportCreditState";
+		String ids = request.getParameter("ids");
+		request.getSession().setAttribute(endFlag, "0");
+		request.getSession().removeAttribute(stateFlag);
 
-        if(StringUtils.isEmpty(ids)){
-            request.getSession().setAttribute(endFlag, "0");
-            request.getSession().setAttribute(stateFlag, "0");
-        } else {
-            List<TrainClasstrainee> exportList = new ArrayList<>();
-            //职称数据字典
-            String mapKey = null;
-            String[] propValue = {"XBM","HEADSHIPLEVEL"};
-            Map<String, String> mapDicItem = new HashMap<>();
-            List<BaseDicitem> listDicItem = dicitemService.queryByProerties("dicCode", propValue);
-            for (BaseDicitem baseDicitem : listDicItem) {
-                mapKey = baseDicitem.getItemCode() + baseDicitem.getDicCode();
-                mapDicItem.put(mapKey, baseDicitem.getItemName());
-            }
+		if (StringUtils.isEmpty(ids)) {
+			request.getSession().setAttribute(endFlag, "0");
+			request.getSession().setAttribute(stateFlag, "0");
+		} else {
+			List<TrainClasstrainee> exportList = new ArrayList<>();
+			// 职称数据字典
+			String mapKey = null;
+			String[] propValue = { "XBM", "HEADSHIPLEVEL" };
+			Map<String, String> mapDicItem = new HashMap<>();
+			List<BaseDicitem> listDicItem = dicitemService.queryByProerties("dicCode", propValue);
+			for (BaseDicitem baseDicitem : listDicItem) {
+				mapKey = baseDicitem.getItemCode() + baseDicitem.getDicCode();
+				mapDicItem.put(mapKey, baseDicitem.getItemName());
+			}
 
-            List<TrainClasstrainee> trainClasstraineeList = null;
-            String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2) and classId='";
-            hql += ids;
-            hql += "' order by xm asc";
-            trainClasstraineeList = classTraineeService.doQuery(hql);
-            for (TrainClasstrainee trainTeacher : trainClasstraineeList) {
-                trainTeacher.setXbm(mapDicItem.get(trainTeacher.getXbm() + "XBM"));
-                trainTeacher.setHeadshipLevel(mapDicItem.get(trainTeacher.getHeadshipLevel()+"HEADSHIPLEVEL"));
-            }
-            exportList.addAll(trainClasstraineeList);
-            FastExcel.exportExcel(response, "学员学分", exportList);
-            request.getSession().setAttribute(endFlag, "1");
-        }
-    }
+			List<TrainClasstrainee> trainClasstraineeList = null;
+			String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2) and classId='";
+			hql += ids;
+			hql += "' order by xm asc";
+			trainClasstraineeList = classTraineeService.doQuery(hql);
+			for (TrainClasstrainee trainTeacher : trainClasstraineeList) {
+				trainTeacher.setXbm(mapDicItem.get(trainTeacher.getXbm() + "XBM"));
+				trainTeacher.setHeadshipLevel(mapDicItem.get(trainTeacher.getHeadshipLevel() + "HEADSHIPLEVEL"));
+			}
+			exportList.addAll(trainClasstraineeList);
+			FastExcel.exportExcel(response, "学员学分", exportList);
+			request.getSession().setAttribute(endFlag, "1");
+		}
+	}
 
-    /**
-     * 检查学分导出是否完成
-     * @param request
-     * @param response
-     * @throws IOException
-     */
-    @RequestMapping("/checkExportCreditEnd")
-    public void docheckExportCreditEnd(HttpServletRequest request,HttpServletResponse response) throws  IOException{
-        SysUser currentUser = getCurrentSysUser();
-        String endFlag = currentUser.getUserName() + "exportCreditIsEnd";
-        String stateFlag = currentUser.getUserName() + "exportCreditState";
-        Object isEnd = request.getSession().getAttribute(endFlag);
-        Object state = request.getSession().getAttribute(stateFlag);
-        if (isEnd != null) {
-            if ("1".equals(isEnd.toString())) {
-                writeJSON(response, jsonBuilder.returnSuccessJson("\"导出完成！\""));
-            } else if (state != null && state.equals("0")) {
-                writeJSON(response, jsonBuilder.returnFailureJson("0"));
-            } else {
-                writeJSON(response, jsonBuilder.returnFailureJson("\"导出未完成！\""));
-            }
-        } else {
-            writeJSON(response, jsonBuilder.returnFailureJson("\"导出未完成！\""));
-        }
-    }
+	/**
+	 * 检查学分导出是否完成
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping("/checkExportCreditEnd")
+	public void docheckExportCreditEnd(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		SysUser currentUser = getCurrentSysUser();
+		String endFlag = currentUser.getUserName() + "exportCreditIsEnd";
+		String stateFlag = currentUser.getUserName() + "exportCreditState";
+		Object isEnd = request.getSession().getAttribute(endFlag);
+		Object state = request.getSession().getAttribute(stateFlag);
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"导出未完成！\""));
+		}
+	}
 
-    @RequestMapping("/addSendUser")
-    public void doaddSendUser(HttpServletRequest request,HttpServletResponse response) throws  IOException{
-        SysUser currentUser = getCurrentSysUser();
-        String ids = request.getParameter("uuid");
-        String sendUserId = request.getParameter("sendUserId");
-        String sendUserName = request.getParameter("sendUserName");
-        String sendInfo = request.getParameter("sendInfo");
-        if (StringUtils.isEmpty(ids) || StringUtils.isEmpty(sendInfo)) {
-            writeJSON(response, jsonBuilder.returnFailureJson("\"没有传入发送消息的参数！\""));
-            return;
-        }
+	@RequestMapping("/addSendUser")
+	public void doaddSendUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		SysUser currentUser = getCurrentSysUser();
+		String ids = request.getParameter("uuid");
+		String sendUserId = request.getParameter("sendUserId");
+		String sendUserName = request.getParameter("sendUserName");
+		String sendInfo = request.getParameter("sendInfo");
+		if (StringUtils.isEmpty(ids) || StringUtils.isEmpty(sendInfo)) {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"没有传入发送消息的参数！\""));
+			return;
+		}
 
-        try {
-            Boolean br = thisService.doSendInfoUser(sendUserId, sendInfo, currentUser);
-            if(br)
-                writeJSON(response, jsonBuilder.returnSuccessJson("\"消息发送成功！\""));
-            else
-                writeJSON(response, jsonBuilder.returnFailureJson("\"消息发送失败！\""));
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-            writeJSON(response, jsonBuilder.returnFailureJson("\"消息发送失败！\""));
-        }
-    }
+		try {
+			Boolean br = thisService.doSendInfoUser(sendUserId, sendInfo, currentUser);
+			if (br)
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"消息发送成功！\""));
+			else
+				writeJSON(response, jsonBuilder.returnFailureJson("\"消息发送失败！\""));
+		} catch (IOException e) {
+			logger.error(e.getMessage());
+			writeJSON(response, jsonBuilder.returnFailureJson("\"消息发送失败！\""));
+		}
+	}
 }

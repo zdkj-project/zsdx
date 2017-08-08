@@ -157,34 +157,33 @@ Ext.define("core.train.class.view.MainGrid", {
             text: "班级类型",
             dataIndex: "classCategory",
             columnType: "basecombobox", //列类型
-            ddCode: "ZXXBJLX" //字典代码          
+            ddCode: "ZXXBJLX" //字典代码 
         },{
             flex:1,
-            minWidth:120,
+            minWidth:100,
             text: "班级名称",
             dataIndex: "className",
+            renderer: function(value, metaData) {                
+                var title = "班级名称";
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + value + '"';
+                return value;
+            }
         },  {
-            width:100,
+            width:90,
             text: "开始日期",
             dataIndex: "beginDate",
             renderer: function(value, metaData) {
-                var date = value.replace(new RegExp(/-/gm), "/");
-                var title = "开始日期";
-                var ss = Ext.Date.format(new Date(date), 'Y-m-d')
-                var html = ss;
-                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                var date = value.replace(new RegExp(/-/gm), "/");    
+                var ss = Ext.Date.format(new Date(date), 'Y-m-d')           
                 return ss;
             }
         }, {
-            width:100,
+            width:90,
             text: "结束日期",
             dataIndex: "endDate",
             renderer: function(value, metaData) {
-                var date = value.replace(new RegExp(/-/gm), "/");
-                var title = "结束日期";
-                var ss = Ext.Date.format(new Date(date), 'Y-m-d')
-                var html = ss;
-                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                var date = value.replace(new RegExp(/-/gm), "/");    
+                var ss = Ext.Date.format(new Date(date), 'Y-m-d')           
                 return ss;
             }
         }, {
@@ -197,14 +196,23 @@ Ext.define("core.train.class.view.MainGrid", {
                 return value;
             }
         },{
-            width:100,
+            width:80,
             text: "联系人",
             dataIndex: "contactPerson"
         }, {
-            width:120,
+            width:100,
             text: "联系电话",
             dataIndex: "contactPhone"
         },  {
+            width: 130,
+            text: "更新时间",
+            dataIndex: "updateTime",
+            renderer: function(value, metaData) {
+                var date = value.replace(new RegExp(/-/gm), "/");    
+                var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i')           
+                return ss;
+            }
+        },{
             width: 80,
             text: "提交状态",
             dataIndex: "isuse",
@@ -220,20 +228,10 @@ Ext.define("core.train.class.view.MainGrid", {
                     return "<span style='color:red'>未提交</span>";
             }
         },{
-            width: 150,
-            text: "创建时间",
-            dataIndex: "createTime",
-            align:'left',
-        },{
-            width: 150,
-            text: "更新时间",
-            dataIndex: "updateTime",
-            align:'left',
-        },{
             xtype: 'actiontextcolumn',
             text: "操作",
             align:'center',
-            width: 370,
+            width: 330,
             fixed: true,
             items: [{
                 text:'学员管理',  

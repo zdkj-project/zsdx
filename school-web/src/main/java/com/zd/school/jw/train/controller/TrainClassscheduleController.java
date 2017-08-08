@@ -68,7 +68,7 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 		Integer limit = super.limit(request);
 		String sort = super.sort(request);
 		String filter = super.filter(request);
-		QueryResult<TrainClassschedule> qResult = thisService.list(start, limit, sort, filter, false);
+		QueryResult<TrainClassschedule> qResult = thisService.list(start, limit, sort, filter, true);
 		strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
 	}

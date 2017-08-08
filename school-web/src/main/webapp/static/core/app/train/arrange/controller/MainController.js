@@ -753,100 +753,133 @@ Ext.define("core.train.arrange.controller.MainController", {
                
                 //读取班级信息
                 //读取学员信息
-                //读取课程信息        
+                //读取课程信息                                                    
                 self.asyncAjax({
-                    url: comm.get("baseUrl")  + "/TrainClass/getClassAllInfo",
+                    url: comm.get("baseUrl") + "/TrainClass/getClassAllInfo",
                     params: {
                         classId: insertObj.uuid
                     },
                     //回调代码必须写在里面
-                    success: function(response) {
+                    success: function (response) {
                         var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                        if(data.success){
-                            var obj=data.obj;
-                            var classInfoContainer=tabItem.down("container[ref=classInfo]");
+                        if (data.success) {
+                            var obj = data.obj;
+                            var classInfoContainer = tabItem.down("container[ref=classInfo]");
                             classInfoContainer.setData(obj.classInfo);
 
-                            var classTraineeInfoContainer=tabItem.down("container[ref=classTraineeInfo]");
-                            classTraineeInfoContainer.setData(obj.classTrainee);
-
-                            var classCourseInfoContainer=tabItem.down("container[ref=classCourseInfo]");
-                            classCourseInfoContainer.setData(obj.classCourse);
+                            var classTraineeTitle="（男生 "+obj.classInfo.traineeManNum+" 人；女生 "+obj.classInfo.traineeWomenNum+" 人）";
+                            var classTraineeObj={
+                                "classTraineeTitle":classTraineeTitle,
+                                "classTrainee":obj.classTrainee
+                            };
+                            var classTraineeInfoContainer = tabItem.down("container[ref=classTraineeInfo]");                                
+                            classTraineeInfoContainer.setData(classTraineeObj);
                             
-                            var classFoodInfoContainer=tabItem.down("container[ref=classFoodInfo]");                                        
-                            var classFoodObj={};
-                            classFoodObj.dinnerType=obj.classInfo.dinnerType;
-                            if(obj.classInfo.dinnerType==1)
-                                classFoodObj.dinnerTypeName="围餐";
-                            else if(obj.classInfo.dinnerType==2)
-                                classFoodObj.dinnerTypeName="自助餐";
-                            else 
-                                classFoodObj.dinnerTypeName="快餐";
-                            classFoodObj.avgNumber=obj.classInfo.avgNumber;
-                            classFoodObj.breakfastStand=obj.classInfo.breakfastStand;
-                            classFoodObj.breakfastCount=obj.classInfo.breakfastCount;
-                            classFoodObj.lunchStand=obj.classInfo.lunchStand;
-                            classFoodObj.lunchCount=obj.classInfo.lunchCount;
-                            classFoodObj.dinnerStand=obj.classInfo.dinnerStand;
-                            classFoodObj.dinnerCount=obj.classInfo.dinnerCount;
+                            var classCourseTitle="（需要评价的课程 "+obj.classInfo.isEvalNum+" 门）";
+                            var classCourseObj={
+                                "classCourseTitle":classCourseTitle,
+                                "classCourse":obj.classCourse
+                            };
+                            var classCourseInfoContainer = tabItem.down("container[ref=classCourseInfo]");
+                            classCourseInfoContainer.setData(classCourseObj);
+
+
+                            var classFoodInfoContainer = tabItem.down("container[ref=classFoodInfo]");
+                            var classFoodObj = {};
+                             //统计
+                            var classFoodTitle="";
+                            var countMoney=(obj.classInfo.breakfastStand*obj.classInfo.foodBreakfastNum +
+                                    obj.classInfo.lunchStand*obj.classInfo.foodLunchNum+obj.classInfo.dinnerStand*obj.classInfo.foodDinnerNum)*obj.classInfo.classDay;
+                            var countNumberInDay=obj.classInfo.foodBreakfastNum*1 +obj.classInfo.foodLunchNum*1 +obj.classInfo.foodDinnerNum*1;
+                            var countNumber=countNumberInDay*obj.classInfo.classDay;
+
+                            classFoodObj.dinnerType = obj.classInfo.dinnerType;
+                            if (obj.classInfo.dinnerType == 1){
+                                classFoodObj.dinnerTypeName = "围餐";   
+                                classFoodTitle="（总额 "+countMoney+" 元 ； 每天围数 "+countNumberInDay+" 围 ； 总围数 "+countNumber+" 围）";                                    
+                            }
+                            else if (obj.classInfo.dinnerType == 2){
+                                classFoodObj.dinnerTypeName = "自助餐";   
+                                classFoodTitle="（总额 "+countMoney+" 元 ； 每天人数 "+countNumberInDay+" 围 ； 总人数 "+countNumber+" 围）";                                      
+                            }
+                            else{
+                                classFoodObj.dinnerTypeName = "快餐"; 
+                                classFoodTitle="（总额 "+countMoney+" 元 ； 每天人数 "+countNumberInDay+" 围 ； 总人数 "+countNumber+" 围）";                                    
+                            }
+                           
+                            classFoodObj.classFoodTitle=classFoodTitle;
+                            classFoodObj.avgNumber = obj.classInfo.avgNumber;
+                            classFoodObj.breakfastStand = obj.classInfo.breakfastStand;
+                            classFoodObj.breakfastCount = obj.classInfo.foodBreakfastNum;
+                            classFoodObj.lunchStand = obj.classInfo.lunchStand;
+                            classFoodObj.lunchCount = obj.classInfo.foodLunchNum;
+                            classFoodObj.dinnerStand = obj.classInfo.dinnerStand;
+                            classFoodObj.dinnerCount = obj.classInfo.foodDinnerNum;
                             //默认为快餐，则显示学员数据   
-                            if(obj.classInfo.dinnerType!="1" && obj.classInfo.dinnerType!="2"){                 
+                            if (obj.classInfo.dinnerType != "1" && obj.classInfo.dinnerType != "2") {
 
                                 //查询班级的就餐信息
                                 self.asyncAjax({
-                                    url: comm.get("baseUrl")  + "/TrainClasstrainee/getClassFoodTrainees",
+                                    url: comm.get("baseUrl") + "/TrainClasstrainee/getClassFoodTrainees",
                                     params: {
                                         classId: insertObj.uuid,
-                                        page:1,
-                                        start:0,
-                                        limit:-1    //-1表示不分页
+                                        page: 1,
+                                        start: 0,
+                                        limit: -1    //-1表示不分页
                                     },
                                     //回调代码必须写在里面
-                                    success: function(response) {
+                                    success: function (response) {
                                         var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                                        var rows=data.rows;
-                                        if(rows!=undefined){ //若存在rows数据，则表明请求正常
-                                            classFoodObj.rows=rows;                                   
-                                            classFoodInfoContainer.setData(classFoodObj);  
-                                        }else{
+                                        var rows = data.rows;
+                                        if (rows != undefined) { //若存在rows数据，则表明请求正常
+                                            classFoodObj.rows = rows;
+                                            classFoodInfoContainer.setData(classFoodObj);
+                                        } else {
                                             self.Error(data.obj);
                                         }
                                     }
-                                });  
-                            }else{
-                                classFoodInfoContainer.setData(classFoodObj);   
-                            }      
-                                
-                                                         
+                                });
+                            } else {
+                                classFoodInfoContainer.setData(classFoodObj);
+                            }
+
+                        
                             //查询班级的住宿信息
                             self.asyncAjax({
-                                url: comm.get("baseUrl")  + "/TrainClasstrainee/getClassRoomTrainees",
+                                url: comm.get("baseUrl") + "/TrainClasstrainee/getClassRoomTrainees",
                                 params: {
                                     classId: insertObj.uuid,
-                                    page:1,
-                                    start:0,
-                                    limit:-1    //-1表示不分页
+                                    page: 1,
+                                    start: 0,
+                                    limit: -1    //-1表示不分页
                                 },
                                 //回调代码必须写在里面
-                                success: function(response) {
+                                success: function (response) {
                                     var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                                    var rows=data.rows;
+                                    var rows = data.rows;
                                     //console.log(rows);
-                                    if(rows!=undefined){  //若存在rows数据，则表明请求正常
-                                        var classRoomInfoContainer=tabItem.down("container[ref=classRoomInfo]");  
-                                        classRoomInfoContainer.setData(rows);     
-                                    }else{
+                                    if (rows != undefined) {  //若存在rows数据，则表明请求正常
+                                        var classRoomTitle="（午休人数-男 "+obj.classInfo.roomSiestaManNum+" 人 ； 午休人数-女 "+obj.classInfo.roomSiestaWomenNum+" 人 ； "+
+                                            "晚宿人数-男 "+obj.classInfo.roomSleepManNum+" 人 ； 晚宿人数-女 "+obj.classInfo.roomSleepWomenNum+" 人 ；"+
+                                            "不午休人数 "+obj.classInfo.roomNoSiestaNum+" 人 ； 不晚宿人数 "+obj.classInfo.roomNoSleepNum+" 人）";
+                                        var classRoomObj={
+                                            "classRoomTitle":classRoomTitle,
+                                            "classRoom":rows
+                                        };
+
+                                        var classRoomInfoContainer = tabItem.down("container[ref=classRoomInfo]");
+                                        classRoomInfoContainer.setData(classRoomObj);
+                                    } else {
                                         self.Error(data.obj);
                                     }
                                 }
-                            });  
-                        }else{
+                            });
+                        } else {
                             self.Error(data.obj);
                         }
-                       
+
                     }
-                });                                    
-                
+                });
                
 
             },30);

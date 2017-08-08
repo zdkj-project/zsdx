@@ -24,71 +24,75 @@ Ext.define("core.train.class.controller.DetailController", {
         "basepanel[xtype=class.classdetaillayout] baseform[xtype=class.roomdetailform] button[ref=submitBtn]":{
             beforeclick:function(btn){
                 var self=this;
-        
-                var detPanel = btn.up("basepanel[xtype=class.classdetaillayout]");
-                var baseform=btn.up("baseform[xtype=class.roomdetailform]");
-                var formObj = baseform.getForm();
 
-                var params = self.getFormValue(formObj);
-                var funData = detPanel.funData;
-                var pkName = funData.pkName;
-                var pkField = formObj.findField(pkName);
+                Ext.Msg.confirm('温馨提示', '您确定要将此信息保存入库吗？' , function(btn2, text) {
+                    if (btn2 == 'yes') {
+                        var detPanel = btn.up("basepanel[xtype=class.classdetaillayout]");
+                        var baseform=btn.up("baseform[xtype=class.roomdetailform]");
+                        var formObj = baseform.getForm();
 
-                
-                //处理提交数据
-                var datas=[];
-                var traineeRoomGrid=detPanel.down("grid[ref=traineeRoomGrid]");      
-                var traineeRoomStore=traineeRoomGrid.getStore();
+                        var params = self.getFormValue(formObj);
+                        var funData = detPanel.funData;
+                        var pkName = funData.pkName;
+                        var pkField = formObj.findField(pkName);
 
-                var loading = new Ext.LoadMask(traineeRoomGrid,{
-                    msg : '正在提交，请稍等...',
-                    removeMask : true// 完成后移除
-                });            
-                loading.show();
+                        
+                        //处理提交数据
+                        var datas=[];
+                        var traineeRoomGrid=detPanel.down("grid[ref=traineeRoomGrid]");      
+                        var traineeRoomStore=traineeRoomGrid.getStore();
 
-                for(var i=0;i<traineeRoomStore.getCount();i++){
-                    var rowData=traineeRoomStore.getAt(i).getData();   
-            
-                    datas.push({
-                        uuid: rowData.uuid,
-                        xm: rowData.xm,
-                        xbm: rowData.xbm,
-                        siesta: rowData.siesta==true?1:0,
-                        sleep: rowData.sleep==true?1:0
-                    });
-                }
-                params.classRoomInfo=JSON.stringify(datas);
+                        var loading = new Ext.LoadMask(traineeRoomGrid,{
+                            msg : '正在提交，请稍等...',
+                            removeMask : true// 完成后移除
+                        });            
+                        loading.show();
 
-
-                self.asyncAjax({
-                    url: comm.get("baseUrl")  + "/TrainClass/doEditClassRoom",
-                    params: params,
-                    //回调代码必须写在里面
-                    success: function(response) {
-                        var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-
-                        if(data.success){  //若存在rows数据，则表明请求正常 
-                            self.msgbox("暂存住宿信息成功!");
-
-                            //刷新外部表格的数据
-                            var basetab = btn.up('baseformtab');
-                            var grid = basetab.funData.grid; //此tab是否保存有grid参数
-                            if (!Ext.isEmpty(grid)) {
-                                var store = grid.getStore();
-//                                store.load(); //刷新父窗体的grid
-                            }
-
-                            loading.hide();
-                        }else{
-                            self.Error(data.obj);
-                            loading.hide();
+                        for(var i=0;i<traineeRoomStore.getCount();i++){
+                            var rowData=traineeRoomStore.getAt(i).getData();   
+                    
+                            datas.push({
+                                uuid: rowData.uuid,
+                                xm: rowData.xm,
+                                xbm: rowData.xbm,
+                                siesta: rowData.siesta==true?1:0,
+                                sleep: rowData.sleep==true?1:0
+                            });
                         }
-                    },
-                    failure: function(response) {
-                        Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
-                        loading.hide();
+                        params.classRoomInfo=JSON.stringify(datas);
+
+
+                        self.asyncAjax({
+                            url: comm.get("baseUrl")  + "/TrainClass/doEditClassRoom",
+                            params: params,
+                            //回调代码必须写在里面
+                            success: function(response) {
+                                var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                                if(data.success){  //若存在rows数据，则表明请求正常 
+                                    self.msgbox("暂存住宿信息成功!");
+
+                                    //刷新外部表格的数据
+                                    var basetab = btn.up('baseformtab');
+                                    var grid = basetab.funData.grid; //此tab是否保存有grid参数
+                                    if (!Ext.isEmpty(grid)) {
+                                        var store = grid.getStore();
+        //                                store.load(); //刷新父窗体的grid
+                                    }
+
+                                    loading.hide();
+                                }else{
+                                    self.Error(data.obj);
+                                    loading.hide();
+                                }
+                            },
+                            failure: function(response) {
+                                Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                loading.hide();
+                            }
+                        }); 
                     }
-                }); 
+                });
 
                 return false;
             }
@@ -99,81 +103,87 @@ Ext.define("core.train.class.controller.DetailController", {
             beforeclick:function(btn){
                 var self=this;
 
-                var detPanel = btn.up("basepanel[xtype=class.classdetaillayout]");
-                var baseform=btn.up("baseform[xtype=class.fooddetailform]");
-                var formObj = baseform.getForm();
+                Ext.Msg.confirm('温馨提示', '您确定要将此信息保存入库吗？' , function(btn2, text) {
+                    if (btn2 == 'yes') {
+                        var detPanel = btn.up("basepanel[xtype=class.classdetaillayout]");
+                        var baseform=btn.up("baseform[xtype=class.fooddetailform]");
+                        var formObj = baseform.getForm();
 
-                var params = self.getFormValue(formObj);
-                var funData = detPanel.funData;
-                var pkName = funData.pkName;
-                var pkField = formObj.findField(pkName);
+                        var params = self.getFormValue(formObj);
+                        var funData = detPanel.funData;
+                        var pkName = funData.pkName;
+                        var pkField = formObj.findField(pkName);
 
-                var excuteFunc=function(){
-                    //处理提交数据
-                    var datas=[];
-                    var traineeFoodGrid=detPanel.down("grid[ref=traineeFoodGrid]");      
-                    var traineeFoodStore=traineeFoodGrid.getStore();
+                        var excuteFunc=function(){
+                            //处理提交数据
+                            var datas=[];
+                            var traineeFoodGrid=detPanel.down("grid[ref=traineeFoodGrid]");      
+                            var traineeFoodStore=traineeFoodGrid.getStore();
 
-                    var loading = new Ext.LoadMask(traineeFoodGrid,{
-                        msg : '正在提交，请稍等...',
-                        removeMask : true// 完成后移除
-                    });            
-                    loading.show();
+                            var loading = new Ext.LoadMask(traineeFoodGrid,{
+                                msg : '正在提交，请稍等...',
+                                removeMask : true// 完成后移除
+                            });            
+                            loading.show();
 
-                    if(params.dinnerType==3){
-                        for(var i=0;i<traineeFoodStore.getCount();i++){
-                            var rowData=traineeFoodStore.getAt(i).getData();   
-                            
-                            var lunch=rowData.lunch==true?1:0;
-                            
-                            // if(params.eatNumber==0&&params.avgNumber==0)    //若这两个参数为0，则自动勾选午餐
-                            //     lunch=1;
+                            if(params.dinnerType==3){
+                                for(var i=0;i<traineeFoodStore.getCount();i++){
+                                    var rowData=traineeFoodStore.getAt(i).getData();   
+                                    
+                                    var lunch=rowData.lunch==true?1:0;
+                                    
+                                    // if(params.eatNumber==0&&params.avgNumber==0)    //若这两个参数为0，则自动勾选午餐
+                                    //     lunch=1;
 
-                            datas.push({
-                                uuid: rowData.uuid,
-                                xm: rowData.xm,
-                                breakfast: rowData.breakfast==true?1:0,
-                                lunch: lunch,
-                                dinner: rowData.dinner==true?1:0
-                            });
-                        }
-                    }
-
-                    params.classFoodInfo=JSON.stringify(datas);
-                 
-                    self.asyncAjax({
-                        url: comm.get("baseUrl")  + "/TrainClass/doEditClassFood",
-                        params: params,
-                        //回调代码必须写在里面
-                        success: function(response) {
-                            var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-
-                            if(data.success){  //若存在rows数据，则表明请求正常 
-
-                                self.msgbox("暂存就餐信息成功!");
-
-                                //刷新外部表格的数据
-                                var basetab = btn.up('baseformtab');
-                                var grid = basetab.funData.grid; //此tab是否保存有grid参数
-                                if (!Ext.isEmpty(grid)) {
-                                    var store = grid.getStore();
-//                                    store.load(); //刷新父窗体的grid
+                                    datas.push({
+                                        uuid: rowData.uuid,
+                                        xm: rowData.xm,
+                                        breakfast: rowData.breakfast==true?1:0,
+                                        lunch: lunch,
+                                        dinner: rowData.dinner==true?1:0
+                                    });
                                 }
-
-                                loading.hide();
-                            }else{
-                                self.Error(data.obj);
-                                loading.hide();
                             }
-                        },
-                        failure: function(response) {
-                            Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
-                            loading.hide();
-                        }
-                    }); 
-                }
 
-                excuteFunc();
+                            params.classFoodInfo=JSON.stringify(datas);
+                         
+                            self.asyncAjax({
+                                url: comm.get("baseUrl")  + "/TrainClass/doEditClassFood",
+                                params: params,
+                                //回调代码必须写在里面
+                                success: function(response) {
+                                    var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                                    if(data.success){  //若存在rows数据，则表明请求正常 
+
+                                        self.msgbox("暂存就餐信息成功!");
+
+                                        //刷新外部表格的数据
+                                        var basetab = btn.up('baseformtab');
+                                        var grid = basetab.funData.grid; //此tab是否保存有grid参数
+                                        if (!Ext.isEmpty(grid)) {
+                                            var store = grid.getStore();
+        //                                    store.load(); //刷新父窗体的grid
+                                        }
+
+                                        loading.hide();
+                                    }else{
+                                        self.Error(data.obj);
+                                        loading.hide();
+                                    }
+                                },
+                                failure: function(response) {
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    loading.hide();
+                                }
+                            }); 
+                        }
+
+                        excuteFunc();
+                    }
+                });
+                
+                return false;
             }
         },
 
@@ -182,88 +192,93 @@ Ext.define("core.train.class.controller.DetailController", {
             beforeclick:function(btn){
                 var self=this;
 
-                var detPanel = btn.up("basepanel[xtype=class.classdetaillayout]");
-                var baseform=btn.up("baseform[xtype=class.detailform]");
-                var formObj = baseform.getForm();
+                Ext.Msg.confirm('温馨提示', '您确定要将此信息保存入库吗？' , function(btn2, text) {
+                    if (btn2 == 'yes') {
 
-                var params = self.getFormValue(formObj);
-                var funData = detPanel.funData;
-                var pkName = funData.pkName;
-                var pkField = formObj.findField(pkName);
+                        var detPanel = btn.up("basepanel[xtype=class.classdetaillayout]");
+                        var baseform=btn.up("baseform[xtype=class.detailform]");
+                        var formObj = baseform.getForm();
 
-            
-                //把checkbox的值转换为数字
-                params.needChecking=params.needChecking==true?1:0;
-                params.needSynctrainee=params.needSynctrainee==true?1:0;
-                
-                //判断当前是保存还是修改操作
-                var act = Ext.isEmpty(pkField.getValue()) ? "doadd" : "doupdate";
-                if (formObj.isValid()) {
+                        var params = self.getFormValue(formObj);
+                        var funData = detPanel.funData;
+                        var pkName = funData.pkName;
+                        var pkField = formObj.findField(pkName);
 
-                    var loading = new Ext.LoadMask(baseform,{
-                       msg : '正在提交，请稍等...',
-                       removeMask : true// 完成后移除
-                    });            
-                    loading.show();
+                    
+                        //把checkbox的值转换为数字
+                        params.needChecking=params.needChecking==true?1:0;
+                        params.needSynctrainee=params.needSynctrainee==true?1:0;
+                        
+                        //判断当前是保存还是修改操作
+                        var act = Ext.isEmpty(pkField.getValue()) ? "doadd" : "doupdate";
+                        if (formObj.isValid()) {
 
-                    self.asyncAjax({
-                        url: funData.action + "/" + act,
-                        params: params,
-                        //回调代码必须写在里面
-                        success: function(response) {
-                            data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                            if (data.success) {
-                                
-                                self.msgbox("暂存班级信息成功!");
-                               
-                                if(act=="doadd"){
-                                    //给表单设置初始化数据
-                                    self.setFormValue(formObj,data.obj);
+                            var loading = new Ext.LoadMask(baseform,{
+                               msg : '正在提交，请稍等...',
+                               removeMask : true// 完成后移除
+                            });            
+                            loading.show();
 
-                                    //初始化一些数据
-                                    var classCourseGrid = detPanel.down("basegrid[xtype=class.classcoursegrid]");
-                                    classCourseGrid.getStore().getProxy().extraParams.filter='[{"type":"string","comparison":"=","value":"'+data.obj.uuid+'","field":"classId"}]';
+                            self.asyncAjax({
+                                url: funData.action + "/" + act,
+                                params: params,
+                                //回调代码必须写在里面
+                                success: function(response) {
+                                    data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                    if (data.success) {
+                                        
+                                        self.msgbox("暂存班级信息成功!");
+                                       
+                                        if(act=="doadd"){
+                                            //给表单设置初始化数据
+                                            self.setFormValue(formObj,data.obj);
 
-                                    var classStudentGrid = detPanel.down("basegrid[xtype=class.classstudentgrid]");
-                                    classStudentGrid.getStore().getProxy().extraParams.filter='[{"type":"string","comparison":"=","value":"'+data.obj.uuid+'","field":"classId"}]';
-                                    
-                                    var foodDetailForm = detPanel.down("baseform[xtype=class.fooddetailform]");
-                                    self.setFormValue(foodDetailForm.getForm(), data.obj);
+                                            //初始化一些数据
+                                            var classCourseGrid = detPanel.down("basegrid[xtype=class.classcoursegrid]");
+                                            classCourseGrid.getStore().getProxy().extraParams.filter='[{"type":"string","comparison":"=","value":"'+data.obj.uuid+'","field":"classId"}]';
 
-                                    var roomDetailForm = detPanel.down("baseform[xtype=class.roomdetailform]");
-                                    roomDetailForm.getForm().findField("uuid").setValue(data.obj.uuid);
+                                            var classStudentGrid = detPanel.down("basegrid[xtype=class.classstudentgrid]");
+                                            classStudentGrid.getStore().getProxy().extraParams.filter='[{"type":"string","comparison":"=","value":"'+data.obj.uuid+'","field":"classId"}]';
+                                            
+                                            var foodDetailForm = detPanel.down("baseform[xtype=class.fooddetailform]");
+                                            self.setFormValue(foodDetailForm.getForm(), data.obj);
 
+                                            var roomDetailForm = detPanel.down("baseform[xtype=class.roomdetailform]");
+                                            roomDetailForm.getForm().findField("uuid").setValue(data.obj.uuid);
+
+                                        }
+                                        
+                                        //刷新外部表格的数据
+                                        var basetab = btn.up('baseformtab');
+                                        var grid = basetab.funData.grid; //此tab是否保存有grid参数
+                                        if (!Ext.isEmpty(grid)) {
+                                            var store = grid.getStore();
+        //                                    store.load(); //刷新父窗体的grid
+                                        }
+
+                                        loading.hide();
+                                    } else {
+                                        self.Error(data.obj);
+                                        loading.hide();
+                                    }
+                                },
+                                failure: function(response) {
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    loading.hide();
                                 }
-                                
-                                //刷新外部表格的数据
-                                var basetab = btn.up('baseformtab');
-                                var grid = basetab.funData.grid; //此tab是否保存有grid参数
-                                if (!Ext.isEmpty(grid)) {
-                                    var store = grid.getStore();
-//                                    store.load(); //刷新父窗体的grid
+                            });             
+                                        
+                        } else {
+                            var errors = ["前台验证失败，错误信息："];
+                            formObj.getFields().each(function(f) {
+                                if (!f.isValid()) {
+                                    errors.push("<font color=red>" + f.fieldLabel + "</font>：" + f.getErrors().join(","));
                                 }
-
-                                loading.hide();
-                            } else {
-                                self.Error(data.obj);
-                                loading.hide();
-                            }
-                        },
-                        failure: function(response) {
-                            Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
-                            loading.hide();
+                            });
+                            self.msgbox(errors.join("<br/>"));
                         }
-                    });             
-                                
-                } else {
-                    var errors = ["前台验证失败，错误信息："];
-                    formObj.getFields().each(function(f) {
-                        if (!f.isValid()) {
-                            errors.push("<font color=red>" + f.fieldLabel + "</font>：" + f.getErrors().join(","));
-                        }
-                    });
-                    self.msgbox(errors.join("<br/>"));
-                }
+                    }
+                });
 
                 return false;
             }
@@ -439,6 +454,111 @@ Ext.define("core.train.class.controller.DetailController", {
                     this.doFastSearch(field);                 
                     return false;
                 }
+            }
+        },
+        //班级课程表格的打开关闭评价按钮
+        "basepanel basegrid[xtype=class.classcoursegrid] button[ref=gridIsEval]":{
+            beforeclick: function(btn){
+                var self=this;
+
+                var baseGrid = btn.up("basegrid");
+                var funCode = baseGrid.funCode;
+                var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+                //得到配置信息
+                var funData = basePanel.funData;
+                var pkName = funData.pkName;
+                //得到选中数据
+                var records = baseGrid.getSelectionModel().getSelection();
+                if (records.length != 1) {
+                    self.Warning("请选择一条需要操作的课程数据！");
+                    return false;
+                }
+
+                var record=records[0]; 
+                var value=0;
+                if(record.get("isEval")==1){
+                    var title='是否要关闭评价？';
+                    value=0;
+                }
+                else{
+                    var title='是否要开启评价？';
+                    value=1;
+                }
+
+                Ext.Msg.confirm('提示', title, function(btn, text) {
+                    if (btn == 'yes') {
+                        //发送ajax请求
+                        var resObj = self.ajax({
+                            url: comm.get("baseUrl") +
+                                "/TrainClassschedule/doUpdateEval",
+                            params: {
+                                id: record.get(pkName),
+                                val: value
+                            }
+                        });
+                        if (resObj.success) {
+                            baseGrid.getStore().load();
+
+                            self.msgbox(resObj.obj);
+
+                        } else {
+                            self.Error(resObj.obj);
+                        }
+                    }
+                });
+                return false;
+            }
+        },    
+        //班级课程表格的删除按钮
+        "basepanel basegrid[xtype=class.classcoursegrid] button[ref=gridDelete]":{
+            beforeclick: function(btn){
+                var self=this;
+
+                var baseGrid = btn.up("basegrid");
+                var funCode = baseGrid.funCode;
+                var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+                //得到配置信息
+                var funData = basePanel.funData;
+                var pkName = funData.pkName;
+                //得到选中数据
+                var records = baseGrid.getSelectionModel().getSelection();
+                if (records.length == 0) {
+                    self.Warning("请选择需要删除的数据！");
+                    return false;
+                }
+                            
+                Ext.Msg.confirm('提示', '是否删除数据?', function(btn, text) {
+                    if (btn == 'yes') {
+
+                        var ids = new Array();
+                        Ext.each(records, function (rec) {
+                            var pkValue = rec.get(pkName);
+                            ids.push(pkValue);
+                        });
+
+                        //发送ajax请求
+                        var resObj = self.ajax({
+                            url: comm.get("baseUrl") +
+                                "/TrainClassschedule/dodelete",
+                            params: {
+                                ids: ids.join(","),
+                                classId:records[0].get("classId")
+                            }
+                        });
+                        if (resObj.success) {
+                            baseGrid.getStore().load();
+
+                            //baseGrid.getStore().remove(record); //不刷新的方式
+                            //baseGrid.getView().refresh();
+                            self.msgbox(resObj.obj);
+
+                        } else {
+                            self.Error(resObj.obj);
+                        }
+                    }
+                });
+
+                return false;
             }
         },
         //班级课程信息 操作列
@@ -621,6 +741,125 @@ Ext.define("core.train.class.controller.DetailController", {
                 }
             }
         },
+        "basepanel basegrid[xtype=class.classstudentgrid] button[ref=gridDelete]":{
+            beforeclick: function(btn){
+                var self=this;
+
+                var baseGrid = btn.up("basegrid");
+                var funCode = baseGrid.funCode;
+                var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+                //得到配置信息
+                var funData = basePanel.funData;
+                var pkName = funData.pkName;
+                //得到选中数据
+                var records = baseGrid.getSelectionModel().getSelection();
+                if (records.length == 0) {
+                    self.Warning("请选择需要删除的数据！");
+                    return false;
+                }
+                            
+    
+
+                Ext.Msg.confirm('提示', '是否删除数据?', function(btn, text) {
+                    if (btn == 'yes') {
+
+                        var ids = new Array();
+                        Ext.each(records, function (rec) {
+                            var pkValue = rec.get(pkName);
+                            ids.push(pkValue);
+                        });
+
+                        //发送ajax请求
+                        var resObj = self.ajax({
+                            url: comm.get("baseUrl") +
+                                "/TrainClasstrainee/dodelete",
+                            params: {
+                                ids: ids.join(","),
+                                classId:records[0].get("classId")
+                            }
+                        });
+                        if (resObj.success) {
+                            baseGrid.getStore().load();
+
+                            //baseGrid.getStore().remove(record); //不刷新的方式
+                            //baseGrid.getView().refresh();
+                            self.msgbox(resObj.obj);
+
+                            //同时刷新住宿和就餐的人员名单。
+                            var basetab = baseGrid.up('baseformtab');
+                            var funCode = basetab.funCode;      //mainLayout的funcode
+                            var detCode = basetab.detCode;      //detailLayout的funcode
+
+                            var objForm = basetab.down("baseform[funCode=" + detCode + "]");
+                            var formObj = objForm.getForm();
+                            var classId = formObj.findField("uuid").getValue();
+                            
+                            //查询班级的就餐学员信息
+                            var traineeFoodGrid=basetab.down("grid[ref=traineeFoodGrid]");
+                            if(traineeFoodGrid){
+                                self.asyncAjax({
+                                    url: comm.get("baseUrl")  + "/TrainClasstrainee/getClassFoodTrainees",
+                                    params: {
+                                        classId: classId,
+                                        page:1,
+                                        start:0,
+                                        limit:-1    //-1表示不分页
+                                    },
+                                    //回调代码必须写在里面
+                                    success: function(response) {
+                                        var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                                        var rows=data.rows;
+                                        //console.log(rows);
+                                        if(rows!=undefined){ //若存在rows数据，则表明请求正常
+                                          
+                                            traineeFoodGrid.getStore().loadData(rows);
+
+                                        }else{
+                                            self.Error(data.obj);
+                                        }
+                                    }
+                                });    
+                            }
+
+                            //查询班级的住宿学员信息
+                            var traineeRoomGrid=basetab.down("grid[ref=traineeRoomGrid]");                        
+                            if(traineeRoomGrid){
+                                self.asyncAjax({
+                                    url: comm.get("baseUrl")  + "/TrainClasstrainee/getClassRoomTrainees",
+                                    params: {
+                                        classId:classId,
+                                        page:1,
+                                        start:0,
+                                        limit:-1    //-1表示不分页
+                                    },
+                                    //回调代码必须写在里面
+                                    success: function(response) {
+                                        var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                                        var rows=data.rows;
+                                        //console.log(rows);
+                                        if(rows!=undefined){  //若存在rows数据，则表明请求正常
+                                
+                                            traineeRoomGrid.getStore().loadData(rows);
+
+                                        }else{
+                                            self.Error(data.obj);
+                                        }
+                                    }
+                                });  
+
+                            }
+                            
+                        } else {
+                            self.Error(resObj.obj);
+                        }
+                    }
+                });
+
+                return false;
+            }
+        },
         //班级学员信息 操作列
         "basepanel basegrid[xtype=class.classstudentgrid]  actioncolumn": {            
             deleteClick: function(data) {
@@ -648,6 +887,7 @@ Ext.define("core.train.class.controller.DetailController", {
                             }
                         });
                         if (resObj.success) {
+                            debugger
                             baseGrid.getStore().load();
 
                             //baseGrid.getStore().remove(record); //不刷新的方式

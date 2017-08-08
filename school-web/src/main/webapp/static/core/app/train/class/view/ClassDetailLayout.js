@@ -103,7 +103,7 @@ Ext.define("core.train.class.view.ClassDetailLayout", {
         },
         items:[{
             xtype:'class.fooddetailform',
-            height:510,
+            height:550,
             margin:0,
             bodyPadding: '0 20 0 5',
             bodyStyle: {
@@ -138,7 +138,7 @@ Ext.define("core.train.class.view.ClassDetailLayout", {
         },
         items:[{
             xtype:'class.roomdetailform',
-            height:430,
+            height:520,
             margin:0,
             bodyPadding: '0 20 0 5',
             bodyStyle: {

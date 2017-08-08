@@ -73,7 +73,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		Integer limit = super.limit(request);
 		String sort = super.sort(request);
 		String filter = super.filter(request);
-		QueryResult<TrainClasstrainee> qResult = thisService.list(start, limit, sort, filter, false);
+		QueryResult<TrainClasstrainee> qResult = thisService.list(start, limit, sort, filter, true);
 		strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
 	}
@@ -252,10 +252,17 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			Integer start = super.start(request);
 			Integer limit = super.limit(request);
 			String classId = request.getParameter("classId");
-
+			String isDelete = request.getParameter("isDelete");
+			
 			//g.isDelete=0 and  查询所有状态的
-			String hql = "select  new TrainClasstrainee(g.uuid,g.xm,g.xbm,g.breakfast,g.lunch,g.dinner,g.isDelete) from TrainClasstrainee g where  g.classId='"
-					+ classId + "' order by g.breakfast desc,g.lunch desc,g.dinner desc";
+			//new 不查询状态为1的
+			String hql = "select  new TrainClasstrainee(g.uuid,g.xm,g.xbm,g.breakfast,g.lunch,g.dinner,g.isDelete) from TrainClasstrainee g "
+					+ " where g.classId='" + classId + "'";
+			if(isDelete!=null){
+				hql+=" and g.isDelete!=1 ";
+			}
+			hql+=" order by g.breakfast desc,g.lunch desc,g.dinner desc";
+			
 			QueryResult<TrainClasstrainee> result = thisService.doQueryResult(hql, start, limit);
 
 			strData = jsonBuilder.buildObjListToJson(result.getTotalCount(), result.getResultList(), true);
@@ -278,11 +285,17 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			Integer start = super.start(request);
 			Integer limit = super.limit(request);
 			String classId = request.getParameter("classId");
+			String isDelete = request.getParameter("isDelete");
 			
 			//g.isDelete=0 or g.isDelete=1 and 
-			String hql = "select new TrainClasstrainee(g.uuid,g.xm,g.xbm,g.siesta,g.sleep,g.roomId,g.roomName,g.isDelete) from TrainClasstrainee g where g.classId='"
-					+ classId + "'  order by g.siesta desc,g.sleep desc";
-
+			//new: 不查询状态为1的
+			String hql = "select new TrainClasstrainee(g.uuid,g.xm,g.xbm,g.siesta,g.sleep,g.roomId,g.roomName,g.isDelete) from TrainClasstrainee g "
+					+ " where g.classId='"+ classId + "'";
+			if(isDelete!=null){
+				hql+=" and g.isDelete!=1 ";
+			}
+			hql+="  order by g.siesta desc,g.sleep desc,g.xbm asc";
+				
 			QueryResult<TrainClasstrainee> result = thisService.doQueryResult(hql, start, limit);
 
 			strData = jsonBuilder.buildObjListToJson(result.getTotalCount(), result.getResultList(), true);

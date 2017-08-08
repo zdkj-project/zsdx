@@ -8,7 +8,7 @@ Ext.define("core.train.class.view.FoodDetailForm", {
     fieldDefaults: { // 统一设置表单字段默认属性
         labelSeparator: "：", // 分隔符
         msgTarget: "qtip",
-        labelWidth: 90,
+        labelWidth: 110,
         labelAlign: "right"
     },
     items: [{
@@ -108,7 +108,24 @@ Ext.define("core.train.class.view.FoodDetailForm", {
                             food1[i].setVisible (true);
                         }
 
-                        currentForm.setHeight(235);
+                        var countFood3=currentForm.query("container[ref=countFood3]");
+                        for(var i=0;i<countFood3.length;i++){
+                            countFood3[i].setVisible (false);
+                        }
+
+                        var countFood2=currentForm.query("container[ref=countFood2]");
+                        for(var i=0;i<countFood2.length;i++){
+                            countFood2[i].setVisible (false);
+                        }
+
+                        var countFood1=currentForm.query("container[ref=countFood1]");
+                        for(var i=0;i<countFood1.length;i++){
+                            countFood1[i].setVisible (true);
+                        }
+
+                        //currentForm.clearFood();
+                        currentForm.countFood1();//计算汇总数据1
+                        currentForm.setHeight(275);
 
                     } else  if (record == 2) {
 
@@ -131,7 +148,24 @@ Ext.define("core.train.class.view.FoodDetailForm", {
                             fields2[i].setFieldLabel ( label.replace("围数","人数"));
                         }
 
-                        currentForm.setHeight(195);
+                        var countFood3=currentForm.query("container[ref=countFood3]");
+                        for(var i=0;i<countFood3.length;i++){
+                            countFood3[i].setVisible (false);
+                        }
+
+                        var countFood1=currentForm.query("container[ref=countFood1]");
+                        for(var i=0;i<countFood1.length;i++){
+                            countFood1[i].setVisible (false);                        
+                        }
+
+                        var countFood2=currentForm.query("container[ref=countFood2]");
+                        for(var i=0;i<countFood2.length;i++){
+                            countFood2[i].setVisible (true);
+                        }
+
+                        //currentForm.clearFood();
+                        currentForm.countFood2();//计算汇总数据1
+                        currentForm.setHeight(235);
                         
                     } else if (record == 3) {
 
@@ -150,11 +184,32 @@ Ext.define("core.train.class.view.FoodDetailForm", {
                             food3[i].setVisible (true);
                         }
 
-                        currentForm.setHeight(510);
+                        var countFood2=currentForm.query("container[ref=countFood2]");
+                        for(var i=0;i<countFood2.length;i++){
+                            countFood2[i].setVisible (false);
+                        }
+
+                        var countFood1=currentForm.query("container[ref=countFood1]");
+                        for(var i=0;i<countFood1.length;i++){
+                            countFood1[i].setVisible (false);
+                        }
+
+                        var countFood3=currentForm.query("container[ref=countFood3]");
+                        for(var i=0;i<countFood3.length;i++){
+                            countFood3[i].setVisible (true);
+                        }
+                        //currentForm.clearFood();
+                        currentForm.countFood3();
+                        currentForm.setHeight(550);
                     }
                     
                 }
             }
+        },{
+            columnWidth: 0.333,
+            xtype: "label",
+            margin:'5 0 0 5 ',
+            html: " （<font color=red,size=14>更换就餐类型后，请注意检查就餐的各项数据，修改后请提交</font>）",
         }]
     },{
         ref:'food1',
@@ -171,7 +226,23 @@ Ext.define("core.train.class.view.FoodDetailForm", {
             xtype: "numberfield",        
             minValue: 0,
             maxValue:999, 
-            emptyText: "请输入每桌人数"   
+            emptyText: "请输入每桌人数",
+            listeners: {
+                change: function(field, record, index) {                  
+                    var currentForm=field.up("baseform[xtype=class.fooddetailform]");
+                    var dinnerType=currentForm.down("field[name=dinnerType]").getValue();                   
+                    if (dinnerType == 1) {
+                        currentForm.countFood1();//计算汇总数据1
+                    } else if (dinnerType == 2) {
+                        currentForm.countFood2();//计算汇总数据2
+                    }                             
+                }
+            }   
+        },{
+            columnWidth: 0.333,
+            xtype: "label",
+            margin:'5 0 0 5 ',
+            html: " （<font color=red,size=14>此处餐标是按每围来设定</font>）",
         }]
     }, {
         xtype: "container",
@@ -186,7 +257,20 @@ Ext.define("core.train.class.view.FoodDetailForm", {
             xtype: "numberfield",  
             minValue: 0,
             maxValue:9999, 
-            emptyText: "请输入早餐价格"
+            emptyText: "请输入早餐价格",
+            listeners: {
+                change: function(field, record, index) {                  
+                    var currentForm=field.up("baseform[xtype=class.fooddetailform]");
+                    var dinnerType=currentForm.down("field[name=dinnerType]").getValue();                  
+                    if (dinnerType == 1) {
+                        currentForm.countFood1();//计算汇总数据1
+                    }  else if (dinnerType == 2) {
+                        currentForm.countFood2();//计算汇总数据2
+                    }  else {
+                        currentForm.countFood3();//计算汇总数据2
+                    }                                      
+                }
+            }   
         },{
             beforeLabelTextTpl: comm.get('required'),
             allowBlank: false,
@@ -196,7 +280,20 @@ Ext.define("core.train.class.view.FoodDetailForm", {
             xtype: "numberfield",
             minValue: 0,
             maxValue:9999,
-            emptyText: "请输入午餐价格"
+            emptyText: "请输入午餐价格",
+            listeners: {
+                change: function(field, record, index) {                  
+                    var currentForm=field.up("baseform[xtype=class.fooddetailform]");
+                    var dinnerType=currentForm.down("field[name=dinnerType]").getValue();                  
+                    if (dinnerType == 1) {
+                        currentForm.countFood1();//计算汇总数据1
+                    }  else if (dinnerType == 2) {
+                        currentForm.countFood2();//计算汇总数据2
+                    }  else {
+                        currentForm.countFood3();//计算汇总数据2
+                    }                                      
+                }
+            }   
         },{
             beforeLabelTextTpl: comm.get('required'),
             allowBlank: false,
@@ -206,7 +303,20 @@ Ext.define("core.train.class.view.FoodDetailForm", {
             xtype: "numberfield", 
             minValue: 0,
             maxValue:9999, 
-            emptyText: "请输入晚餐价格"   
+            emptyText: "请输入晚餐价格",
+            listeners: {
+                change: function(field, record, index) {                  
+                    var currentForm=field.up("baseform[xtype=class.fooddetailform]");
+                    var dinnerType=currentForm.down("field[name=dinnerType]").getValue();                  
+                    if (dinnerType == 1) {
+                        currentForm.countFood1();//计算汇总数据1
+                    } else if (dinnerType == 2) {
+                        currentForm.countFood2();//计算汇总数据2
+                    } else {
+                        currentForm.countFood3();//计算汇总数据2
+                    }                                        
+                }
+            }   
         }]
     },{ 
         ref:'food2',
@@ -218,34 +328,183 @@ Ext.define("core.train.class.view.FoodDetailForm", {
             beforeLabelTextTpl: comm.get('required'),
             columnWidth: 0.333,
             allowBlank: false,
-            fieldLabel: "早餐围数",    
+            fieldLabel: "计划早餐围数",    
             name: "breakfastCount",
             xtype: "numberfield",        
             minValue: 0,
             maxValue:999, 
-            emptyText: "请输入开餐围数/人数"      
+            emptyText: "请输入开餐围数/人数" ,
+            listeners: {
+                change: function(field, record, index) {                  
+                    var currentForm=field.up("baseform[xtype=class.fooddetailform]");
+                    var dinnerType=currentForm.down("field[name=dinnerType]").getValue();                   
+                    if (dinnerType == 1) {
+                        currentForm.countFood1();//计算汇总数据1
+                    }  else if (dinnerType == 2) {
+                        currentForm.countFood2();//计算汇总数据2
+                    }                                       
+                }
+            }   
         },{
             beforeLabelTextTpl: comm.get('required'),
             columnWidth: 0.333,
             allowBlank: false,
-            fieldLabel: "午餐围数",    
+            fieldLabel: "计划午餐围数",    
             name: "lunchCount",
             xtype: "numberfield",        
             minValue: 0,
             maxValue:999, 
-            emptyText: "请输入开餐围数/人数"      
+            emptyText: "请输入开餐围数/人数",
+            listeners: {
+                change: function(field, record, index) {                  
+                    var currentForm=field.up("baseform[xtype=class.fooddetailform]");
+                    var dinnerType=currentForm.down("field[name=dinnerType]").getValue();                 
+                    if (dinnerType == 1) {
+                        currentForm.countFood1();//计算汇总数据1
+                    }  else if (dinnerType == 2) {
+                        currentForm.countFood2();//计算汇总数据2
+                    }                                       
+                }
+            }       
         },{
             beforeLabelTextTpl: comm.get('required'),
             columnWidth: 0.333,
             allowBlank: false,
-            fieldLabel: "晚餐围数",    
+            fieldLabel: "计划晚餐围数",    
             name: "dinnerCount",
             xtype: "numberfield",        
             minValue: 0,
             maxValue:999, 
-            emptyText: "请输入开餐围数/人数"      
+            emptyText: "请输入开餐围数/人数",
+            listeners: {
+                change: function(field, record, index) {                  
+                    var currentForm=field.up("baseform[xtype=class.fooddetailform]");
+                    var dinnerType=currentForm.down("field[name=dinnerType]").getValue();               
+                    if (dinnerType == 1) {
+                        currentForm.countFood1();//计算汇总数据1
+                    }  else if (dinnerType == 2) {
+                        currentForm.countFood2();//计算汇总数据2
+                    }                                       
+                }
+            }      
         }]
-    }, {
+    }, { 
+        ref:'countFood1',
+        hidden:true,
+        xtype: "container",
+        layout: "column",
+        labelAlign: "right",
+        items: [{            
+            columnWidth: 0.333,
+            fieldLabel: "总额",    
+            name: "countMoney",
+            xtype: "textfield",        
+            value:0,
+            readOnly :true  
+        },{          
+            columnWidth: 0.333,
+            fieldLabel: "每天围数",    
+            name: "countNumberInDay",
+            xtype: "textfield",
+            value:0,
+            readOnly :true      
+        
+        },{    
+            columnWidth: 0.333,
+            fieldLabel: "总围数",    
+            name: "countNumber",
+            xtype: "textfield",        
+            value:0,
+            readOnly :true          
+        }]
+    }, { 
+        ref:'countFood2',
+        hidden:true,
+        xtype: "container",
+        layout: "column",
+        labelAlign: "right",
+        items: [{            
+            columnWidth: 0.333,
+            fieldLabel: "总额",    
+            name: "countMoney2",
+            xtype: "textfield",        
+            value:0,
+            readOnly :true  
+        },{          
+            columnWidth: 0.333,
+            fieldLabel: "每天人数",    
+            name: "countNumberInDay2",
+            xtype: "textfield",
+            value:0,
+            readOnly :true      
+        
+        },{    
+            columnWidth: 0.333,
+            fieldLabel: "总人数",    
+            name: "countNumber2",
+            xtype: "textfield",        
+            value:0,
+            readOnly :true          
+        }]
+    },{ 
+        ref:'countFood3',
+        //hidden:true,
+        xtype: "container",
+        layout: "column",
+        labelAlign: "right",
+        items: [{            
+            columnWidth: 0.333,
+            fieldLabel: "早餐人数",    
+            name: "breakfastCount3",
+            xtype: "textfield",        
+            value:0,
+            readOnly :true  
+        },{          
+            columnWidth: 0.333,
+            fieldLabel: "午餐人数",    
+            name: "lunchCount3",
+            xtype: "textfield",
+            value:0,
+            readOnly :true      
+        
+        },{    
+            columnWidth: 0.333,
+            fieldLabel: "晚餐人数",    
+            name: "dinnerCount3",
+            xtype: "textfield",        
+            value:0,
+            readOnly :true          
+        }]
+    },{ 
+        ref:'countFood3',
+        //hidden:true,
+        xtype: "container",
+        layout: "column",
+        labelAlign: "right",
+        items: [{            
+            columnWidth: 0.333,
+            fieldLabel: "总额",    
+            name: "countMoney3",
+            xtype: "textfield",        
+            value:0,
+            readOnly :true  
+        },{          
+            columnWidth: 0.333,
+            fieldLabel: "每天人数",    
+            name: "countNumberInDay3",
+            xtype: "textfield",
+            value:0,
+            readOnly :true      
+        
+        },{    
+            columnWidth: 0.333,
+            fieldLabel: "总人数",    
+            name: "countNumber3",
+            xtype: "textfield",        
+            value:0,
+            readOnly :true          
+        }]
+    },{
         ref:'food3',
         xtype: "container",
         layout: "column",
@@ -263,7 +522,7 @@ Ext.define("core.train.class.view.FoodDetailForm", {
                 stripeRows: false   //不展示隔行变色
             },
             columnWidth:1,
-            height: 350,
+            height: 300,
             store:{
                 type:"class.trainfoodgridStore"
             },
@@ -282,9 +541,42 @@ Ext.define("core.train.class.view.FoodDetailForm", {
                         return v=="1"?"男":"女";      
                     }
                 },
-                { xtype: 'checkcolumn', headerCheckbox:true, text: '早餐', dataIndex: 'breakfast', flex: 1 },
-                { xtype: 'checkcolumn', headerCheckbox:true,  text: '午餐', dataIndex: 'lunch', flex: 1 },
-                { xtype: 'checkcolumn', headerCheckbox:true, text: '晚餐', dataIndex: 'dinner', flex: 1},
+                { xtype: 'checkcolumn', headerCheckbox:true, text: '早餐', dataIndex: 'breakfast', flex: 1,
+                    listeners:{
+                        headercheckchange:function( me , checked , e , eOpts ) {
+                            var currentForm=me.up("baseform[xtype=class.fooddetailform]");
+                            currentForm.countFood3();
+                        },
+                        checkchange :function ( me , rowIndex , checked , record , e , eOpts ) {
+                            var currentForm=me.up("baseform[xtype=class.fooddetailform]");
+                            currentForm.countFood3();
+                        }
+                    }
+                },
+                { xtype: 'checkcolumn', headerCheckbox:true,  text: '午餐', dataIndex: 'lunch', flex: 1,
+                    listeners:{
+                        headercheckchange:function ( me , checked , e , eOpts ) {
+                            var currentForm=me.up("baseform[xtype=class.fooddetailform]");
+                            currentForm.countFood3();
+                        },
+                        checkchange:function ( me , rowIndex , checked , record , e , eOpts ) {
+                            var currentForm=me.up("baseform[xtype=class.fooddetailform]");
+                            currentForm.countFood3();
+                        }
+                    }
+                },
+                { xtype: 'checkcolumn', headerCheckbox:true, text: '晚餐', dataIndex: 'dinner', flex: 1,
+                    listeners:{
+                        headercheckchange:function ( me , checked , e , eOpts ) {
+                            var currentForm=me.up("baseform[xtype=class.fooddetailform]");
+                            currentForm.countFood3();
+                        },
+                        checkchange:function ( me , rowIndex , checked , record , e , eOpts ) {
+                            var currentForm=me.up("baseform[xtype=class.fooddetailform]");
+                            currentForm.countFood3();
+                        }
+                    }
+                },
                 { align: 'center',titleAlign: "center", text: '学员状态', dataIndex: 'isDelete',width:80,
                     renderer: function(value, metaData) {
                         if(value==0)
@@ -308,7 +600,80 @@ Ext.define("core.train.class.view.FoodDetailForm", {
                     }
                 }
                 */
-            ]
+            ]          
         }]
-    }]
+    }],
+    clearFood:function(){
+        this.down("field[name=breakfastStand]").setValue(0);
+        this.down("field[name=lunchStand]").setValue(0);
+        this.down("field[name=dinnerStand]").setValue(0);
+        this.down("field[name=breakfastCount]").setValue(0);
+        this.down("field[name=lunchCount]").setValue(0);
+        this.down("field[name=dinnerCount]").setValue(0);
+    },
+    countFood1:function(){
+        
+        var countMoney=0,countNumberInDay=0,countNumber=0;
+        var breakfastStand=this.down("field[name=breakfastStand]").getValue();
+        var lunchStand=this.down("field[name=lunchStand]").getValue();
+        var dinnerStand=this.down("field[name=dinnerStand]").getValue();
+        var breakfastCount=this.down("field[name=breakfastCount]").getValue();
+        var lunchCount=this.down("field[name=lunchCount]").getValue();
+        var dinnerCount=this.down("field[name=dinnerCount]").getValue();
+
+        var beginDate=this.down("field[name=beginDate]").getValue();
+        var endDate=this.down("field[name=endDate]").getValue();
+        var day=(new Date(endDate).getTime()-new Date(beginDate).getTime())/(1000*60*60*24)+1;
+
+        this.down("field[name=countMoney]").setValue((breakfastStand*breakfastCount+lunchStand*lunchCount+dinnerStand*dinnerCount)*day);
+        this.down("field[name=countNumberInDay]").setValue(breakfastCount+lunchCount+dinnerCount);
+        this.down("field[name=countNumber]").setValue((breakfastCount+lunchCount+dinnerCount)*day);
+
+    },
+    countFood2:function(){
+        
+        var countMoney=0,countNumberInDay=0,countNumber=0;
+        var breakfastStand=this.down("field[name=breakfastStand]").getValue();
+        var lunchStand=this.down("field[name=lunchStand]").getValue();
+        var dinnerStand=this.down("field[name=dinnerStand]").getValue();
+        var breakfastCount=this.down("field[name=breakfastCount]").getValue();
+        var lunchCount=this.down("field[name=lunchCount]").getValue();
+        var dinnerCount=this.down("field[name=dinnerCount]").getValue();
+
+        var beginDate=this.down("field[name=beginDate]").getValue();
+        var endDate=this.down("field[name=endDate]").getValue();
+        var day=(new Date(endDate).getTime()-new Date(beginDate).getTime())/(1000*60*60*24)+1;
+
+        this.down("field[name=countMoney2]").setValue((breakfastStand*breakfastCount+lunchStand*lunchCount+dinnerStand*dinnerCount)*day);
+        this.down("field[name=countNumberInDay2]").setValue(breakfastCount+lunchCount+dinnerCount);
+        this.down("field[name=countNumber2]").setValue((breakfastCount+lunchCount+dinnerCount)*day);
+
+    },
+    countFood3:function(){
+        var traineeFoodGrid = this.down("grid[ref=traineeFoodGrid]");
+        var traineeFoodStore = traineeFoodGrid.getStore();
+        var breakfastNum=0,lunchNum=0,dinnerNum=0;
+
+        for (var i = 0; i < traineeFoodStore.getCount(); i++) {
+            var rowData = traineeFoodStore.getAt(i).getData();
+
+            breakfastNum += rowData.breakfast == true ? 1 : 0;
+            lunchNum += rowData.lunch == true ? 1 : 0;
+            dinnerNum += rowData.dinner == true ? 1 : 0;           
+        }
+        
+        var breakfastStand=this.down("field[name=breakfastStand]").getValue();
+        var lunchStand=this.down("field[name=lunchStand]").getValue();
+        var dinnerStand=this.down("field[name=dinnerStand]").getValue();
+        var beginDate=this.down("field[name=beginDate]").getValue();
+        var endDate=this.down("field[name=endDate]").getValue();
+        var day=(new Date(endDate).getTime()-new Date(beginDate).getTime())/(1000*60*60*24)+1;
+
+        this.down("field[name=breakfastCount3]").setValue(breakfastNum);
+        this.down("field[name=lunchCount3]").setValue(lunchNum);
+        this.down("field[name=dinnerCount3]").setValue(dinnerNum);
+        this.down("field[name=countMoney3]").setValue((breakfastStand*breakfastNum+lunchStand*lunchNum+dinnerStand*dinnerNum)*day);
+        this.down("field[name=countNumberInDay3]").setValue(breakfastNum+lunchNum+dinnerNum);
+        this.down("field[name=countNumber3]").setValue((breakfastNum+lunchNum+dinnerNum)*day);
+    }
 });

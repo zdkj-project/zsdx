@@ -356,6 +356,30 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
      * @FieldInfo(name = "")
      * private String field1;
      */
+    @FieldInfo(name = "民族")
+    @Formula("(SELECT a.MZM FROM TRAIN_T_TRAINEE a where a.TRAINEE_ID=TRAINEE_ID)")
+    private String mzm;
+
+    public String getMzm() {
+        return mzm;
+    }
+
+    public void setMzm(String mzm) {
+        this.mzm = mzm;
+    }
+    
+    @FieldInfo(name = "学员类别")
+    @Formula("(SELECT a.TRAINEE_CATEGORY FROM TRAIN_T_TRAINEE a where a.TRAINEE_ID=TRAINEE_ID)")
+    private  String traineeCategory;
+
+    public String getTraineeCategory() {
+        return traineeCategory;
+    }
+
+    public void setTraineeCategory(String traineeCategory) {
+        this.traineeCategory = traineeCategory;
+    }
+    
     @FieldInfo(name = "班级名称")
     @Formula("(SELECT a.CLASS_NAME FROM TRAIN_T_CLASS a where a.CLASS_ID=CLASS_ID)")
     private String className;
