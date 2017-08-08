@@ -14,6 +14,25 @@ Ext.define("core.train.course.controller.MainController", {
     init: function () {
     },
     control: {
+    	//关于权限的判断
+    	"basegrid[xtype=course.maingrid]": {
+            afterrender: function (grid, eOpts) {
+                var btnAdd = grid.down("button[ref=gridAdd_Tab]");
+                var btnDelete = grid.down("button[ref=gridDelete]");
+                var btnGridImport = grid.down("button[ref=gridImport]");
+                var btnGridExport = grid.down("button[ref=gridExport]");
+                var btnGridDownTemplate = grid.down("button[ref=gridDownTemplate]");
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("TCMANAGER") == -1) {
+                    btnAdd.setHidden(true);
+                    btnDelete.setHidden(true);
+                    btnGridImport.setHidden(true);
+                    btnGridExport.setHidden(true);
+                    btnGridDownTemplate.setHidden(true);
+                }
+            }
+        },
+    	
         //重写高级查询
         "basequeryform button[ref=gridSearchFormOk]":{
             beforeclick:function(btn){     
@@ -92,24 +111,6 @@ Ext.define("core.train.course.controller.MainController", {
                 if(categoryName)
                     categoryName.reset();
 
-            }
-        },
-        /**
-         * grid加载后根据权限控制按钮的显示
-         */
-        "basegrid[xtype=course.maingrid]": {
-            afterrender: function (grid, eOpts) {
-                var btnAdd = grid.down("button[ref=gridAdd_Tab]");
-                var btnDelete = grid.down("button[ref=gridDelete]");
-                var btnGridImport = grid.down("button[ref=gridImport]");
-                var btnGridDownTemplate = grid.down("button[ref=gridDownTemplate]");
-                var roleKey = comm.get("roleKey");
-                if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("PEIXUNROLE") == -1&&roleKey.indexOf("TCMANAGER") == -1) {
-                    btnAdd.setHidden(true);
-                    btnDelete.setHidden(true);
-                    btnGridImport.setHidden(true);
-                    btnGridDownTemplate.setHidden(true);
-                }
             }
         },
         /**

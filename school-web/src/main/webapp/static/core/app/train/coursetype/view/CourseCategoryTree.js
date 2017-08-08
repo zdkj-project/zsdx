@@ -89,6 +89,13 @@ Ext.define("core.train.coursetype.view.CourseCategoryTree", {
                         record: rec,
                         cmd: "edit"
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("TCMANAGER") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             },{
                 text: '排序',
@@ -102,6 +109,13 @@ Ext.define("core.train.coursetype.view.CourseCategoryTree", {
                         record: rec,
                         cmd: "order"
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("TCMANAGER") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             },{
                 text: '删除',
@@ -115,6 +129,13 @@ Ext.define("core.train.coursetype.view.CourseCategoryTree", {
                         record: rec,
                         cmd: "delete"
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("TCMANAGER") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             }]
         }]

@@ -21,12 +21,14 @@ Ext.define("core.train.trainee.controller.MainController", {
                 var btnAdd = grid.down("button[ref=gridAdd_Tab]");
                 var btnDelete = grid.down("button[ref=gridDelete]");
                 var btnGridImport = grid.down("button[ref=gridImport]");
+                var btnGridExport = grid.down("button[ref=gridExport]");
                 var btnGridDownTemplate = grid.down("button[ref=gridDownTemplate]");
                 var roleKey = comm.get("roleKey");
-                if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("PEIXUNROLE") == -1) {
+                if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("XYMANAGER") == -1) {
                     btnAdd.setHidden(true);
                     btnDelete.setHidden(true);
                     btnGridImport.setHidden(true);
+                    btnGridExport.setHidden(true);
                     btnGridDownTemplate.setHidden(true);
                 }
             }
