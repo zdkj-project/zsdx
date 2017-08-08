@@ -13,12 +13,12 @@ Ext.define('core.main.controller.MainController', {
     init: function() {
         var self = this;
         //在主视图中写一次，即可加载，重复在不同的是视图中写，会多次加载,造成事件方法会执行多次
-        console.log("初始化controller");
+        //console.log("初始化controller");
 
 
         var baseController =  Ext.create('core.base.controller.MainController');
         baseController.init();
-        baseController.inited = true
+        baseController.inited = true;
         
 
         //console.log(this.getView().getViewModel().get('systemMenu' ));
@@ -240,7 +240,7 @@ Ext.define('core.main.controller.MainController', {
 
                     }catch(e){
                         Ext.Msg.alert('提示', '此模块功能待开发中！');
-                        console.log(e);
+                        //console.log(e);
                         return false;
                     }
                 }else{
@@ -353,7 +353,7 @@ Ext.define('core.main.controller.MainController', {
 
                     }catch(e){
                         Ext.Msg.alert('提示', '此模块功能待开发中！');
-                        console.log(e);
+                        //console.log(e);
                         return false;
                     }
                 }else{
@@ -483,7 +483,7 @@ Ext.define('core.main.controller.MainController', {
 
                     }catch(e){
                         Ext.Msg.alert('提示', '此模块功能待开发中！！');
-                        console.log(e);
+                        //console.log(e);
                         return false;
                     }
 

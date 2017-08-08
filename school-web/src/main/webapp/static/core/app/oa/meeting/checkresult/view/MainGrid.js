@@ -41,7 +41,7 @@ Ext.define("core.oa.meeting.checkresult.view.MainGrid", {
             xtype: 'button',
             funCode: 'girdSearchBtn', //指定此类按钮为girdSearchBtn类型
             ref: 'gridFastSearchBtn',
-            iconCls: 'x-fa fa-search',
+            iconCls: 'x-fa fa-search'
         }, ' ', {
             xtype: 'button',
             text: '高级搜索',
@@ -127,10 +127,10 @@ Ext.define("core.oa.meeting.checkresult.view.MainGrid", {
                 ref: 'gridDetail',
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('meetingUserClick_Tab', {
+                    this.fireEvent('checkResultClick_Tab', {
                         view:view.grid,
                         record: rec,
-                        cmd:"meetingEmp"
+                        cmd:"checkResult"
                     });
                 }
             }]

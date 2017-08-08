@@ -187,7 +187,39 @@ public class OaMeetingemp extends BaseEntity implements Serializable{
     public void setFactoryfixId(Long factoryfixId) {
         this.factoryfixId = factoryfixId;
     }
-/** 以下为不需要持久化到数据库中的字段,根据项目的需要手工增加
+
+    @FieldInfo(name = "性别")
+    @Formula("(SELECT (CASE a.XBM WHEN '1' THEN '男' WHEN'2' THEN '女' ELSE '' END) AS xbm FROM dbo.SYS_T_USER as a  WHERE a.USER_ID=EMPLOYEE_ID)")
+    private String xbm;
+
+    public String getXbm() {
+        return xbm;
+    }
+
+    public void setXbm(String xbm) {
+        this.xbm = xbm;
+    }
+
+    @FieldInfo(name = "主部门名称")
+    @Formula("(SELECT ISNULL(a.NODE_TEXT,'') FROM dbo.BASE_T_ORG a WHERE a.DEPT_ID=(SELECT b.DEPT_ID FROM BASE_T_USERDEPTJOB b WHERE b.MASTER_DEPT=1 AND  b.USER_ID=EMPLOYEE_ID AND b.ISDELETE=0))")
+    private String deptName;
+
+    public String getDeptName() {
+        return deptName;
+    }
+
+    public void setDeptName(String deptName) {
+        this.deptName = deptName;
+    }
+
+    @FieldInfo(name = "主岗位名称")
+    @Formula("(SELECT ISNULL(a.JOB_NAME,'') FROM dbo.BASE_T_JOB a WHERE a.JOB_ID=(SELECT b.JOB_ID FROM BASE_T_USERDEPTJOB b WHERE b.MASTER_DEPT=1 AND  b.USER_ID=EMPLOYEE_ID AND b.ISDELETE=0))")
+    private String jobName;
+
+    public String getJobName() {
+        return jobName;
+    }
+    /** 以下为不需要持久化到数据库中的字段,根据项目的需要手工增加
     *@Transient
     *@FieldInfo(name = "")
     *private String field1;

@@ -41,5 +41,5 @@ public class VoTrainClasstrainee {
 	public void setCardNo(String cardNo) {
 		this.cardNo = cardNo;
 	}
-	
+
 }

@@ -386,6 +386,29 @@ public class TrainClass extends BaseEntity implements Serializable {
         this.evalEndtime = evalEndtime;
     }
 
+    @FieldInfo(name = "考勤规则Id")
+    @Column(name = "CHECKRULE_ID",length = 36,nullable = true)
+    private String checkruleId;
+
+    public String getCheckruleId() {
+        return checkruleId;
+    }
+
+    public void setCheckruleId(String checkruleId) {
+        this.checkruleId = checkruleId;
+    }
+
+    @FieldInfo(name = "考勤规则名称")
+    @Column(name = "CHECKRULE_NAME", length = 128, nullable = true)
+    private String checkruleName;
+
+    public String getCheckruleName() {
+        return checkruleName;
+    }
+
+    public void setCheckruleName(String checkruleName) {
+        this.checkruleName = checkruleName;
+    }
     /*
     @FieldInfo(name = "学员ID")
     @Column(name = "TRINEE_ID", length = 8000, nullable = true)
