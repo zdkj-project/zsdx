@@ -8,7 +8,7 @@ Ext.define("core.train.class.view.RoomDetailForm", {
     fieldDefaults: { // 统一设置表单字段默认属性
         labelSeparator: "：", // 分隔符
         msgTarget: "qtip",
-        labelWidth: 90,
+        labelWidth: 110,
         labelAlign: "right"
     },
     items: [{
@@ -71,7 +71,61 @@ Ext.define("core.train.class.view.RoomDetailForm", {
             vtype:'endDate',
             compareField:'beginDate'
         }]
-    }, {
+    }, { 
+        xtype: "container",
+        layout: "column",
+        labelAlign: "right",
+        items: [{            
+            columnWidth: 0.333,
+            fieldLabel: "午休人数（男）",    
+            name: "siestaManNum",
+            xtype: "textfield",        
+            value:0,
+            readOnly :true  
+        },{          
+            columnWidth: 0.333,
+            fieldLabel: "午休人数（女）",    
+            name: "siestaWomenNum",
+            xtype: "textfield",
+            value:0,
+            readOnly :true      
+        
+        },{    
+            columnWidth: 0.333,
+            fieldLabel: "不午休人数",    
+            name: "noSiestaNum",
+            xtype: "textfield",        
+            value:0,
+            readOnly :true          
+        }]
+    },{ 
+        xtype: "container",
+        layout: "column",
+        labelAlign: "right",
+        items: [{            
+            columnWidth: 0.333,
+            fieldLabel: "晚宿人数（男）",    
+            name: "sleepManNum",
+            xtype: "textfield",        
+            value:0,
+            readOnly :true  
+        },{          
+            columnWidth: 0.333,
+            fieldLabel: "晚宿人数（女）",    
+            name: "sleepWomenNum",
+            xtype: "textfield",
+            value:0,
+            readOnly :true      
+        
+        },{    
+            columnWidth: 0.333,
+            fieldLabel: "不晚宿人数",    
+            name: "noSleepNum",
+            xtype: "textfield",        
+            value:0,
+            readOnly :true          
+        }]
+    },{
         xtype: "container",
         layout: "column",
         labelAlign: "right",
@@ -107,8 +161,30 @@ Ext.define("core.train.class.view.RoomDetailForm", {
                         return v=="1"?"男":"女";      
                     }
                 },
-                { xtype: 'checkcolumn', headerCheckbox:true,  text: '午休', dataIndex: 'siesta', flex: 1 },
-                { xtype: 'checkcolumn', headerCheckbox:true, text: '晚宿', dataIndex: 'sleep', flex: 1},
+                { xtype: 'checkcolumn', headerCheckbox:true,  text: '午休', dataIndex: 'siesta', flex: 1 ,
+                    listeners:{
+                        headercheckchange:function ( me , checked , e , eOpts ) {
+                            var currentForm=me.up("baseform[xtype=class.roomdetailform]");
+                            currentForm.countRoom();
+                        },
+                        checkchange:function ( me , rowIndex , checked , record , e , eOpts ) {
+                            var currentForm=me.up("baseform[xtype=class.roomdetailform]");
+                            currentForm.countRoom();
+                        }
+                    }
+                },
+                { xtype: 'checkcolumn', headerCheckbox:true, text: '晚宿', dataIndex: 'sleep', flex: 1,
+                    listeners:{
+                        headercheckchange:function ( me , checked , e , eOpts ) {
+                            var currentForm=me.up("baseform[xtype=class.roomdetailform]");
+                            currentForm.countRoom();
+                        },
+                        checkchange:function ( me , rowIndex , checked , record , e , eOpts ) {
+                            var currentForm=me.up("baseform[xtype=class.roomdetailform]");
+                            currentForm.countRoom();
+                        }
+                    }
+                },
                 { align: 'center',titleAlign: "center", text: '学员状态', dataIndex: 'isDelete',width:80,
                     renderer: function(value, metaData) {
                         if(value==0)
@@ -134,5 +210,39 @@ Ext.define("core.train.class.view.RoomDetailForm", {
                 */
             ]
         }]
-    }]
+    }],
+    countRoom:function(){
+        var traineeRoomGrid = this.down("grid[ref=traineeRoomGrid]");
+        var traineeRoomStore = traineeRoomGrid.getStore();
+        var siestaManNum=0,siestaWomenNum=0,noSiestaNum=0,sleepManNum=0,sleepWomenNum=0,noSleepNum=0;
+
+        for (var i = 0; i < traineeRoomStore.getCount(); i++) {
+            var rowData = traineeRoomStore.getAt(i).getData();
+
+            if(rowData.siesta == true){
+                if(rowData.xbm==1)
+                    siestaManNum+=1;
+                else
+                    siestaWomenNum+=1;
+            }else{
+                noSiestaNum+=1;
+            }
+
+            if(rowData.sleep == true){
+                if(rowData.xbm==1)
+                    sleepManNum+=1;
+                else
+                    sleepWomenNum+=1;
+            }else{
+                noSleepNum+=1;
+            }      
+        }
+       
+        this.down("field[name=siestaManNum]").setValue(siestaManNum);
+        this.down("field[name=siestaWomenNum]").setValue(siestaWomenNum);
+        this.down("field[name=noSiestaNum]").setValue(noSiestaNum);
+        this.down("field[name=sleepManNum]").setValue(sleepManNum);
+        this.down("field[name=sleepWomenNum]").setValue(sleepWomenNum);
+        this.down("field[name=noSleepNum]").setValue(noSleepNum);
+    }
 });

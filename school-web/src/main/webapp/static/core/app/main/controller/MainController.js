@@ -125,7 +125,7 @@ Ext.define('core.main.controller.MainController', {
                         '<tpl else>',
                             '<a href="{url}" target="_bank" style="color: #000;">',
                                 '<div class="mainMenuIcon-wrap" style="padding: 10px 0px;margin:0px;width: 80px;">',                                    
-                                '<img src="{bigIcon}" class="mainMenuIcon-img" style="width:50px;height:50px;"/>',                                
+                                '<img src="{bigIcon}" class="mainMenuIcon-img" style="width:50px;height:50px;border-radius: 0px;"/>',                                
                                 '<br/><span class="mainMenuIcon-text" style="padding-top: 0px;">{text}</span>',
                             '</div>',
                             '</a>',

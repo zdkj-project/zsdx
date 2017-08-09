@@ -253,4 +253,16 @@ Ext.define("core.util.SqlUtil",{
 		}
 		return filterFidlds;
 	},	
+
+	getQueryParmeter:function(queryPanel){
+		var obj={};
+	    var queryFields=queryPanel.query("basequeryfield");                  
+	    Ext.each(queryFields,function(queryField){
+	        var fieldName=queryField.name;                       
+	        var valueField=queryField.down("field[name="+fieldName+"_field]");
+	        var value=valueField.getValue();
+	        obj[fieldName]=value;
+	    });
+	    return obj;
+	}
 });

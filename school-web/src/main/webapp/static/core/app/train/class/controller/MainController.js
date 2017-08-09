@@ -1563,7 +1563,7 @@ Ext.define("core.train.class.controller.MainController", {
                         layout: 'border',
                         items: [{
                             xtype: 'baseform',
-                            height: 40,
+                            //height: 40,
                             region: 'north',
                             bodyPadding: 0,
                             bodyStyle: {
@@ -1584,10 +1584,11 @@ Ext.define("core.train.class.controller.MainController", {
                                 fieldLabel: "<span style='font-weight:400;font-size:14px'>所属班级</span>",
                                 name: "classNameShow",
                                 xtype: "displayfield",
-                                width: 300,
+                                width: 800,
                                 labelWidth: 80,
-                                margin: 5,
-                                value: "<span style='font-weight:400;font-size:14px'>" + insertObj.className + "</span>"
+                                labelStyle:"padding-top:0px",
+                                margin: '10 5',
+                                value: "<span style='font-weight:400;font-size:20px;color:red'>" + insertObj.className + "</span>"
                             }]
                         }, {
                             xtype: "class.classstudentgrid",
@@ -1727,7 +1728,7 @@ Ext.define("core.train.class.controller.MainController", {
                         layout: 'border',
                         items: [{
                             xtype: 'baseform',
-                            height: 40,
+                            //height: 40,
                             region: 'north',
                             bodyPadding: 0,
                             bodyStyle: {
@@ -1748,10 +1749,11 @@ Ext.define("core.train.class.controller.MainController", {
                                 fieldLabel: "<span style='font-weight:400;font-size:14px'>所属班级</span>",
                                 name: "classNameShow",
                                 xtype: "displayfield",
-                                width: 300,
+                                width: 800,
                                 labelWidth: 80,
-                                margin: 5,
-                                value: "<span style='font-weight:400;font-size:14px'>" + insertObj.className + "</span>"
+                                labelStyle:"padding-top:0px",
+                                margin: '10 5',
+                                value: "<span style='font-weight:400;font-size:20px;color:red'>" + insertObj.className + "</span>"
                             }]
                         }, {
                             xtype: "class.classcoursegrid",
@@ -1929,6 +1931,7 @@ Ext.define("core.train.class.controller.MainController", {
                             url: comm.get("baseUrl") + "/TrainClasstrainee/getClassFoodTrainees",
                             params: {
                                 classId: insertObj.uuid,
+                                isDelete:1, //表示排除isDelete为1的数据
                                 page: 1,
                                 start: 0,
                                 limit: -1    //-1表示不分页
@@ -1951,6 +1954,15 @@ Ext.define("core.train.class.controller.MainController", {
                                     ]);*/
                                     traineeFoodGrid.getStore().loadData(rows);
 
+                                    var dinnerType=insertObj.dinnerType;            
+                                    if (dinnerType == 1) {
+                                        foodDetailForm.countFood1();//计算汇总数据1
+                                    }  else if (dinnerType == 2) {
+                                        foodDetailForm.countFood2();//计算汇总数据2
+                                    }  else {
+                                        foodDetailForm.countFood3();//计算汇总数据2
+                                    } 
+
                                 } else {
                                     self.Error(data.obj);
                                 }
@@ -1962,6 +1974,7 @@ Ext.define("core.train.class.controller.MainController", {
                             url: comm.get("baseUrl") + "/TrainClasstrainee/getClassRoomTrainees",
                             params: {
                                 classId: insertObj.uuid,
+                                isDelete:1, //表示排除isDelete为1的数据
                                 page: 1,
                                 start: 0,
                                 limit: -1    //-1表示不分页
@@ -1985,6 +1998,9 @@ Ext.define("core.train.class.controller.MainController", {
                                         { name: '赵六', traineeId: '444', xbm: "1",siesta: true,sleep: false }
                                     ]);*/
                                     traineeRoomGrid.getStore().loadData(rows);
+
+                                    //new：初次加载时，计算总数
+                                    roomDetailForm.countRoom();//计算汇总数据      
 
                                 } else {
                                     self.Error(data.obj);
@@ -2010,28 +2026,54 @@ Ext.define("core.train.class.controller.MainController", {
                                     var classInfoContainer = tabItem.down("container[ref=classInfo]");
                                     classInfoContainer.setData(obj.classInfo);
 
-                                    var classTraineeInfoContainer = tabItem.down("container[ref=classTraineeInfo]");
-                                    classTraineeInfoContainer.setData(obj.classTrainee);
+                                    var classTraineeTitle="（男生 "+obj.classInfo.traineeManNum+" 人；女生 "+obj.classInfo.traineeWomenNum+" 人）";
+                                    var classTraineeObj={
+                                        "classTraineeTitle":classTraineeTitle,
+                                        "classTrainee":obj.classTrainee
+                                    };
+                                    var classTraineeInfoContainer = tabItem.down("container[ref=classTraineeInfo]");                                
+                                    classTraineeInfoContainer.setData(classTraineeObj);
 
+                                    var classCourseTitle="（需要评价的课程 "+obj.classInfo.isEvalNum+" 门）";
+                                    var classCourseObj={
+                                        "classCourseTitle":classCourseTitle,
+                                        "classCourse":obj.classCourse
+                                    };
                                     var classCourseInfoContainer = tabItem.down("container[ref=classCourseInfo]");
-                                    classCourseInfoContainer.setData(obj.classCourse);
+                                    classCourseInfoContainer.setData(classCourseObj);
+
 
                                     var classFoodInfoContainer = tabItem.down("container[ref=classFoodInfo]");
                                     var classFoodObj = {};
+                                     //统计
+                                    var classFoodTitle="";
+                                    var countMoney=(obj.classInfo.breakfastStand*obj.classInfo.foodBreakfastNum +
+                                            obj.classInfo.lunchStand*obj.classInfo.foodLunchNum+obj.classInfo.dinnerStand*obj.classInfo.foodDinnerNum)*obj.classInfo.classDay;
+                                    var countNumberInDay=obj.classInfo.foodBreakfastNum*1 +obj.classInfo.foodLunchNum*1 +obj.classInfo.foodDinnerNum*1;
+                                    var countNumber=countNumberInDay*obj.classInfo.classDay;
+
                                     classFoodObj.dinnerType = obj.classInfo.dinnerType;
-                                    if (obj.classInfo.dinnerType == 1)
-                                        classFoodObj.dinnerTypeName = "围餐";
-                                    else if (obj.classInfo.dinnerType == 2)
-                                        classFoodObj.dinnerTypeName = "自助餐";
-                                    else
-                                        classFoodObj.dinnerTypeName = "快餐";
+                                    if (obj.classInfo.dinnerType == 1){
+                                        classFoodObj.dinnerTypeName = "围餐";   
+                                        classFoodTitle="（总额 "+countMoney+" 元 ； 每天围数 "+countNumberInDay+" 围 ； 总围数 "+countNumber+" 围）";                                    
+                                    }
+                                    else if (obj.classInfo.dinnerType == 2){
+                                        classFoodObj.dinnerTypeName = "自助餐";   
+                                        classFoodTitle="（总额 "+countMoney+" 元 ； 每天人数 "+countNumberInDay+" 围 ； 总人数 "+countNumber+" 围）";                                      
+                                    }
+                                    else{
+                                        classFoodObj.dinnerTypeName = "快餐"; 
+                                        classFoodTitle="（总额 "+countMoney+" 元 ； 每天人数 "+countNumberInDay+" 围 ； 总人数 "+countNumber+" 围）";                                    
+                                    }
+                                   
+                                    classFoodObj.classFoodTitle=classFoodTitle;
                                     classFoodObj.avgNumber = obj.classInfo.avgNumber;
                                     classFoodObj.breakfastStand = obj.classInfo.breakfastStand;
-                                    classFoodObj.breakfastCount = obj.classInfo.breakfastCount;
+                                    classFoodObj.breakfastCount = obj.classInfo.foodBreakfastNum;
                                     classFoodObj.lunchStand = obj.classInfo.lunchStand;
-                                    classFoodObj.lunchCount = obj.classInfo.lunchCount;
+                                    classFoodObj.lunchCount = obj.classInfo.foodLunchNum;
                                     classFoodObj.dinnerStand = obj.classInfo.dinnerStand;
-                                    classFoodObj.dinnerCount = obj.classInfo.dinnerCount;
+                                    classFoodObj.dinnerCount = obj.classInfo.foodDinnerNum;
                                     //默认为快餐，则显示学员数据   
                                     if (obj.classInfo.dinnerType != "1" && obj.classInfo.dinnerType != "2") {
 
@@ -2060,7 +2102,7 @@ Ext.define("core.train.class.controller.MainController", {
                                         classFoodInfoContainer.setData(classFoodObj);
                                     }
 
-
+                                
                                     //查询班级的住宿信息
                                     self.asyncAjax({
                                         url: comm.get("baseUrl") + "/TrainClasstrainee/getClassRoomTrainees",
@@ -2076,8 +2118,16 @@ Ext.define("core.train.class.controller.MainController", {
                                             var rows = data.rows;
                                             //console.log(rows);
                                             if (rows != undefined) {  //若存在rows数据，则表明请求正常
+                                                var classRoomTitle="（午休人数-男 "+obj.classInfo.roomSiestaManNum+" 人 ； 午休人数-女 "+obj.classInfo.roomSiestaWomenNum+" 人 ； "+
+                                                    "晚宿人数-男 "+obj.classInfo.roomSleepManNum+" 人 ； 晚宿人数-女 "+obj.classInfo.roomSleepWomenNum+" 人 ；"+
+                                                    "不午休人数 "+obj.classInfo.roomNoSiestaNum+" 人 ； 不晚宿人数 "+obj.classInfo.roomNoSleepNum+" 人）";
+                                                var classRoomObj={
+                                                    "classRoomTitle":classRoomTitle,
+                                                    "classRoom":rows
+                                                };
+
                                                 var classRoomInfoContainer = tabItem.down("container[ref=classRoomInfo]");
-                                                classRoomInfoContainer.setData(rows);
+                                                classRoomInfoContainer.setData(classRoomObj);
                                             } else {
                                                 self.Error(data.obj);
                                             }
@@ -2168,7 +2218,7 @@ Ext.define("core.train.class.controller.MainController", {
                 }
 
                 insertObj = recordData;
-                tabTitle = "编辑住宿信息";
+                tabTitle = "班级住宿申请";
                 tabItemId = funCode + "_gridRoomEdit";
 
                 //获取主键值
@@ -2187,7 +2237,7 @@ Ext.define("core.train.class.controller.MainController", {
                 }
 
                 insertObj = recordData;
-                tabTitle = "查看住宿信息";
+                tabTitle = "查看住宿申请";
                 tabItemId = funCode + "_gridRoomDetail" + insertObj.classNumb;
                 break;
         }
@@ -2243,6 +2293,7 @@ Ext.define("core.train.class.controller.MainController", {
                     url: comm.get("baseUrl") + "/TrainClasstrainee/getClassRoomTrainees",
                     params: {
                         classId: insertObj.uuid,
+                        isDelete:1, //表示排除isDelete为1的数据
                         page: 1,
                         start: 0,
                         limit: -1    //-1表示不分页
@@ -2266,6 +2317,9 @@ Ext.define("core.train.class.controller.MainController", {
                                 { name: '赵六', traineeId: '444', xbm: "1",siesta: true,sleep: false }
                             ]);*/
                             traineeRoomGrid.getStore().loadData(rows);
+
+                            //new：初次加载时，计算总数
+                            objDetForm.countRoom();//计算汇总数据                            
 
                         } else {
                             self.Error(data.obj);
@@ -2339,7 +2393,7 @@ Ext.define("core.train.class.controller.MainController", {
                 }
 
                 insertObj = recordData;
-                tabTitle = "编辑就餐信息";
+                tabTitle = "班级就餐申请";
                 tabItemId = funCode + "_gridFoodEdit";
 
                 //获取主键值
@@ -2358,7 +2412,7 @@ Ext.define("core.train.class.controller.MainController", {
                 }
 
                 insertObj = recordData;
-                tabTitle = "查看就餐信息";
+                tabTitle = "查看就餐申请";
                 tabItemId = funCode + "_gridFoodDetail" + insertObj.classNumb;
                 break;
         }
@@ -2410,11 +2464,12 @@ Ext.define("core.train.class.controller.MainController", {
                     self.setFuncReadOnly(funData, objDetForm, true);
                 }
 
-                //查询班级的住宿信息
+                //查询班级的就餐信息
                 self.asyncAjax({
                     url: comm.get("baseUrl") + "/TrainClasstrainee/getClassFoodTrainees",
                     params: {
                         classId: insertObj.uuid,
+                        isDelete:1, //表示排除isDelete为1的数据
                         page: 1,
                         start: 0,
                         limit: -1    //-1表示不分页
@@ -2429,6 +2484,16 @@ Ext.define("core.train.class.controller.MainController", {
                             //获取班级学员就餐信息
                             var traineeRoomGrid = tabItem.down("grid[ref=traineeFoodGrid]");
                             traineeRoomGrid.getStore().loadData(rows);
+                            
+                            //new：初次加载时，计算总数
+                            var dinnerType=insertObj.dinnerType;            
+                            if (dinnerType == 1) {
+                                objDetForm.countFood1();//计算汇总数据1
+                            }  else if (dinnerType == 2) {
+                                objDetForm.countFood2();//计算汇总数据2
+                            }  else {
+                                objDetForm.countFood3();//计算汇总数据2
+                            } 
 
                         } else {
                             self.Error(data.obj);

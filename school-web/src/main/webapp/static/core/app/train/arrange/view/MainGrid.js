@@ -99,7 +99,7 @@ Ext.define("core.train.arrange.view.MainGrid", {
             text: '序号',
             align: 'center'
         }, {
-            width:120,
+            width:100,
             text: "班级类型",
             dataIndex: "classCategory",
             columnType: "basecombobox", //列类型
@@ -108,13 +108,18 @@ Ext.define("core.train.arrange.view.MainGrid", {
             flex:1,
             minWidth:100,
             text: "班级名称",
-            dataIndex: "className"
+            dataIndex: "className",
+            renderer: function(value, metaData) {                
+                var title = "班级名称";
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + value + '"';
+                return value;
+            }
         }, {
             width:100,
             text: "班级编号",
             dataIndex: "classNumb"
         },  {
-            width:100,
+            width:90,
             text: "开始日期",
             dataIndex: "beginDate",
             renderer: function (value, metaData) {
@@ -123,7 +128,7 @@ Ext.define("core.train.arrange.view.MainGrid", {
                 return ss;
             }
         }, {
-            width:100,
+            width:90,
             text: "结束日期",
             dataIndex: "endDate",
             renderer: function (value, metaData) {
@@ -142,11 +147,11 @@ Ext.define("core.train.arrange.view.MainGrid", {
                 return value;
             }
         }, {
-            width:100,
+            width:80,
             text: "联系人",
             dataIndex: "contactPerson"
         }, {
-            width:120,
+            width:100,
             text: "联系电话",
             dataIndex: "contactPhone"
         },{
@@ -183,19 +188,18 @@ Ext.define("core.train.arrange.view.MainGrid", {
                     return "<span style='color:red'>未安排</span>";
             }
         },{
-            width: 150,
-            text: "创建时间",
-            dataIndex: "createTime",
-            align:'left',
-        },{
-            width: 150,
+            width: 130,
             text: "更新时间",
             dataIndex: "updateTime",
-            align:'left',
+            renderer: function(value, metaData) {
+                var date = value.replace(new RegExp(/-/gm), "/");    
+                var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i')           
+                return ss;
+            }
         },{
             xtype: 'actiontextcolumn',
             text: "操作",
-            width: 220,
+            width: 160,
             align:'center',
             fixed: true,
             items: [{

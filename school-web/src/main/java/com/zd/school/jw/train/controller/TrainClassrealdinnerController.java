@@ -3,6 +3,7 @@ package com.zd.school.jw.train.controller;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,6 +26,7 @@ import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.ModelUtil;
 import com.zd.core.util.PoiExportExcel;
 import com.zd.core.util.BeanUtils;
+import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.StringUtils;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.jw.train.model.TrainClass;
@@ -254,4 +256,62 @@ public class TrainClassrealdinnerController extends FrameWorkController<TrainCla
 		}
 	}
 	
+	
+	/**
+	 * 就餐汇总数据
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	@RequestMapping(value = { "/getDinnerTotalList" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
+			org.springframework.web.bind.annotation.RequestMethod.POST })
+	public void getDinnerTotalList( HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ParseException {
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");   
+	     
+		String strData = ""; // 返回给js的数据
+		String startDate=request.getParameter("beginDate");
+		startDate=startDate==null?"1900-1-1":sdf.format(sdf.parse(startDate));
+		
+		String endDate=request.getParameter("endDate");
+		endDate=endDate==null?"2999-12-12":sdf.format(sdf.parse(endDate));
+		
+		String className = request.getParameter("className");
+		className=className==null?"":className;
+		String classNumb = request.getParameter("classNumb");
+		classNumb=classNumb==null?"":classNumb;
+		
+		Integer pageIndex=Integer.parseInt(request.getParameter("page"));;	//page
+		Integer pageSize=Integer.parseInt(request.getParameter("limit"));;	//limit
+		
+		StringBuffer sql = new StringBuffer("EXEC [dbo].[Usp_PPT_TrainDinnerTotal] ");
+		sql.append("'" + className + "',");
+		sql.append("'" + classNumb + "',");
+		sql.append("'" + startDate + "',");
+		sql.append("'" + endDate + "',");
+		
+		String page=pageIndex + "," + pageSize;
+
+		List<Map<String, Object>> lists=thisService.getForValuesToSql(sql.toString()+page);
+			
+
+		int count=Integer.parseInt(lists.get(0).get("rownum").toString());
+		request.getSession().setAttribute("TrainDinnerTotalDatas", lists.get(0));	//将统计信息存放到session中
+		
+		lists.remove(0);
+		
+		strData = jsonBuilder.buildObjListToJson(Long.valueOf(count), lists, true);// 处理数据
+		
+		writeJSON(response, strData);// 返回数据
+	}
+	
+	@RequestMapping(value = { "/getDinnerTotalDatas" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
+			org.springframework.web.bind.annotation.RequestMethod.POST })
+	public void getDinnerTotalDatas( HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ParseException {
+		Object obj = request.getSession().getAttribute("TrainDinnerTotalDatas");
+		String strData = JsonBuilder.getInstance().toJson(obj);// 处理数据
+		writeJSON(response, jsonBuilder.returnSuccessJson(strData));// 返回数据	
+	}
 }

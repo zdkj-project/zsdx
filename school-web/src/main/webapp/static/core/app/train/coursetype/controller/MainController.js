@@ -13,6 +13,24 @@ Ext.define("core.train.coursetype.controller.MainController", {
     init: function () {
     },
     control: {
+    	 "basetreegrid[xtype=coursetype.coursecategorytree]": {
+             afterrender: function (grid, eOpts) {
+                 var btnAdd = grid.down("button[ref=gridAdd_Tab]");
+                 var btnEdit = grid.down("button[ref=gridEdit]");
+                 var btnDelete = grid.down("button[ref=gridDelete]");
+                 var btnRefresh = grid.down("button[ref=gridRefresh]");
+                 var btnExport = grid.down("button[ref=gridExport]");
+                 var roleKey = comm.get("roleKey");
+                 if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("TCMANAGER") == -1) {
+                     btnAdd.setHidden(true);
+                     btnEdit.setHidden(true);
+                     btnDelete.setHidden(true);
+                     btnRefresh.setHidden(true);
+                     btnExport.setHidden(true);
+                 }
+             }
+         },
+    	
     	/**
          * 导出
          */

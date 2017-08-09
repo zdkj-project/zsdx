@@ -90,13 +90,7 @@ Ext.define("core.system.menu.controller.MenuController", {
         var detCode = basePanel.detCode;
         var detLayout = basePanel.detLayout;
         var defaultObj = funData.defaultObj;
-        
-      //设置tab页的itemId
-        var tabItemId = funCode + "_gridAdd";     //命名规则：funCode+'_ref名称',确保不重复
-
-        //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
-        var tabItem = tabPanel.getComponent(tabItemId);
-
+                
         var insertObj = self.getDefaultValue(defaultObj);
         var records = baseGrid.getSelectionModel().getSelection();
 		if (records.length != 1) {
@@ -115,6 +109,8 @@ Ext.define("core.system.menu.controller.MenuController", {
 		if (parentNode)
 			parentName = parentNode.get("text");
         
+        //设置tab页的itemId
+        var tabItemId = funCode + "_gridAdd";     //命名规则：funCode+'_ref名称',确保不重复
 		//根据选择的记录与操作确定form初始化的数据
 		var iconCls = "x-fa fa-plus-square";
 		var title = "增加下级菜单";
@@ -144,7 +140,8 @@ Ext.define("core.system.menu.controller.MenuController", {
 				iconCls = "x-fa fa-pencil-square";
 				operType = "edit";
 				title = "修改菜单";
-                
+                tabItemId = funCode + "_gridEdit";
+
                 insertObj = records[0].data;
 				insertObj = Ext.apply(insertObj, {
 					parentNode: parent,
@@ -163,6 +160,9 @@ Ext.define("core.system.menu.controller.MenuController", {
         var popFunData = Ext.apply(funData, {
             grid: baseGrid
         });
+
+        //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
+        var tabItem = tabPanel.getComponent(tabItemId);
 
         if (!tabItem) {
             var tabTitle = title;

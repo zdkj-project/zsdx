@@ -230,3 +230,8 @@
     border:none !important;
     outline: none !important;
 }
+
+/*设置只读的表单本文域的背景色*/
+.x-form-readonly input{
+    background: #f8f8f8;
+}
