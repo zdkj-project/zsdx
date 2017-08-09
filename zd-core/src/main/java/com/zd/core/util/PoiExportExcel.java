@@ -235,9 +235,27 @@ public class PoiExportExcel {
 									// 当前处理的单元格的数据一致时，才继续合并，否则单独合并两列
 									if (rowMergeObj[2].equals(val) && rowMergeObj[1].equals(headArray[j])
 											&& i == (int) rowMergeObj[3]) {
-										sheet.removeMergedRegion((int) rowMergeObj[0]);
+										//sheet.removeMergedRegion((int) rowMergeObj[0]);
+//										int index = sheet.addMergedRegion(
+//												new CellRangeAddress(rowNum, rowNum, (int) rowMergeObj[4], j));	
+//										int index = sheet.addMergedRegionUnsafe(
+//												new CellRangeAddress(rowNum, rowNum, (int) rowMergeObj[4], j));	
+										
+										//查找合并过的同行的列，查找到后移除，再合并
+										List<CellRangeAddress> cellRangeAddress=sheet.getMergedRegions();
+										for(int x=0;x<cellRangeAddress.size();x++){
+											CellRangeAddress tempCRA=cellRangeAddress.get(x);
+											if(tempCRA.getFirstColumn()==(int) rowMergeObj[4]){
+												if(tempCRA.getFirstRow()==rowNum&&tempCRA.getLastRow()==rowNum){
+													sheet.removeMergedRegion(x); // 移除	
+													break;
+												}
+											}
+										}
+										//index无用了，因为这个index只是一个下标，所以若remove了某个合并项，那么其他的合并项的下标就会变化
 										int index = sheet.addMergedRegion(
-												new CellRangeAddress(rowNum, rowNum, (int) rowMergeObj[4], j));
+												new CellRangeAddress(rowNum, rowNum, (int) rowMergeObj[4], j));	
+										
 										rowMergeObj[0] = index;
 									} else {
 										int index = sheet
@@ -294,9 +312,25 @@ public class PoiExportExcel {
 											}
 										}
 										if (isTempMerger == true) {
-											sheet.removeMergedRegion((int) recordObj[0]); // 先移除
+//											sheet.removeMergedRegion((int) recordObj[0]); // 先移除											
+//											int index = sheet.addMergedRegion(
+//													new CellRangeAddress((int) recordObj[2], rowNum, j, j)); // 再合并
+											//int index = sheet.addMergedRegionUnsafe(
+											//		new CellRangeAddress((int) recordObj[2], rowNum, j, j)); // 直接合并
+											//查找合并过的同列的行，查找到后移除，再合并
+											List<CellRangeAddress> cellRangeAddress=sheet.getMergedRegions();
+											for(int x=0;x<cellRangeAddress.size();x++){
+												CellRangeAddress tempCRA=cellRangeAddress.get(x);
+												if(tempCRA.getFirstRow()==(int) recordObj[2]){
+													if(tempCRA.getFirstColumn()==j&&tempCRA.getLastColumn()==j){
+														sheet.removeMergedRegion(x); // 移除	
+														break;
+													}
+												}
+											}
 											int index = sheet.addMergedRegion(
 													new CellRangeAddress((int) recordObj[2], rowNum, j, j)); // 再合并
+													
 											recordObj[0] = index;
 											recordMap.put(j, recordObj);
 										} else { // 否则，重新保存此列的合并数据

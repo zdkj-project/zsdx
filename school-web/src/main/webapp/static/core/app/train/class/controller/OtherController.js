@@ -976,21 +976,30 @@ Ext.define("core.train.class.controller.OtherController", {
                         success: function (response) {
                             data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                             if (data.success) {
-                                //发送ajax请求
-                                var resObj = self.ajax({
+                            
+                                self.asyncAjax({
                                     url: funData.action + "/doClassUse",
                                     params: {
-                                        classId: classId
+                                        classId:classId
+                                    },
+                                    timeout:1000*60*60, //1个小时
+                                    //回调代码必须写在里面
+                                    success: function(response) {
+                                        var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                        loading.hide();
+                                        if(data.success){                                                                                  
+                                            self.Info(data.obj);
+                                            tabPanel.remove(tabItem);
+                                        }else{
+                                            self.Error(data.obj);
+                                        }
+                                       
+                                    },
+                                    failure: function(response) {
+                                        loading.hide();
+                                        Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
                                     }
                                 });
-                                if (resObj.success) {
-                                    Ext.Msg.hide();
-                                    self.Info(data.obj);
-                                    tabPanel.remove(tabItem);
-                                } else {
-                                    Ext.Msg.hide();
-                                    self.msgbox(resObj.obj);
-                                }
                                 /*                                self.msgbox(data.obj);
                                                                 var grid = basetab.funData.grid; //此tab是否保存有grid参数
                                                                 if (!Ext.isEmpty(grid)) {
@@ -1001,11 +1010,12 @@ Ext.define("core.train.class.controller.OtherController", {
                                                                 loading.hide();
                                                                 tabPanel.remove(tabItem);*/
                             } else {
-                                self.Error(data.obj);
                                 loading.hide();
+                                self.Error(data.obj);                            
                             }
                         },
                         failure: function (response) {
+                            loading.hide();
                             alert('数据请求出错了！！！！\n错误信息：\n' + response.responseText);
                         }
                     });

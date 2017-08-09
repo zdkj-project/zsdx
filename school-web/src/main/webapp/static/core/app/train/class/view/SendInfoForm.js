@@ -50,7 +50,7 @@ Ext.define("core.train.class.view.SendInfoForm", {
         beforeLabelTextTpl: comm.get('required'),
         fieldLabel: "消息内容",
         name: "sendInfo",
-        xtype: "textfield",
+        xtype: "textarea",
         width:600,
         height:150
     }]

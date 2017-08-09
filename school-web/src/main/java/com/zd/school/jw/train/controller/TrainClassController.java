@@ -421,6 +421,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			// if(state==1&&result==0){
 			// thisService.updateByProperties("uuid", classId,"isuse",0);
 			// }
+			logger.error(e.getMessage());
 			writeJSON(response, jsonBuilder.returnSuccessJson("\"请求失败，请联系管理员！\""));
 		} finally {
 			DBContextHolder.clearDBType();
@@ -512,6 +513,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			// if(state==1&&result==0){
 			// thisService.updateByProperties("uuid", classId,"isuse",0);
 			// }
+			logger.error(e.getMessage());
 			writeJSON(response, jsonBuilder.returnSuccessJson("\"请求失败，请联系管理员！\""));
 		} finally {
 			DBContextHolder.clearDBType();

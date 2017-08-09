@@ -42,7 +42,7 @@ import java.util.*;
 @Service
 @Transactional
 public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implements TrainClassService {
-
+	
 	@Resource
 	public void setTrainClassDao(TrainClassDao dao) {
 		this.dao = dao;
@@ -493,6 +493,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 
 		} catch (Exception e) {
 			// TODO: handle exception
+			logger.error(e.getMessage());
 			// 捕获了异常后，要手动进行回滚
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			result = -1;
@@ -669,6 +670,8 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 		} catch (Exception e) {
 			result = -1;
 			// TODO: handle exception
+			
+			logger.error(e.getMessage());
 			// 捕获了异常后，要手动进行回滚
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			// 或者抛出运行时异常
