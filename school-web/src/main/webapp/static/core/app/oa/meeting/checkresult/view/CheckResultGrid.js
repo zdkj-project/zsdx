@@ -33,7 +33,8 @@ Ext.define("core.oa.meeting.checkresult.view.CheckResultGrid", {
             width: 100
         }, {
             text: "性别",
-            width: 60
+            width: 60,
+            dataIndex:"xbm"
         }, {
             text: "部门",
             dataIndex: "deptName",

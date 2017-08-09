@@ -189,7 +189,7 @@ public class OaMeetingemp extends BaseEntity implements Serializable{
     }
 
     @FieldInfo(name = "性别")
-    @Formula("(SELECT (CASE a.XBM WHEN '1' THEN '男' WHEN'2' THEN '女' ELSE '' END) AS xbm FROM dbo.SYS_T_USER as a  WHERE a.USER_ID=EMPLOYEE_ID)")
+    @Formula("(SELECT (CASE a.XBM WHEN '1' THEN '男' WHEN'2' THEN '女' ELSE '' END) FROM dbo.SYS_T_USER as a  WHERE a.USER_ID=EMPLOYEE_ID)")
     private String xbm;
 
     public String getXbm() {

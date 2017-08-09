@@ -1,10 +1,10 @@
-Ext.define("core.public.selectuser.view.SelectUserGrid", {
+Ext.define("core.public.selectUser.view.SelectUserGrid", {
     extend: "core.base.view.BaseGrid",
     alias: "widget.pubselect.selectusergrid",
-    al:false,
+    al:true,
     frame: false,
     columnLines: false,
-    dataUrl: comm.get("baseUrl") + "/sysuser/getUserNotInRoleId", //数据获取地址
+    dataUrl: comm.get("baseUrl") + "/sysuser/list", //数据获取地址
     model: "com.zd.school.plartform.system.model.SysUser",
     /**
      * 工具栏操作按E钮
@@ -34,7 +34,6 @@ Ext.define("core.public.selectuser.view.SelectUserGrid", {
             rootId: "ROOT",
             funCode:'girdFastSearchText',
             configInfo: {
-                //controller: 'role.OtherController',
                 multiSelect: false,
                 fieldInfo: "deptName~deptId,text~id",
                 whereSql: " and isDelete='0' ",
@@ -64,10 +63,10 @@ Ext.define("core.public.selectuser.view.SelectUserGrid", {
                 selectStore = grid.getStore();
                 selectStore.removeAt(index);
 
-                var basePanel = grid.up("panel[xtype=role.selectuserlayout]");
+                var basePanel = grid.up("panel[xtype=pubselect.selectuserlayout]");
                 var isSelectGrid;
                 if(basePanel){
-                    isSelectGrid = basePanel.down("panel[xtype=role.isselectusergrid]");
+                    isSelectGrid = basePanel.down("panel[xtype=pubselect.isselectusergrid]");
                     var isSelectStore = isSelectGrid.getStore();
                     isSelectStore.insert(0, [record]);
                 }
@@ -99,10 +98,6 @@ Ext.define("core.public.selectuser.view.SelectUserGrid", {
             width: 50,
             text: '序号',
             align: 'center'
-        }, {
-            width:120,
-            text: "用户名",
-            dataIndex: "userName"
         },{
             width:70,
             text: "姓名",
@@ -114,21 +109,13 @@ Ext.define("core.public.selectuser.view.SelectUserGrid", {
             columnType: "basecombobox",
             ddCode: "XBM"
         }, {
-            width:150,
+            flex:1,
             text: "部门",
             dataIndex: "deptName"
         }, {
-            width:110,
+            width:120,
             text: "岗位",
             dataIndex: "jobName"
-        }, {
-            text: "编制",
-            dataIndex: "zxxbzlb",
-            ddCode: "ZXXBZLB",
-            columnType: "basecombobox",
-            minWidth:100,
-            flex:1,
-            align:'left'
         }]
     },
     emptyText: '<span style="width:100%;text-align:center;display: block;">暂无数据</span>'

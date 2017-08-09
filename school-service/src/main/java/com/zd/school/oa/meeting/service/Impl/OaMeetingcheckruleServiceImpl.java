@@ -3,6 +3,7 @@ package com.zd.school.oa.meeting.service.Impl;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
+import com.zd.core.util.StringUtils;
 import com.zd.school.oa.meeting.dao.OaMeetingcheckruleDao;
 import com.zd.school.oa.meeting.model.OaMeetingcheckrule;
 import com.zd.school.oa.meeting.service.OaMeetingcheckruleService;
@@ -126,4 +127,21 @@ public class OaMeetingcheckruleServiceImpl extends BaseServiceImpl<OaMeetingchec
 			return null;
 		}
 	}
+
+    @Override
+    public QueryResult<OaMeetingcheckrule> list(Integer start, Integer limit, String sort, String filter, String whereSql) {
+        String orderSql = "";
+        if (StringUtils.isNotEmpty(sort)) {
+            orderSql = " order by " + StringUtils.convertSortToSql(sort);
+        }
+        if (StringUtils.isNotEmpty(filter)) {
+            whereSql += StringUtils.convertFilterToSql(filter);
+        }
+        String hql = " from OaMeetingcheckrule o where o.isDelete=0 " + whereSql + orderSql;
+        QueryResult<OaMeetingcheckrule> queryResult = this.doQueryResult(hql, start, limit);
+        if (queryResult.getResultList().size() > 0)
+            return queryResult;
+        else
+            return null;
+    }
 }

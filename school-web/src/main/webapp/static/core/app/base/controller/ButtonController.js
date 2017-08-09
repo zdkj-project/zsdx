@@ -73,6 +73,7 @@ Ext.define("core.base.controller.ButtonController", {
             "basepanel basegrid field[funCode=girdFastSearchText]": {
                 specialkey: function (field, e) {
                     if (e.getKey() == e.ENTER) {
+
                         //得到组件                 
                         var baseGrid = field.up("basegrid");
                         if (!baseGrid)

@@ -2,8 +2,8 @@ package com.zd.school.oa.meeting.service;
 
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseService;
+import com.zd.school.oa.meeting.model.OaMeetingemp;
 import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.oa.meeting.model.OaMeetingemp ;
 
 
 /**
@@ -70,4 +70,17 @@ public interface OaMeetingempService extends BaseService<OaMeetingemp> {
 	 * @return
 	 */
 	public OaMeetingemp doAddEntity(OaMeetingemp entity, SysUser currentUser);
+
+
+    /**
+     * 获取可选择的参加会议人员，带翻页功能
+     * @param start 记录开始位置
+     * @param limit 每页的记录数
+     * @param sort 排列字段及方式
+     * @param filter 过滤条件
+     * @param whereSql 附加过滤条件
+     * @param meetingId 要添加人员的会议
+     * @return
+     */
+    public QueryResult<SysUser> getNotMeetingUserList(Integer start, Integer limit, String sort, String filter, String whereSql, String meetingId);
 }

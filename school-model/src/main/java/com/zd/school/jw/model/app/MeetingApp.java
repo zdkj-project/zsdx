@@ -1,16 +1,15 @@
 package com.zd.school.jw.model.app;
 
+import com.zd.school.oa.meeting.model.OaMeeting;
+
 import java.util.List;
 
-import com.zd.school.oa.meeting.model.OaMeeting;
-import com.zd.school.oa.meeting.model.OaMeetingemp;
-
 public class MeetingApp {
-	//判断是否调用成功，true为调用成功,false为失败。默认为false
+    /**
+     * 调用成功与否的标记
+     */
 	private boolean code=false;
 
-	
-	
 	public boolean getCode() {
 		return code;
 	}
@@ -20,7 +19,9 @@ public class MeetingApp {
 	}
 
 
-	//返回信息
+    /**
+     * 调用返回的消息
+     */
 	private String message;
 
 	public String getMessage() {
@@ -30,11 +31,11 @@ public class MeetingApp {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
-	//封装数据list实体
-	private List<OaMeeting> meeting;
-	
 
+    /**
+     * 返回的会议列表信息
+     */
+	private List<OaMeeting> meeting;
 	public List<OaMeeting> getMeeting() {
 		return meeting;
 	}

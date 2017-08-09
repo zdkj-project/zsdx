@@ -9,6 +9,7 @@ import com.zd.school.jw.train.model.vo.VoTrainClasstrainee;
 import com.zd.school.jw.train.service.*;
 import com.zd.school.oa.terminal.model.OaInfoterm;
 import com.zd.school.oa.terminal.service.OaInfotermService;
+import com.zd.school.plartform.comm.model.CommAttachment;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -69,11 +70,12 @@ public class TrainCourseAppController {
 
             if (ModelUtil.isNotNull(roomTerm)) {
                 if (date.getTime() < date2.getTime()) {
-                    course = courseService.doQuery("from TrainClassschedule where scheduleAddress='" + roomTerm.getRoomName() + "' and beginTime Between '" + s + " 06:00:00' And '" + sdf.format(date2) + "' order by beginTime asc");
+//                    course = courseService.doQuery("from TrainClassschedule where scheduleAddress='" + roomTerm.getRoomName() + "' and beginTime Between '" + s + " 06:00:00' And '" + sdf.format(date2) + "' order by beginTime asc");
+                    course = courseService.doQuery("from TrainClassschedule where scheduleAddress='" + roomTerm.getRoomName() + "' and beginTime Between '" +sdf.format(date) + "' And '" + sdf.format(date2) + "' order by beginTime asc");
                 } else if (date.getTime() < date3.getTime()) {
-                    course = courseService.doQuery("from TrainClassschedule where scheduleAddress='" + roomTerm.getRoomName() + "' and beginTime Between '" + s + " 12:00:00' And '" + sdf.format(date3) + "' order by beginTime asc");
+                    course = courseService.doQuery("from TrainClassschedule where scheduleAddress='" + roomTerm.getRoomName() + "' and beginTime Between '" +sdf.format(date) + "' And '" + sdf.format(date3) + "' order by beginTime asc");
                 } else {
-                    course = courseService.doQuery("from TrainClassschedule where scheduleAddress='" + roomTerm.getRoomName() + "' and beginTime Between '" + s + " 18:00:00' And '" + sdf.format(date4) + "' order by beginTime asc");
+                    course = courseService.doQuery("from TrainClassschedule where scheduleAddress='" + roomTerm.getRoomName() + "' and beginTime Between '" +sdf.format(date) + "' And '" + sdf.format(date4) + "' order by beginTime asc");
                 }
                 if (course.size() > 0) {
                     //同一教室，同一时间段只可能有一个培训班
@@ -84,12 +86,17 @@ public class TrainCourseAppController {
                             "CONVERT(VARCHAR(36),(isnull((SELECT top 1 a.UP_CARD_ID FROM CARD_T_USEINFO a where a.USER_ID=TRAIN_T_CLASSTRAINEE.CLASS_TRAINEE_ID order by a.CREATE_TIME desc),''0''))) AS cardNo " +
                             " FROM dbo.TRAIN_T_CLASSTRAINEE WHERE CLASS_ID=''{0}''",classId);
                     volist = classService.doQuerySqlObject(sql, VoTrainClasstrainee.class);
-                    TrainCheckrule checkrule = ruleService.get(classInfo.getCheckruleId());
-
                     for (TrainClassschedule c : course) {
                         c.setList(volist);
                     }
+
+                    TrainCheckrule checkrule = ruleService.get(classInfo.getCheckruleId());
                     tca.setCheckrule(checkrule);
+
+                    sql = MessageFormat.format("SELECT ATTACH_NAME AS attachName,ATTACH_URL AS attachUrl FROM dbo.BASE_T_ATTACHMENT WHERE ENTITY_NAME=''TrainClass'' AND RECORD_ID=''{0}''", classId);
+                    List<CommAttachment> attachmentList = classService.doQuerySqlObject(sql, CommAttachment.class);
+                    tca.setAttachment(attachmentList);
+
                 } else {
                     tca.setCode(false);
                     tca.setMessage("数据异常调用失败,没有对应时间的课程");

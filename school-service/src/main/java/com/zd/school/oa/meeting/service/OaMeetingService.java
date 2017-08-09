@@ -71,4 +71,22 @@ public interface OaMeetingService extends BaseService<OaMeeting> {
 	 */
 	public OaMeeting doAddEntity(OaMeeting entity, SysUser currentUser);
 
+    /**
+     * 增加新的参会人员
+     * @param ids 要增加参会人员的会议Id
+     * @param userId 要增加的人员Id,多人用英文逗号隔开
+     * @param userName 要增加的人员姓名,多人用英文逗号隔开
+     * @param currentUser 当前操作人员
+     * @return
+     */
+	public  Boolean doAddMeetingUser(String ids,String userId,String userName,SysUser currentUser);
+
+    /**
+     * 删除指定的参会人员
+     * @param ids 要删除参会人员的会议
+     * @param userId 要删除参会人员的Id，多人用英文逗号隔开
+     * @param currentUser 当前操作人员
+     * @return
+     */
+    public Boolean doDeleteMeetingUser(String ids, String userId, SysUser currentUser);
 }

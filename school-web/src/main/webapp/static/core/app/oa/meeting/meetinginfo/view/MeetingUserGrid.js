@@ -17,8 +17,8 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
 	extParams: {
 	},
     tbar: [],
-    panelTopBar:false,
-/*    panelTopBar:{
+    //panelTopBar:false,
+    panelTopBar:{
         xtype:'toolbar',
         items: [{
             xtype: 'button',
@@ -37,7 +37,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
             html:'快速搜索：'
         },{
             xtype:'textfield',
-            name:'courseName',
+            name:'xm',
             funCode:'girdFastSearchText',
             isNotForm:true,   //由于文本框重写了baseform下面的funcode值，所以使用这个属性，防止重写这里设定的fundcode值。
             emptyText: '请输入姓名'
@@ -47,7 +47,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
             ref: 'gridFastSearchBtn',
             iconCls: 'x-fa fa-search'
         }]
-    },*/
+    },
     panelBottomBar:false,
 	columns: { 
         defaults:{
@@ -71,11 +71,43 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
 		}, {
 			text: "部门",
 			dataIndex: "deptName",
-			width:100
+			width:150
 		}, {
             text: "岗位",
             dataIndex: "jobName",
             width:100
+        }, {
+            text: "签到时间",
+            dataIndex: "incardTime",
+            width: 100,
+            renderer: function (value, metaData) {
+                var title = "签到时间";
+                if (Ext.isEmpty(value))
+                    return value;
+                else {
+                    var date = value.replace(new RegExp(/-/gm), "/");
+                    var ss = Ext.Date.format(new Date(date), 'Y-m-d  H:i:s');
+                    var html = ss;
+                    metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                    return ss;
+                }
+            }
+        }, {
+            text: "签退时间",
+            dataIndex: "outcardTime",
+            width: 100,
+            renderer: function (value, metaData) {
+                var title = "签退时间";
+                if (Ext.isEmpty(value))
+                    return value;
+                else {
+                    var date = value.replace(new RegExp(/-/gm), "/");
+                    var ss = Ext.Date.format(new Date(date), 'Y-m-d  H:i:s');
+                    var html = ss;
+                    metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                    return ss;
+                }
+            }
         }, {
             text: "考勤结果",
             dataIndex: "attendResult",

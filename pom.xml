@@ -322,7 +322,13 @@
 		    <groupId>com.belerweb</groupId>
 		    <artifactId>pinyin4j</artifactId>
 		    <version>2.5.0</version>
-		</dependency>		
+		</dependency>
+        <!--图片压缩依赖包-->
+        <dependency>
+            <groupId>org.im4java</groupId>
+            <artifactId>im4java</artifactId>
+            <version>1.4.0</version>
+        </dependency>
 	</dependencies>
 	<modules>
 		<module>school-model</module>

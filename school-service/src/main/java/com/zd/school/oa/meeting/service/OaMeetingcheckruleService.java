@@ -70,4 +70,19 @@ public interface OaMeetingcheckruleService extends BaseService<OaMeetingcheckrul
 	 * @return
 	 */
 	public OaMeetingcheckrule doAddEntity(OaMeetingcheckrule entity, SysUser currentUser);
+
+    /**
+     * 获取考勤规则列表
+     * @param start
+     *            查询的起始记录数
+     * @param limit
+     *            每页的记录数
+     * @param sort
+     *            排序参数
+     * @param filter
+     *            查询过滤参数
+     * @param whereSql 附加过滤条件
+     * @return
+     */
+    public QueryResult<OaMeetingcheckrule> list(Integer start, Integer limit, String sort, String filter, String whereSql);
 }

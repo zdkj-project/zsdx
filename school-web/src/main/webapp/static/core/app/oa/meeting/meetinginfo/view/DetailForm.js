@@ -32,7 +32,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             emptyText: "请输入会议主题",
             maxLength: 50,
             maxLengthText: "最多50个字符,汉字占2个字符",
-        },{
+        }, {
             beforeLabelTextTpl: comm.get("required"),
             allowBlank: false,
             blankText: "会议名称不能为空",
@@ -61,12 +61,54 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
         }, {
             beforeLabelTextTpl: comm.get("required"),
             fieldLabel: "是否考勤",
-            columnWidth: 0.49,
+            columnWidth: 0.19,
             name: "needChecking",
             xtype: "checkbox",
             boxLabel: "考勤",
-            inputValue:"1",
-            checked: true
+            inputValue: "1",
+            checked: true,
+            listeners: {
+                change: function (field, newValue, oldValue) {
+                    var currentForm = field.up("baseform[xtype=meetinginfo.detailform]");
+                    var checkoutFields = currentForm.query("field[ref=checkoutField]");
+                    if (newValue == true) {
+                        for (var i = 0; i < checkoutFields.length; i++) {
+                            checkoutFields[i].setVisible(true);
+                        }
+                    } else {
+                        for (var i = 0; i < checkoutFields.length; i++) {
+                            checkoutFields[i].setVisible(false);
+                        }
+                    }
+                }
+            }
+        }, {
+            fieldLabel: "考勤规则ID",
+            name: "checkruleId",
+            xtype: "textfield",
+            hidden: true
+        }, {
+            ref: 'checkoutField',
+            beforeLabelTextTpl: "",
+            allowBlank: true,
+            blankText: "考勤规则不能为空",
+            columnWidth: 0.3,
+            xtype: "basefuncfield",
+            refController: "meetinginfo.otherController", //该功能主控制器，这里重新指定为当前视图的控制器了
+            funcPanel: "checkrule.mainlayout", //该功能显示的主视图
+            formPanel: "meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
+            funcTitle: "考勤规则选择", //查询窗口的标题
+            configInfo: {
+                width: 1200,
+                height: 650,
+                fieldInfo: "checkruleId~checkruleName,uuid~ruleName",
+                whereSql: " and isDelete='0' and startUsing=1 ",
+                orderSql: " order by createTime DESC ",
+                muiltSelect: false //是否多选
+            },
+            fieldLabel: "考勤规则",
+            emptyText: "请选择考勤规则",
+            name: "checkruleName"
         }]
     }, {
         xtype: "container",
@@ -104,17 +146,17 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             name: "emceeId",
             xtype: "textfield",
             hidden: true
-        },{                   
-            columnWidth: 0.49,      
+        }, {
+            columnWidth: 0.49,
             xtype: "basefuncfield",
-            refController: "meetinginfo.otherController", //该功能主控制器，这里重新指定为当前视图的控制器了
-            funcPanel: "meetinginfo.selectemcee.mainlayout", //该功能显示的主视图
-            formPanel:"meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
+            refController: "pubselect.selectusercontroller",
+            funcPanel: "pubselect.selectuserlayout", //该功能显示的主视图
+            funcGrid: "pubselect.isselectusergrid", //该功能显示的主视图
+            formPanel: "meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
             funcTitle: "主持人选择", //查询窗口的标题
             configInfo: {
-                //width:comm.get("clientWidth")*0.8,
-                width:1000,
-                height:650,
+                width: 1200,
+                height: 800,
                 fieldInfo: "emceeId~emcee,uuid~xm",
                 whereSql: " and isDelete='0' ",
                 orderSql: " order by createTime DESC ",
@@ -128,28 +170,29 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             beforeLabelTextTpl: comm.get("required"),
             allowBlank: false,
             blankText: "会议地点不能为空",
-            columnWidth: 0.49,     
-
+            columnWidth: 0.49,
             xtype: "basefuncfield",
-            refController: "meetinginfo.otherController", //该功能主控制器，这里重新指定为当前视图的控制器了
-            funcPanel: "room.mainlayout", //该功能显示的主视图
-            formPanel:"meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
+            // refController: "meetinginfo.otherController", //该功能主控制器，这里重新指定为当前视图的控制器了
+            refController: "pubselect.selectroomcontroller",
+            funcPanel: "pubselect.selectroomlayout", //该功能显示的主视图
+            funcGrid: "pubselect.isselectroomgrid", //该功能显示的主视图
+            formPanel: "meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
             funcTitle: "会议地点选择", //查询窗口的标题
             configInfo: {
-                width:1200,
-                height:650,
+                width: 1200,
+                height: 800,
                 fieldInfo: "roomId~roomName,uuid~roomName",
                 whereSql: " and isDelete='0' ",
-                orderSql: " order by createTime DESC ",
+                orderSql: " order by areaUpName, areaName,orderIndex asc",
                 muiltSelect: false //是否多选
             },
             fieldLabel: "会议地点",
             emptyText: "请选择会议地点",
             name: "roomName"
-    
+
         }, {
             fieldLabel: "房间ID",
-           // columnWidth: 0.5,
+            // columnWidth: 0.5,
             name: "roomId",
             xtype: "textfield",
             emptyText: "请输入房间ID",
@@ -165,29 +208,28 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             fieldLabel: " 会议人员ID",
             name: "mettingEmpid",
             xtype: "textfield",
-            hidden:true
+            hidden: true
         }, {
-
             columnWidth: 0.49,
             xtype: "basefuncfield",
-            //funcController: "core.systemset.jobinfo.controller.jobinfoController", //该属性现在不需要了
-            funcPanel: "meetinginfo.selectsysuser.mainlayout", //该功能显示的主视图
-            refController:'meetinginfo.otherController',             //指定弹出的window引用的控制器，方便方法重写。 若不需要重写，则不配置此项
-            formPanel:"meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
+            refController: "pubselect.selectusercontroller",
+            funcPanel: "pubselect.selectuserlayout", //该功能显示的主视图
+            funcGrid: "pubselect.isselectusergrid", //该功能显示的主视图
+            formPanel: "meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
             funcTitle: "参会人员", //查询窗口的标题
             configInfo: {
-                width:1200,
-                height:650,
+                width: 1200,
+                height: 800,
                 fieldInfo: "mettingEmpid~mettingEmpname,uuid~xm",
                 whereSql: " and isDelete='0' ",
-                orderSql: "",
+                orderSql: " order by createTime DESC ",
                 muiltSelect: true //是否多选
             },
             fieldLabel: '参会人员',
             name: "mettingEmpname",
-            allowBlank: true,
+            allowBlank: true
         }]
-    },{
+    }, {
         xtype: "container",
         layout: "column",
         labelAlign: "right",
@@ -198,7 +240,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             xtype: "ueditor",
             height: 200,
             listeners: {
-                'change': function() {
+                'change': function () {
                     var me = this;
                     me.isChanged = true;
                 }

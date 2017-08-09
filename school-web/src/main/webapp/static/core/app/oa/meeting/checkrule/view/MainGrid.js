@@ -149,6 +149,13 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
                         view: view.grid,
                         record: rec
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("HYKQMANAGER") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             }, {
                 //iconCls: 'x-fa fa-file-text',
@@ -175,6 +182,13 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
                         view: view.grid,
                         record: rec
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("HYKQMANAGER") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             }]
         }]

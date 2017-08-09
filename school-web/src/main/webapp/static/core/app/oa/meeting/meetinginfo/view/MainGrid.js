@@ -134,6 +134,13 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
                         record: rec,
                         cmd:"edit"
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("HYKQMANAGER") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             },{
                 text:'参会人员',

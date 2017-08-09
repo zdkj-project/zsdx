@@ -5,7 +5,9 @@ import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
 import com.zd.school.oa.meeting.dao.OaMeetingDao;
 import com.zd.school.oa.meeting.model.OaMeeting;
+import com.zd.school.oa.meeting.model.OaMeetingemp;
 import com.zd.school.oa.meeting.service.OaMeetingService;
+import com.zd.school.oa.meeting.service.OaMeetingempService;
 import com.zd.school.plartform.system.model.SysUser;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,9 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
     }
 	private static Logger logger = Logger.getLogger(OaMeetingServiceImpl.class);
 
+    @Resource
+    private OaMeetingempService meetingempService;
+
 	@Override
 	public QueryResult<OaMeeting> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
         QueryResult<OaMeeting> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
@@ -68,7 +73,35 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 		}
 		return delResult;
 	}
-	/**
+
+    @Override
+    public Boolean doDeleteMeetingUser(String ids, String userId, SysUser currentUser) {
+	    String[] userIds = userId.split(",");
+        meetingempService.deleteByPK(userIds);
+        return true;
+    }
+
+    @Override
+    public Boolean doAddMeetingUser(String ids, String userId, String userName,SysUser currentUser) {
+        String[] userIds = userId.split(",");
+        String[] userNames = userName.split(",");
+        OaMeeting meeting = this.get(ids);
+        OaMeetingemp meetingemp = null;
+        for (int i = 0; i < userIds.length; i++) {
+            meetingemp = new OaMeetingemp();
+            meetingemp.setBeginTime(meeting.getBeginTime());
+            meetingemp.setEndTime(meeting.getEndTime());
+            meetingemp.setEmployeeId(userIds[i]);
+            meetingemp.setXm(userNames[i]);
+            meetingemp.setMeetingId(ids);
+            meetingemp.setCreateUser(currentUser.getUuid());
+            meetingemp.setUpdateUser(currentUser.getUuid());
+            meetingempService.merge(meetingemp);
+        }
+        return true;
+    }
+
+    /**
 	 * 根据传入的实体对象更新数据库中相应的数据
 	 * 
 	 * @param entity

@@ -12,6 +12,21 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
     },
     control: {
         /**
+         * grid加载后根据权限控制按钮的显示
+         */
+        "basegrid[xtype=meetinginfo.maingrid]": {
+            afterrender: function (grid, eOpts) {
+                var btnAdd = grid.down("button[ref=gridExport]");
+                var btnDelete = grid.down("button[ref=sync]");
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("HYKQMANAGER") == -1) {
+                    btnAdd.setHidden(true);
+                    btnDelete.setHidden(true);
+                }
+            }
+        },
+
+        /**
          * 从OA同步会议按钮事件
          */
         "panel[xtype=meetinginfo.maingrid] button[ref=sync]": {
@@ -61,16 +76,6 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                         }, 1000);    //延迟1秒执行
                     }
                 });
-                /*                var resObj = this.ajax({
-                                    url: "/meetingsync" + "/meeting"
-                                });
-                                if (resObj.success) {
-                                    this.msgbox("同步成功!");
-                                    btn.up("basegrid").getStore().load();
-                                } else {
-                                    //self.msgbox("同步成功!");
-                                    this.msgbox("同步失败！");
-                                }*/
                 return false;
             }
         },
@@ -261,7 +266,8 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                 break;
         }
         var popFunData = Ext.apply(funData, {
-            grid: baseGrid
+            grid: baseGrid,
+            uuid:recordData.uuid
         });
         var tabItem = tabPanel.getComponent(tabItemId);
         if (!tabItem) {
@@ -295,14 +301,15 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
 
                 tabItem.add(item);
                 //根据需要初始化详情页面数据
+                var filter="[{'type':'string','value':'"+insertObj.uuid+"','field':'meetingId','comparison':'='}]";
                 switch (cmd) {
                     case "edit":
                         var objDetailForm = item.down("baseform[funCode=" + detCode + "]");
                         var formDetailObj = objDetailForm.getForm();
                         self.setFormValue(formDetailObj, insertObj);
+                        formDetailObj.findField("mettingEmpname").setVisible(false);
                         break;
                     case "detail":
-                        var detailhtmlpanel = item.down("container[xtype=meetinginfo.DetailPanel]");
                         //处理数据字典的值
                         var ddItem = factory.DDCache.getItemByDDCode("MEETINGCATEGORY");
                         var resultVal = "";
@@ -316,10 +323,25 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                         }
                         recordData.meetingCategory = resultVal;
                         recordData.needChecking = recordData.needChecking == 1 ? "需要考勤" : "不考勤";
-                        detailhtmlpanel.setData(recordData);
+                        var meetingInfoContainer = tabItem.down("container[ref=meetingInfo]");
+                        meetingInfoContainer.setData(recordData);
+                        self.asyncAjax({
+                            url: comm.get('baseUrl') + "/OaMeetingemp/list",
+                            params: {
+                                filter: filter,
+                                page: 1,
+                                start: 0,
+                                limit: 0
+                            },
+                            success: function (response) {
+                                var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                var meetingUserContainer = tabItem.down("container[ref=meetingUsers]");
+                                meetingUserContainer.setData(data);
+                            }
+                        });
                         break;
                     case "meetingEmp":
-                        var filter="[{'type':'string','value':'"+insertObj.uuid+"','field':'meetingId','comparison':'='}]";
+                        //var filter="[{'type':'string','value':'"+insertObj.uuid+"','field':'meetingId','comparison':'='}]";
                         var meetingUserGrid = tabItem.down("basegrid[xtype=meetinginfo.meetingusergrid]");
                         var proxy = meetingUserGrid.getStore().getProxy();
                         proxy.extraParams.filter = filter;

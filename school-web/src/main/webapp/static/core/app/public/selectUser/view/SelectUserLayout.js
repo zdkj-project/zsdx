@@ -1,30 +1,29 @@
 
-Ext.define("core.public.selectuser.view.SelectUserLayout", {
+Ext.define("core.public.selectUser.view.SelectUserLayout", {
     extend: "core.base.view.BasePanel",
     alias: 'widget.pubselect.selectuserlayout',
-    funCode: "selectuser_detail",
-    border: false,
-    //funData用来定义一些常规的参数
+    controller: 'pubselect.selectusercontroller',
+    /** 页面代码定义 */
+    funCode: "selectuser_main",
+    layout:'border',
+    border:false,
     funData: {
-        action: comm.get('baseUrl') + "/sysuser", //请求controller
-        whereSql: "", //表格查询条件
-        orderSql: "", //表格排序条件
-        filter: "", //表格过滤条件
-        pkName: "uuid", //主键
-        //默认的初始值设置
-        defaultObj: {
-        }
+        action: comm.get("baseUrl") + "/sysuser", //请求Action
+        pkName: "uuid"
     },
-    //controller: 'role.OtherController',
-    layout: 'border',
+    /*设置最小宽度，并且自动滚动*/
+    minWidth:1200,
+    scrollable:true,
     items: [{
         xtype:'pubselect.selectusergrid',
-        width:600,
-        region: "west",
+        //width:600,
+        flex:1,
+        region: "center",
         margin:'5'
     }, {
         xtype: "pubselect.isselectusergrid",
-        region: "center",
+        region: "east",
+        width:600,
         margin:'5'
     }]
 })

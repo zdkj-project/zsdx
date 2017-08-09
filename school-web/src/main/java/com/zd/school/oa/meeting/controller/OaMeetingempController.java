@@ -1,30 +1,24 @@
 
 package com.zd.school.oa.meeting.controller;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.zd.core.constant.Constant;
+import com.zd.core.controller.core.FrameWorkController;
+import com.zd.core.model.extjs.QueryResult;
+import com.zd.core.util.ModelUtil;
+import com.zd.core.util.StringUtils;
+import com.zd.school.oa.meeting.model.OaMeeting;
+import com.zd.school.oa.meeting.model.OaMeetingemp;
+import com.zd.school.oa.meeting.service.OaMeetingempService;
+import com.zd.school.plartform.system.model.SysUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.zd.core.constant.Constant;
-import com.zd.core.constant.StatuVeriable;
-import com.zd.core.controller.core.FrameWorkController;
-import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.util.ModelUtil;
-import com.zd.core.util.BeanUtils;
-import com.zd.core.util.StringUtils;
-import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.oa.meeting.model.OaMeetingemp ;
-import com.zd.school.oa.meeting.dao.OaMeetingempDao ;
-import com.zd.school.oa.meeting.service.OaMeetingempService ;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * 
@@ -69,14 +63,13 @@ public class OaMeetingempController extends FrameWorkController<OaMeetingemp> im
     }
 
     /**
-     * 
-      * @Title: doadd
-      * @Description: 增加新实体信息至数据库
-      * @param OaMeetingemp 实体类
-      * @param request
-      * @param response
-      * @return void    返回类型
-      * @throws IOException    抛出异常
+     *
+     * @param entity
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
      */
     @RequestMapping("/doadd")
     public void doAdd(OaMeetingemp entity, HttpServletRequest request, HttpServletResponse response)
@@ -126,15 +119,16 @@ public class OaMeetingempController extends FrameWorkController<OaMeetingemp> im
 			}
         }
     }
+
     /**
-     * @Title: doUpdate
-     * @Description: 编辑指定记录
-     * @param OaMeetingemp
+     *
+     * @param entity
      * @param request
      * @param response
-     * @return void    返回类型
-     * @throws IOException  抛出异常
-    */
+     * @throws IOException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
     @RequestMapping("/doupdate")
     public void doUpdates(OaMeetingemp entity, HttpServletRequest request, HttpServletResponse response)
             throws IOException, IllegalAccessException, InvocationTargetException {
@@ -152,5 +146,28 @@ public class OaMeetingempController extends FrameWorkController<OaMeetingemp> im
 		} catch (Exception e) {
 			writeJSON(response, jsonBuilder.returnFailureJson("'数据修改失败,详情见错误日志'"));
 		}
+    }
+
+    /**
+     * 获取可选择的参加会议人员
+     * @param entity
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @RequestMapping(value = { "/getNotMeetingUserList" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
+            org.springframework.web.bind.annotation.RequestMethod.POST })
+    public void getNotMeetingUserList(@ModelAttribute OaMeeting entity, HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        String strData = ""; // 返回给js的数据
+        Integer start = super.start(request);
+        Integer limit = super.limit(request);
+        String sort = super.sort(request);
+        String filter = super.filter(request);
+        String meetingId = request.getParameter("meetingId");
+        String whereSql = request.getParameter("whereSql");
+        QueryResult<SysUser> qResult = thisService.getNotMeetingUserList(start,limit,sort,filter,whereSql,meetingId);
+        strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
+        writeJSON(response, strData);// 返回数据
     }
 }

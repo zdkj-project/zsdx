@@ -7,12 +7,13 @@ import com.zd.school.build.define.model.BuildRoominfo;
 import com.zd.school.build.define.service.BuildRoominfoService;
 import com.zd.school.oa.doc.model.DocSendcheck;
 import com.zd.school.oa.meeting.model.OaMeeting;
+import com.zd.school.oa.meeting.model.OaMeetingcheckrule;
 import com.zd.school.oa.meeting.model.OaMeetingemp;
 import com.zd.school.oa.meeting.service.OaMeetingService;
+import com.zd.school.oa.meeting.service.OaMeetingcheckruleService;
 import com.zd.school.oa.meeting.service.OaMeetingempService;
 import com.zd.school.plartform.baseset.model.BaseDicitem;
 import com.zd.school.plartform.baseset.service.BaseDicitemService;
-import com.zd.school.plartform.baseset.service.BaseOrgService;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -32,19 +33,24 @@ import java.util.Map;
 @Controller
 @RequestMapping("/meetingsync")
 public class MeetingSyncController extends FrameWorkController<DocSendcheck> implements Constant {
-    @Resource
     //orcl的session工厂
-    private SessionFactory sssssss;
     @Resource
-    private BaseOrgService orgService;
+    private SessionFactory sssssss;
+
     @Resource
     private OaMeetingService meetingService;
+
     @Resource
     private OaMeetingempService empService;
+
     @Resource
     private BuildRoominfoService buildService;
+
     @Resource
     private BaseDicitemService dicitemService;
+
+    @Resource
+    private OaMeetingcheckruleService oaMeetingcheckruleService;
 
     @RequestMapping(value = "meeting")
     public void meeting(HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
@@ -86,6 +92,11 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
         for (BuildRoominfo buildRoominfo : roominfoList) {
             mapRoomInfo.put(buildRoominfo.getRoomName(), buildRoominfo.getUuid());
         }
+        //默认的会议考勤规则
+        String[] rulePropertyName = {"isDelete","startUsing"};
+        Object[] rulpropValue = {0,1};
+        List<OaMeetingcheckrule> ruleList = oaMeetingcheckruleService.queryByProerties(rulePropertyName, rulpropValue);
+        OaMeetingcheckrule checkRule = ruleList.get(0);
         for (Object[] o : list) {
             m = meetingService.get(o[0].toString());
             if (m == null) {
@@ -106,12 +117,9 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
             m.setRoomName(o[6].toString());
             if (mapRoomInfo.get(o[6]) != null)
                 m.setRoomId(mapRoomInfo.get(o[6]));
-/*            build = buildService.getByProerties("roomName", o[6].toString());
-            if (ModelUtil.isNotNull(build)) {
-                m.setRoomId(build.getUuid());
-            }*/
-
             m.setNeedChecking((short) 1);
+            m.setCheckruleId(checkRule.getUuid());
+            m.setCheckruleName(checkRule.getRuleName());
             meetingService.merge(m);
         }
         employee();

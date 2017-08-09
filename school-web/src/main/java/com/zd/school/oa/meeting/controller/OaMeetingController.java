@@ -6,8 +6,8 @@ import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.ImportExcelUtil;
 import com.zd.core.util.ModelUtil;
-import com.zd.core.util.PoiExportExcel;
 import com.zd.core.util.StringUtils;
+import com.zd.core.util.exportMeetingInfo;
 import com.zd.school.build.define.model.BuildRoominfo;
 import com.zd.school.build.define.service.BuildRoominfoService;
 import com.zd.school.excel.FastExcel;
@@ -31,6 +31,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -294,28 +295,22 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
 	 * @throws Exception
 	 */
 	@RequestMapping("/exportMeetingExcel")
-	public void exportRoomExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void exportMeetingExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.getSession().setAttribute("exportTrainClassRoomIsEnd", "0");
 		request.getSession().removeAttribute("exportTrainClassRoomIsState");
-
 		SimpleDateFormat fmtDate = new SimpleDateFormat("yyyy年MM月dd日 HH:mm");
-		// SimpleDateFormat fmtDateWeek = new SimpleDateFormat("yyyy年M月d日 （E）");
-		// SimpleDateFormat fmtTime = new SimpleDateFormat("h:mm");
-
-		
-		
-		Map<String, String> mapMeetingCategory = new HashMap<>(); 
-		String hql1 = " from BaseDicitem where dicCode in ('MEETINGCATEGORY')";
+		//导出涉及到的 数据字典
+		Map<String, String> mapMeetingCategory = new HashMap<>();
+		String hql1 = " from BaseDicitem where dicCode in ('MEETINGCATEGORY','XBM')";
 		List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
 		for (BaseDicitem baseDicitem : listBaseDicItems1) {
-			mapMeetingCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName()); 
+			mapMeetingCategory.put(baseDicitem.getDicCode() + baseDicitem.getItemCode(), baseDicitem.getItemName());
 		}
-		 
 
-		List<Map<String, Object>> allList = new ArrayList<>();
-		Integer[] columnWidth = new Integer[] { 30, 30, 15, 15, 10, 15, 15,20,30,10,40 };
+        String sql = "SELECT XM,xbm,deptName,jobName,incardTime,outcardTime,attendResult,resultDesc FROM OA_V_MEETINGEMP where MEETING_ID=''{0}''";
+        List<Map<String, Object>> allList = new ArrayList<>();
+		Integer[] columnWidth = new Integer[] { 10, 10, 10, 30, 10, 15, 15,20,30};
 
-		
 		// --------.处理信息，并组装表格数据--------------------
 		String ids = request.getParameter("ids"); 
 		List<OaMeeting> list = null;
@@ -323,40 +318,43 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
 		if (StringUtils.isNotEmpty(ids)) {
 			hql += " and uuid in ('" + ids.replace(",", "','") + "')";
 		}
-		list = thisService.doQuery(hql);		
-		
+		list = thisService.doQuery(hql);
+
 		// 处理导出的基本数据
-		List<Map<String, String>> mapList = new ArrayList<>();
-		Map<String, String> map = null;
+		List<Map<String, Object>> mapList = new ArrayList<>();
+        List<Map<String, Object>> mapMeetingUserList = new ArrayList<>();
+		Map<String, Object> map = null;
 		for (OaMeeting oaMeeting : list) {
 			map = new LinkedHashMap<>();
 			map.put("meetingTitle",oaMeeting.getMeetingTitle());
 			map.put("meetingName",oaMeeting.getMeetingName());
-			map.put("meetingCategory",mapMeetingCategory.get(oaMeeting.getMeetingCategory()));
+			map.put("meetingCategory",mapMeetingCategory.get("MEETINGCATEGORY"+oaMeeting.getMeetingCategory()));
 			map.put("emcee",oaMeeting.getEmcee());
 			map.put("needChecking",oaMeeting.getNeedChecking()==1?"需要":"不需要");
 			map.put("beginTime",fmtDate.format(oaMeeting.getBeginTime()));
 			map.put("endTime",fmtDate.format(oaMeeting.getEndTime()));
 			//map.put("meetingContent",oaMeeting.getMeetingContent());
 			map.put("roomName",oaMeeting.getRoomName());
-			map.put("mettingEmpname",oaMeeting.getMettingEmpname());
-			Short state= oaMeeting.getMeetingState();
-			map.put("meetingState",(state==null || state==0)?"未开始":state==1?"进行中":"已完成");
-			map.put("attendResult",oaMeeting.getAttendResult());
+            mapMeetingUserList = thisService.getForValuesToSql(MessageFormat.format(sql, oaMeeting.getUuid()));
+            map.put("meetingUser", mapMeetingUserList);
+           // mapMeetingUserList = meetingempService.qu
+			//map.put("mettingEmpname",oaMeeting.getMettingEmpname());
+			//Short state= oaMeeting.getMeetingState();
+			//map.put("meetingState",(state==null || state==0)?"未开始":state==1?"进行中":"已完成");
+			//map.put("attendResult",oaMeeting.getAttendResult());
 			
 			mapList.add(map);
 		}
 		Map<String, Object> allMap = new LinkedHashMap<>();
 		allMap.put("data", mapList);
-		allMap.put("title", "会议考勤信息表");
-		allMap.put("head", new String[] { "会议主题", "会议名称", "会议类型", "主持人", "是否考勤", "开始时间", "结束时间",  "会议地点", "参会人员", "会议状态","考勤结果" }); // 规定名字相同的，设定为合并
+		allMap.put("head", new String[] { "序号", "姓名", "性别", "部门", "岗位", "签到时间", "签退时间",  "考勤结果", "考勤说明 "});
+        allMap.put("headAlignment", new Integer[] { 1, 1, 1, 1, 1, 1, 1, 1,1}); // 0代表居中，1代表居左，2代表居右
 		allMap.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
-		allMap.put("columnAlignment", new Integer[] { 1, 1, 0, 0, 0, 0, 0, 1,1,0,1 }); // 0代表居中，1代表居左，2代表居右
-		allMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+		allMap.put("columnAlignment", new Integer[] { 1, 1, 1, 1, 1, 1, 1, 1,1}); // 0代表居中，1代表居左，2代表居右
 		allList.add(allMap);
 
 		// 在导出方法中进行解析
-		boolean result = PoiExportExcel.exportExcel(response, "会议考勤信息表", "会议考勤信息", allList);
+		boolean result = exportMeetingInfo.exportMeetingInfoExcel(response, "会议考勤信息表", "会议考勤信息", allList);
 		if (result == true) {
 			request.getSession().setAttribute("exportMeetingIsEnd", "1");
 		} else {
@@ -404,6 +402,53 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
         QueryResult<OaMeetingemp> qResult = meetingempService.doPaginationQuery(0, 0, sort, filter, true);
         strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
         writeJSON(response, strData);// 返回数据
+    }
+
+    @RequestMapping("/doAddMeetingUser")
+    public void doAddMeetingUser(OaMeeting entity, HttpServletRequest request, HttpServletResponse response)
+            throws IOException, IllegalAccessException, InvocationTargetException {
+        // 入库前检查代码
+        String ids = request.getParameter("ids");
+        String userId = request.getParameter("userId");
+        String userName = request.getParameter("userName");
+        if(StringUtils.isEmpty(ids) || StringUtils.isEmpty(userId) || StringUtils.isEmpty(userName)){
+            writeJSON(response, jsonBuilder.returnFailureJson("'没有传入要设置的参会人员参数'"));
+            return;
+        }
+        // 获取当前的操作用户
+        SysUser currentUser = getCurrentSysUser();
+        try {
+            Boolean bl = thisService.doAddMeetingUser(ids, userId, userName, currentUser);
+            if (bl)
+                writeJSON(response, jsonBuilder.returnSuccessJson("'添加参会人员成功'"));
+            else
+                writeJSON(response, jsonBuilder.returnFailureJson("'添加参会人员失败,详情见错误日志'"));
+        } catch (Exception e) {
+            writeJSON(response, jsonBuilder.returnFailureJson("'添加参会人员失败,详情见错误日志'"));
+        }
+    }
+
+    @RequestMapping("/doDeleteMeetingUser")
+    public void doDeleteMeetingUser(OaMeeting entity, HttpServletRequest request, HttpServletResponse response)
+            throws IOException, IllegalAccessException, InvocationTargetException {
+        // 入库前检查代码
+        String ids = request.getParameter("ids");
+        String userId = request.getParameter("userId");
+        if(StringUtils.isEmpty(ids) || StringUtils.isEmpty(userId)){
+            writeJSON(response, jsonBuilder.returnFailureJson("'没有传入要删除的参会人员参数'"));
+            return;
+        }
+        // 获取当前的操作用户
+        SysUser currentUser = getCurrentSysUser();
+        try {
+            Boolean bl = thisService.doDeleteMeetingUser(ids, userId, currentUser);
+            if (bl)
+                writeJSON(response, jsonBuilder.returnSuccessJson("'删除参会人员成功'"));
+            else
+                writeJSON(response, jsonBuilder.returnFailureJson("'删除参会人员失败,详情见错误日志'"));
+        } catch (Exception e) {
+            writeJSON(response, jsonBuilder.returnFailureJson("'删除参会人员失败,详情见错误日志'"));
+        }
     }
 
 }

@@ -66,7 +66,9 @@ public class OaMeetingcheckruleController extends FrameWorkController<OaMeetingc
 		Integer limit = super.limit(request);
 		String sort = super.sort(request);
 		String filter = super.filter(request);
-        QueryResult<OaMeetingcheckrule> qResult = thisService.list(start, limit, sort, filter,true);
+        String whereSql = super.whereSql(request);
+        QueryResult<OaMeetingcheckrule> qResult = thisService.list(start, limit, sort, filter,whereSql);
+//        QueryResult<OaMeetingcheckrule> qResult = thisService.list(start, limit, sort, filter,true);
         strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
         writeJSON(response, strData);// 返回数据
     }

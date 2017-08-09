@@ -17,12 +17,9 @@ Ext.define("core.oa.meeting.meetinginfo.controller.OtherController", {
     },
     /** 该视图内的组件事件注册 */
     control: {
-        "baseformtab button[ref=formContinue]": {
-            beforeclick: function(btn) {
-                console.log(btn);
-            }
-        },
-
+        /**
+         * 详细页面提交按钮事件
+         */
         "baseformtab button[ref=formSave]": {
             beforeclick: function (btn) {
                 var self = this;
@@ -50,6 +47,11 @@ Ext.define("core.oa.meeting.meetinginfo.controller.OtherController", {
 
                 //把checkbox的值转换为数字 ；    暂时测试时设置，
                 params.needChecking=params.needChecking==true?1:0;
+                var checkruleName = params.checkruleName;
+                if (params.needChecking==1&&Ext.isEmpty(checkruleName)){
+                    self.Error("请选择考勤规则");
+                    return false;
+                }
                 //params.needSynctrainee=params.needSynctrainee==true?1:0;
 
                 //判断当前是保存还是修改操作
@@ -108,104 +110,6 @@ Ext.define("core.oa.meeting.meetinginfo.controller.OtherController", {
                 return false;
             }
         },
-
-        "baseformtab button[ref=formClose]": {
-            beforeclick: function(btn) {
-               // console.log(btn);
-            }
-        },
-
-/*        "window[funcPanel=room.mainlayout] button[ref=ssOkBtn]":{
-            beforeclick: function(btn) {               
-                var self=this;
-
-                var win=btn.up("window[funcPanel=room.mainlayout]");
-                var baseGrid=win.down("grid[xtype=room.RoomGrid]");                       
-
-                var tabPanel=Ext.ComponentQuery.query('tabpanel[xtype=app-main]')[0];
-                var tabItem=tabPanel.getActiveTab();
-                var formpanel=tabItem.down('form[xtype=' + win.formPanel + ']');
-                                    
-                var records = baseGrid.getSelectionModel().getSelection();
-                if (records.length != 1) {
-                    self.msgbox("请选择一个场地！");
-                    return false;
-                }
-
-                var funCode = baseGrid.funCode;
-                var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
-                //得到配置信息
-                var funData = basePanel.funData;
-                var pkName = funData.pkName;
-            
-                var roomId=records[0].get(pkName);
-                var areaUpName=records[0].get("areaUpName");
-                var areaName=records[0].get("areaName");
-                var roomName=records[0].get("roomName");
-                
-                formpanel.getForm().findField("roomId").setValue(roomId);
-                formpanel.getForm().findField("roomName").setValue(roomName);
-
-                win.close();
-                return false;
-            }
-        },*/
-
-        //选择班主任，界面加载事件
-        "window[funcPanel=meetinginfo.selectsysuser.mainlayout]":{
-            afterrender:function(win){
-
-                var tabPanel=Ext.ComponentQuery.query('tabpanel[xtype=app-main]')[0];
-                var tabItem=tabPanel.getActiveTab();
-                var formpanel=tabItem.down('form[xtype=' + win.formPanel + ']');
-                //var formpanel = Ext.ComponentQuery.query('form[xtype=' + win.formPanel + ']')[0];
-                var ids = formpanel.getForm().findField("mettingEmpid").getValue();
-                var grid = win.down("grid[xtype=meetinginfo.selectsysuser.isselectusergrid]");
-                var store = grid.getStore();
-                var proxy = store.getProxy();
-                proxy.extraParams = {
-                    ids: ids
-                };
-                store.load();
-                return false;
-            }
-        },
-
-        //选择班主任，勾选后提交事件
-        "window[funcPanel=meetinginfo.selectsysuser.mainlayout] button[ref=ssOkBtn]":{
-            beforeclick: function(btn) {
-                
-                var win=btn.up("window[funcPanel=meetinginfo.selectsysuser.mainlayout]");
-                var grid=win.down("grid[xtype=meetinginfo.selectsysuser.isselectusergrid]");
-                var baseGrid=win.down("basegrid");
-
-                var tabPanel=Ext.ComponentQuery.query('tabpanel[xtype=app-main]')[0];
-                var tabItem=tabPanel.getActiveTab();
-                var formpanel=tabItem.down('form[xtype=' + win.formPanel + ']');
-                //var formpanel=Ext.ComponentQuery.query('form[xtype='+win.formPanel+']')[0];
-                
-                //var dataField=win.dataField;
-                var store=grid.getStore();
-                var nameArray=new Array();
-                var idArray=new Array();                            
-
-                for(var i=0;i<store.getCount();i++){
-                    if(idArray.indexOf(store.getAt(i).get("uuid"))==-1||store.getAt(i).get("uuid")=="null"){
-                        nameArray.push(store.getAt(i).get("xm"));
-                        idArray.push(store.getAt(i).get("uuid")?store.getAt(i).get("uuid"):" ");  //为空的数据，要使用一个空格号隔开，否则后台split分割有误                        
-                    }                        
-                }
-                            
-                formpanel.getForm().findField("mettingEmpid").setValue(idArray.join(","));
-                formpanel.getForm().findField("mettingEmpname").setValue(nameArray.join(","));                  
-
-                //baseGrid.getStore().getProxy().extraParams.filter="[{'type':'string','comparison':'','value':'学生','field':'jobName'}]";
-                baseGrid.getStore().getProxy().extraParams.filter="[]";
-                win.close();
-                return false;
-            }
-        },
-
         /**
          * 导入会议的保存按钮
          */
@@ -253,7 +157,69 @@ Ext.define("core.oa.meeting.meetinginfo.controller.OtherController", {
                 win.close();
                 return false;
             }
+        },
+
+        /**
+         * 参会人员选择后确定按钮事件
+         */
+        "mtfuncwindow[funcPanel=pubselect.selectuserlayout] button[ref=ssOkBtn]": {
+            beforeclick: function (btn) {
+                var self = this ;
+                var win = btn.up("mtfuncwindow");
+                var funcPanel = win.funcPanel;
+                var winFunData = win.funData;
+                var baseGrid = winFunData.userGird;
+                var basePanel = win.down("panel[xtype=" + funcPanel + "]");
+                var selectGrid = basePanel.down("grid[xtype=pubselect.isselectusergrid]");
+                var records = selectGrid.getStore().data;
+                var recordLen = records.length;
+                if (recordLen==0){
+                    self.Warning("没有选择参会人员，请重新选择！");
+                    return false;
+                }
+                var userIds = new Array();
+                var userNames = new Array();
+                for (var i = 0; i < recordLen; i++) {
+                    var r = records.getAt(i);
+                    userIds.push(r.get("uuid"));
+                    userNames.push(r.get("xm"));
+                }
+                var title = "确定添加这些参会人员吗？";
+                Ext.Msg.confirm('提示', title, function (btnOper, text) {
+                    if (btnOper == 'yes') {
+                        //发送ajax请求
+                        var resObj = self.ajax({
+                            url: winFunData.action + "/doAddMeetingUser",
+                            params: {
+                                ids: winFunData.uuid,
+                                userId: userIds.join(","),
+                                userName:userNames.join(",")
+                            }
+                        });
+                        if (resObj.success) {
+                            var store = baseGrid.getStore();
+                            store.load();
+                            self.msgbox(resObj.obj);
+                            win.close();
+                        } else {
+                            self.Error(resObj.obj);
+                        }
+                    }
+                });
+                return false;
+            }
+        },
+        /**
+         * 参会人员选择取消按钮事件
+         */
+        "mtfuncwindow[funcPanel=pubselect.selectuserlayout] button[ref=ssCancelBtn]": {
+            beforeclick: function (btn) {
+                var self = this ;
+                var win = btn.up("mtfuncwindow");
+                if (win)
+                    win.close();
+                return false;
+            }
         }
-    
-    }   
+    }
 });

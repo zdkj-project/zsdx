@@ -1,4 +1,4 @@
-Ext.define("ccore.public.selectuser.view.IsSelectUserGrid", {
+Ext.define("ccore.public.selectUser.view.IsSelectUserGrid", {
     extend: "Ext.grid.Panel",
     alias: "widget.pubselect.isselectusergrid",
     ref: 'isselectusergrid',
@@ -23,10 +23,6 @@ Ext.define("ccore.public.selectuser.view.IsSelectUserGrid", {
         text: '序号',
         align: 'center'
     }, {
-        width: 120,
-        text: "用户名",
-        dataIndex: "userName"
-    }, {
         width: 70,
         text: "姓名",
         dataIndex: "xm"
@@ -34,47 +30,36 @@ Ext.define("ccore.public.selectuser.view.IsSelectUserGrid", {
         width: 50,
         text: "性别",
         dataIndex: "xbm",
-        columnType: "basecombobox",
-        ddCode: "XBM"
+        renderer: function(value){
+            return value == 1 ? "男" : "女";
+        }
     }, {
-        width: 150,
+        flex:1,
         text: "部门",
         dataIndex: "deptName"
     }, {
-        width: 110,
+        width: 120,
         text: "岗位",
         dataIndex: "jobName"
-    }, {
-        text: "编制",
-        dataIndex: "zxxbzlb",
-        ddCode: "ZXXBZLB",
-        columnType: "basecombobox",
-        minWidth: 100,
-        flex: 1,
-        align: 'left'
     }],
     viewConfig: {
         plugins: {
             ptype: 'gridviewdragdrop',
             ddGroup: "DrapDropGroup"
-            //dragGroup: 'secondGridDDGroup',
-            //dropGroup: 'firstGridDDGroup'
         },
         listeners: {
             drop: function (node, data, dropRec, dropPosition) {
-                //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-                //Ext.example.msg("Drag from right to left", 'Dropped ' + data.records[0].get('name') + dropOn);
             },
             beforeitemdblclick: function (grid, record, item, index, e, eOpts) {
                 IsSelectStore = grid.getStore();
                 IsSelectStore.removeAt(index);
 
-                var basePanel = grid.up("panel[xtype=role.selectuserlayout]");
-                var selectGrid = basePanel.down("panel[xtype=role.selectusergrid]");
+                var basePanel = grid.up("panel[xtype=pubselect.selectuserlayout]");
+                var selectGrid = basePanel.down("panel[xtype=pubselect.selectusergrid]");
                 var selectStore = selectGrid.getStore();
                 selectStore.insert(0, [record]);
                 return false;
             }
         }
-    },
+    }
 });
