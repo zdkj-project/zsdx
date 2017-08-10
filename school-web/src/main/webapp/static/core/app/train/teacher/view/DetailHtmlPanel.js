@@ -63,7 +63,7 @@ Ext.define("core.train.teacher.view.DetailHtmlPanel", {
                         '</div>',
                         '<div class="wrap" style="font-size:14px">',
                             '<strong>教师基本信息：</strong>',
-                            '<span>{teaDesc}</span>'
+                            '<span>{teaDesc}</span>',
                         '</div>',
                         '<div class="wrap" style="font-size:14px">',
                             '<strong>主要研究方向：</strong>',

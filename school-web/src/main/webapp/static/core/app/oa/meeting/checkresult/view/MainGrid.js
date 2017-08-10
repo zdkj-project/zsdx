@@ -79,7 +79,7 @@ Ext.define("core.oa.meeting.checkresult.view.MainGrid", {
             columnType: "basecombobox", //列类型
             ddCode: "MEETINGCATEGORY" //字典代码
         }, {
-            width: 120,
+            width: 150,
             text: "会议地点",
             dataIndex: "roomName",
             align: 'left'
@@ -109,15 +109,22 @@ Ext.define("core.oa.meeting.checkresult.view.MainGrid", {
                 metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return ss;
             }
-        }, {
-            width: 150,
+        },{
+            width: 130,
             text: "更新时间",
             dataIndex: "updateTime",
-            align: 'left'
+            renderer: function(value, metaData) {
+                if(value){
+                    var date = value.replace(new RegExp(/-/gm), "/");    
+                    var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i');    
+                    return ss;
+                } 
+                return value;            
+            }
         }, {
             xtype: 'actiontextcolumn',
             text: "操作",
-            width: 150,
+            width: 100,
             fixed: true,
             align: 'center',
             items: [{
