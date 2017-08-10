@@ -12,7 +12,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
     },
     control: {
         /**
-         * grid加载后根据权限控制按钮的显示
+         * 会议列表grid加载后根据权限控制按钮的显示
          */
         "basegrid[xtype=meetinginfo.maingrid]": {
             afterrender: function (grid, eOpts) {
@@ -25,7 +25,6 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                 }
             }
         },
-
         /**
          * 从OA同步会议按钮事件
          */

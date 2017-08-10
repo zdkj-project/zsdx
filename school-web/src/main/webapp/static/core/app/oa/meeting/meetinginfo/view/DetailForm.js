@@ -222,7 +222,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
                 height: 800,
                 fieldInfo: "mettingEmpid~mettingEmpname,uuid~xm",
                 whereSql: " and isDelete='0' ",
-                orderSql: " order by createTime DESC ",
+                orderSql: " order by deptName,jobName,xm DESC ",
                 muiltSelect: true //是否多选
             },
             fieldLabel: '参会人员',

@@ -77,7 +77,7 @@ public class SwapAppController {
 						t.setXbm(tt.getXbm());
 						t.setZp(tt.getZp());
 						t.setWorkUnit(tt.getWorkUnit());
-						t.setMobilePhone("1");
+						t.setMobilePhone(tt.getMobilePhone());
 						t.setIsDelete(tt.getIsDelete());
 						trainService.merge(t);
 					}else{
@@ -88,7 +88,7 @@ public class SwapAppController {
 						t.setZp(tt.getZp());
 						t.setSfzjh(tt.getSfzjh());
 						t.setWorkUnit(tt.getWorkUnit());
-						t.setMobilePhone("1");
+						t.setMobilePhone(tt.getMobilePhone());
 						t.setIsDelete(tt.getIsDelete());
 						trainService.merge(t);
 						
