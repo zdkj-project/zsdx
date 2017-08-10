@@ -84,12 +84,24 @@ Ext.define('core.train.courseeval.view.EvalGrid', {
             minWidth:100,
             text: "班级名称",
             dataIndex: "className",
-            align: 'left'
+            align: 'left',
+            renderer: function (value, metaData) {
+                var title = "班级名称";
+                var html = value;
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                return html;
+            }
         }, {
-            width: 250,
+            width: 120,
             text: "课程名称",
             dataIndex: "courseName",
-            align: 'left'
+            align: 'left',
+            renderer: function (value, metaData) {
+                var title = "课程名称";
+                var html = value;
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                return html;
+            }
         }, {
             width: 100,
             text: "上课日期",

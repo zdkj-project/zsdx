@@ -137,7 +137,49 @@ Ext.define("core.train.coursetype.view.CourseCategoryTree", {
                     } else
                         return null;
                 }
-            }]
+            },
+//            {
+//                text: '上移',
+//                style: 'font-size:12px;',
+//                tooltip: '上移',
+//                ref: 'gridRemove',
+//                handler: function (view, rowIndex, colIndex, item) {
+//                	var rec = view.getStore().getAt(rowIndex);
+//                    this.fireEvent('upRemove', {
+//                        view: view.grid,
+//                        record: rec,
+//                        cmd: "remove"
+//                    });
+//                },
+//                getClass: function (v, metadata, record) {
+//                    var roleKey = comm.get("roleKey");
+//                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("TCMANAGER") == -1){
+//                        return 'x-hidden-display';
+//                    } else
+//                        return null;
+//                }
+//            },{
+//                text: '下移',
+//                style: 'font-size:12px;',
+//                tooltip: '下移',
+//                ref: 'gridRemove',
+//                handler: function (view, rowIndex, colIndex, item) {
+//                	var rec = view.getStore().getAt(rowIndex);
+//                    this.fireEvent('downRemove', {
+//                        view: view.grid,
+//                        record: rec,
+//                        cmd: "remove"
+//                    });
+//                },
+//                getClass: function (v, metadata, record) {
+//                    var roleKey = comm.get("roleKey");
+//                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("TCMANAGER") == -1){
+//                        return 'x-hidden-display';
+//                    } else
+//                        return null;
+//                }
+//            }
+            ]
         }]
     }
     /*    listeners: {

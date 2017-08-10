@@ -17,6 +17,15 @@ Ext.define("core.train.cardcenter.controller.MainController", {
         */
     },
     control: {
+    	"basegrid[xtype=cardcenter.maingrid]": {
+            afterrender: function (grid, eOpts) {
+                var btngridExportExcel = grid.down("button[ref=gridExportExcel]");
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("ZONGWUROLE") == -1) {
+                	btngridExportExcel.setHidden(true);
+                }
+            }
+           },
         /**
          * 导出班级学员发卡绑定模版
          */

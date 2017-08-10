@@ -112,7 +112,7 @@ Ext.define("core.train.creditrule.view.MainGrid", {
         items: [{
             xtype: "rownumberer",
             flex: 0,
-            width: 60,
+            width: 50,
             text: '序号',
             align: 'center'
         }, {
@@ -144,16 +144,18 @@ Ext.define("core.train.creditrule.view.MainGrid", {
                 }
             }  
         },{
-            width: 150,
-            text: "创建时间",
-            dataIndex: "createTime",
-            align:'left',
-        },{
-            width: 150,
+            width: 130,
             text: "更新时间",
             dataIndex: "updateTime",
-            align:'left',
-        }, {
+            renderer: function(value, metaData) {
+                if(value){
+                    var date = value.replace(new RegExp(/-/gm), "/");    
+                    var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i');    
+                    return ss;
+                } 
+                return value;            
+            }
+        },  {
             xtype: 'actiontextcolumn',
             text: "操作",
             align: 'center',
@@ -165,7 +167,8 @@ Ext.define("core.train.creditrule.view.MainGrid", {
                 tooltip: '启用',
                 ref: 'gridStartUsing',
                 getClass :function(v,metadata,record,rowIndex,colIndex,store){
-                    if(record.get("startUsing")==1)
+                	var roleKey = comm.get("roleKey");
+                    if(record.get("startUsing")==1||(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1))
                         return 'x-hidden-display';
                     else
                         return null;
@@ -188,6 +191,13 @@ Ext.define("core.train.creditrule.view.MainGrid", {
                         view: view.grid,
                         record: rec
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             }, {
                 text:'详细',  
@@ -207,7 +217,8 @@ Ext.define("core.train.creditrule.view.MainGrid", {
                 tooltip: '删除',
                 ref: 'gridDelete',
                 getClass :function(v,metadata,record,rowIndex,colIndex,store){
-                    if(record.get("startUsing")==1)
+                	 var roleKey = comm.get("roleKey");
+                    if(record.get("startUsing")==1||(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1))
                         return 'x-hidden-display';
                     else
                         return null;

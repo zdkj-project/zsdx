@@ -39,7 +39,7 @@ Ext.define("core.train.alleval.view.MainLayout", {
     items: [{
         xtype: "alleval.maingrid",
         region: "west",
-        width: 440,
+        width: 410,
         //height:300,
         split: true,
         style: {

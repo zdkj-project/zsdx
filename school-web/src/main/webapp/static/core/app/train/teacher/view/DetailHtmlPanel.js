@@ -57,7 +57,7 @@ Ext.define("core.train.teacher.view.DetailHtmlPanel", {
                         '<li title={workUnits}>工作单位：{workUnits}</li>',
                         '<div style="clear:both"></div>',
                     '</ul>',
-                     '<div class="trainTeacher_desc">',
+                    '<div class="trainTeacher_desc">',
                         '<div class="wrap" style="margin-top: 10px;color: #c3190c;min-height:20px;">',
                             '<strong>个人简介</strong>',
                         '</div>',

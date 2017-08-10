@@ -20,6 +20,11 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
        'basepanel[xtype=dinnerregister.mainlayout]':{
             render:function(cpt){
                 var form=cpt.down("baseform[xtype=dinnerregister.mainform]");
+                var btngridExport = form.down("button[ref=gridExport]");
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("TCMANAGER") == -1) {
+                	btngridExport.setHidden(true);
+                }
                 var params={
                     start:0,
                     limit:-1,
@@ -30,6 +35,16 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
             }
        },
 
+       "fieldset[xtype=dinnerregister.mainformfieldset]": {
+           afterrender: function (fieldset, eOpts) {
+               var btnsubmitRegister = fieldset.down("button[ref=submitRegister]");
+               var roleKey = comm.get("roleKey");
+               if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("TCMANAGER") == -1) {
+            	   btnsubmitRegister.setHidden(true);
+               }
+           }
+       },
+       
        'fieldset[xtype=dinnerregister.mainformfieldset] button[ref=submitRegister]':{
             beforeclick:function(btn){
 

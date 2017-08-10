@@ -12,7 +12,24 @@ Ext.define("core.train.courseeval.controller.MainController", {
     init: function () {
     },
     control: {
+        "basegrid[xtype=courseeval.evalgrid]": {
+            afterrender: function (grid, eOpts) {
+                var btngridSumEval = grid.down("button[ref=gridSumEval_Tab]");
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PXPJMANGER") == -1) {
+                	btngridSumEval.setHidden(true);
+                }
+            }
+        },
+    	
         "basegrid[xtype=courseeval.maingrid]": {
+        	afterrender: function (grid, eOpts) {
+                var btnAdd = grid.down("button[ref=gridAdd_Tab]");
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PXPJMANGER") == -1) {
+                    btnAdd.setHidden(true);
+                }
+            },
             beforeitemclick: function (grid, record, item, index, e, eOpts) {
                 var self = this;
                 var mainLayout = grid.up("panel[xtype=courseeval.mainlayout]");

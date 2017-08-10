@@ -11,6 +11,18 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
     init: function () {
     },
     control: {
+    	"basegrid[xtype=meetinginfo.maingrid]": {
+            afterrender: function (grid, eOpts) {
+                var btngridExport = grid.down("button[ref=gridExport]");
+                var btnsync = grid.down("button[ref=sync]");
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("HYKQMANAGER") == -1) {
+                	btngridExport.setHidden(true);
+                	btnsync.setHidden(true);
+                }
+            }
+        },
+    	
         /**
          * 会议列表grid加载后根据权限控制按钮的显示
          */

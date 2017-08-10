@@ -128,11 +128,18 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
                 return value;
             }
         }, {
-            width: 150,
+            width: 130,
             text: "更新时间",
             dataIndex: "updateTime",
-            align: 'left'
-        }, {
+            renderer: function(value, metaData) {
+                if(value){
+                    var date = value.replace(new RegExp(/-/gm), "/");    
+                    var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i');    
+                    return ss;
+                } 
+                return value;            
+            }
+        },  {
             xtype: 'actiontextcolumn',
             text: "操作",
             width: 120,

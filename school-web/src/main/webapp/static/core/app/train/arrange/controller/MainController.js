@@ -18,56 +18,75 @@ Ext.define("core.train.arrange.controller.MainController", {
         */
     },
     control: {
-        "basegrid[xtype=arrange.maingrid]": {
-            itemclick: function(grid, record, item, index, e, eOpts) {
-                var basePanel = grid.up("basepanel");
-                var funCode = basePanel.funCode;
-                var baseGrid = basePanel.down("basegrid[funCode=" +
-                    funCode + "]");
-                var records = baseGrid.getSelectionModel().getSelection();
-
-                var btnArrangeRoom = baseGrid.down("button[ref=gridArrangeRoom_Tab]");
-                var btnArrangeSite = baseGrid.down("button[ref=gridArrangeSite_Tab]");
-                var btnArrange = baseGrid.down("button[ref=gridArrange]");
-
-                if (records.length == 0) {
-                    if (btnArrangeRoom)
-                        btnArrangeRoom.setDisabled(true);
-                    if (btnArrangeSite)
-                        btnArrangeSite.setDisabled(true);
-                    if (btnArrange)
-                        btnArrange.setDisabled(true);
-
-                } else if (records.length == 1) {
-                    
-                    // if(record.get("isarrange")==1&&record.get("isuse")==2){
-                    //     if (btnArrangeRoom)
-                    //         btnArrangeRoom.setDisabled(true);
-                    //     if (btnArrangeSite)
-                    //         btnArrangeSite.setDisabled(true);
-                    //     if (btnArrange)
-                    //         btnArrange.setDisabled(true);                    
-                    // }else{
-                        if (btnArrangeRoom)
-                            btnArrangeRoom.setDisabled(false);
-                        if (btnArrangeSite)
-                            btnArrangeSite.setDisabled(false);
-                        if (btnArrange)
-                            btnArrange.setDisabled(false);
-                    //}
-
-                } else {
-                    if (btnArrangeRoom)
-                        btnArrangeRoom.setDisabled(true);
-                    if (btnArrangeSite)
-                        btnArrangeSite.setDisabled(true);
-                    if (btnArrange)
-                        btnArrange.setDisabled(true);
-                }
-                    //console.log(1231);
-                
-            }
-        },
+    	//对没有权限的角色隐藏按钮
+    	 "basegrid[xtype=arrange.maingrid]": {
+             afterrender: function (grid, eOpts) {
+                 var btngridArrangeRoom = grid.down("button[ref=gridArrangeRoom_Tab]");
+                 var btngridArrangeSite = grid.down("button[ref=gridArrangeSite_Tab]");
+                 var btngridExportRoom = grid.down("button[ref=gridExportRoom]");
+                 var btngridExportSite = grid.down("button[ref=gridExportSite]");
+                 var btngridArrange = grid.down("button[ref=gridArrange]");
+                 var roleKey = comm.get("roleKey");
+                 if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("ZONGWUROLE") == -1) {
+                	 btngridArrangeRoom.setHidden(true);
+                	 btngridArrangeSite.setHidden(true);
+                	 btngridExportRoom.setHidden(true);
+                	 btngridExportSite.setHidden(true);
+                	 btngridArrange.setHidden(true);
+                 }
+             }
+            },
+//    
+//        "basegrid[xtype=arrange.maingrid]": {
+//            itemclick: function(grid, record, item, index, e, eOpts) {
+//                var basePanel = grid.up("basepanel");
+//                var funCode = basePanel.funCode;
+//                var baseGrid = basePanel.down("basegrid[funCode=" +
+//                    funCode + "]");
+//                var records = baseGrid.getSelectionModel().getSelection();
+//
+//                var btnArrangeRoom = baseGrid.down("button[ref=gridArrangeRoom_Tab]");
+//                var btnArrangeSite = baseGrid.down("button[ref=gridArrangeSite_Tab]");
+//                var btnArrange = baseGrid.down("button[ref=gridArrange]");
+//
+//                if (records.length == 0) {
+//                    if (btnArrangeRoom)
+//                        btnArrangeRoom.setDisabled(true);
+//                    if (btnArrangeSite)
+//                        btnArrangeSite.setDisabled(true);
+//                    if (btnArrange)
+//                        btnArrange.setDisabled(true);
+//
+//                } else if (records.length == 1) {
+//                    
+//                    // if(record.get("isarrange")==1&&record.get("isuse")==2){
+//                    //     if (btnArrangeRoom)
+//                    //         btnArrangeRoom.setDisabled(true);
+//                    //     if (btnArrangeSite)
+//                    //         btnArrangeSite.setDisabled(true);
+//                    //     if (btnArrange)
+//                    //         btnArrange.setDisabled(true);                    
+//                    // }else{
+//                        if (btnArrangeRoom)
+//                            btnArrangeRoom.setDisabled(false);
+//                        if (btnArrangeSite)
+//                            btnArrangeSite.setDisabled(false);
+//                        if (btnArrange)
+//                            btnArrange.setDisabled(false);
+//                    //}
+//
+//                } else {
+//                    if (btnArrangeRoom)
+//                        btnArrangeRoom.setDisabled(true);
+//                    if (btnArrangeSite)
+//                        btnArrangeSite.setDisabled(true);
+//                    if (btnArrange)
+//                        btnArrange.setDisabled(true);
+//                }
+//                    //console.log(1231);
+//                
+//            }
+//        },
         "basegrid[xtype=arrange.maingrid] button[ref=gridArrange]": {
             beforeclick: function(btn) {
                 var self = this;
