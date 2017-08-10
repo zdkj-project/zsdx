@@ -343,7 +343,7 @@ public class PoiExportExcel {
 									}
 								}
 							}
-							preVal = (String) val;
+							preVal = String.valueOf(val);
 							j++;
 						}
 						// 设置行高
@@ -366,7 +366,6 @@ public class PoiExportExcel {
 				 * catch (IllegalAccessException e) { // LOG.error("反射异常", e); }
 				 */
 			catch (Exception e) {
-
 				System.out.println(e.getMessage());
 				return false;
 				// LOG.error("其他异常", e);

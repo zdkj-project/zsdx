@@ -15,6 +15,8 @@ Ext.define("core.train.dinnertotal.view.ClassDinnerGrid", {
      * 继承自core.base.view.BaseGrid可以在此覆盖重写
      */
     panelTopBar: null,
+
+    bottomInfoPanelRef:'totalInfo',
     /** 排序字段定义 */
     defSort: [{
        property: "dinnerDate", //字段名
@@ -78,6 +80,14 @@ Ext.define("core.train.dinnertotal.view.ClassDinnerGrid", {
             width:120,
             text: "实际晚餐围/人数",
             dataIndex: "dinnerReal"
+        },{
+            width:100,
+            text: "计划金额",
+            dataIndex: "countMoneyPlan"
+        }, {
+            width:100,
+            text: "实际金额",
+            dataIndex: "countMoneyReal"
         },{
             flex:1,
             minWidth:100,

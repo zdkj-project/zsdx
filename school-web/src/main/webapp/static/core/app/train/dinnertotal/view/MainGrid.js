@@ -26,12 +26,17 @@ Ext.define("core.train.dinnertotal.view.MainGrid", {
                 iconCls: 'x-fa fa-file-text'
             },  {
                 xtype: 'button',
-                text: '导出报表',
+                text: '导出汇总报表',
                 ref: 'gridExport',
                 funCode: 'girdFuntionBtn',
-                disabled: true,
                 iconCls: 'x-fa fa-file'
-            }, '->', {
+            },{
+                xtype: 'button',
+                text: '导出班级就餐详情',
+                ref: 'gridDinnerDetailExport',
+                funCode: 'girdFuntionBtn',
+                iconCls: 'x-fa fa-file'
+            },  '->', {
                 xtype: 'tbtext',
                 html: '快速搜索：'
             }, {
@@ -85,9 +90,22 @@ Ext.define("core.train.dinnertotal.view.MainGrid", {
                 return value;
             }
         },{
-            width:120,
+            width:100,
             text: "班级编号",
             dataIndex: "CLASS_NUMB"
+        }, {
+            width:80,
+            text: "就餐类型",
+            dataIndex: "DINNER_TYPE",
+            renderer: function(value, metaData) {                
+                if(value==1){
+                    return "围餐";
+                }else if(value==2){
+                    return "自助餐";
+                }else{
+                    return "快餐";
+                }
+            }
         }, {
             width:120,
             text: "计划早餐围/人数",
@@ -112,6 +130,14 @@ Ext.define("core.train.dinnertotal.view.MainGrid", {
             width:120,
             text: "实际晚餐围/人数",
             dataIndex: "DINNER_REAL"
+        }, {
+            width:100,
+            text: "计划总额",
+            dataIndex: "COUNT_MONEY_PLAN"
+        }, {
+            width:100,
+            text: "实际总额",
+            dataIndex: "COUNT_MONEY_REAL"
         },{
             xtype: 'actiontextcolumn',
             text: "操作",

@@ -176,4 +176,30 @@ public class TrainClassrealdinner extends BaseEntity implements Serializable{
     public String getContactPhone() {
         return contactPhone;
     }
+    
+    @FieldInfo(name = "计划金额")
+    @Formula("(SELECT (a.BREKFAST_STAND*a.BREAKFAST_COUNT+a.LUNCH_STAND*a.LUNCH_COUNT+a.DINNER_STAND*a.DINNER_COUNT)  FROM dbo.TRAIN_T_CLASS a WHERE a.CLASS_ID=CLASS_ID)")
+    private BigDecimal countMoneyPlan;
+
+    public void setCountMoneyPlan(BigDecimal countMoneyPlan) {
+        this.countMoneyPlan = countMoneyPlan;
+    }
+
+    public BigDecimal getCountMoneyPlan() {
+        return countMoneyPlan;
+    }
+       
+    //SELECT (a.BREKFAST_STAND*b.BREAKFAST_REAL+a.LUNCH_STAND*b.LUNCH_REAL+a.DINNER_STAND*b.DINNER_REAL) FROM dbo.TRAIN_T_CLASS a join TRAIN_T_CLASSREALDINNER b on a.CLASS_ID=b.CLASS_ID where b.CLASSEAT_ID=CLASSEAT_ID
+    @FieldInfo(name = "实际金额")
+    @Formula("(SELECT (a.BREKFAST_STAND*BREAKFAST_REAL+a.LUNCH_STAND*LUNCH_REAL+a.DINNER_STAND*DINNER_REAL)  FROM dbo.TRAIN_T_CLASS a WHERE a.CLASS_ID=CLASS_ID)")
+    private BigDecimal countMoneyReal;
+
+    public void setCountMoneyReal(BigDecimal countMoneyReal) {
+        this.countMoneyReal = countMoneyReal;
+    }
+
+    public BigDecimal getCountMoneyReal() {
+        return countMoneyReal;
+    }
+    
 }
