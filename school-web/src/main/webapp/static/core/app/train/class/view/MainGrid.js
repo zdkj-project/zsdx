@@ -208,9 +208,12 @@ Ext.define("core.train.class.view.MainGrid", {
             text: "更新时间",
             dataIndex: "updateTime",
             renderer: function(value, metaData) {
-                var date = value.replace(new RegExp(/-/gm), "/");    
-                var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i')           
-                return ss;
+                if(value){
+                    var date = value.replace(new RegExp(/-/gm), "/");    
+                    var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i');    
+                    return ss;
+                } 
+                return value;            
             }
         },{
             width: 80,

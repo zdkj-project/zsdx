@@ -71,7 +71,7 @@ Ext.define("core.base.view.form.BaseQueryField",{
 
 		if(queryType=="textfield"){	
 			var obj={
-				xtype:queryType,
+				xtype:'texttrigger',
 				name:this.name+"_field"
 			};
 			if(this.config){
