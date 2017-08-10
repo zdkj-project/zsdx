@@ -44,28 +44,7 @@ Ext.define("core.train.class.view.MainGrid", {
                 funCode: 'girdFuntionBtn',
                 disabled: true,
                 iconCls: 'x-fa fa-minus-circle'
-            }, /*{
-                xtype: 'button',
-                text: '导入班级',
-                ref: 'gridImport',
-                funCode: 'girdFuntionBtn',
-                disabled: false,
-                iconCls: 'x-fa fa-clipboard'
-            }, {
-                xtype: 'button',
-                text: '导入学员',
-                ref: 'gridImportTrainee',
-                funCode: 'girdFuntionBtn',
-                disabled: true,
-                iconCls: 'x-fa fa-clipboard'
             },{
-                xtype: 'button',
-                text: '导入课程',
-                ref: 'gridImportCourse',
-                funCode: 'girdFuntionBtn',
-                disabled: true,
-                iconCls: 'x-fa fa-clipboard'
-            },*/  {
                 xtype: 'button',
                 text: '导出',
                 ref: 'gridExport',
@@ -252,6 +231,13 @@ Ext.define("core.train.class.view.MainGrid", {
                         record: rec,
                         cmd: 'detail'
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             },{
                 text:'课程管理',  
@@ -272,6 +258,13 @@ Ext.define("core.train.class.view.MainGrid", {
                         record: rec,
                         cmd: 'detail'
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             },{
                 text:'就餐申请',  
@@ -292,6 +285,13 @@ Ext.define("core.train.class.view.MainGrid", {
                         record: rec,
                         cmd: 'edit'
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             },{
                 text:'住宿申请',  
@@ -312,6 +312,13 @@ Ext.define("core.train.class.view.MainGrid", {
                         record: rec,
                         cmd: 'edit'
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             }, {
                 text:'详情',  
@@ -342,6 +349,13 @@ Ext.define("core.train.class.view.MainGrid", {
                         view: view.grid,
                         record: rec
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             }, {
                 text:'删除',  
@@ -349,7 +363,8 @@ Ext.define("core.train.class.view.MainGrid", {
                 tooltip: '删除',
                 ref: 'gridDelete',
                 getClass :function(v,metadata,record){
-                    if(record.get("isuse")!=null&&record.get("isuse")!=0)
+                	var roleKey = comm.get("roleKey");
+                    if((record.get("isuse")!=null&&record.get("isuse")!=0)||(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1))
                         return 'x-hidden-display';
                     else
                         return null;

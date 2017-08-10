@@ -12,7 +12,6 @@ Ext.define("core.train.class.controller.MainController", {
     init: function () {
     },
     control: {
-
         /**
          * 导出班级信息（学员、课程、住宿、用餐)
          */
@@ -351,6 +350,21 @@ Ext.define("core.train.class.controller.MainController", {
             }
         },
         "basegrid[xtype=class.maingrid]": {
+        	 afterrender: function (grid, eOpts) {
+                 var btnAdd = grid.down("button[ref=gridAdd_Tab]");
+                 var btnEdit = grid.down("button[ref=gridEdit_Tab]");
+                 var btnDelete = grid.down("button[ref=gridDelete]");
+                 var btnExport = grid.down("button[ref=gridExport]");
+                 var btngridUse = grid.down("button[ref=gridUse]");
+                 var roleKey = comm.get("roleKey");
+                 if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1) {
+                     btnAdd.setHidden(true);
+                     btnEdit.setHidden(true);
+                     btnDelete.setHidden(true);
+                     btngridUse.setHidden(true);
+                     btnExport.setHidden(true);
+                 }
+             },
             itemclick: function (grid, record, item, index, e, eOpts) {
                 var basePanel = grid.up("basepanel");
                 var funCode = basePanel.funCode;

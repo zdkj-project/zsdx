@@ -11,10 +11,27 @@ Ext.define("core.train.calcucredit.controller.MainController", {
     init: function () {
     },
     control: {
+        "basegrid[xtype=calcucredit.traineesgrid]": {
+            afterrender: function (grid, eOpts) {
+                var btngridSumcredit = grid.down("button[ref=gridSumcredit]");
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1) {
+                	btngridSumcredit.setHidden(true);
+                }
+            }
+        },
+    	
         /**
          * 班级列表相关事件
          */
         "basegrid[xtype=calcucredit.maingrid]": {
+        	afterrender: function (grid, eOpts) {
+                var btngridExport = grid.down("button[ref=gridExport]");
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1) {
+                	btngridExport.setHidden(true);
+                }
+            },
             //列表点击事件
             beforeitemclick: function (grid, record, item, index, e, eOpts) {
                 var self = this;
