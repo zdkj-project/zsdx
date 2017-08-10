@@ -39,7 +39,7 @@ Ext.define("core.train.calcucredit.view.MainLayout", {
     items: [{
         xtype: "calcucredit.maingrid",
         region: "west",
-        width: 440,
+        width: 410,
         split: true,
         style: {
             border: '1px solid #ddd'

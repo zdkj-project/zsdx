@@ -39,7 +39,7 @@ Ext.define("core.train.courseeval.view.MainLayout", {
     items: [{
             xtype: "courseeval.maingrid",
             region: "west",
-            width: 450,
+            width: 410,
             //height:300,
             split: true,
             style: {

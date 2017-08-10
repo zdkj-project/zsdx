@@ -98,11 +98,11 @@ Ext.define("core.train.trainee.view.MainGrid", {
             text: '序号',
             align: 'center'
         }, {
-            width: 100,
+            width: 80,
             text: "姓名",
             dataIndex: "xm",
         }, {
-            width: 80,
+            width: 50,
             text: "性别",
             dataIndex: "xbm",
             columnType: "basecombobox", //列类型
@@ -114,7 +114,7 @@ Ext.define("core.train.trainee.view.MainGrid", {
             columnType: "basecombobox", //列类型
             ddCode: "MZM" //字典代码	
         }, {
-            width: 120,
+            width: 100,
             text: "职务",
             dataIndex: "position",
         }, {
@@ -124,16 +124,16 @@ Ext.define("core.train.trainee.view.MainGrid", {
             columnType: "basecombobox", //列类型
             ddCode: "HEADSHIPLEVEL" //字典代码
         }, {
-            width: 180,
+            width: 150,
             text: "身份证件号",
             dataIndex: "sfzjh",
         }, {
-            width: 120,
+            width: 100,
             text: "手机号码",
             dataIndex: "mobilePhone",
         }, {
             flex: 1,
-            minWidth: 150,
+            minWidth: 120,
             text: "所在单位",
             dataIndex: "workUnit",
             renderer: function (value, metaData) {
@@ -153,20 +153,24 @@ Ext.define("core.train.trainee.view.MainGrid", {
             text: "培训学分",
             dataIndex: "credits"//未动
         }, {
-            width: 150,
-            text: "创建时间",
-            dataIndex: "createTime",
-            align:'left',
-        },{
-            width: 150,
+            width: 130,
             text: "更新时间",
             dataIndex: "updateTime",
-            align:'left',
+            renderer: function(value, metaData) {
+                if(value){
+                    var date = value.replace(new RegExp(/-/gm), "/");    
+                    var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i');    
+                    return ss;
+                } 
+                return value;            
+            }
         }, {
             xtype: 'actiontextcolumn',
             text: "操作",
-            width: 150,
-            resizable: false,
+            width: 130,
+            //resizable: false,
+            fixed: true,
+            align: 'center',
             items: [{
                 text: '培训记录',
                 style: 'font-size:12px;',

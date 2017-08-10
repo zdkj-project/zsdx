@@ -10,7 +10,7 @@ Ext.define("core.train.teacher.view.DetailLayout", {
 		defaultObj: {}
 	},
 	/*设置最小宽度，并且自动滚动*/
-    minWidth:1200,
+    minWidth:1000,
     scrollable:true,
 
     /*关联此视图控制器*/

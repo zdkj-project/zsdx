@@ -77,7 +77,7 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
     },
     columns: {
         defaults: {
-            align: 'center',
+            //align: 'center',
             titleAlign: "center"
         },
         items: [{
@@ -126,19 +126,22 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
             text: "班级编号",
             dataIndex: "classNumb",
         },{
-            width: 150,
-            text: "创建时间",
-            dataIndex: "createTime",
-            align:'left',
-        },{
-            width: 150,
+            width: 130,
             text: "更新时间",
             dataIndex: "updateTime",
-            align:'left',
-        }, {
+            renderer: function(value, metaData) {
+                if(value){
+                    var date = value.replace(new RegExp(/-/gm), "/");    
+                    var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i');    
+                    return ss;
+                } 
+                return value;            
+            }
+        },{
             xtype: 'actiontextcolumn',
             text: "操作",
             width: 100,
+            align: 'center',
             fixed: true,
             items: [{
                 //iconCls: 'x-fa fa-pencil-square',

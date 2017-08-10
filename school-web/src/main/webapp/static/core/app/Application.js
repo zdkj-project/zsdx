@@ -35,11 +35,9 @@ Ext.define('core.Application', {
 
         //同步加载
         Ext.syncRequire ([
-            // EXT 6.0无法使用，需要找新的插件
-            //"baseUx.form.datetime.DateTimePicker",
-            //"baseUx.form.datetime.DateTime", 
             "Ext.ux.DateTimePicker",
             "Ext.ux.DateTimeField",
+            "baseUx.form.textfield.TextTrigger",
             "factory.ModelFactory",
             "factory.DDCache",
             "Ext.ux.UEditor",

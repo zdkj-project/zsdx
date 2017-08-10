@@ -81,30 +81,30 @@ Ext.define('core.train.calcucredit.view.TraineesGrid', {
             text: '序号',
             align: 'center'
         }, {
-            width: 120,
+            width: 100,
             text: "姓名",
             dataIndex: "xm"
         }, {
-            width: 80,
+            width: 50,
             text: "性别",
             dataIndex: "xbm",
             columnType: "basecombobox", //列类型
             ddCode: "XBM" //字典代码
         }, {
-            width: 120,
+            width: 100,
             text: "移动电话",
             dataIndex: "mobilePhone"
         },{
             flex:1,
-            minWidth: 150,
+            minWidth: 120,
             text: "所在单位",
             dataIndex: "workUnit"
         },{
-            width:150,
+            width:120,
             text: "职务",
             dataIndex: "position"
         },{
-            width:150,
+            width:120,
             text: "行政级别",
             dataIndex: "headshipLevel",
             columnType: "basecombobox", //列类型
@@ -114,15 +114,17 @@ Ext.define('core.train.calcucredit.view.TraineesGrid', {
             text: "学分 ",
             dataIndex: "realRredit"
         },{
-            width: 150,
-            text: "创建时间",
-            dataIndex: "createTime",
-            align:'left',
-        },{
-            width: 150,
+            width: 130,
             text: "更新时间",
             dataIndex: "updateTime",
-            align:'left',
+            renderer: function(value, metaData) {
+                if(value){
+                    var date = value.replace(new RegExp(/-/gm), "/");    
+                    var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i');    
+                    return ss;
+                } 
+                return value;            
+            }
         }, {
             xtype: 'actiontextcolumn',
             text: "操作",

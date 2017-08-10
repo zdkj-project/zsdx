@@ -126,23 +126,45 @@ Ext.define("core.train.indicator.view.MainGrid", {
         }, {
             //width: 300,
             flex: 1,
+            minWidth:150,
             text: "评价标准",
             dataIndex: "indicatorStand",
-        },{
-            width: 150,
+            renderer: function (value, metaData) {
+                var title = "评价标准";
+                var html = value;
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                return html;
+            }
+        }, {
+            width: 130,
             text: "创建时间",
             dataIndex: "createTime",
-            align: 'left'
+            renderer: function(value, metaData) {
+                if(value){
+                    var date = value.replace(new RegExp(/-/gm), "/");    
+                    var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i');    
+                    return ss;
+                } 
+                return value;            
+            }
         }, {
-            width: 150,
+            width: 130,
             text: "更新时间",
             dataIndex: "updateTime",
-            align: 'left'
+            renderer: function(value, metaData) {
+                if(value){
+                    var date = value.replace(new RegExp(/-/gm), "/");    
+                    var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i');    
+                    return ss;
+                } 
+                return value;            
+            }
         }, {
             xtype: 'actiontextcolumn',
             text: "操作",
             width: 150,
             resizable: false,
+            align:'center',
             items: [{
                 text: '编辑',
                 style: 'font-size:12px;',

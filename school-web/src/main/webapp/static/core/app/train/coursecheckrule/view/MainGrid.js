@@ -111,11 +111,12 @@ Ext.define("core.train.coursecheckrule.view.MainGrid", {
         items: [{
             xtype: "rownumberer",
             flex: 0,
-            width: 60,
+            width: 50,
             text: '序号',
             align: 'center'
         },  {
-            width:120,
+            flex:1,
+            minWidth:120,
             text: "规则名称",
             dataIndex: "ruleName",
         }, {
@@ -129,11 +130,11 @@ Ext.define("core.train.coursecheckrule.view.MainGrid", {
             text: "签到提前分钟",
             dataIndex: "inBefore",
         }, {
-            width:120,
+            width:100,
             text: "迟到分钟",
             dataIndex: "beLate",
         }, {
-            width:120,
+            width:100,
             text: "缺勤分钟",
             dataIndex: "absenteeism",
         }, {
@@ -171,15 +172,17 @@ Ext.define("core.train.coursecheckrule.view.MainGrid", {
                 }
             }  
         },{
-            width: 150,
-            text: "创建时间",
-            dataIndex: "createTime",
-            align:'left',
-        },{
-            width: 150,
+            width: 130,
             text: "更新时间",
             dataIndex: "updateTime",
-            align:'left',
+            renderer: function(value, metaData) {
+                if(value){
+                    var date = value.replace(new RegExp(/-/gm), "/");    
+                    var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i');    
+                    return ss;
+                } 
+                return value;            
+            }
         }, {
             xtype: 'actiontextcolumn',
             text: "操作",
