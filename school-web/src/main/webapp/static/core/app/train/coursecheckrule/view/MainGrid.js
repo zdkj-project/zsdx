@@ -195,7 +195,8 @@ Ext.define("core.train.coursecheckrule.view.MainGrid", {
                 tooltip: '启用',
                 ref: 'gridStartUsing',
                 getClass :function(v,metadata,record,rowIndex,colIndex,store){
-                    if(record.get("startUsing")==1)
+                	 var roleKey = comm.get("roleKey");
+                    if(record.get("startUsing")==1||(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1))
                         return 'x-hidden-display';
                     else
                         return null;
@@ -218,6 +219,13 @@ Ext.define("core.train.coursecheckrule.view.MainGrid", {
                         view: view.grid,
                         record: rec
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             }, {
                 text:'详细',  
@@ -237,7 +245,8 @@ Ext.define("core.train.coursecheckrule.view.MainGrid", {
                 tooltip: '删除',
                 ref: 'gridDelete',
                 getClass :function(v,metadata,record,rowIndex,colIndex,store){
-                    if(record.get("startUsing")==1)
+                	var roleKey = comm.get("roleKey");
+                    if(record.get("startUsing")==1||(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1))
                         return 'x-hidden-display';
                     else
                         return null;

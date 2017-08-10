@@ -177,6 +177,13 @@ Ext.define("core.train.indicator.view.MainGrid", {
                         record: rec,
                         cmd: "edit"
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PXPJMANGER") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             }, {
                 text: '详情',
@@ -202,6 +209,13 @@ Ext.define("core.train.indicator.view.MainGrid", {
                         view: view.grid,
                         record: rec
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PXPJMANGER") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             }]
         }]

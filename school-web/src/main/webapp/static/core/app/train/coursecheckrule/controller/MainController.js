@@ -13,6 +13,21 @@ Ext.define("core.train.coursecheckrule.controller.MainController", {
     init: function() {
     },
     control: {
+    "basegrid[xtype=coursecheckrule.maingrid]": {
+        afterrender: function (grid, eOpts) {
+            var btnAdd = grid.down("button[ref=gridAdd_Tab]");
+            var btnEdit = grid.down("button[ref=gridEdit_Tab]");
+            var btnDelete = grid.down("button[ref=gridDelete]");
+            var btngridStartUsing = grid.down("button[ref=gridStartUsing]");
+            var roleKey = comm.get("roleKey");
+            if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1) {
+                btnAdd.setHidden(true);
+                btnEdit.setHidden(true);
+                btnDelete.setHidden(true);
+                btngridStartUsing.setHidden(true);
+            }
+        }
+    },
         "basegrid button[ref=gridAdd_Tab]": {
             beforeclick: function(btn) {
                 this.doDetail_Tab(btn,"add");

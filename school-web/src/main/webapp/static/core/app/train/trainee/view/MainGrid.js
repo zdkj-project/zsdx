@@ -9,7 +9,7 @@ Ext.define("core.train.trainee.view.MainGrid", {
      * 高级查询面板
      */
     panelButtomBar: {
-        xtype: 'trainee.mainquerypanel',
+        xtype: 'trainee.mainquerypanel'
     },
     /**
      * 工具栏操作按钮
@@ -100,7 +100,7 @@ Ext.define("core.train.trainee.view.MainGrid", {
         }, {
             width: 80,
             text: "姓名",
-            dataIndex: "xm",
+            dataIndex: "xm"
         }, {
             width: 50,
             text: "性别",
@@ -116,7 +116,7 @@ Ext.define("core.train.trainee.view.MainGrid", {
         }, {
             width: 100,
             text: "职务",
-            dataIndex: "position",
+            dataIndex: "position"
         }, {
             width: 100,
             text: "行政级别",
@@ -124,13 +124,9 @@ Ext.define("core.train.trainee.view.MainGrid", {
             columnType: "basecombobox", //列类型
             ddCode: "HEADSHIPLEVEL" //字典代码
         }, {
-            width: 150,
-            text: "身份证件号",
-            dataIndex: "sfzjh",
-        }, {
             width: 100,
             text: "手机号码",
-            dataIndex: "mobilePhone",
+            dataIndex: "mobilePhone"
         }, {
             flex: 1,
             minWidth: 120,
@@ -148,10 +144,6 @@ Ext.define("core.train.trainee.view.MainGrid", {
             dataIndex: "traineeCategory",
             columnType: "basecombobox", //列类型
             ddCode: "TRAINEECATEGORY" //字典代码
-        }, {
-            width: 100,
-            text: "培训学分",
-            dataIndex: "credits"//未动
         }, {
             width: 130,
             text: "更新时间",

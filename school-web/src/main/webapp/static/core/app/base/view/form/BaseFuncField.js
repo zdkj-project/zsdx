@@ -83,6 +83,7 @@ Ext.define("core.base.view.form.BaseFuncField", {
         if (!height)
             height = comm.get("resolutionHeight") * 0.5;
         var muiltSelect = configInfo.muiltSelect;
+        var orderSql = configInfo.orderSql;
         var fieldArray = fieldInfo.split(",");
         var dataField = fieldArray[0].split("~");
         var gridField = fieldArray[1].split("~");
@@ -147,6 +148,7 @@ Ext.define("core.base.view.form.BaseFuncField", {
                         var baseGrid = basePanel.down("basegrid");
                         var baseProxy = baseGrid.getStore().getProxy();	//zzk修复，2017-4-10
                         baseProxy.extraParams.whereSql = whereSql;
+                        baseProxy.extraParams.orderSql = orderSql;
                         if (!muiltSelect) {
                             if (funcGrid) {
                                 var returnGrid = basePanel.down("grid[xtype=" + funcGrid + "]");

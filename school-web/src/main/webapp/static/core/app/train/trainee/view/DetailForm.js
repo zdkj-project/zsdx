@@ -72,6 +72,9 @@ Ext.define("core.train.trainee.view.DetailForm", {
             emptyText: "请输入身份证件号",
             maxLength: 20,
             maxLengthText: "最多20个字符,汉字占2个字符",
+            inputType: 'password',
+            disabled:true
+  //          hidden:true
         }]
     }, {
         xtype: "container",

@@ -17,6 +17,13 @@ Ext.define("core.train.alleval.controller.MainController", {
          * 班级列表相关事件
          */
         "basegrid[xtype=alleval.maingrid]": {
+        	afterrender: function (grid, eOpts) {
+                var btngridExport = grid.down("button[ref=gridExport]");
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PXPJMANGER") == -1) {
+               	 btngridExport.setHidden(true);
+                }
+            },
             //列表点击事件
             beforeitemclick: function (grid, record, item, index, e, eOpts) {
                 var self = this;

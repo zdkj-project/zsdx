@@ -1,6 +1,7 @@
 Ext.define("core.train.coursetype.view.ChangeOrderGrid", {
     extend: "core.base.view.BaseGrid",
     alias: "widget.coursetype.changeordergrid",
+    id:"coursetypechangeordergrid",
     frame: false,
     columnLines: false,
     dataUrl: comm.get("baseUrl") + "/TrainCoursecategory/list", //数据获取地址

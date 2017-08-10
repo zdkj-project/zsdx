@@ -18,6 +18,18 @@ Ext.define("core.oa.meeting.meetinginfo.controller.DetailController", {
     },
     /** 该视图内的组件事件注册 */
     control: {
+
+        "basegrid[xtype=meetinginfo.meetingusergrid]": {
+            afterrender: function (grid, eOpts) {
+                var btnAdd = grid.down("button[ref=gridAddUser]");
+                var btnDelete = grid.down("button[ref=gridDelUser]");
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("HYKQMANAGER") == -1) {
+                    btnAdd.setHidden(true);
+                    btnDelete.setHidden(true);
+                }
+            }
+        },
         /**
          * 参会人列表增加参会人员按钮事件
          */

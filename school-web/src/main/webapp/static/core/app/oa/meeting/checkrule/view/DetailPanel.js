@@ -37,7 +37,7 @@
                 '<div class="trainClass_title">规则说明：</div>',
                 '<ul>',
                   '<tpl if="!ruleDesc">',
-                        '<span>请输入规则说明!</span>',
+                        '<span>无说明</span>',
                     '<tpl else>',
                         '<span>{ruleDesc}</span>',
                     '</tpl>',
