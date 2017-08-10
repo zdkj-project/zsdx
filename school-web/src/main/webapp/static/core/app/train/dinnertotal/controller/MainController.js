@@ -16,6 +16,48 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
         */
     },
     control: { 
+
+        //手动加载数据，并给编写store的加载事件
+        "basepanel basegrid[xtype=dinnertotal.maingrid]":{
+            afterrender :function( me , eOpts ) {
+                var self=this;
+                var store=me.getStore();
+                    
+                this.loadDinnerTotalDatas(store,me);
+                    
+                // store.loadPage(1,{
+                //     scope: this,
+                //     callback: function(records, operation, success) {
+                        
+                //         self.syncAjax({
+                //             url:comm.get('baseUrl') + "/TrainClassrealdinner/getDinnerTotalDatas",
+                //             timeout: 1000*60*30,        //半个小时         
+                //             //回调代码必须写在里面
+                //             success: function(response) {
+                //                 var result = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                //                 if(result.success){
+                //                     var data=result.obj;
+                //                     var html="计划总额："+data.COUNT_MONEY_PLAN+" 元&nbsp;&nbsp;&nbsp;实际总额："+data.COUNT_MONEY_REAL+" 元&nbsp;&nbsp;&nbsp;"+
+                //                     "计划总围/人数："+(data.BREAKFAST_COUNT*1+data.LUNCH_COUNT*1+data.DINNER_COUNT*1)+"&nbsp;&nbsp;&nbsp;"+
+                //                     "实际总围/人数："+(data.BREAKFAST_REAL*1+data.LUNCH_REAL*1+data.DINNER_REAL*1);
+                                
+                //                     me.down('panel[ref=dinnerTotalInfo]').setHtml(html);                              
+                //                 }else{                                    
+                //                     me.down('panel[ref=dinnerTotalInfo]').setHtml("请求失败！");   
+                //                 }               
+                //             },
+                //             failure: function(response) {                                
+                //                 self.Error("请求失败！");
+                //             }
+                //         });
+                    
+                //     }
+                // }); 
+            }
+            
+           
+        } , 
+
         //快速搜索按按钮
         "basepanel basegrid button[ref=gridFastSearchBtn]": {
             beforeclick: function (btn) {
@@ -39,7 +81,10 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                 var store = baseGrid.getStore();
                 var proxy = store.getProxy();
                 proxy.extraParams = obj;
-                store.loadPage(1);
+                //store.loadPage(1);
+
+                //加载数据，并且加载汇总数据
+                this.loadDinnerTotalDatas(store,baseGrid);
 
                 return false;
             }
@@ -68,7 +113,10 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                     var store = baseGrid.getStore();
                     var proxy = store.getProxy();
                     proxy.extraParams = obj;
-                    store.loadPage(1);
+                    //store.loadPage(1);
+
+                    //加载数据，并且加载汇总数据
+                    this.loadDinnerTotalDatas(store,baseGrid);
                 }
                 return false;
             }
@@ -96,7 +144,10 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                     var store = baseGrid.getStore();
                     var proxy = store.getProxy();
                     proxy.extraParams=obj;
-                    store.loadPage(1);
+                    //store.loadPage(1);
+
+                    //加载数据，并且加载汇总数据
+                    this.loadDinnerTotalDatas(store,baseGrid);
                 }
                 return false;
             }
@@ -122,7 +173,11 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                 var store = baseGrid.getStore();
                 var proxy = store.getProxy();
                 proxy.extraParams=obj;
-                store.loadPage(1);  
+                //store.loadPage(1);  
+
+                //加载数据，并且加载汇总数据
+                this.loadDinnerTotalDatas(store,baseGrid);
+                
 
                 return false;
             }
@@ -351,6 +406,7 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                         var html="计划总额："+records[0].get("COUNT_MONEY_PLAN")+" 元&nbsp;&nbsp;&nbsp;实际总额："+records[0].get("COUNT_MONEY_REAL")+" 元&nbsp;&nbsp;&nbsp;"+
                             "计划总围/人数："+(records[0].get("BREAKFAST_COUNT")*1+records[0].get("LUNCH_COUNT")*1+records[0].get("DINNER_COUNT")*1)+"&nbsp;&nbsp;&nbsp;"+
                             "实际总围/人数："+(records[0].get("BREAKFAST_REAL")*1+records[0].get("LUNCH_REAL")*1+records[0].get("DINNER_REAL")*1);
+                        
                         classDinnerGrid.down('panel[ref=totalInfo]').setHtml(html);
 
                     }, 30);
@@ -440,6 +496,11 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                         classDinnerGrid.getStore().getProxy().extraParams.filter = '[{"type":"string","comparison":"=","value":"' + pkValue + '","field":"classId"}]';
                         classDinnerGrid.getStore().load();
 
+                        var html="计划总额："+records[0].get("COUNT_MONEY_PLAN")+" 元&nbsp;&nbsp;&nbsp;实际总额："+records[0].get("COUNT_MONEY_REAL")+" 元&nbsp;&nbsp;&nbsp;"+
+                            "计划总围/人数："+(records[0].get("BREAKFAST_COUNT")*1+records[0].get("LUNCH_COUNT")*1+records[0].get("DINNER_COUNT")*1)+"&nbsp;&nbsp;&nbsp;"+
+                            "实际总围/人数："+(records[0].get("BREAKFAST_REAL")*1+records[0].get("LUNCH_REAL")*1+records[0].get("DINNER_REAL")*1);
+                        
+                        classDinnerGrid.down('panel[ref=totalInfo]').setHtml(html);
 
                     }, 30);
 
@@ -454,6 +515,38 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                 return false;
             },
         }
+    },
+
+    loadDinnerTotalDatas:function(store,baseGrid){
+        var self=this;
+        store.loadPage(1,{
+            scope: this,
+            callback: function(records, operation, success) {
+                
+                self.syncAjax({
+                    url:comm.get('baseUrl') + "/TrainClassrealdinner/getDinnerTotalDatas",
+                    timeout: 1000*60*30,        //半个小时         
+                    //回调代码必须写在里面
+                    success: function(response) {
+                        var result = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                        if(result.success){
+                            var data=result.obj;
+                            var html="计划总额："+data.COUNT_MONEY_PLAN+" 元&nbsp;&nbsp;&nbsp;实际总额："+data.COUNT_MONEY_REAL+" 元&nbsp;&nbsp;&nbsp;"+
+                            "计划总围/人数："+(data.BREAKFAST_COUNT*1+data.LUNCH_COUNT*1+data.DINNER_COUNT*1)+"&nbsp;&nbsp;&nbsp;"+
+                            "实际总围/人数："+(data.BREAKFAST_REAL*1+data.LUNCH_REAL*1+data.DINNER_REAL*1);
+                        
+                            baseGrid.down('panel[ref=dinnerTotalInfo]').setHtml(html);                              
+                        }else{                                    
+                            baseGrid.down('panel[ref=dinnerTotalInfo]').setHtml("请求失败！");   
+                        }               
+                    },
+                    failure: function(response) {                                
+                        self.Error("请求失败！");
+                    }
+                });
+            
+            }
+        });
     }    
        
 

@@ -1,6 +1,7 @@
 Ext.define("core.train.dinnertotal.view.MainGrid", {
     extend: "core.base.view.BaseGrid",
     alias: "widget.dinnertotal.maingrid",
+    al:false,
     frame: false,
     columnLines: false,
     dataUrl: comm.get("baseUrl") + "/TrainClassrealdinner/getDinnerTotalList", //数据获取地址
@@ -58,6 +59,9 @@ Ext.define("core.train.dinnertotal.view.MainGrid", {
             }
         ],
     },
+
+    bottomInfoPanelRef:'dinnerTotalInfo',
+
     /** 排序字段定义 */
     defSort: [],
     /** 扩展参数 */
