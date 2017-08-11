@@ -4,11 +4,11 @@ Ext.define("core.train.coursechkresult.view.MainLayout", {
     /** 引入必须的文件 */
     requires: [ 
         'core.train.coursechkresult.controller.MainController',
-        //'core.train.coursechkresult.model.MainGridModel',
-        //'core.train.coursechkresult.store.MainGridStore', 
         'core.train.coursechkresult.view.MainGrid',
         'core.train.coursechkresult.view.MainQueryPanel',
         "core.train.coursechkresult.view.DetailLayout",
+        "core.train.coursechkresult.view.ClassStudentGrid",
+        "core.train.coursechkresult.view.ClassCourseGrid"
     ],    
     /** 关联此视图控制器 */
     controller: 'coursechkresult.mainController',
@@ -29,8 +29,10 @@ Ext.define("core.train.coursechkresult.view.MainLayout", {
         width: 1000,
         height: 600,
         defaultObj: {},
+        tabConfig: {         //zzk：2017-6-1加入，用于对tab操作提供基本配置数据
+            detailTitle: '考勤情况'
+        }
     },
-
     /*设置最小宽度，并且自动滚动*/
     minWidth:1200,
     scrollable:true,

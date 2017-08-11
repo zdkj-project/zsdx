@@ -7,6 +7,7 @@ import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.*;
 import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClasstrainee;
+import com.zd.school.jw.train.model.vo.VoTrainClassCheck;
 import com.zd.school.jw.train.service.TrainClassService;
 import com.zd.school.jw.train.service.TrainClasstraineeService;
 import com.zd.school.plartform.system.model.CardUserInfoToUP;
@@ -500,6 +501,26 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
         String classTraineeId = request.getParameter("ids");
         List<Map<String, Object>> list = thisService.getClassTraineeCreditsList(classTraineeId);
         strData = jsonBuilder.buildObjListToJson((long) list.size(), list, true);// 处理数据
+        writeJSON(response, strData);// 返回数据
+    }
+
+    @RequestMapping(value = { "/getCheckList" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
+            org.springframework.web.bind.annotation.RequestMethod.POST })
+    public void getCheckList( HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        String strData = ""; // 返回给js的数据
+        Integer start = super.start(request);
+        Integer limit = super.limit(request);
+        String sort = super.sort(request);
+        String filter = super.filter(request);
+        String classId = request.getParameter("classId");
+        String classScheduleId = request.getParameter("classScheduleId");
+        if(StringUtils.isEmpty(classId) && StringUtils.isEmpty(classScheduleId)){
+            writeJSON(response, jsonBuilder.returnFailureJson("'没有传入查询考勤的参数：班级或课程'"));
+            return;
+        }
+        QueryResult<VoTrainClassCheck> qResult = thisService.getCheckList(start, limit, classId, classScheduleId);
+        strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
         writeJSON(response, strData);// 返回数据
     }
 }

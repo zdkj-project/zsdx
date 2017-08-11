@@ -1,31 +1,13 @@
 package com.zd.school.plartform.system.model;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.math.BigDecimal;
+import com.zd.core.annotation.FieldInfo;
+import com.zd.core.model.BaseEntity;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.zd.core.annotation.FieldInfo;
-import com.zd.core.model.BaseEntity;
-import com.zd.core.util.DateTimeSerializer;
+import java.io.Serializable;
 
 /**
  * 
@@ -76,7 +58,7 @@ public class SysAppinfo extends BaseEntity implements Serializable{
         return appTitle;
     }
         
-    @FieldInfo(name = "appType")
+    @FieldInfo(name = "appType 1=会议考勤 2-课程考勤")
     @Column(name = "APP_TYPE", length = 4, nullable = true)
     private String appType;
     public void setAppType(String appType) {
@@ -86,7 +68,7 @@ public class SysAppinfo extends BaseEntity implements Serializable{
         return appType;
     }
         
-    @FieldInfo(name = "appUrl")
+    @FieldInfo(name = "下载地址")
     @Column(name = "APP_URL", length = 256, nullable = true)
     private String appUrl;
     public void setAppUrl(String appUrl) {
@@ -96,7 +78,7 @@ public class SysAppinfo extends BaseEntity implements Serializable{
         return appUrl;
     }
         
-    @FieldInfo(name = "appVersion")
+    @FieldInfo(name = "APP版本")
     @Column(name = "APP_VERSION", length = 10, nullable = true)
     private Integer appVersion;
     public void setAppVersion(Integer appVersion) {

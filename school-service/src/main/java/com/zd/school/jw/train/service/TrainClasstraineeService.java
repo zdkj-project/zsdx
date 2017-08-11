@@ -1,12 +1,13 @@
 package com.zd.school.jw.train.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseService;
+import com.zd.school.jw.train.model.TrainClasstrainee;
+import com.zd.school.jw.train.model.vo.VoTrainClassCheck;
 import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.jw.train.model.TrainClasstrainee ;
+
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -89,4 +90,6 @@ public interface TrainClasstraineeService extends BaseService<TrainClasstrainee>
      * @return
      */
     public List<Map<String, Object>> getClassTraineeCreditsList(String classTraineeId);
+
+    public QueryResult<VoTrainClassCheck> getCheckList(Integer start, Integer limit, String classId, String classScheduleId);
 }

@@ -1,31 +1,13 @@
 package com.zd.school.jw.train.model;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.math.BigDecimal;
-
-import javax.persistence.AttributeOverride;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.zd.core.annotation.FieldInfo;
 import com.zd.core.model.BaseEntity;
 import com.zd.core.util.DateTimeSerializer;
+
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 
@@ -123,9 +105,19 @@ public class TrainCourseattend extends BaseEntity implements Serializable{
     public Date getOutcardTime() {
         return outcardTime;
     }
-        
 
-    /** 以下为不需要持久化到数据库中的字段,根据项目的需要手工增加 
+    @FieldInfo(name = "考勤结果")
+    @Column(name = "ATTENT_RESULT",length = 16,nullable = true)
+    private String attendResult;
+
+    public String getAttendResult() {
+        return attendResult;
+    }
+
+    public void setAttendResult(String attendResult) {
+        this.attendResult = attendResult;
+    }
+    /** 以下为不需要持久化到数据库中的字段,根据项目的需要手工增加
     *@Transient
     *@FieldInfo(name = "")
     *private String field1;

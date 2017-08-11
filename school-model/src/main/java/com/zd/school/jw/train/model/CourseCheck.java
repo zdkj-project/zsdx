@@ -1,15 +1,11 @@
 package com.zd.school.jw.train.model;
 
-import java.io.Serializable;
-import java.util.Date;
-
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.zd.core.util.DateTimeSerializer;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.io.Serializable;
+import java.util.Date;
 
 public class CourseCheck implements Serializable{
 	//班级id
@@ -30,8 +26,31 @@ public class CourseCheck implements Serializable{
 	private boolean loaded;
 	
 	private boolean managed;
-	
-	public boolean isLoaded() {
+
+	private String attendResult;
+
+    public String getAttendResult() {
+        return attendResult;
+    }
+
+    public void setAttendResult(String attendResult) {
+        this.attendResult = attendResult;
+    }
+
+    /**
+     * 考勤人员Id
+     */
+	private String userId;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public boolean isLoaded() {
 		return loaded;
 	}
 	public void setLoaded(boolean loaded) {

@@ -49,7 +49,7 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
             xtype: 'button',
             funCode: 'girdSearchBtn', //指定此类按钮为girdSearchBtn类型
             ref: 'gridFastSearchBtn',
-            iconCls: 'x-fa fa-search',
+            iconCls: 'x-fa fa-search'
         }, ' ', {
             xtype: 'button',
             text: '高级搜索',
@@ -70,7 +70,7 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
     	],
     /** 扩展参数 */
     extParams: {
-        whereSql: "",
+        whereSql: ""
         //查询的过滤字段
         //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
         //filter: "[{'type':'string','comparison':'=','value':'','field':'claiId'}]"
@@ -83,67 +83,79 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
         items: [{
             xtype: "rownumberer",
             flex: 0,
-            width: 60,
+            width: 50,
             text: '序号',
             align: 'center'
         }, {
-            width: 150,
+            width:100,
+            text: "班级类型",
+            dataIndex: "classCategory",
+            columnType: "basecombobox", //列类型
+            ddCode: "ZXXBJLX" //字典代码
+        },{
+            flex:1,
+            minWidth:100,
+            text: "班级名称",
+            dataIndex: "className",
+            renderer: function(value, metaData) {
+                var title = "班级名称";
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + value + '"';
+                return value;
+            }
+        },  {
+            width:90,
             text: "开始日期",
             dataIndex: "beginDate",
             renderer: function(value, metaData) {
                 var date = value.replace(new RegExp(/-/gm), "/");
-                var title = "开始日期";
                 var ss = Ext.Date.format(new Date(date), 'Y-m-d')
-                var html = ss;
-                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return ss;
             }
         }, {
-            width: 150,
+            width:90,
             text: "结束日期",
             dataIndex: "endDate",
             renderer: function(value, metaData) {
                 var date = value.replace(new RegExp(/-/gm), "/");
-                var title = "结束日期";
                 var ss = Ext.Date.format(new Date(date), 'Y-m-d')
-                var html = ss;
-                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return ss;
             }
         }, {
-            flex:1,
-            width: 120,
-            text: "班级名称",
-            dataIndex: "className",
-        }, {
-            width: 150,
-            text: "班级类型",
-            dataIndex: "classCategory",
-            columnType: "basecombobox", //列类型
-            ddCode: "CLASSCATEGORY" //字典代码			
-        }, {
-            width: 150,
-            text: "班级编号",
-            dataIndex: "classNumb",
+            width:120,
+            text: "班主任",
+            dataIndex: "bzrName",
+            renderer: function(value, metaData) {
+                var title = "班主任";
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + value + '"';
+                return value;
+            }
         },{
+            width:80,
+            text: "联系人",
+            dataIndex: "contactPerson"
+        }, {
+            width:100,
+            text: "联系电话",
+            dataIndex: "contactPhone"
+        },  {
             width: 130,
             text: "更新时间",
             dataIndex: "updateTime",
             renderer: function(value, metaData) {
                 if(value){
-                    var date = value.replace(new RegExp(/-/gm), "/");    
-                    var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i');    
+                    var date = value.replace(new RegExp(/-/gm), "/");
+                    var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i');
                     return ss;
-                } 
-                return value;            
+                }
+                return value;
             }
         },{
             xtype: 'actiontextcolumn',
             text: "操作",
-            width: 100,
+            width: 150,
             align: 'center',
             fixed: true,
-            items: [{
+            items: [/*{
                 //iconCls: 'x-fa fa-pencil-square',
             	text:'编辑',  
                 style:'font-size:12px;',
@@ -163,7 +175,7 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
                     } else
                         return null;
                 }
-            }, {
+            }, */{
                 //iconCls: 'x-fa fa-file-text',
             	text:'详细',  
                 style:'font-size:12px;',  
@@ -171,12 +183,13 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
                 ref: 'gridDetail',
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('detailClick', {
+                    this.fireEvent('detailClick_Tab', {
                         view: view.grid,
-                        record: rec
+                        record: rec,
+                        cmd:"detail"
                     });
                 }
-            }, {
+            }/*, {
                 //iconCls: 'x-fa fa-minus-circle',
             	text:'删除',  
                 style:'font-size:12px;',  
@@ -196,7 +209,7 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
                     } else
                         return null;
                 }
-            }]
+            }*/]
         }]
     },
     emptyText: '<span style="width:100%;text-align:center;display: block;">暂无数据</span>'

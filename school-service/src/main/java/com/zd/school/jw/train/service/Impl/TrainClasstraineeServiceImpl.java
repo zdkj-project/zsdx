@@ -8,6 +8,7 @@ import com.zd.school.jw.train.dao.TrainClasstraineeDao;
 import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.jw.train.model.TrainTrainee;
+import com.zd.school.jw.train.model.vo.VoTrainClassCheck;
 import com.zd.school.jw.train.service.TrainClassService;
 import com.zd.school.jw.train.service.TrainClasstraineeService;
 import com.zd.school.jw.train.service.TrainTraineeService;
@@ -387,5 +388,18 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                 "\t order by courseDate,courseTime",classTraineeId);
         List<Map<String, Object>> list = this.getForValuesToSql(sql);
         return list;
+    }
+
+    @Override
+    public QueryResult<VoTrainClassCheck> getCheckList(Integer start, Integer limit, String classId, String classScheduleId) {
+        String sql = "SELECT classTraineeId, classId, traineeId, xm, xbm, mobilePhone, workUnit, classScheduleId,incardTime,outcardTime,attendResult FROM TRAIN_V_CHECKRESULT where 1=1 ";
+        if(StringUtils.isNotEmpty(classId))
+            sql += " and classId='" + classId +"'";
+        if(StringUtils.isNotEmpty(classScheduleId))
+            sql += " and classScheduleId='" + classScheduleId +"'";
+
+        QueryResult<VoTrainClassCheck> qr = this.doQueryResultSqlObject(sql, start,limit,VoTrainClassCheck.class);
+
+        return  qr;
     }
 }

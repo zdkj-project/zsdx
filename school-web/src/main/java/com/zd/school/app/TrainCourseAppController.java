@@ -81,10 +81,10 @@ public class TrainCourseAppController {
                     //同一教室，同一时间段只可能有一个培训班
                     String classId = course.get(0).getClassId();
                     TrainClass classInfo = classService.get(classId);
-                    String sql = MessageFormat.format(" SELECT CLASS_ID AS classId,xm,TRAINEE_ID AS traineeId," +
+                    String sql = MessageFormat.format(" SELECT CLASS_ID AS classId,xm,CLASS_TRAINEE_ID AS traineeId," +
                             "CONVERT(VARCHAR(36),(ISNULL((SELECT top 1 a.FACT_NUMB FROM CARD_T_USEINFO a where a.USER_ID=TRAIN_T_CLASSTRAINEE.CLASS_TRAINEE_ID order BY a.CREATE_TIME desc),''0''))) AS factoryfixId," +
                             "CONVERT(VARCHAR(36),(isnull((SELECT top 1 a.UP_CARD_ID FROM CARD_T_USEINFO a where a.USER_ID=TRAIN_T_CLASSTRAINEE.CLASS_TRAINEE_ID order by a.CREATE_TIME desc),''0''))) AS cardNo " +
-                            " FROM dbo.TRAIN_T_CLASSTRAINEE WHERE CLASS_ID=''{0}''",classId);
+                            " FROM dbo.TRAIN_T_CLASSTRAINEE WHERE ISDELETE=0 and  CLASS_ID=''{0}''",classId);
                     volist = classService.doQuerySqlObject(sql, VoTrainClasstrainee.class);
                     for (TrainClassschedule c : course) {
                         c.setList(volist);
@@ -143,35 +143,48 @@ public class TrainCourseAppController {
         TrainCourseattend attend = null;
         TrainClassschedule course = null;
         try {
-            for (CourseCheck t : check) {
-                String uid = "";
+            if(coursecheck.length()>0) {
+                for (CourseCheck t : check) {
+  /*              String uid = "";
                 List<Object[]> obj = termService.ObjectQuerySql("select USER_ID,CARDNO from dbo.PT_CARD where FACTORYFIXID='" + t.getWlkh() + "'");
-                uid = obj.get(0)[0].toString();
+                uid = obj.get(0)[0].toString();*/
 
-                course = courseService.get(t.getCourseId());
+                    course = courseService.get(t.getCourseId());
 
-                String[] param = {"classId", "classScheduleId", "traineeId"};
-                Object[] values = {t.getClassId(), t.getCourseId(), uid};
-                attend = attendService.getByProerties(param, values);
-                if (attend != null) {
-                    attend.setBeginTime(course.getBeginTime());
-                    attend.setEndTime(course.getEndTime());
-                    if (t.getLg().equals("0")) {
-                        attend.setIncardTime(t.getTime());
-                    } else {
-                        attend.setOutcardTime(t.getTime());
-                    }
-                    attendService.merge(attend);
-                } else {
-                    cca.setCode(false);
-                    cca.setMessage("查询不到对应的学生考勤");
-                    return cca;
+                    String[] param = {"classId", "classScheduleId", "traineeId"};
+                    Object[] values = {t.getClassId(), t.getCourseId(), t.getUserId()};
+//                Object[] values = {t.getClassId(), t.getCourseId(), uid};
+                    attend = attendService.getByProerties(param, values);
+                    if(attend==null)
+                        attend = new TrainCourseattend();
+                   // if (attend != null) {
+                        attend.setClassId(t.getClassId());
+                        attend.setClassScheduleId(t.getCourseId());
+                        attend.setTraineeId(t.getUserId());
+                        attend.setBeginTime(course.getBeginTime());
+                        attend.setEndTime(course.getEndTime());
+                        if (t.getLg().equals("0")) {
+                            attend.setIncardTime(t.getTime());
+                        } else {
+                            attend.setOutcardTime(t.getTime());
+                        }
+                        attend.setAttendResult(t.getAttendResult());
+                        attendService.merge(attend);
+    /*                } else {
+                        cca.setCode(false);
+                        cca.setMessage("查询不到对应的考勤人员");
+                        return cca;
+                    }*/
+
                 }
-
+                cca.setCode(true);
+                cca.setMessage("存储数据成功");
+                return cca;
+            } else{
+                cca.setCode(false);
+                cca.setMessage("没有上传考勤数据");
+                return cca;
             }
-            cca.setCode(true);
-            cca.setMessage("存储数据成功");
-            return cca;
 
         } catch (Exception e) {
             cca.setCode(false);
