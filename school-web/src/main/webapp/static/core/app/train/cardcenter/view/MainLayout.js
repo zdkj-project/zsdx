@@ -36,7 +36,7 @@ Ext.define("core.train.cardcenter.view.MainLayout", {
 
     /*设置最小宽度，并且自动滚动*/
     minWidth:1200,
-    scrollable:true,
+    scrollable:'x',
 
    
     items: [{
@@ -46,16 +46,16 @@ Ext.define("core.train.cardcenter.view.MainLayout", {
             width: 455,
             //height:300,
             split: true,
-            style: {
-                border: '1px solid #ddd'
-            },
+            // style: {
+            //     border: '1px solid #ddd'
+            // },
             frame: false
         }, {
             xtype: "cardcenter.maingrid",
             region: "center",
             flex: 1.5,
-            style: {
-                border: '1px solid #ddd'
-            }
+            // style: {
+            //     border: '1px solid #ddd'
+            // }
         }]
 });

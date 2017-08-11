@@ -42,22 +42,22 @@ Ext.define("core.eduresources.room.view.MainLayout", {
     
     /*设置最小宽度，并且自动滚动*/
     minWidth:1200,
-    scrollable:true,
+    scrollable:'x',
     
     items: [{
         collapsible: true,
         split: true,
         xtype: "room.areagrid",
         region: "west",
-        style:{
-            border: '1px solid #ddd'
-        },
-        width: comm.get("clientWidth") * 0.32
+        // style:{
+        //     border: '1px solid #ddd'
+        // },
+        width: 500
     }, {
         xtype: "room.RoomGrid",
-        style:{
-            border: '1px solid #ddd'
-        },
+        // style:{
+        //     border: '1px solid #ddd'
+        // },
         region: "center"
     }]
 })

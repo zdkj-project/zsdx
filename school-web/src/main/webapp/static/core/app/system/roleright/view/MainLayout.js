@@ -45,7 +45,7 @@ Ext.define("core.system.roleright.view.MainLayout", {
             border: '1px solid #ddd'
         },
 		margin:'0 5 0 0',
-		width:480
+		width:460
 		//width: comm.get("clientWidth") * 0.35
 	}, {
 		xtype: "roleright.rolgerightgrid",

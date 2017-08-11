@@ -164,7 +164,7 @@ public class TrainClassrealdinnerController extends FrameWorkController<TrainCla
     }
     
     /**
-	 * 导出班级住宿安排信息
+	 * 导出某天登记信息
 	 *
 	 * @param request
 	 * @param response
@@ -314,4 +314,223 @@ public class TrainClassrealdinnerController extends FrameWorkController<TrainCla
 		String strData = JsonBuilder.getInstance().toJson(obj);// 处理数据
 		writeJSON(response, jsonBuilder.returnSuccessJson(strData));// 返回数据	
 	}
+	
+	
+	/**
+	 * 导出就餐汇总信息
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/exportTotalExcel")
+	public void exportTotalExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getSession().setAttribute("exportTrainClassDinnerTotalIsEnd", "0");
+		request.getSession().removeAttribute("exportTrainClassDinnerTotalIsState");
+		
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");   
+		//SimpleDateFormat fmtDateWeek = new SimpleDateFormat("yyyy年M月d日 （E）");
+		//SimpleDateFormat fmtTime = new SimpleDateFormat("h:mm");
+		
+		List<Map<String, Object>> allList = new ArrayList<>();
+			
+		try{
+					     	
+			String startDate=request.getParameter("beginDate");
+			startDate=startDate==null?"1900-1-1":sdf.format(sdf.parse(startDate));
+			
+			String endDate=request.getParameter("endDate");
+			endDate=endDate==null?"2999-12-12":sdf.format(sdf.parse(endDate));
+			
+			String className = request.getParameter("className");
+			className=className==null?"":className;
+			String classNumb = request.getParameter("classNumb");
+			classNumb=classNumb==null?"":classNumb;
+			
+			Integer pageIndex=0;
+			Integer pageSize=Integer.MAX_VALUE;
+			
+			StringBuffer sql = new StringBuffer("EXEC [dbo].[Usp_PPT_TrainDinnerTotal] ");
+			sql.append("'" + className + "',");
+			sql.append("'" + classNumb + "',");
+			sql.append("'" + startDate + "',");
+			sql.append("'" + endDate + "',");
+			
+			String page=pageIndex + "," + pageSize;
+			List<Map<String, Object>> lists=thisService.getForValuesToSql(sql.toString()+page);						
+			lists.remove(0);
+					
+			// 处理基本数据		
+			List<Map<String, String>> exportList = new ArrayList<>();
+			Map<String, String> dinnerMap = null;
+			for (Map<String, Object> classrealdinner : lists) {
+				Object dinnerType=classrealdinner.get("DINNER_TYPE");
+				if("1".equals(dinnerType)){
+					dinnerType="围餐";
+				}else if("2".equals(dinnerType)){
+					dinnerType="自助餐";
+				}else{
+					dinnerType="快餐";
+				}
+				dinnerMap=new LinkedHashMap<>();
+				dinnerMap.put("rownum", String.valueOf(classrealdinner.get("rownum")));
+				dinnerMap.put("CLASS_NAME", String.valueOf(classrealdinner.get("CLASS_NAME")));
+				dinnerMap.put("CLASS_NUMB", String.valueOf(classrealdinner.get("CLASS_NUMB")));
+				dinnerMap.put("DINNER_TYPE", String.valueOf(dinnerType));
+				dinnerMap.put("BREAKFAST_COUNT", String.valueOf(classrealdinner.get("BREAKFAST_COUNT")));
+				dinnerMap.put("LUNCH_COUNT", String.valueOf(classrealdinner.get("LUNCH_COUNT")));
+				dinnerMap.put("DINNER_COUNT", String.valueOf(classrealdinner.get("DINNER_COUNT")));
+				dinnerMap.put("BREAKFAST_REAL", String.valueOf(classrealdinner.get("BREAKFAST_REAL")));
+				dinnerMap.put("LUNCH_REAL", String.valueOf(classrealdinner.get("LUNCH_REAL")));
+				dinnerMap.put("DINNER_REAL", String.valueOf(classrealdinner.get("DINNER_REAL")));
+				dinnerMap.put("COUNT_MONEY_PLAN", String.valueOf(classrealdinner.get("COUNT_MONEY_PLAN")));
+				dinnerMap.put("COUNT_MONEY_REAL", String.valueOf(classrealdinner.get("COUNT_MONEY_REAL")));
+				exportList.add(dinnerMap);
+			}
+			// --------2.组装表格数据
+			Map<String, Object> dinnerAllMap = new LinkedHashMap<>();
+			dinnerAllMap.put("data", exportList);
+			dinnerAllMap.put("title", "就餐汇总表");
+			dinnerAllMap.put("head", new String[] { "序号","班级名称", "班级编号", "就餐类型", "计划早餐围/人数", "计划午餐围/人数", "计划晚餐围/人数","实际早餐围/人数","实际午餐围/人数","实际晚餐围/人数","计划总额","实际总额" }); // 规定名字相同的，设定为合并
+			dinnerAllMap.put("columnWidth", new Integer[] { 10, 20, 15, 12, 16, 16, 16,16, 16, 16,15,15 }); // 30代表30个字节，15个字符
+			dinnerAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0 }); // 0代表居中，1代表居左，2代表居右
+			dinnerAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+			allList.add(dinnerAllMap);
+	
+			// 在导出方法中进行解析		
+			boolean result = PoiExportExcel.exportExcel(response, "就餐汇总信息", "就餐汇总信息", allList);
+			if (result == true) {
+				request.getSession().setAttribute("exportTrainClassDinnerTotalIsEnd", "1");
+			} else {
+				request.getSession().setAttribute("exportTrainClassDinnerTotalIsEnd", "0");
+				request.getSession().setAttribute("exportTrainClassDinnerTotalIsState", "0");
+			}
+		}catch(Exception e){
+			request.getSession().setAttribute("exportTrainClassDinnerTotalIsEnd", "0");
+			request.getSession().setAttribute("exportTrainClassDinnerTotalIsState", "0");
+		}
+	}
+	
+	/**
+	 * 导出班级详情信息
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/exportDinnerDetailExcel")
+	public void exportDinnerDetailExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getSession().setAttribute("exportTrainDinnerDetailIsEnd", "0");
+		request.getSession().removeAttribute("exportTrainDinnerDetailIsState");
+
+		SimpleDateFormat fmtDate = new SimpleDateFormat("yyyy年MM月dd日");
+		//SimpleDateFormat fmtDateWeek = new SimpleDateFormat("yyyy年M月d日 （E）");
+		//SimpleDateFormat fmtTime = new SimpleDateFormat("h:mm");
+		
+		List<Map<String, Object>> allList = new ArrayList<>();
+		
+		String classId = request.getParameter("classId"); 
+	
+		try{
+			String hql="from TrainClassrealdinner a where a.isDelete=0 and a.classId=? order by a.createTime asc";
+			List<TrainClassrealdinner> lists=thisService.getForValues(hql,classId);
+			String sheetTitle="";
+			
+			// 处理课程基本数据
+			List<Map<String, String>> exportList = new ArrayList<>();
+			Map<String, String> dinnerMap = null;
+			for (TrainClassrealdinner classrealdinner : lists) {
+				dinnerMap = new LinkedHashMap<>();
+				
+				if(sheetTitle.isEmpty())
+					sheetTitle=classrealdinner.getClassName();
+				
+				dinnerMap.put("className", classrealdinner.getClassName());
+				dinnerMap.put("date", fmtDate.format(classrealdinner.getDinnerDate()));
+				dinnerMap.put("person",classrealdinner.getContactPerson());
+				dinnerMap.put("phone", classrealdinner.getContactPhone());
+				dinnerMap.put("breakfast", String.valueOf(classrealdinner.getBreakfastCount()));
+				dinnerMap.put("lunch", String.valueOf(classrealdinner.getLunchCount()));
+				dinnerMap.put("dinner", String.valueOf(classrealdinner.getDinnerCount()));
+				dinnerMap.put("breakfastReal", String.valueOf(classrealdinner.getBreakfastReal()));
+				dinnerMap.put("lunchReal", String.valueOf(classrealdinner.getLunchReal()));
+				dinnerMap.put("dinnerReal", String.valueOf(classrealdinner.getDinnerReal()));
+				dinnerMap.put("moneyPlan", String.valueOf(classrealdinner.getCountMoneyPlan()));
+				dinnerMap.put("moneyReal", String.valueOf(classrealdinner.getCountMoneyReal()));			
+				dinnerMap.put("version", classrealdinner.getVersion()==0?"未登记":"已登记");
+				dinnerMap.put("remark", classrealdinner.getRemark());			
+				exportList.add(dinnerMap);
+			}
+			// --------2.组装表格数据
+			Map<String, Object> dinnerAllMap = new LinkedHashMap<>();
+			dinnerAllMap.put("data", exportList);
+			dinnerAllMap.put("title", "班级就餐登记详情表");
+			dinnerAllMap.put("head", new String[] { "班级名称", "就餐日期", "联系人", "联系电话", "预定早餐围/人数", "预定午餐围/人数", "预定晚餐围/人数","实际早餐围/人数","实际午餐围/人数","实际晚餐围/人数","计划金额","实际金额","是否登记","备注" }); // 规定名字相同的，设定为合并
+			dinnerAllMap.put("columnWidth", new Integer[] { 15, 15, 15, 15, 16, 16, 16,16, 16, 16,10,10,10,20 }); // 30代表30个字节，15个字符
+			dinnerAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0,0 }); // 0代表居中，1代表居左，2代表居右
+			dinnerAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+			allList.add(dinnerAllMap);
+	
+			// 在导出方法中进行解析
+			
+			boolean result = PoiExportExcel.exportExcel(response, "班级就餐登记详情信息", sheetTitle, allList);
+			if (result == true) {
+				request.getSession().setAttribute("exportTrainDinnerDetailIsEnd", "1");
+			} else {
+				request.getSession().setAttribute("exportTrainDinnerDetailIsEnd", "0");
+				request.getSession().setAttribute("exportTrainDinnerDetailIsState", "0");
+			}
+		}catch(Exception e){
+			request.getSession().setAttribute("exportTrainDinnerDetailIsEnd", "0");
+			request.getSession().setAttribute("exportTrainDinnerDetailIsState", "0");
+		}
+	}
+	/**
+	 * 判断是否导出完毕
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/checkExportDinnerDetailEnd")
+	public void checkExportDinnerDetailEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Object isEnd = request.getSession().getAttribute("exportTrainDinnerDetailIsEnd");
+		Object state = request.getSession().getAttribute("exportTrainDinnerDetailIsState");
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+		}
+	}
+	
+	/**
+	 * 判断是否导出完毕
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/checkExportTotalEnd")
+	public void checkExportTotalEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Object isEnd = request.getSession().getAttribute("exportTrainClassDinnerTotalIsEnd");
+		Object state = request.getSession().getAttribute("exportTrainClassDinnerTotalIsState");
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+		}
+	}
+	
 }

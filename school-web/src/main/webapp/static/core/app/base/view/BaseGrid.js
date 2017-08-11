@@ -31,6 +31,7 @@ Ext.define("core.base.view.BaseGrid", {
     extParams: {},
     
     noPagging: false,   //是否要在这里装载分页栏
+    bottomInfoPanelRef:null,   //是否显示底部消息栏，并且此值作为该组件ref的值
     model: '',          //model的名称
     storePageSize:20,
     store:'',           //store的名称，若为空，则在下面的初始化代码中加载，否则不再加载
@@ -226,8 +227,12 @@ Ext.define("core.base.view.BaseGrid", {
             }
         }
         
+        /*表格底部的Bar*/
+        /*更新：表格底部加入一行作为显示统计数据的panel*/
+        var pagingToolBar=null;    
+        var buttomInfoPanel=null;
         if (this.noPagging == false) {
-            this.bbar = Ext.create('Ext.PagingToolbar', {   
+            pagingToolBar = Ext.create('Ext.PagingToolbar', {   
                 cls:'basegridPagingToolbar',         
                 store: this.store,
                 pageSize: this.storePageSize,
@@ -236,18 +241,38 @@ Ext.define("core.base.view.BaseGrid", {
                     //Ext.create('Ext.ux.ProgressBarPager', {}),
                     Ext.create('Ext.ux.ComboPageSize', {})
                 ],
-                items: [/*{
-                    icon: '/Content/16Icons/lightning.png',
-                    tooltip: '重置查询',
-                    scope: this,
-                    handler: function() {
-                        this.filters.clearFilters();
-                    }
-                }*/],
+                items: [],
                 emptyMsg: "没有可显示的数据"
             });
         }
-        
+        if(this.bottomInfoPanelRef){
+            buttomInfoPanel=Ext.create('Ext.panel.Panel',{
+                ref:this.bottomInfoPanelRef,
+                height:25,
+                bodyStyle :{
+                    backgroundColor:'#f6dfdf',
+                   // border:'1px solid #99bce8',
+                    padding:'5px 0px 0px 5px',
+                    color:'#a70c00',
+                    fontWeight: 400
+                }        
+            });    
+        }
+        if(pagingToolBar||buttomInfoPanel){
+            var dockedItems=[];
+
+            if(buttomInfoPanel)
+                dockedItems.push(Ext.apply(buttomInfoPanel,{ dock:'top'}));
+
+            if(pagingToolBar)
+                dockedItems.push(Ext.apply(pagingToolBar,{ dock:'bottom'}));        
+            this.bbar=Ext.create('Ext.panel.Panel',{
+                dockedItems:dockedItems
+            })
+        }
+       
+
+        /*表格顶部的Bar*/
         if(this.panelTopBar||this.panelButtomBar){
             /*
             var items={

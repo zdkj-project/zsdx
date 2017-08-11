@@ -16,6 +16,48 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
         */
     },
     control: { 
+
+        //手动加载数据，并给编写store的加载事件
+        "basepanel basegrid[xtype=dinnertotal.maingrid]":{
+            afterrender :function( me , eOpts ) {
+                var self=this;
+                var store=me.getStore();
+                    
+                this.loadDinnerTotalDatas(store,me);
+                    
+                // store.loadPage(1,{
+                //     scope: this,
+                //     callback: function(records, operation, success) {
+                        
+                //         self.syncAjax({
+                //             url:comm.get('baseUrl') + "/TrainClassrealdinner/getDinnerTotalDatas",
+                //             timeout: 1000*60*30,        //半个小时         
+                //             //回调代码必须写在里面
+                //             success: function(response) {
+                //                 var result = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                //                 if(result.success){
+                //                     var data=result.obj;
+                //                     var html="计划总额："+data.COUNT_MONEY_PLAN+" 元&nbsp;&nbsp;&nbsp;实际总额："+data.COUNT_MONEY_REAL+" 元&nbsp;&nbsp;&nbsp;"+
+                //                     "计划总围/人数："+(data.BREAKFAST_COUNT*1+data.LUNCH_COUNT*1+data.DINNER_COUNT*1)+"&nbsp;&nbsp;&nbsp;"+
+                //                     "实际总围/人数："+(data.BREAKFAST_REAL*1+data.LUNCH_REAL*1+data.DINNER_REAL*1);
+                                
+                //                     me.down('panel[ref=dinnerTotalInfo]').setHtml(html);                              
+                //                 }else{                                    
+                //                     me.down('panel[ref=dinnerTotalInfo]').setHtml("请求失败！");   
+                //                 }               
+                //             },
+                //             failure: function(response) {                                
+                //                 self.Error("请求失败！");
+                //             }
+                //         });
+                    
+                //     }
+                // }); 
+            }
+            
+           
+        } , 
+
         //快速搜索按按钮
         "basepanel basegrid button[ref=gridFastSearchBtn]": {
             beforeclick: function (btn) {
@@ -39,7 +81,10 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                 var store = baseGrid.getStore();
                 var proxy = store.getProxy();
                 proxy.extraParams = obj;
-                store.loadPage(1);
+                //store.loadPage(1);
+
+                //加载数据，并且加载汇总数据
+                this.loadDinnerTotalDatas(store,baseGrid);
 
                 return false;
             }
@@ -68,7 +113,10 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                     var store = baseGrid.getStore();
                     var proxy = store.getProxy();
                     proxy.extraParams = obj;
-                    store.loadPage(1);
+                    //store.loadPage(1);
+
+                    //加载数据，并且加载汇总数据
+                    this.loadDinnerTotalDatas(store,baseGrid);
                 }
                 return false;
             }
@@ -96,7 +144,10 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                     var store = baseGrid.getStore();
                     var proxy = store.getProxy();
                     proxy.extraParams=obj;
-                    store.loadPage(1);
+                    //store.loadPage(1);
+
+                    //加载数据，并且加载汇总数据
+                    this.loadDinnerTotalDatas(store,baseGrid);
                 }
                 return false;
             }
@@ -122,8 +173,148 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                 var store = baseGrid.getStore();
                 var proxy = store.getProxy();
                 proxy.extraParams=obj;
-                store.loadPage(1);  
+                //store.loadPage(1);  
 
+                //加载数据，并且加载汇总数据
+                this.loadDinnerTotalDatas(store,baseGrid);
+                
+
+                return false;
+            }
+        },
+
+
+        /**
+         * 导出班级就餐汇总数据
+         */
+        "basepanel basegrid button[ref=gridExport]": {
+            beforeclick: function (btn) {
+                var self = this;
+                //得到组件
+                var baseGrid=btn.up("basegrid");
+                //获取表格参数
+                var extraParams = baseGrid.getStore().getProxy().extraParams;
+                var params="?t=1";
+                //Object {beginDate: "2017-08-02", endDate: "2017-08-05", className: "阿萨德", classNumb: "撒旦"}
+                for(var i in extraParams){
+                    console.log(i);
+                    params+="&"+i+"="+extraParams[i];
+                }
+               
+                var title = "确定要导出就餐汇总信息吗？";
+            
+                Ext.Msg.confirm('提示', title, function (btn, text) {
+                    if (btn == "yes") {
+                        Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
+                        //window.location.href = comm.get('baseUrl') + "/TrainClass/exportExcel?ids=" + ids.join(",");
+                        var component=Ext.create('Ext.Component', {
+                            title: 'HelloWorld',
+                            width: 0,
+                            height:0,
+                            hidden:true,
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClassrealdinner/exportTotalExcel' + params + '"></iframe>',
+                            renderTo: Ext.getBody()
+                        });
+                        
+                       
+                        var time=function(){
+                            self.syncAjax({
+                                url: comm.get('baseUrl') + '/TrainClassrealdinner/checkExportTotalEnd',
+                                timeout: 1000*60*30,        //半个小时         
+                                //回调代码必须写在里面
+                                success: function(response) {
+                                    data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                    if(data.success){
+                                        Ext.Msg.hide();
+                                        self.msgbox(data.obj);
+                                        component.destroy();                                
+                                    }else{                                    
+                                        if(data.obj==0){    //当为此值，则表明导出失败
+                                            Ext.Msg.hide();
+                                            self.Error("导出失败，请重试或联系管理员！");
+                                            component.destroy();                                        
+                                        }else{
+                                            setTimeout(function(){time()},1000);
+                                        }
+                                    }               
+                                },
+                                failure: function(response) {
+                                    Ext.Msg.hide();
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    component.destroy();
+                                }
+                            });
+                        }
+                        setTimeout(function(){time()},1000);    //延迟1秒执行
+                    }
+                });
+                return false;
+            }
+        },
+
+        /**
+         * 导出班级就餐详情数据
+         */
+        "basepanel basegrid button[ref=gridDinnerDetailExport]": {
+            beforeclick: function (btn) {
+                var self = this;
+                //得到组件
+                var baseGrid=btn.up("basegrid");
+               
+                var records = baseGrid.getSelectionModel().getSelection();
+                if (records.length != 1) {
+                    self.Warning("请选择一个班级！");
+                    return;
+                }
+
+                var params="?classId="+records[0].get("CLASS_ID");
+                var title = "确定要导出["+records[0].get("CLASS_NAME")+"]的班级详细信息吗？";
+            
+                Ext.Msg.confirm('提示', title, function (btn, text) {
+                    if (btn == "yes") {
+                        Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
+                        //window.location.href = comm.get('baseUrl') + "/TrainClass/exportExcel?ids=" + ids.join(",");
+                        var component=Ext.create('Ext.Component', {
+                            title: 'HelloWorld',
+                            width: 0,
+                            height:0,
+                            hidden:true,
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClassrealdinner/exportDinnerDetailExcel' + params + '"></iframe>',
+                            renderTo: Ext.getBody()
+                        });
+                        
+                       
+                        var time=function(){
+                            self.syncAjax({
+                                url: comm.get('baseUrl') + '/TrainClassrealdinner/checkExportDinnerDetailEnd',
+                                timeout: 1000*60*30,        //半个小时         
+                                //回调代码必须写在里面
+                                success: function(response) {
+                                    data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                    if(data.success){
+                                        Ext.Msg.hide();
+                                        self.msgbox(data.obj);
+                                        component.destroy();                                
+                                    }else{                                    
+                                        if(data.obj==0){    //当为此值，则表明导出失败
+                                            Ext.Msg.hide();
+                                            self.Error("导出失败，请重试或联系管理员！");
+                                            component.destroy();                                        
+                                        }else{
+                                            setTimeout(function(){time()},1000);
+                                        }
+                                    }               
+                                },
+                                failure: function(response) {
+                                    Ext.Msg.hide();
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    component.destroy();
+                                }
+                            });
+                        }
+                        setTimeout(function(){time()},1000);    //延迟1秒执行
+                    }
+                });
                 return false;
             }
         },
@@ -150,14 +341,14 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                 var detCode = basePanel.detCode;
                 var funData = basePanel.funData;
 
-                //设置tab页的itemId
-                var tabItemId = funCode + "_gridDetail";     //命名规则：funCode+'_ref名称',确保不重复
-                //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
-                var tabItem = tabPanel.getComponent(tabItemId);
-
                 //获取主键值              
                 var pkValue = records[0].get("CLASS_ID");
 
+                //设置tab页的itemId
+                var tabItemId = funCode + "_gridDetail"+pkValue;     //命名规则：funCode+'_ref名称',确保不重复
+                //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
+                var tabItem = tabPanel.getComponent(tabItemId);
+             
                 //判断是否已经存在tab了
                 if (!tabItem) {
 
@@ -211,14 +402,16 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                         classDinnerGrid.getStore().getProxy().extraParams.filter = '[{"type":"string","comparison":"=","value":"' + pkValue + '","field":"classId"}]';
                         classDinnerGrid.getStore().load();
 
+                        
+                        var html="计划总额："+records[0].get("COUNT_MONEY_PLAN")+" 元&nbsp;&nbsp;&nbsp;实际总额："+records[0].get("COUNT_MONEY_REAL")+" 元&nbsp;&nbsp;&nbsp;"+
+                            "计划总围/人数："+(records[0].get("BREAKFAST_COUNT")*1+records[0].get("LUNCH_COUNT")*1+records[0].get("DINNER_COUNT")*1)+"&nbsp;&nbsp;&nbsp;"+
+                            "实际总围/人数："+(records[0].get("BREAKFAST_REAL")*1+records[0].get("LUNCH_REAL")*1+records[0].get("DINNER_REAL")*1);
+                        
+                        classDinnerGrid.down('panel[ref=totalInfo]').setHtml(html);
 
                     }, 30);
 
-                } else if (tabItem.itemPKV != pkValue) {     //判断是否点击的是同一条数据，不同则替换数据
-
-                    var objDetForm = tabItem.down("baseform[funCode=" + detCode + "]");
-                    var formDeptObj = objDetForm.getForm();                
-                }
+                } 
 
                 tabPanel.setActiveTab(tabItem);
 
@@ -303,6 +496,11 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                         classDinnerGrid.getStore().getProxy().extraParams.filter = '[{"type":"string","comparison":"=","value":"' + pkValue + '","field":"classId"}]';
                         classDinnerGrid.getStore().load();
 
+                        var html="计划总额："+records[0].get("COUNT_MONEY_PLAN")+" 元&nbsp;&nbsp;&nbsp;实际总额："+records[0].get("COUNT_MONEY_REAL")+" 元&nbsp;&nbsp;&nbsp;"+
+                            "计划总围/人数："+(records[0].get("BREAKFAST_COUNT")*1+records[0].get("LUNCH_COUNT")*1+records[0].get("DINNER_COUNT")*1)+"&nbsp;&nbsp;&nbsp;"+
+                            "实际总围/人数："+(records[0].get("BREAKFAST_REAL")*1+records[0].get("LUNCH_REAL")*1+records[0].get("DINNER_REAL")*1);
+                        
+                        classDinnerGrid.down('panel[ref=totalInfo]').setHtml(html);
 
                     }, 30);
 
@@ -317,6 +515,38 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                 return false;
             },
         }
+    },
+
+    loadDinnerTotalDatas:function(store,baseGrid){
+        var self=this;
+        store.loadPage(1,{
+            scope: this,
+            callback: function(records, operation, success) {
+                
+                self.syncAjax({
+                    url:comm.get('baseUrl') + "/TrainClassrealdinner/getDinnerTotalDatas",
+                    timeout: 1000*60*30,        //半个小时         
+                    //回调代码必须写在里面
+                    success: function(response) {
+                        var result = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                        if(result.success){
+                            var data=result.obj;
+                            var html="计划总额："+data.COUNT_MONEY_PLAN+" 元&nbsp;&nbsp;&nbsp;实际总额："+data.COUNT_MONEY_REAL+" 元&nbsp;&nbsp;&nbsp;"+
+                            "计划总围/人数："+(data.BREAKFAST_COUNT*1+data.LUNCH_COUNT*1+data.DINNER_COUNT*1)+"&nbsp;&nbsp;&nbsp;"+
+                            "实际总围/人数："+(data.BREAKFAST_REAL*1+data.LUNCH_REAL*1+data.DINNER_REAL*1);
+                        
+                            baseGrid.down('panel[ref=dinnerTotalInfo]').setHtml(html);                              
+                        }else{                                    
+                            baseGrid.down('panel[ref=dinnerTotalInfo]').setHtml("请求失败！");   
+                        }               
+                    },
+                    failure: function(response) {                                
+                        self.Error("请求失败！");
+                    }
+                });
+            
+            }
+        });
     }    
        
 

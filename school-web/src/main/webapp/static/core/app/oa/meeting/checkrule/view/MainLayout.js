@@ -16,7 +16,7 @@ Ext.define("core.oa.meeting.checkrule.view.MainLayout", {
     detLayout: "checkrule.detaillayout",
     /*标注这个视图控制器的别名，以此提供给window处使用*/
     otherController: 'checkrule.otherController',
-    layout: 'border',
+    layout: 'fit',
     border: false,
     funData: {
         action: comm.get("baseUrl") + "/OaMeetingcheckrule", //请求Action
@@ -46,7 +46,6 @@ Ext.define("core.oa.meeting.checkrule.view.MainLayout", {
     scrollable:true,
     
     items: [{
-        xtype: "checkrule.maingrid",
-        region: "center"
+        xtype: "checkrule.maingrid"
     }]
 })
