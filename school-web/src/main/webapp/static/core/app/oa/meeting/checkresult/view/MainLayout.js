@@ -18,7 +18,7 @@ Ext.define("core.oa.meeting.checkresult.view.MainLayout", {
     detLayout: "checkresult.detaillayout",
     /*标注这个视图控制器的别名，以此提供给window处使用*/
     otherController:'checkresult.otherController',
-    layout:'border',
+    layout:'fit',
     border:false,
     funData: {
         action: comm.get("baseUrl") + "/OaMeeting", //请求Action
@@ -42,7 +42,6 @@ Ext.define("core.oa.meeting.checkresult.view.MainLayout", {
     
 
     items: [{
-            xtype: "checkresult.maingrid",
-            region: "center"
+            xtype: "checkresult.maingrid"
     }]
 })

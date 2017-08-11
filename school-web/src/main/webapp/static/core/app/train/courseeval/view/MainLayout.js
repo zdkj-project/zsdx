@@ -34,7 +34,7 @@ Ext.define("core.train.courseeval.view.MainLayout", {
 
     /*设置最小宽度，并且自动滚动*/
     minWidth:1200,
-    scrollable:true,
+    scrollable:'x',
     
     items: [{
             xtype: "courseeval.maingrid",
@@ -42,16 +42,16 @@ Ext.define("core.train.courseeval.view.MainLayout", {
             width: 410,
             //height:300,
             split: true,
-            style: {
-                border: '1px solid #ddd'
-            },
+            // style: {
+            //     border: '1px solid #ddd'
+            // },
             frame: false
         }, {
             xtype: "courseeval.evalgrid",
             region: "center",
             flex: 1.5,
-            style: {
-                border: '1px solid #ddd'
-            }
+            // style: {
+            //     border: '1px solid #ddd'
+            // }
         }]
 })

@@ -34,23 +34,23 @@ Ext.define("core.train.calcucredit.view.MainLayout", {
 
     /*设置最小宽度，并且自动滚动*/
     minWidth:1200,
-    scrollable:true,
+    scrollable:'x',
 
     items: [{
         xtype: "calcucredit.maingrid",
         region: "west",
         width: 410,
         split: true,
-        style: {
-            border: '1px solid #ddd'
-        },
+        // style: {
+        //     border: '1px solid #ddd'
+        // },
         frame: false
     }, {
         xtype: "calcucredit.traineesgrid",
         region: "center",
-        flex: 1.5,
-        style: {
-            border: '1px solid #ddd'
-        }
+        flex: 1,
+        // style: {
+        //     border: '1px solid #ddd'
+        // }
     }]
 })

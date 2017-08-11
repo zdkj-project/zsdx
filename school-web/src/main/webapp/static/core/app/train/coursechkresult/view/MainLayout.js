@@ -18,7 +18,7 @@ Ext.define("core.train.coursechkresult.view.MainLayout", {
     detLayout: "coursechkresult.detaillayout",
     /*标注这个视图控制器的别名，以此提供给window处使用*/
     otherController:'coursechkresult.otherController',
-    layout:'border',
+    layout:'fit',
     border:false,
     funData: {
         action: comm.get("baseUrl") + "/TrainClass", //请求Action
@@ -37,6 +37,6 @@ Ext.define("core.train.coursechkresult.view.MainLayout", {
 
     items: [{
             xtype: "coursechkresult.maingrid",
-            region: "center"
+            //region: "center"
     }]
 })

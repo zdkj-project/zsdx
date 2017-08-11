@@ -53,10 +53,10 @@ Ext.define("core.system.user.view.MainLayout", {
 
 	/*设置最小宽度，并且自动滚动*/
     minWidth: 1300,
-    scrollable: true,
+    scrollable: 'x',
 
 
-	bodyPadding: '2 0 0 0',
+	//bodyPadding: '2 0 0 0',
 	items: [{
 		xtype: "user.depttree",
 		region: "west",

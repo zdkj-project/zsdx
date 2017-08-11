@@ -37,25 +37,25 @@ Ext.define("core.systemset.dictionary.view.MainLayout", {
     
     /*设置最小宽度，并且自动滚动*/
     minWidth:1200,
-    scrollable:true,
+    scrollable:'x',
 	//bodyPadding: 2,
 	items: [{
 		xtype: "dic.dicgrid",
 		region: "west",
-		width: comm.get("clientWidth") * 0.31,
+		width: 550,
 		margin:'0 5 0 0',
 		border: false,
-		style:{
-            border: '1px solid #ddd'
-        },
+		// style:{
+  //           border: '1px solid #ddd'
+  //       },
 		frame:false
 	}, {
 		xtype: "dic.itemgrid",
 		region: "center",
 		border: false,
-		style:{
-            border: '1px solid #ddd'
-        },
+		// style:{
+  //           border: '1px solid #ddd'
+  //       },
 		frame:false
 	}]
 })

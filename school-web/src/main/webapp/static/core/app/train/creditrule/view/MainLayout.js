@@ -18,7 +18,7 @@ Ext.define("core.train.creditrule.view.MainLayout", {
     detLayout: "creditrule.detaillayout",
     /*标注这个视图控制器的别名，以此提供给window处使用*/
     otherController:'creditrule.otherController',
-    layout:'border',
+    layout:'fit',
     border:false,
     funData: {
         action: comm.get("baseUrl") + "/TrainCreditsrule", //请求Action
@@ -41,7 +41,6 @@ Ext.define("core.train.creditrule.view.MainLayout", {
     scrollable:true,
 
     items: [{
-        xtype: "creditrule.maingrid",
-        region: "center"
+        xtype: "creditrule.maingrid"
     }]
 })

@@ -18,7 +18,7 @@ Ext.define("core.train.coursecheckrule.view.MainLayout", {
     detLayout: "coursecheckrule.detaillayout",
     /*标注这个视图控制器的别名，以此提供给window处使用*/
     otherController:'coursecheckrule.otherController',
-    layout:'border',
+    layout:'fit',
     border:false,
     funData: {
         action: comm.get("baseUrl") + "/TrainCheckrule", //请求Action
@@ -41,7 +41,6 @@ Ext.define("core.train.coursecheckrule.view.MainLayout", {
     scrollable:true,
     
     items: [{
-            xtype: "coursecheckrule.maingrid",
-            region: "center"
+            xtype: "coursecheckrule.maingrid",        
     }]
 })
