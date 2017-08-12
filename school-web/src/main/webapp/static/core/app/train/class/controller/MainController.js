@@ -1836,7 +1836,7 @@ Ext.define("core.train.class.controller.MainController", {
         //设置tab页的itemId
         var tabItemId = funCode + "_gridAdd";     //命名规则：funCode+'_ref名称',确保不重复
         var pkValue = null;
-        var operType = "detail";    // 只显示关闭按钮
+        var operType = "noButton";    // 添加和编辑不显示关闭按钮
         var items = [{
             xtype: detLayout
         }];
@@ -1883,6 +1883,7 @@ Ext.define("core.train.class.controller.MainController", {
                         xtype: 'class.classdetailhtmlpanel'
                     }]
                 }];
+                operType = "detail"; 
                 break;
         }
 

@@ -514,7 +514,8 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 					+ " job.JOB_NAME AS identifier,'1' AS cardState," // cardState
 																		// 和 sid
 																		// 都置默认值，现在不做特定的处理
-					+ " '' as sid,org.EXT_FIELD04 as departmentId " + " from SYS_T_USER as u "
+					+ " '' as sid,org.EXT_FIELD04 as departmentId,job.JOB_NAME as jobName "
+					+ " from SYS_T_USER as u "
 					+ " join BASE_T_UserDeptJOB udj on u.USER_ID=udj.USER_ID"
 					+ " join BASE_T_ORG org on udj.dept_ID=org.dept_ID"
 					+ " join BASE_T_JOB job on udj.job_id=job.JOB_ID" + " where u.ISDELETE=0 and udj.ISDELETE=0 "
@@ -565,7 +566,8 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 					+ "u.SFZJH AS identifier,'1' AS cardState, " // cardState
 																	// 和 sid
 																	// 都置默认值，现在不做特定的处理
-					+ "'' as sid,org.EXT_FIELD04 as departmentId  " + " from SYS_T_USER u" + " join BASE_T_ORG org on "
+					+ "'' as sid,org.EXT_FIELD04 as departmentId,job.JOB_NAME as jobName  "
+					+ " from SYS_T_USER u" + " join BASE_T_ORG org on "
 					+ "		(select top 1 DEPT_ID from BASE_T_UserDeptJOB where USER_ID=u.USER_ID and ISDELETE=0 order by master_dept desc,CREATE_TIME desc)=org.dept_ID "
 					+ " join BASE_T_JOB job on "
 					+ "		(select top 1 JOB_ID from BASE_T_UserDeptJOB where USER_ID=u.USER_ID and ISDELETE=0 order by master_dept desc,CREATE_TIME desc)=job.JOB_ID "

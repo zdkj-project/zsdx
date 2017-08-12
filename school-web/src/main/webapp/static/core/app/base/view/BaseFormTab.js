@@ -91,6 +91,8 @@ Ext.define("core.base.view.BaseFormTab", {
                     }]
                 }];
                 break;
+            case 'noButton':                
+                break;
             default:
                 me.dockedItems = [{
                     xtype: 'toolbar',

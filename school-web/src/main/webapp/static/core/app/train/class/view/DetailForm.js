@@ -207,6 +207,20 @@ Ext.define("core.train.class.view.DetailForm", {
                 emptyText: "请输入是否考勤",
                 maxLength: 2,
                 maxLengthText: "最多2个字符,汉字占2个字符",
+                listeners: {
+                    change: function (field, newValue, oldValue) {
+                        var currentForm = field.up("baseform[xtype=class.detailform]");
+                        var checkoutCTR = currentForm.down("container[ref=checkoutCTR]");
+
+                        if (newValue == true) {
+                            checkoutCTR.setVisible (true);
+                            currentForm.setHeight(180);
+                        } else {                                
+                            checkoutCTR.setVisible (false);
+                            currentForm.setHeight(150);
+                        }
+                    }
+                }
             },
             // {
             //     beforeLabelTextTpl: comm.get('required'),
@@ -224,6 +238,66 @@ Ext.define("core.train.class.view.DetailForm", {
             //     maxLengthText: "最多2个字符,汉字占2个字符",
             // }
             ]
+        },
+        {
+            xtype: "container",
+            layout: "column",
+            labelAlign: "right",
+            hidden: true,
+            ref:'checkoutCTR',
+            items: [{
+                fieldLabel: "考勤规则ID",
+                name: "checkruleId",
+                xtype: "textfield",
+                hidden: true
+            }, {
+                beforeLabelTextTpl: "",
+                allowBlank: true,
+                blankText: "考勤规则不能为空",
+                columnWidth:0.25,
+                xtype: "basefuncfield",
+                refController: "", //该功能主控制器，这里重新指定为当前视图的控制器了
+                funcPanel: "checkrule.mainlayout", //该功能显示的主视图
+                formPanel: "class.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
+                funcTitle: "考勤规则选择", //查询窗口的标题
+                configInfo: {
+                    width: 1200,
+                    height: 650,
+                    fieldInfo: "checkruleId~checkruleName,uuid~ruleName",
+                    whereSql: " and isDelete='0' and startUsing=1 ",
+                    orderSql: " order by createTime DESC ",
+                    muiltSelect: false //是否多选
+                },
+                fieldLabel: "考勤规则",
+                emptyText: "请选择考勤规则",
+                name: "checkruleName"
+            },{
+                fieldLabel: "学分规则ID",
+                name: "creditsruleId",
+                xtype: "textfield",
+                hidden: true
+            }, {
+                beforeLabelTextTpl: "",
+                allowBlank: true,
+                blankText: "学分规则不能为空",
+                columnWidth: 0.25,
+                xtype: "basefuncfield",
+                refController: "", //该功能主控制器，这里重新指定为当前视图的控制器了
+                funcPanel: "creditrule.mainlayout", //该功能显示的主视图
+                formPanel: "class.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
+                funcTitle: "学分规则选择", //查询窗口的标题
+                configInfo: {
+                    width: 1200,
+                    height: 650,
+                    fieldInfo: "creditsruleId~creditsruleName,uuid~ruleName",
+                    whereSql: " and isDelete='0' and startUsing=1 ",
+                    orderSql: " order by createTime DESC ",
+                    muiltSelect: false //是否多选
+                },
+                fieldLabel: "学分规则",
+                emptyText: "请选择学分规则",
+                name: "creditsruleName"
+            }]
         },
         // {
         //     xtype: "container",

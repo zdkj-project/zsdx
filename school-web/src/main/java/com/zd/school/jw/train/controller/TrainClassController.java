@@ -481,8 +481,9 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			// 4.判断是否需要进行同步，仅当就餐类型为快餐的时候，才需要进行学员就餐信息的同步【处理重复安排导致的餐券问题，不重复生成此班级的餐券类型】
 			if (trainClass.getDinnerType() == null || trainClass.getDinnerType() == 3) {
 				// 查询班级学员就餐信息
-				// 4.查询班级的学员信息 g.isDelete=0 and
-				String hql = "select new TrainClasstrainee(g.uuid,g.xm,g.xbm,g.breakfast,g.lunch,g.dinner,g.isDelete) from TrainClasstrainee g where g.classId='"
+				// 4.查询班级的学员信息 (new:只查询出正常状态的学员，不再删除餐券数据)
+				String hql = "select new TrainClasstrainee(g.uuid,g.xm,g.xbm,g.breakfast,g.lunch,g.dinner,g.isDelete) from TrainClasstrainee g "
+						+ "where g.isDelete!=1 and g.classId='"
 						+ classId + "' order by g.breakfast desc,g.lunch desc,g.dinner desc";
 				List<TrainClasstrainee> traineeFoods = classTraineeService.doQuery(hql);
 

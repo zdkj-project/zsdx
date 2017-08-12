@@ -580,10 +580,14 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 			String insertSql = "insert into XF_MealCouponSet(MealCouponTypeID,EmployeeID,StartDate,EndDate,CreateDate,MealId)"
 					+ "values(%d,%s,'%s','%s','%s','%s');";
 	
-			String updateSql = "update XF_MealCouponSet MealCouponTypeID=0,MealId='%s' where EmployeeID='%s';";
+			String updateSql = "update XF_MealCouponSet set MealCouponTypeID=0,MealId='%s' where EmployeeID='%s';";
 			
 			String deleteSql = "delete from XF_MealCouponDetail where EmployeeID='%s' ; delete from XF_MealCouponSet where EmployeeID='%s'";
-
+			
+			String insertDetailSql = "insert into XF_MealCouponDetail(MealCouponDate,EmployeeID,MealTypeID,MealCouponTypeID,MealCouponAmount,Flag,CreateUserID,CreateDate,MealCouponConsume) "
+					+ " values('%s',%s,'%s',%d,'%s',%d,%d,'%s','%s');";
+			
+			
 			for (int i = 0; i < traineeFoods.size(); i++) {
 				TrainClasstrainee trainee = traineeFoods.get(i);
 				// 判断学员就餐的类型
@@ -596,49 +600,145 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 				MealId = null;
 
 				// 查询该学员的餐券信息
-				String selectSql = "select top 1 EmployeeID,MealId from XF_MealCouponSet where EmployeeID="
+				String selectSql = "select top 1 MealCouponTypeID,EmployeeID,MealId from XF_MealCouponSet where EmployeeID="
 						+ "(select top 1 EmployeeID from TC_Employee where UserId='" + trainee.getUuid() + "')";
 				List<Map<String, Object>> MealInfo = this.getForValuesToSql(selectSql);
 
 				// 判断学员的状态
 				if (trainee.getIsDelete() == 1) {
 					if (MealInfo.size() > 0) {
-						// 删除学员的餐券
-						executeSb.append(String.format(deleteSql, MealInfo.get(0).get("EmployeeID"),
-								MealInfo.get(0).get("EmployeeID")));
+						// 删除学员的餐券（在提交班级数据时，就设置了card表的此人员的card状态为2）
+//						executeSb.append(String.format(deleteSql, MealInfo.get(0).get("EmployeeID"),
+//								MealInfo.get(0).get("EmployeeID")));
 					}
 
 				} else {
-
+					String MealTypeIDs=null;	//存储餐券的类型，每个字节代表一个TC_MealType
 					if (breakFast == 1 && lunch == 1 && dinner == 1) { // 早午晚餐类
 						MealId = MealIds[6];
+						MealTypeIDs="123";
 					} else if (lunch == 1 && dinner == 1) { // 午晚餐类
 						MealId = MealIds[5];
+						MealTypeIDs="23";
 					} else if (breakFast == 1 && dinner == 1) { // 早晚餐类
 						MealId = MealIds[4];
+						MealTypeIDs="13";
 					} else if (breakFast == 1 && lunch == 1) { // 早午餐类
 						MealId = MealIds[3];
+						MealTypeIDs="12";
 					} else if (dinner == 1) { // 晚餐类
 						MealId = MealIds[2];
+						MealTypeIDs="3";
 					} else if (lunch == 1) { // 午餐类
 						MealId = MealIds[1];
+						MealTypeIDs="2";
 					} else if (breakFast == 1) { // 早餐类
 						MealId = MealIds[0];
+						MealTypeIDs="1";
 					}
 
-					if (MealId != null) { // 有订餐
+					if (MealId != null) { // 有订餐(new:删除此人员的餐券信息，并重新生成餐券和餐券详情)
 						if (MealInfo.size() > 0) {
 							if (!MealInfo.get(0).get("MealId").equals(MealId)) { // 若前后的订餐不一致，则更新
+								// 删除学员的餐券明细数据
+								executeSb.append(String.format("delete from XF_MealCouponDetail where EmployeeID='%s' ;", MealInfo.get(0).get("EmployeeID")));
+								
+								//更新 学员餐券设置表
 								executeSb.append(String.format(updateSql, MealId , MealInfo.get(0).get("EmployeeID")));
+								
+								//重新生成餐券明细表							
+								//计算天数
+								long endTime=trainClass.getEndDate().getTime();
+								long startTime=trainClass.getBeginDate().getTime();
+								long currentTime=new Date().getTime();
+								if(startTime<currentTime)
+									startTime=currentTime;
+								long diff = endTime - startTime;	//得到的差值 
+								long days = (long) (Math.ceil((float)diff / (1000 * 60 * 60 * 24))+1);
+							    if(days<=0)
+							    	break;
+							    
+							    Calendar calendar=Calendar.getInstance();
+							    calendar.setTimeInMillis(startTime);	//真正意义上的开始日期
+
+							    String breakFastStand=String.valueOf(trainClass.getBreakfastStand());
+							    String lunchStand=String.valueOf(trainClass.getLunchStand());
+							    String dinnerStand=String.valueOf(trainClass.getDinnerStand());
+							    
+							    //生成剩余天数的餐券
+							    for(int j=0;j<days;j++){
+							    	
+							    	 String dateStr=DateUtil.formatDate(calendar.getTime());						    	
+							    	 //分别生成早中晚三种餐券
+							    	 for(int k=0;k<MealTypeIDs.length();k++){
+							    		 String money="";
+							    		 if(MealTypeIDs.charAt(k)=='1')
+							    			 money=breakFastStand;
+							    		 else if(MealTypeIDs.charAt(k)=='2')
+							    			 money=lunchStand;
+							    		 else if(MealTypeIDs.charAt(k)=='3')
+							    			 money=dinnerStand;
+							    		 
+							    		 executeSb.append(String.format(insertDetailSql, dateStr,
+							    				 MealInfo.get(0).get("EmployeeID"),
+													MealTypeIDs.charAt(k),0,money,0,1,currentDate,"0.00"));
+							    	 }
+							    	 
+							    	 calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH)+1);						   
+							    }
 							}
+							
 						} else {
+							//生成学员餐券设置表数据
 							executeSb.append(String.format(insertSql, 0,
 									"(select top 1 EmployeeID from TC_Employee where UserId='"
 											+ traineeFoods.get(i).getUuid() + "')",
 									beginDate, endDate, currentDate, MealId));
+							
+							//生成餐券明细表
+							//计算天数
+							long endTime=trainClass.getEndDate().getTime();
+							long startTime=trainClass.getBeginDate().getTime();
+							long currentTime=new Date().getTime();
+							if(startTime<currentTime)
+								startTime=currentTime;
+							long diff = endTime - startTime;	//得到的差值 
+						    long days = (long) (Math.ceil((float)diff /(1000 * 60 * 60 * 24))+1);
+						    if(days<=0)
+						    	break;
+						    
+						    Calendar calendar=Calendar.getInstance();
+						    calendar.setTimeInMillis(startTime);	//真正意义上的开始日期
+
+						    String breakFastStand=String.valueOf(trainClass.getBreakfastStand());
+						    String lunchStand=String.valueOf(trainClass.getLunchStand());
+						    String dinnerStand=String.valueOf(trainClass.getDinnerStand());
+						    
+						    //生成剩余天数的餐券
+						    for(int j=0;j<days;j++){
+						    	
+						    	 String dateStr=DateUtil.formatDate(calendar.getTime());						    	
+						    	 //分别生成早中晚三种餐券
+						    	 for(int k=0;k<MealTypeIDs.length();k++){
+						    		 String money="";
+						    		 if(MealTypeIDs.charAt(k)=='1')
+						    			 money=breakFastStand;
+						    		 else if(MealTypeIDs.charAt(k)=='2')
+						    			 money=lunchStand;
+						    		 else if(MealTypeIDs.charAt(k)=='3')
+						    			 money=dinnerStand;
+						    		 
+						    		 executeSb.append(String.format(insertDetailSql, dateStr,
+						    				 "(select top 1 EmployeeID from TC_Employee where UserId='"
+														+ traineeFoods.get(i).getUuid() + "')",
+														MealTypeIDs.charAt(k),0,money,0,1,currentDate,"0.00"));
+						    	 }
+						    	 
+						    	 calendar.set(Calendar.DAY_OF_MONTH, calendar.get(Calendar.DAY_OF_MONTH)+1);						   
+						    }
 						}
 
-					} else { // 没有订餐
+					} else { // 没有订餐(new:删除此人员的餐券信息)
 						if (MealInfo.size() > 0) {
 							// 删除学员的餐券
 							executeSb.append(String.format(deleteSql, MealInfo.get(0).get("EmployeeID"),
@@ -647,8 +747,8 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 					}
 				}
 
-				// 每20条语句执行一次插入
-				if ((i + 1) % 20 == 0) {				
+				// 每10个运行执行一次插入
+				if ((i + 1) % 10 == 0) {				
 					result += this.executeSql(executeSb.toString());
 					executeSb.setLength(0); // 清空
 				}
@@ -664,9 +764,16 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 			// 更新餐券类型（若直接在上边的语句中直接使用子查询去查询类型ID，会报错，因为事物原因，类型并未提交入库，所以查询不到）
 			// 继而，在插入了学员就餐数据之后，使用下面这个语句进行一次性的更新就餐id。
 			updateSql = "update XF_MealCouponSet set MealCouponTypeID =" + " isnull((select top 1 MealCouponTypeID from"
-					+ "		XF_MealCouponType where MealId=XF_MealCouponSet.MealId),0) "
+					+ "	XF_MealCouponType where MealId=XF_MealCouponSet.MealId),0) "
 					+ " where MealCouponTypeID=0 and MealId is not null";
 			this.executeSql(updateSql);
+			
+			//生成餐券详细表中的餐券类型ID，原因同上
+			updateSql = "update XF_MealCouponDetail set MealCouponTypeID =" + " isnull((select top 1 MealCouponTypeID from"
+					+ "	XF_MealCouponSet where EmployeeID=XF_MealCouponDetail.EmployeeID),0) "
+					+ " where MealCouponTypeID=0 and EmployeeID is not null";
+			this.executeSql(updateSql);
+			
 		} catch (Exception e) {
 			result = -1;
 			// TODO: handle exception
@@ -743,37 +850,51 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 				}
 			}
 
-		} else {
-
-			// 1.创建就餐类型（早餐类、午餐类、晚餐类、早午餐类、早晚餐类、午晚餐类、早午晚餐类）
+		}
+		
+		// 1.创建就餐类型（早餐类、午餐类、晚餐类、早午餐类、早晚餐类、午晚餐类、早午晚餐类）
+		StringBuffer sb = new StringBuffer();
+		
+		//判断是否存在，不存在则创建
+		if(uuid1==null){
 			uuid1 = UUID.randomUUID().toString();
-			uuid2 = UUID.randomUUID().toString();
-			uuid3 = UUID.randomUUID().toString();
-			uuid4 = UUID.randomUUID().toString();
-			uuid5 = UUID.randomUUID().toString();
-			uuid6 = UUID.randomUUID().toString();
-			uuid7 = UUID.randomUUID().toString();
-
-			StringBuffer sb = new StringBuffer();
 			sb.append(String.format(insertSql, className + "-早餐类", 50102, 1, breakFastStand, 0, 0.00, 0, 0.00, 0, 0.00,
 					1, 0, beginDate, endDate, currentDate, uuid1, classId));
+		}
+		if(uuid2==null){
+			uuid2 = UUID.randomUUID().toString();
 			sb.append(String.format(insertSql, className + "-午餐类", 50102, 0, 0.00, 1, lunchStand, 0, 0.00, 0, 0.00, 1,
 					0, beginDate, endDate, currentDate, uuid2, classId));
+		}
+		if(uuid3==null){
+			uuid3 = UUID.randomUUID().toString();
 			sb.append(String.format(insertSql, className + "-晚餐类", 50102, 0, 0.00, 0, 0.00, 1, dinnerStand, 0, 0.00, 1,
 					0, beginDate, endDate, currentDate, uuid3, classId));
+		}
+		if(uuid4==null){
+			uuid4 = UUID.randomUUID().toString();
 			sb.append(String.format(insertSql, className + "-早午餐类", 50102, 1, breakFastStand, 1, lunchStand, 0, 0.00, 0,
 					0.00, 1, 0, beginDate, endDate, currentDate, uuid4, classId));
+		}
+		if(uuid5==null){
+			uuid5 = UUID.randomUUID().toString();
 			sb.append(String.format(insertSql, className + "-早晚餐类", 50102, 1, breakFastStand, 0, 0.00, 1, dinnerStand,
 					0, 0.00, 1, 0, beginDate, endDate, currentDate, uuid5, classId));
+		}
+		if(uuid6==null){
+			uuid6 = UUID.randomUUID().toString();
 			sb.append(String.format(insertSql, className + "-午晚餐类", 50102, 0, 0.00, 1, lunchStand, 1, dinnerStand, 0,
 					0.00, 1, 0, beginDate, endDate, currentDate, uuid6, classId));
+		}
+		if(uuid7==null){
+			uuid7 = UUID.randomUUID().toString();
 			sb.append(String.format(insertSql, className + "-早午晚餐类", 50102, 1, breakFastStand, 1, lunchStand, 1,
 					dinnerStand, 0, 0.00, 1, 0, beginDate, endDate, currentDate, uuid7, classId));
-
-			this.executeSql(sb.toString());
-
 		}
-
+		
+		if(sb.length()>0)
+			this.executeSql(sb.toString());
+	
 		return new String[] { uuid1, uuid2, uuid3, uuid4, uuid5, uuid6, uuid7 };
 	}
 

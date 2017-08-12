@@ -409,6 +409,30 @@ public class TrainClass extends BaseEntity implements Serializable {
     public void setCheckruleName(String checkruleName) {
         this.checkruleName = checkruleName;
     }
+    
+    @FieldInfo(name = "学分规则Id")
+    @Column(name = "CREDITSRULE_ID",length = 36,nullable = true)
+    private String creditsruleId;
+
+    public String getCreditsruleId() {
+        return creditsruleId;
+    }
+
+    public void setCreditsruleId(String creditsruleId) {
+        this.creditsruleId = creditsruleId;
+    }
+
+    @FieldInfo(name = "学分规则名称")
+    @Column(name = "CREDITSRULE_NAME", length = 128, nullable = true)
+    private String creditsruleName;
+
+    public String getCreditsruleName() {
+        return creditsruleName;
+    }
+
+    public void setCreditsruleName(String creditsruleName) {
+        this.creditsruleName = creditsruleName;
+    }
     /*
     @FieldInfo(name = "学员ID")
     @Column(name = "TRINEE_ID", length = 8000, nullable = true)

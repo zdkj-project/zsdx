@@ -209,6 +209,14 @@ Ext.define("core.train.class.controller.DetailController", {
                         params.needChecking=params.needChecking==true?1:0;
                         params.needSynctrainee=params.needSynctrainee==true?1:0;
                         
+                        //如果没有勾选考勤，则清除规则的参数
+                        if(params.needChecking==0){
+                            params.checkruleId="";
+                            params.checkruleName="";
+                            params.creditsruleId="";
+                            params.creditsruleName="";
+                        }
+
                         //判断当前是保存还是修改操作
                         var act = Ext.isEmpty(pkField.getValue()) ? "doadd" : "doupdate";
                         if (formObj.isValid()) {

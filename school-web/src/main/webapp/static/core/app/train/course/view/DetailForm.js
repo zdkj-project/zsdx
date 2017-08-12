@@ -124,7 +124,8 @@ Ext.define("core.train.course.view.DetailForm", {
             xtype: "numberfield",
             emptyText: "请输入课时时长",
             minValue: 0,
-            maxValue: 99999
+            maxValue: 99999,
+            value:150
         }]
     }, {
         xtype: "container",
