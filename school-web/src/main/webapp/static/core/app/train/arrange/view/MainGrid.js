@@ -30,7 +30,7 @@ Ext.define("core.train.arrange.view.MainGrid", {
             ref: 'gridArrangeSite_Tab',
             funCode: 'girdFuntionBtn',
             iconCls: 'x-fa fa-pencil-square'
-        },{
+        }, {
             xtype: 'button',
             text: '导出住宿',
             ref: 'gridExportRoom',
@@ -114,11 +114,11 @@ Ext.define("core.train.arrange.view.MainGrid", {
                 metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + value + '"';
                 return value;
             }
-        }, {
+        },/* {
             width:100,
             text: "班级编号",
             dataIndex: "classNumb"
-        },  {
+        },  */{
             width:90,
             text: "开始日期",
             dataIndex: "beginDate",
@@ -155,6 +155,15 @@ Ext.define("core.train.arrange.view.MainGrid", {
             text: "联系电话",
             dataIndex: "contactPhone"
         },{
+            width: 130,
+            text: "更新时间",
+            dataIndex: "updateTime",
+            renderer: function(value, metaData) {
+                var date = value.replace(new RegExp(/-/gm), "/");    
+                var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i')           
+                return ss;
+            }
+        },{
             width: 80,
             text: "提交状态",
             dataIndex: "isuse",
@@ -188,18 +197,9 @@ Ext.define("core.train.arrange.view.MainGrid", {
                     return "<span style='color:red'>未安排</span>";
             }
         },{
-            width: 130,
-            text: "更新时间",
-            dataIndex: "updateTime",
-            renderer: function(value, metaData) {
-                var date = value.replace(new RegExp(/-/gm), "/");    
-                var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i')           
-                return ss;
-            }
-        },{
             xtype: 'actiontextcolumn',
             text: "操作",
-            width: 160,
+            width: 250,
             align:'center',
             fixed: true,
             items: [{
@@ -244,9 +244,23 @@ Ext.define("core.train.arrange.view.MainGrid", {
                     });
                 }
             }, {
-                text:'详情',  
+                text: '就餐详情',
+                style: 'font-size:12px;',
+                tooltip: '就餐详情',
+                ref: 'gridFoodDetail',        
+                handler: function (view, rowIndex,colIndex, item) {
+                    var rec = view.getStore().getAt(
+                        rowIndex);
+                    this.fireEvent('gridFoodDetailClick_Tab', {
+                        view: view.grid,
+                        record: rec,
+                        cmd: 'detail'
+                    });
+                }
+            }, {
+                text:'班级详情',  
                 style:'font-size:12px;',  
-                tooltip: '详情',
+                tooltip: '班级详情',
                 ref: 'gridDetail',
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);

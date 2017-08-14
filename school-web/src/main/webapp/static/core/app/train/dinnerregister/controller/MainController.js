@@ -55,6 +55,9 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                 var breakfastRealText=fieldset.down("field[name=breakfastReal]");
                 var lunchRealText=fieldset.down("field[name=lunchReal]");
                 var dinnerRealText=fieldset.down("field[name=dinnerReal]");
+                var breakfastStandRealText=fieldset.down("field[name=breakfastStandReal]");
+                var lunchStandRealText=fieldset.down("field[name=lunchStandReal]");
+                var dinnerStandRealText=fieldset.down("field[name=dinnerStandReal]");
                     
                 if(!breakfastRealText.isValid()||!lunchRealText.isValid()||!dinnerRealText.isValid()){
                     self.Warning("输入的数据有误，请检查！");
@@ -69,7 +72,10 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                         uuid:uuid,
                         breakfastReal:breakfastRealText.getValue(),
                         lunchReal:lunchRealText.getValue(),
-                        dinnerReal:dinnerRealText.getValue()                 
+                        dinnerReal:dinnerRealText.getValue(),
+                        breakfastStandReal:breakfastStandRealText.getValue(),
+                        lunchStandReal:lunchStandRealText.getValue(),
+                        dinnerStandReal:dinnerStandRealText.getValue()                      
                     },
                     timeout:1000*60*60, //1个小时
                     //回调代码必须写在里面
@@ -180,7 +186,7 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
 
     loadInfo:function(form,params){
         var self=this;
-        Ext.Msg.wait('正在查询中,请稍后...', '温馨提示');
+        //Ext.Msg.wait('正在查询中,请稍后...', '温馨提示');
 
         //var form=cpt.down("baseform[xtype=dinnerregister.mainform]");
         form.removeAll();
@@ -199,7 +205,14 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                     //var fieldset=Ext.create('core.train.dinnerregister.view.MainFormFieldSet',{
                     items.push({
                         xtype:'dinnerregister.mainformfieldset',
-                        title: recordData.className,                             
+                        title: recordData.className,     
+                        defaults:{
+                            width:'100%',
+                            margin:"10 5",
+                            labelAlign : 'right',
+                            //columnWidth : 0.5,
+                            msgTarget: 'qtip',
+                        },                        
                         items :[ {
                             xtype: "container",
                             layout: "column",                             
@@ -267,11 +280,10 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                                 xtype : 'displayfield',
                                 value: recordData.dinnerCount
                             }]
-                        },{                        
-                            xtype: "container",
-                            layout: "column",
-                            labelAlign: "right",
-                            items:[ {
+                        },{
+                            xtype:'container',
+                            layout:'column',
+                            items:[{
                                 beforeLabelTextTpl: comm.get('required'),
                                 allowBlank: false, 
                                 columnWidth: 0.3,
@@ -305,7 +317,42 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                                 maxValue:999, 
                                 value: recordData.dinnerReal,
                                 emptyText: "请输入实际数值"      
-                            }, {            
+                            }]
+                        },{                        
+                            xtype: "container",
+                            layout: "column",
+                            labelAlign: "right",
+                            items:[ {
+                                beforeLabelTextTpl: comm.get('required'),
+                                allowBlank: false, 
+                                columnWidth: 0.3,                            
+                                fieldLabel: '实际早餐餐标',
+                                name: 'breakfastStandReal',
+                                xtype : 'numberfield',
+                                minValue: 0,
+                                maxValue:9999, 
+                                value: recordData.breakfastStandReal
+                            }, {
+                                beforeLabelTextTpl: comm.get('required'),
+                                allowBlank: false, 
+                                columnWidth: 0.3,                               
+                                fieldLabel: '实际午餐餐标',
+                                name: 'lunchStandReal',
+                                xtype : 'numberfield',
+                                minValue: 0,
+                                maxValue:9999, 
+                                value: recordData.lunchStandReal
+                            }, {
+                                beforeLabelTextTpl: comm.get('required'),
+                                allowBlank: false, 
+                                columnWidth: 0.3,                                
+                                fieldLabel: '实际晚餐餐标',
+                                name: 'dinnerStandReal',
+                                xtype : 'numberfield',
+                                minValue: 0,
+                                maxValue:9999, 
+                                value: recordData.dinnerStandReal
+                            },{            
                                 columnAlign:'center',
                                 xtype:'button',
                                 columnWidth: 0.1,
@@ -323,9 +370,7 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                 if(data.totalCount==0){
                     form.setHtml("<span style='padding: 20px;font-size: 20px;text-align: center;  display: inline-block;width: 100%;'>今日没有需要就餐登记的班级！</span>");
                 }
-                setTimeout(function(){
-                    Ext.Msg.hide();    
-                },500);
+                
                                                              
             },
             failure: function(response) {

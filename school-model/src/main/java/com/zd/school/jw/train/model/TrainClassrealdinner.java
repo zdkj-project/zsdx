@@ -96,6 +96,36 @@ public class TrainClassrealdinner extends BaseEntity implements Serializable{
     public Integer getDinnerReal() {
         return dinnerReal;
     }
+    
+    @FieldInfo(name = "实际早餐餐标")
+    @Column(name = "BREAKFAST_STAND_REAL", precision = 8, scale = 2, nullable = true)
+    private BigDecimal breakfastStandReal;
+    public void setBreakfastStandReal(BigDecimal breakfastStandReal) {
+        this.breakfastStandReal = breakfastStandReal;
+    }
+    public BigDecimal getBreakfastStandReal() {
+        return breakfastStandReal;
+    }
+        
+    @FieldInfo(name = "实际午餐餐标")
+    @Column(name = "LUNCH_STAND_REAL", precision = 8, scale = 2, nullable = true)
+    private BigDecimal lunchStandReal;
+    public void setLunchStandReal(BigDecimal lunchStandReal) {
+        this.lunchStandReal = lunchStandReal;
+    }
+    public BigDecimal getLunchStandReal() {
+        return lunchStandReal;
+    }
+        
+    @FieldInfo(name = "实际晚餐餐标")
+    @Column(name = "DINNER_STAND_REAL", precision = 8, scale = 2, nullable = true)
+    private BigDecimal dinnerStandReal;
+    public void setDinnerStandReal(BigDecimal dinnerStandReal) {
+        this.dinnerStandReal = dinnerStandReal;
+    }
+    public BigDecimal getDinnerStandReal() {
+        return dinnerStandReal;
+    }
         
     @FieldInfo(name = "备注")
     @Column(name = "REMARK", length = 128, nullable = true)

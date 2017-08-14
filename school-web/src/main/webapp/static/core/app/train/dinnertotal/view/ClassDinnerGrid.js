@@ -56,7 +56,7 @@ Ext.define("core.train.dinnertotal.view.ClassDinnerGrid", {
                 var ss = Ext.Date.format(new Date(value*1), 'Y-m-d')           
                 return ss;
             }
-        },{
+        },/*{
             width:120,
             text: "计划早餐围/人数",
             dataIndex: "breakfastCount"
@@ -68,18 +68,30 @@ Ext.define("core.train.dinnertotal.view.ClassDinnerGrid", {
             width:120,
             text: "计划晚餐围/人数",
             dataIndex: "dinnerCount"
-        }, {
+        },*/ {
             width:120,
             text: "实际早餐围/人数",
             dataIndex: "breakfastReal"
         }, {
             width:120,
+            text: "早餐餐标",
+            dataIndex: "breakfastStandReal"
+        }, {
+            width:120,
             text: "实际午餐围/人数",
             dataIndex: "lunchReal"
-        }, {
+        },  {
+            width:120,
+            text: "午餐餐标",
+            dataIndex: "lunchStandReal"
+        },{
             width:120,
             text: "实际晚餐围/人数",
             dataIndex: "dinnerReal"
+        }, {
+            width:120,
+            text: "晚餐餐标",
+            dataIndex: "dinnerStandReal"
         },{
             width:100,
             text: "计划金额",

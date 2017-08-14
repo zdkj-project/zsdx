@@ -153,6 +153,9 @@ public class TrainClassrealdinnerServiceImpl extends BaseServiceImpl<TrainClassr
 		    	tc.setClassId(classId);
 		    	tc.setBreakfastReal(0);
 		    	tc.setLunchReal(0);
+		    	tc.setBreakfastStandReal(trainClass.getBreakfastStand());
+		    	tc.setLunchStandReal(trainClass.getLunchStand());
+		    	tc.setDinnerStandReal(trainClass.getDinnerStand());
 		    	tc.setDinnerReal(0);
 		    	tc.setDinnerDate(calendar.getTime());
 		    	tc.setCreateTime(currentDate);

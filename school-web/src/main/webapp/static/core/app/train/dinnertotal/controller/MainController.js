@@ -496,9 +496,9 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                         classDinnerGrid.getStore().getProxy().extraParams.filter = '[{"type":"string","comparison":"=","value":"' + pkValue + '","field":"classId"}]';
                         classDinnerGrid.getStore().load();
 
-                        var html="计划总额："+records[0].get("COUNT_MONEY_PLAN")+" 元&nbsp;&nbsp;&nbsp;实际总额："+records[0].get("COUNT_MONEY_REAL")+" 元&nbsp;&nbsp;&nbsp;"+
-                            "计划总围/人数："+(records[0].get("BREAKFAST_COUNT")*1+records[0].get("LUNCH_COUNT")*1+records[0].get("DINNER_COUNT")*1)+"&nbsp;&nbsp;&nbsp;"+
-                            "实际总围/人数："+(records[0].get("BREAKFAST_REAL")*1+records[0].get("LUNCH_REAL")*1+records[0].get("DINNER_REAL")*1);
+                        var html="计划总额："+record.get("COUNT_MONEY_PLAN")+" 元&nbsp;&nbsp;&nbsp;实际总额："+record.get("COUNT_MONEY_REAL")+" 元&nbsp;&nbsp;&nbsp;"+
+                            "计划总围/人数："+(record.get("BREAKFAST_COUNT")*1+record.get("LUNCH_COUNT")*1+record.get("DINNER_COUNT")*1)+"&nbsp;&nbsp;&nbsp;"+
+                            "实际总围/人数："+(record.get("BREAKFAST_REAL")*1+record.get("LUNCH_REAL")*1+record.get("DINNER_REAL")*1);
                         
                         classDinnerGrid.down('panel[ref=totalInfo]').setHtml(html);
 

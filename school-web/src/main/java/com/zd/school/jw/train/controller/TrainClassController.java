@@ -590,13 +590,19 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				Map<String, String> mapHeadshipLevel = new HashMap<>();
 				Map<String, String> mapXbm = new HashMap<>();
 				Map<String, String> mapClassCategory = new HashMap<>();
-				String hql1 = " from BaseDicitem where dicCode in ('HEADSHIPLEVEL','XBM','ZXXBJLX')";
+				Map<String, String> mapMzmCategory = new HashMap<>();
+				Map<String, String> mapTraineeCategory = new HashMap<>();
+				String hql1 = " from BaseDicitem where dicCode in ('HEADSHIPLEVEL','XBM','ZXXBJLX','TRAINEECATEGORY','MZM')";
 				List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
 				for (BaseDicitem baseDicitem : listBaseDicItems1) {
 					if (baseDicitem.getDicCode().equals("XBM"))
 						mapXbm.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
 					else if (baseDicitem.getDicCode().equals("HEADSHIPLEVEL"))
 						mapHeadshipLevel.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
+					else if (baseDicitem.getDicCode().equals("MZM"))
+						mapMzmCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
+					else if (baseDicitem.getDicCode().equals("TRAINEECATEGORY"))
+						mapTraineeCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
 					else
 						mapClassCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
 				}
@@ -640,11 +646,13 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 					traineeMap = new LinkedHashMap<>();
 					traineeMap.put("xm", classTrainee.getXm());
 					traineeMap.put("xbm", mapXbm.get(classTrainee.getXbm()));
-					traineeMap.put("phone", classTrainee.getMobilePhone());
-					traineeMap.put("sfzjh", classTrainee.getSfzjh());
-					traineeMap.put("workUnit", classTrainee.getWorkUnit());
+					traineeMap.put("mz",mapMzmCategory.get(classTrainee.getMzm()));
 					traineeMap.put("position", classTrainee.getPosition());
 					traineeMap.put("headshipLevel", mapHeadshipLevel.get(classTrainee.getHeadshipLevel()));
+					traineeMap.put("phone", classTrainee.getMobilePhone());
+					//traineeMap.put("sfzjh", classTrainee.getSfzjh());
+					traineeMap.put("workUnit", classTrainee.getWorkUnit());
+					traineeMap.put("traineeCategory", mapTraineeCategory.get(classTrainee.getTraineeCategory()));
 
 					String isDelete = "";
 					if (classTrainee.getIsDelete() == 0)
@@ -1056,13 +1064,19 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		Map<String, String> mapHeadshipLevel = new HashMap<>();
 		Map<String, String> mapXbm = new HashMap<>();
 		Map<String, String> mapClassCategory = new HashMap<>();
-		String hql1 = " from BaseDicitem where dicCode in ('HEADSHIPLEVEL','XBM','ZXXBJLX')";
+		Map<String, String> mapMzmCategory = new HashMap<>();
+		Map<String, String> mapTraineeCategory = new HashMap<>();
+		String hql1 = " from BaseDicitem where dicCode in ('HEADSHIPLEVEL','XBM','ZXXBJLX','TRAINEECATEGORY','MZM')";
 		List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
 		for (BaseDicitem baseDicitem : listBaseDicItems1) {
 			if (baseDicitem.getDicCode().equals("XBM"))
 				mapXbm.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
 			else if (baseDicitem.getDicCode().equals("HEADSHIPLEVEL"))
 				mapHeadshipLevel.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
+			else if (baseDicitem.getDicCode().equals("MZM"))
+				mapMzmCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
+			else if (baseDicitem.getDicCode().equals("TRAINEECATEGORY"))
+				mapTraineeCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
 			else
 				mapClassCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
 		}
@@ -1102,11 +1116,14 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 
 			traineeMap.put("xm", classTrainee.getXm());
 			traineeMap.put("xbm", mapXbm.get(classTrainee.getXbm()));
+			traineeMap.put("mz", mapMzmCategory.get(classTrainee.getMzm()));
+			traineeMap.put("position", classTrainee.getPosition());
+			traineeMap.put("headshipLevel", mapHeadshipLevel.get(classTrainee.getHeadshipLevel()));
 			traineeMap.put("phone", classTrainee.getMobilePhone());
 			traineeMap.put("sfzjh", classTrainee.getSfzjh());
 			traineeMap.put("workUnit", classTrainee.getWorkUnit());
-			traineeMap.put("position", classTrainee.getPosition());
-			traineeMap.put("headshipLevel", mapHeadshipLevel.get(classTrainee.getHeadshipLevel()));
+			traineeMap.put("traineeCategory", mapTraineeCategory.get(classTrainee.getTraineeCategory()));
+			
 			
 			//只统计不为1的数据
 			if(classTrainee.getIsDelete()!=1){
@@ -1227,10 +1244,10 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		Map<String, Object> traineeAllMap = new LinkedHashMap<>();
 		traineeAllMap.put("data", traineeList);
 		traineeAllMap.put("title", "班级学员表");
-		traineeAllMap.put("head", new String[] { "姓名", "性别", "移动电话", "身份证号码", "所在单位", "职务", "行政级别" }); // 规定
+		traineeAllMap.put("head", new String[] { "姓名", "性别","民族","职务", "行政级别", "移动电话", "身份证号码", "所在单位", "学员类型"  }); // 规定
 																										// 名字相同的，设定为合并
-		traineeAllMap.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
-		traineeAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 1, 0, 0 }); // 0代表居中，1代表居左，2代表居右
+		traineeAllMap.put("columnWidth",  new Integer[] { 15, 15, 15, 20, 15, 15, 15,15,15 }); // 30代表30个字节，15个字符
+		traineeAllMap.put("columnAlignment", new Integer[] { 0, 0,0, 0, 0, 0, 0,1,0 }); // 0代表居中，1代表居左，2代表居右
 		traineeAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
 		allList.add(traineeAllMap);
 

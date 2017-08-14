@@ -6,6 +6,7 @@ import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.ImportExcelUtil;
 import com.zd.core.util.NotSendUtil;
+import com.zd.core.util.PoiExportExcel;
 import com.zd.core.util.StringUtils;
 import com.zd.school.excel.FastExcel;
 import com.zd.school.jw.train.model.TrainTeacher;
@@ -332,6 +333,7 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
     @RequestMapping("/exportExcel")
     public void exportExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
         request.getSession().setAttribute("exportTeacherIsEnd","0");
+        request.getSession().removeAttribute("exportTeacherIsState");
         String ids = request.getParameter("ids");
         List<TrainTeacher> list = null;
         String hql = " from TrainTeacher where isDelete=0 ";
@@ -360,11 +362,39 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
         }
         exportList.addAll(list);
         //Thread.sleep(10000);
-        FastExcel.exportExcel(response, "师资信息", exportList);
-
-        request.getSession().setAttribute("exportTeacherIsEnd","1");
+        boolean result = FastExcel.exportExcel(response, "师资信息", exportList);
+        
+        if (result == true) {
+			request.getSession().setAttribute("exportTeacherIsEnd", "1");
+		} else {
+			request.getSession().setAttribute("exportTeacherIsEnd", "0");
+			request.getSession().setAttribute("exportTeacherIsState", "0");
+		}
     }
+    /**
+	 * 判断导出时，是否导出完毕
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/checkExportEnd")
+	public void checkExportRoomEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
 
+		Object isEnd = request.getSession().getAttribute("exportTeacherIsEnd");
+		Object state = request.getSession().getAttribute("exportTeacherIsState");
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+		}
+	}
 
 
     @RequestMapping("/sendMessage")

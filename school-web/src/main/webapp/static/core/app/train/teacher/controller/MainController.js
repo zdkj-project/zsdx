@@ -75,6 +75,8 @@ Ext.define("core.train.teacher.controller.MainController", {
          */
         "basegrid[xtype=teacher.maingrid] button[ref=gridExport]": {
             beforeclick: function (btn) {
+                var self=this;
+                
                 //得到组件
                 var baseGrid = btn.up("basegrid");
                 var funCode = baseGrid.funCode;
@@ -97,30 +99,45 @@ Ext.define("core.train.teacher.controller.MainController", {
                 Ext.Msg.confirm('提示', title, function (btn, text) {
                     if (btn == "yes") {
                         Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
-                        window.location.href = comm.get('baseUrl') + "/TrainTeacher/exportExcel?ids=" + ids.join(",");
-                        /*                  Ext.create('Ext.panel.Panel', {
-                         title: 'HelloWorld',
-                         width: 200,
-                         html: '<iframe scrolling="auto" frameborder="0" width="100%" height="100%" src="' + comm.get('baseUrl') + '/TrainTeacher/exportExcel?ids=' + ids.join(",") + '"></iframe>',
-                         renderTo: Ext.getBody()
-                         });*/
-                        // var task = new Ext.util.DelayedTask(function () {
-                        //     Ext.Msg.hide();
-                        // });
-                        Ext.Ajax.request({
-                            url: comm.get('baseUrl') + '/TrainTeacher/checkExportEnd',
-                            success: function (resp, opts) {
-                                //task.delay(1200);
-                                Ext.Msg.hide();
-                            },
-                            failure: function (resp, opts) {
-                                task.delay(1200);
-                                var respText = Ext.util.JSON.decode(resp.responseText);
-                                Ext.Msg.alert('错误', respText.error);
-                            }
+                        var component = Ext.create('Ext.Component', {
+                            title: 'HelloWorld',
+                            width: 0,
+                            height: 0,
+                            hidden: true,
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainTeacher/exportExcel?ids=' + ids.join(",") + '&orderSql=order by categoryOrderindex,courseCode "></iframe>',
+                            renderTo: Ext.getBody()
                         });
+
+                        var time = function () {
+                            self.syncAjax({
+                                url: comm.get('baseUrl') + '/TrainTeacher/checkExportEnd',
+                                timeout: 1000 * 60 * 30,        //半个小时
+                                //回调代码必须写在里面
+                                success: function (response) {
+                                    data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                    if (data.success) {
+                                        Ext.Msg.hide();
+                                        self.msgbox(data.obj);
+                                        component.destroy();
+                                    } else {
+                                        setTimeout(function () {
+                                            time()
+                                        }, 1000);
+                                    }
+                                },
+                                failure: function (response) {
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    component.destroy();
+                                    clearInterval(interval)
+                                }
+                            });
+                        }
+                        setTimeout(function () {
+                            time()
+                        }, 1000);    //延迟1秒执行
                     }
                 });
+
                 return false;
             }
         },

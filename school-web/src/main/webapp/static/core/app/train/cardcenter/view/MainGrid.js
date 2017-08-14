@@ -89,10 +89,6 @@ Ext.define("core.train.cardcenter.view.MainGrid", {
         text: "移动电话",
         dataIndex: "mobilePhone" 
     },{
-        width: 150,
-        text: "身份证件号",
-        dataIndex: "sfzjh",
-    },{
         width:80,
         text: "学员状态",
         dataIndex: "isDelete",
@@ -107,7 +103,7 @@ Ext.define("core.train.cardcenter.view.MainGrid", {
     },{
         width:100,
         text: "卡片编号",
-        dataIndex: "upCardId"        
+        dataIndex: "cardNo"        
     },{
         width:100,
         text: "发卡状态",
