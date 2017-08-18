@@ -197,6 +197,15 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                 var cmd = data.cmd;
                 this.doDetail_Tab(null, cmd, baseGrid, record);
                 return false;
+            },
+            //上传图片
+            imageDetailClick_Tab: function (data) {
+                var baseGrid = data.view;
+                var record = data.record;
+                var cmd = data.cmd
+                this.doImageDetail_Tab(null, cmd, baseGrid, record);
+
+                return false;
             }
         }
     },
@@ -362,6 +371,126 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
             }, 30);
 
         } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue && cmd!="detail") {
+            self.Warning("你已经打开一个编辑窗口了");
+            return;
+        }
+        tabPanel.setActiveTab(tabItem);
+    },
+
+
+    doImageDetail_Tab: function (btn, cmd, grid, record) {
+        var self = this;
+        var baseGrid;
+        var recordData;
+
+        if (btn) {
+            baseGrid = btn.up("basegrid");
+            var rescords = baseGrid.getSelectionModel().getSelection();
+            // var indexAdd = cmd.indexOf("add");
+            // if (indexAdd != -1) {
+                ////不是增加的操作，只能选择一条记录
+                if (rescords.length != 1) {
+                    self.msgbox("请选择1条数据！");
+                    return;
+                }
+                recordData = rescords[0].getData();
+            //}
+        } else {
+            baseGrid = grid;
+            recordData = record.getData();
+        }
+
+        var funCode = baseGrid.funCode;
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+        var tabPanel = baseGrid.up("tabpanel[xtype=app-main]");
+
+        var funData = basePanel.funData;
+        var detCode = basePanel.detCode;
+        var detLayout = basePanel.detLayout;
+        var defaultObj = funData.defaultObj;
+
+        var otherController = basePanel.otherController;
+        if (!otherController)
+            otherController = '';
+
+        var insertObj = self.getDefaultValue(defaultObj);
+
+        var tabTitle = funData.tabConfig.addTitle;
+        var tabItemId = funCode + "_gridImageDetail";
+        var pkName = funData.pkName;
+        var pkValue = null;
+        var operType = cmd;
+        //根据不同的操作对数据进行组装
+        switch (cmd) {
+            case "detail":
+                insertObj = Ext.apply(insertObj, recordData);
+                tabTitle = insertObj.meetingTitle+"-考勤图片";
+                //获取主键值
+                pkValue = recordData[pkName];
+
+                tabItemId = funCode + "_gridImageDetail"+pkValue;
+
+                break;
+        }
+        var popFunData = Ext.apply(funData, {
+            grid: baseGrid,
+            meetingId:pkValue
+        });
+        var tabItem = tabPanel.getComponent(tabItemId);
+        if (!tabItem) {
+            tabItem = Ext.create({
+                xtype: 'container',
+                title: tabTitle,
+                scrollable: true,
+                itemId: tabItemId,
+                itemPKV: pkValue,
+                layout: 'fit'
+            });
+            tabPanel.add(tabItem);
+
+            setTimeout(function () {
+                var item = Ext.widget("baseformtab", {
+                    operType: operType,
+                    controller: otherController,
+                    funCode: funCode,
+                    detCode: detCode,
+                    tabItemId: tabItemId,
+                    insertObj: insertObj,
+                    funData: popFunData,
+                    items: [{
+                        xtype: detLayout,
+                        funCode: detCode,
+                        items: [{
+                            xtype: "meetinginfo.imagesgrid"
+                        }]
+                    }]
+                });
+
+                tabItem.add(item);
+                //根据需要初始化详情页面数据
+                switch (cmd) {
+                    case "detail":
+                        var detailPanel = item.down("basepanel[xtype=" + detLayout + "]");
+                        var imageView =  detailPanel.down("panel[xtype=meetinginfo.imagesgrid] dataview");
+                        var imageStore = imageView.getStore();
+                        var imageProxy = imageStore.getProxy();
+                        var filter = "[{\"type\":\"string\",\"comparison\":\"=\",\"value\":\"" + pkValue + "\",\"field\":\"recordId\"}"+
+                                    ",{\"type\":\"string\",\"comparison\":\"=\",\"value\":\"OaMeeting\",\"field\":\"entityName\"}"+
+                                    ",{\"type\":\"string\",\"comparison\":\"=\",\"value\":\"jpg\",\"field\":\"attachType\"}"+
+                                "]";
+                        imageProxy.extraParams = {
+                            filter: filter
+                        };
+                        imageStore.loadPage(1);
+                        
+                        //在这里绑定stroe
+                        var pagetool = detailPanel.down("pagingtoolbar");
+                        pagetool.setStore(imageStore);
+                        break;
+                }
+            }, 30);
+
+        } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue && cmd != "detail") {
             self.Warning("你已经打开一个编辑窗口了");
             return;
         }

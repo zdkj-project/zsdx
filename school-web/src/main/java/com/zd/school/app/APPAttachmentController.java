@@ -149,8 +149,10 @@ public class APPAttachmentController extends FrameWorkController<BaseAttachment>
             File localFile = new File(path);
 
             if (!localFile.exists()) { // 判断文件夹是否存在
-                localFile.getParentFile().mkdir();
+            	localFile.getParentFile().mkdirs(); // 不存在则创建
+            	localFile.createNewFile();
             }
+             
             // 生成jpeg图片
             OutputStream out = new FileOutputStream(localFile);
             out.write(bytes);

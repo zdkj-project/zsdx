@@ -14,7 +14,9 @@ import com.zd.school.jw.train.service.TrainClassService;
 import com.zd.school.jw.train.service.TrainClassrealdinnerService;
 import com.zd.school.jw.train.service.TrainClassscheduleService;
 import com.zd.school.jw.train.service.TrainClasstraineeService;
+import com.zd.school.plartform.baseset.model.BaseAttachment;
 import com.zd.school.plartform.baseset.model.BaseDicitem;
+import com.zd.school.plartform.baseset.service.BaseAttachmentService;
 import com.zd.school.plartform.baseset.service.BaseDicitemService;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.model.SysUserToUP;
@@ -27,8 +29,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -64,7 +70,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 
 	@Resource
 	TrainClassrealdinnerService classrealdinnerService; // service层接口
-
+	
 	/**
 	 * @Title: list
 	 * @Description: 查询数据列表
@@ -1619,4 +1625,5 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			writeJSON(response, jsonBuilder.returnFailureJson("\"消息发送失败！\""));
 		}
 	}
+	
 }

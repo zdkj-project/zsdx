@@ -18,7 +18,102 @@ Ext.define("core.oa.meeting.meetinginfo.controller.DetailController", {
     },
     /** 该视图内的组件事件注册 */
     control: {
+        "basepanel panel[xtype=meetinginfo.imagesgrid] button[ref=gridDeleteImage]": {
+            beforeclick: function(btn) {
+                var self=this;
+                var basetab = btn.up('baseformtab');
+                var tabPanel = btn.up("tabpanel[xtype=app-main]");
+                           
+                var imagesView = basetab.down("panel[xtype=meetinginfo.imagesgrid] dataview");
+                var recordes=imagesView.getSelectionModel( ).getSelection();
 
+                if(recordes.length>0){
+                    var ids=[];
+                    var urls=[];
+                    for(var i=0;i<recordes.length;i++){                                                                          
+                        ids.push(recordes[i].data.uuid);  
+                        urls.push(recordes[i].data.attachUrl);                      
+                    }
+
+                    Ext.MessageBox.confirm('删除图片', '您确定要对选中的图片进行删除吗？', function(btn, text) {
+                                 
+                        if (btn == 'yes') {
+                            //发送ajax请求
+                            var resObj = self.ajax({
+                                url: comm.get('baseUrl') + "/BaseAttachment/doDeleteImage",                                
+                                params: {
+                                    ids: ids.join(","),
+                                    urls:urls.join(",")                                  
+                                }
+                            });
+                            if (resObj.success) {
+                               
+                                var store=imagesView.getStore();
+                                var totalCount=store.getTotalCount();
+                                var pageSize=store.pageSize;
+                                if((totalCount-recordes.length)%pageSize==0){
+                                    store.loadPage(1);
+                                }else{
+                                    store.load();
+                                }
+
+                                self.msgbox(resObj.obj);                                    
+                            } else {
+                                self.Error(resObj.obj);
+                            }
+                        }
+                    });  
+
+                }else{
+                    self.msgbox("请选择图片！"); 
+                }
+
+                return false;
+            }
+        },
+
+        "basepanel panel[xtype=meetinginfo.imagesgrid] button[ref=gridUploadImage]": {
+            beforeclick: function(btn) {
+                var self=this;
+                var basetab = btn.up('baseformtab');
+                var tabPanel = btn.up("tabpanel[xtype=app-main]");
+                           
+                var obj={};
+                obj.recordId=basetab.insertObj.uuid;
+                obj.meetingTitle=basetab.insertObj.meetingTitle;
+                obj.entityName="OaMeeting";
+
+                var imagesView = basetab.down("panel[xtype=meetinginfo.imagesgrid] dataview");
+                var win = Ext.create('Ext.Window', {
+                    title: "考勤图片上传",
+                    iconCls: 'x-fa fa-plus-circle',
+                    controller:"meetinginfo.otherController",
+                    width: 450,
+                    resizable: false,
+                    constrain: true,
+                    autoHeight: true,
+                    modal: true,
+                    closeAction: 'close',
+                    plain: true,
+                    grid: imagesView,
+                    items: [{
+                        xtype: "meetinginfo.imagesdeailform"
+                    }],
+                    listeners: {
+                        beforerender:function(win){
+                            var formObj=win.down("form").getForm();
+                            self.setFormValue(formObj,obj);  
+                            //console.log(obj)
+                        }
+                    }
+                });
+            
+                win.show();
+
+                return false;
+            }
+        },     
+        
         "basegrid[xtype=meetinginfo.meetingusergrid]": {
             afterrender: function (grid, eOpts) {
                 var btnAdd = grid.down("button[ref=gridAddUser]");

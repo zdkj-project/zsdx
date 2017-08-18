@@ -10,7 +10,8 @@ import java.util.concurrent.ExecutionException;
 import javax.imageio.ImageIO;
 
 import org.im4java.core.ConvertCmd;
-import org.im4java.core.IMOperation;  
+import org.im4java.core.IMOperation;
+
   
   
 /** 

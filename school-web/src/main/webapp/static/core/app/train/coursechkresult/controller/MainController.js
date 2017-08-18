@@ -24,6 +24,14 @@ Ext.define("core.train.coursechkresult.controller.MainController", {
             }
         },
 
+        "basegrid[xtype=coursechkresult.maingrid] button[ref=gridDetail_Tab]": {
+           beforeclick: function (btn) {
+                this.doDetail_Tab(btn, "detail");
+                return false;
+            }
+            
+        },
+
         "basegrid  actioncolumn": {
             detailClick_Tab: function (data) {
                 var baseGrid = data.view;
@@ -51,15 +59,15 @@ Ext.define("core.train.coursechkresult.controller.MainController", {
         if (btn) {
             baseGrid = btn.up("basegrid");
             var rescords = baseGrid.getSelectionModel().getSelection();
-            var indexAdd = cmd.IndexOf("add");
-            if (indexAdd != -1) {
-                //不是增加的操作，只能选择一条记录
+            // var indexAdd = cmd.indexOf("add");
+            // if (indexAdd != -1) {
+                ////不是增加的操作，只能选择一条记录
                 if (rescords.length != 1) {
                     self.msgbox("请选择1条数据！");
                     return;
                 }
                 recordData = rescords[0].getData();
-            }
+            //}
         } else {
             baseGrid = grid;
             recordData = record.getData();
@@ -140,6 +148,10 @@ Ext.define("core.train.coursechkresult.controller.MainController", {
                             filter: filter
                         };
                         courseStore.loadPage(1);
+
+                        //设置表格的默认filter为这个有classId的filter，使得快速查询正常使用
+                       courseGrid.extParams.filter=filter;
+                       
                         /*                        var detailhtmlpanel = item.down("container[xtype=meetinginfo.DetailPanel]");
                                                 //处理数据字典的值
                                                 var ddItem = factory.DDCache.getItemByDDCode("MEETINGCATEGORY");

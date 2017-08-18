@@ -228,7 +228,32 @@ public class TrainClassschedule extends BaseEntity implements Serializable{
     public void setCredits(Integer credits) {
         this.credits = credits;
     }
+    
+    @FieldInfo(name = "具体细化小班级，A班，B班，null正常班级")
+    @Column(name = "小班级名称", length = 8, nullable = true)
+    private String smallClassName;
 
+    public String getSmallClassName() {
+        return smallClassName;
+    }
+
+    public void setSmallClassName(String smallClassName) {
+        this.smallClassName = smallClassName;
+    }
+    
+    //自选课程，则学员没有刷卡，则不会算做缺勤
+    @FieldInfo(name = "是否自选课程")
+    @Column(name = "IS_OPTIONAL",columnDefinition = "int default 0",nullable = true)
+    private  Integer isOptional=0;
+
+    public Integer getIsOptional() {
+        return isOptional;
+    }
+
+    public void setIsOptional(Integer isOptional) {
+        this.isOptional = isOptional;
+    }
+    
     /** 以下为不需要持久化到数据库中的字段,根据项目的需要手工增加
     *@Transient
     *@FieldInfo(name = "")

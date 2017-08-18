@@ -14,7 +14,7 @@ Ext.define("core.train.coursechkresult.view.DetailLayout", {
     /*关联此视图控制器*/
 	controller: 'coursechkresult.detailController',
     minWidth:1200,
-    scrollable:true,
+    scrollable:'x',
 	items: [{
 		xtype: "coursechkresult.classcoursegrid",
         region: "west",

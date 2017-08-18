@@ -143,6 +143,7 @@ public class OaMeeting extends BaseEntity implements Serializable {
         return roomName;
     }
 
+    //已经废弃
     @FieldInfo(name = " 会议人员ID,多人用英文逗号隔开")
     @Column(name = "METTING_EMPID", length = 2048, nullable = true)
     private String mettingEmpid;
@@ -154,7 +155,7 @@ public class OaMeeting extends BaseEntity implements Serializable {
     public String getMettingEmpid() {
         return mettingEmpid;
     }
-
+    //已经废弃
     @FieldInfo(name = "会议人员姓名,多人用英文逗号隔开，和ID顺序对应")
     @Column(name = "MEETING_EMPNMAE", length = 1024, nullable = true)
     private String mettingEmpname;

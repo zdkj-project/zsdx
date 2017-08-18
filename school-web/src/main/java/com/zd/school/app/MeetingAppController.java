@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -45,39 +46,77 @@ public class MeetingAppController {
     public @ResponseBody
     MeetingApp meetinglist(String termCode, String time, HttpServletRequest request,
                            HttpServletResponse response) throws IOException, ParseException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-        MeetingApp info = new MeetingApp();
-        OaInfoterm roomTerm = termService.getByProerties("termCode", termCode);
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        MeetingApp info = new MeetingApp();	//返回此数据
+        
+        try {
+			// 判断时间查询上午下午
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date date = sdf.parse(time);
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+			String s = dateFormat.format(date);
+			Date date2 = sdf.parse(s + " 12:00:00");
+			Date date3 = sdf.parse(s + " 18:00:00");
+			Date date4 = sdf.parse(s + " 23:59:59");
+			
+			// 设备号查询房间
+			OaInfoterm roomTerm = termService.getByProerties("termCode", termCode);
 
-        List<OaMeeting> meeting = null;
-        OaMeetingcheckrule checkrule = null;
-        List<Object[]> obj = null;
-        if (ModelUtil.isNotNull(roomTerm)) {
-            meeting = meetingService.doQuery("from OaMeeting where roomId='" + roomTerm.getRoomId() + "' and Convert(varchar,beginTime,120) like'" + time + "%' order by beginTime asc");
-            for (OaMeeting o : meeting) {
-                o.setBegin(dateFormat.format(o.getBeginTime()));
-                o.setEnd(dateFormat.format(o.getEndTime()));
-
-                List<OaMeetingemp> emplist = empService.queryByProerties("meetingId", o.getUuid());
-                o.setMeetingemp(emplist);
-
-                checkrule = ruleService.get(o.getCheckruleId());
-                o.setOaMeetingcheckrule(checkrule);
-
-                String sql = MessageFormat.format("SELECT ATTACH_NAME AS attachName,ATTACH_URL AS attachUrl FROM dbo.BASE_T_ATTACHMENT WHERE ENTITY_NAME=''OaMeeting'' AND RECORD_ID=''{0}''", o.getUuid());
-                List<CommAttachment> attachmentList = meetingService.doQuerySqlObject(sql, CommAttachment.class);
-                o.setAttachment(attachmentList);
-            }
-        } else {
-            info.setCode(false);
-            info.setMessage("没有找到该终端设备！");
-            return info;
-        }
-
-        info.setCode(true);
-        info.setMessage("请求成功！");
-        info.setMeeting(meeting);
-        return info;
+	        List<OaMeeting> meeting = null;
+	        OaMeetingcheckrule checkrule = null;
+	        List<Object[]> obj = null;
+	        if (ModelUtil.isNotNull(roomTerm)) {
+	        	if (date.getTime() < date2.getTime()) {
+					// course = courseService.doQuery("from TrainClassschedule
+					// where scheduleAddress='" + roomTerm.getRoomName() + "'
+					// and beginTime Between '" + s + " 06:00:00' And '" +
+					// sdf.format(date2) + "' order by beginTime asc");
+	        		//meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomId='" + roomTerm.getRoomId() + "' and Convert(varchar,beginTime,120) like'" + time + "%' order by beginTime asc");
+	        		//注：我们正式使用时需要将可能作为会议室的房间名称发给OA，所以要将房间查询方式换为id
+	        		meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomName='"
+							+ roomTerm.getRoomName() + "' and beginTime Between '" + sdf.format(date) + "' And '"
+							+ sdf.format(date2) + "' order by beginTime asc");
+				} else if (date.getTime() < date3.getTime()) {
+					meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomName='"
+							+ roomTerm.getRoomName() + "' and beginTime Between '" + sdf.format(date) + "' And '"
+							+ sdf.format(date3) + "' order by beginTime asc");
+				} else {
+					meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomName='"
+							+ roomTerm.getRoomName() + "' and beginTime Between '" + sdf.format(date) + "' And '"
+							+ sdf.format(date4) + "' order by beginTime asc");
+				}
+	        	
+        		 for (OaMeeting o : meeting) {
+ 	                o.setBegin(timeFormat.format(o.getBeginTime()));
+ 	                o.setEnd(timeFormat.format(o.getEndTime()));
+ 	
+ 	                List<OaMeetingemp> emplist = empService.queryByProerties("meetingId", o.getUuid());
+ 	                o.setMeetingemp(emplist);
+ 	
+ 	                checkrule = ruleService.get(o.getCheckruleId());
+ 	                o.setOaMeetingcheckrule(checkrule);
+ 	
+ 	                String sql = MessageFormat.format("SELECT ATTACH_NAME AS attachName,ATTACH_URL AS attachUrl FROM dbo.BASE_T_ATTACHMENT WHERE  ATTACH_TYPE=''jpg'' AND ENTITY_NAME=''OaMeeting'' AND RECORD_ID=''{0}''", o.getUuid());
+ 	                List<CommAttachment> attachmentList = meetingService.doQuerySqlObject(sql, CommAttachment.class);
+ 	                o.setAttachment(attachmentList);
+ 	            }
+	        	
+	        }
+	         else {
+	            info.setCode(false);
+	            info.setMessage("没有找到该终端设备！");
+	            return info;
+	        }
+	
+	        info.setCode(true);
+	        info.setMessage("请求成功！");
+	        info.setMeeting(meeting);
+	        return info;
+        }catch (Exception e) {
+        	info.setCode(false);
+        	info.setMessage("数据异常调用失败" + e.getMessage());
+			return info;
+		}
 
     }
 

@@ -3,6 +3,7 @@ package com.zd.school.jw.train.model.vo;
 public class VoTrainClasstrainee {
 	//班级id
 	private String classId;
+	
     //人员姓名
 	private String xm;
 	//人员id
