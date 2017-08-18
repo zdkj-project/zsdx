@@ -31,7 +31,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
             text: '删除',
             ref: 'gridDelUser',
             funCode: 'girdFuntionBtn',
-            iconCls: 'x-fa fa-clipboard'
+            iconCls: 'x-fa fa-minus-circle'
         },'->',{
             xtype: 'tbtext',
             html:'快速搜索：'

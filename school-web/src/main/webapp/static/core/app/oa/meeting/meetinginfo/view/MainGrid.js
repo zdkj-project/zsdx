@@ -126,7 +126,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
         },  {
             xtype: 'actiontextcolumn',
             text: "操作",
-            width: 150,
+            width: 200,
             fixed: true,
             align: 'center',
             items: [{
@@ -170,6 +170,20 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
                     this.fireEvent('detailClick_Tab', {
+                        view: view.grid,
+                        record: rec,
+                        cmd:"detail"
+                    });
+                }
+            },{
+                //iconCls: 'x-fa fa-file-text',
+                text:'上传图片',  
+                style:'font-size:12px;',  
+                tooltip: '上传图片',
+                ref: 'gridImageDetail',
+                handler: function(view, rowIndex, colIndex, item) {
+                    var rec = view.getStore().getAt(rowIndex);
+                    this.fireEvent('imageDetailClick_Tab', {
                         view: view.grid,
                         record: rec,
                         cmd:"detail"

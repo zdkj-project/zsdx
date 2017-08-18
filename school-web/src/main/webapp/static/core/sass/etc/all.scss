@@ -386,3 +386,105 @@ table.pg td#ten{
 background:#FFE4F0;
 }
 
+
+
+/*begin：图片DataView界面的样式*/
+.imagegrid.thumb-wrap{
+    float: left;
+    margin: 10px;
+    margin-right: 0;
+    padding: 5px;
+    border: 1px solid #dfe9f6;
+    width: 172px;
+    background-color: #fff;
+    cursor: pointer;
+    font-weight: 400;
+}
+.imagegrid.thumb-wrap .thumb {
+    background-color: #f9f9f9;
+    /*padding: 3px;*/
+    border: 5px solid white;
+}
+.imagegrid.thumb-wrap .thumb .img {
+    width: 150px;
+    height: 200px;  //4:3
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+
+}
+.imagegrid.thumb-wrap span {
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: 25px;
+    text-align: center;
+}
+.imagegrid.thumb-wrap.x-item-selected {
+    background: #cae4ff;
+    border: 1px solid #95c3ff;  
+    padding: 5px;
+}
+.imagegrid.thumb-wrap.x-item-hover {
+    background: #cae4ff;    
+    padding: 5px;
+    border: 1px solid #95c3ff;  
+}
+.imagegrid.thumb-wrap.x-view-selector{
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0;
+    background: #c3daf9;
+    border: 1px dotted #39b;
+    opacity: .5;
+    -moz-opacity: .5;
+    filter: alpha(opacity=50);
+    zoom: 1;
+}
+.imagegrid.thumb-wrap.x-view-item-focused{
+    outline:none !important;
+}
+.showimagegrid.thumb-wrap{
+    float: left;
+    margin: 4px;
+    margin-right: 0;
+    padding: 5px;
+    border: 1px solid #dfe9f6;
+    width: 124px;
+    background-color: #fff;
+    cursor: pointer;
+}
+.showimagegrid.thumb-wrap .thumb {
+    background-color: #eee;
+    /*padding: 3px;*/
+    border: 5px solid white;
+}
+.showimagegrid.thumb-wrap .thumb .img {
+    width: 100px;
+    height: 75px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+
+}
+.showimagegrid.thumb-wrap span {
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    line-height: 25px;
+    text-align: center;
+}
+.showimagegrid.thumb-wrap.x-item-selected {
+    background: #cae4ff;
+    border: 1px solid #95c3ff;  
+    padding: 5px;
+}
+.showimagegrid.thumb-wrap.x-item-hover {
+    background: #cae4ff;    
+    padding: 5px;
+     border: 1px solid #95c3ff;  
+}
+/*end：图片DataView界面的样式*/

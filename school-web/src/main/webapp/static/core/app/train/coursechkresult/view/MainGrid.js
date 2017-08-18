@@ -17,21 +17,29 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
      */
     panelTopBar: {
         xtype: 'toolbar',
-        items: [{
+        items: [/*{
             xtype: 'button',
             text: '详细',
             ref: 'gridDetail',
+            text: '分析',
+            ref: 'gridAnalyze',
+            funCode: 'girdFuntionBtn', //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
+            iconCls: 'x-fa fa-plus-circle'
+        },*/ {
+            xtype: 'button',
+            text: '考勤详细',
+            ref: 'gridDetail_Tab',
             funCode: 'girdFuntionBtn',
             disabled: true,
             iconCls: 'x-fa fa-file-text'
-        }, {
+        },/* {
             xtype: 'button',
             text: '导出',
             ref: 'gridExport',
             funCode: 'girdFuntionBtn',
 //            disabled: true,
             iconCls: 'x-fa fa-file'
-        }, '->', {
+        }, */'->', {
             xtype: 'tbtext',
             html: '快速搜索：'
         }, {
@@ -146,7 +154,7 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
         },{
             xtype: 'actiontextcolumn',
             text: "操作",
-            width: 150,
+            width: 100,
             align: 'center',
             fixed: true,
             items: [/*{
@@ -171,9 +179,9 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
                 }
             }, */{
                 //iconCls: 'x-fa fa-file-text',
-            	text:'详细',  
+            	text:'考勤详细',  
                 style:'font-size:12px;',  
-                tooltip: '详细',
+                tooltip: '考勤详细',
                 ref: 'gridDetail',
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
