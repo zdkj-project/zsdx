@@ -399,10 +399,10 @@ public class TrainCoursecategoryServiceImpl extends BaseServiceImpl<TrainCoursec
         List<TrainCoursecategory> exportList = new ArrayList<>();
 
         //导出时要转换字典项
-        String mapKey = null;
-        String[] propValue = {"HEADSHIPLEVEL", "XBM", "TRAINEECATEGORY", "XWM", "XLM", "ZZMMM", "MZM"};
-        Map<String, String> mapDicItem = new HashMap<>();
-        List<BaseDicitem> listDicItem = dicitemService.queryByProerties("dicCode", propValue);
+//        String mapKey = null;
+//        String[] propValue = {"HEADSHIPLEVEL", "XBM", "TRAINEECATEGORY", "XWM", "XLM", "ZZMMM", "MZM"};
+//        Map<String, String> mapDicItem = new HashMap<>();
+//        List<BaseDicitem> listDicItem = dicitemService.queryByProerties("dicCode", propValue);
 //        for (BaseDicitem baseDicitem : listDicItem) {
 //            mapKey = baseDicitem.getItemCode() + baseDicitem.getDicCode();
 //            mapDicItem.put(mapKey, baseDicitem.getItemName());

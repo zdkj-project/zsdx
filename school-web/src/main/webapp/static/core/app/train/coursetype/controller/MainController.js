@@ -172,140 +172,141 @@ Ext.define("core.train.coursetype.controller.MainController", {
                 this.doMainGridDelete(null, data.cmd, data.view, data.record);
                 return false;
             },
-//            //操作列上移
-//            upRemove: function (data) {
-//                this.doupRemove(null, data.cmd, data.view, data.record);
-//                return false;
-//            },
-//          //操作下移
-//            downRemove: function (data) {
-//                this.dodownRemove(null, data.cmd, data.view, data.record);
-//                return false;
-//            }
+            //操作列上移
+            upRemove: function (data) {
+                this.doupRemove(null, data.cmd, data.view, data.record);
+                return false;
+            },
+          //操作下移
+            downRemove: function (data) {
+                this.dodownRemove(null, data.cmd, data.view, data.record);
+                return false;
+            }
         }
 
     },
     
-//    doupRemove: function (btn, cmd, grid, record) {
-//        var self = this;
-//        var baseGrid;
-//        var recordData;
-//        var selCount = 0;
-//        var index ;
-//
-//        if (btn) {
-//            baseGrid = btn.up("basetreegrid");
-//            recordData = baseGrid.getSelectionModel().getSelection();
-//            selCount = recordData.length;
-//        } else {
-//            baseGrid = grid;
-//            recordData = record.getData();
-//            selCount = 1;
-//        }
-//       
-//
-//        //得到组件
-//        var funCode = baseGrid.funCode;
-//        var tabPanel = baseGrid.up("tabpanel[xtype=app-main]"); //标签页
-//        var basePanel = baseGrid.up("panel[funCode=" + funCode + "]");
-//
-//        //得到配置信息
-//        var funData = basePanel.funData;
-//        var detCode = basePanel.detCode;
-//        var detLayout = basePanel.detLayout;
-//
-//        var operType = cmd;
-//        var pkValue = null;
-//
-//        //关键：window的视图控制器
-//        var otherController = basePanel.otherController;
-//        if (!otherController)
-//            otherController = '';
-//
-//        //处理特殊默认值
-//        var defaultObj = funData.defaultObj;
-//        var insertObj = self.getDefaultValue(defaultObj);
-//
-//        //当前节点
-//        var pkValue;
-//        var just = "3EF578B0-61EA-45EF-8731-839F798BA3CA";
-//        var justName = "课程分类 ";
-//        var parentCategory = "3EF578B0-61EA-45EF-8731-839F798BA3CA";
-//        var parentName = "课程分类";
-//        var parentLevel = 0;
-//        var orderIndex =0;
-//        var level=0;
-//        var store = baseGrid.getStore();
-//
-//        var tempData;
-//        if (selCount == 1) {
-//            if (btn)
-//                tempData = recordData[0].data;
-//            else
-//                tempData = recordData;
-//            //当前节点
-//            pkValue = tempData.id;
-//            just = tempData.id;
-//            justName = tempData.text;
-//            orderIndex = tempData.orderIndex;
-//            level=tempData.level;
-//            index = store.indexOf(record);
-//
-//            //当前节点的上级节点
-//            parent = tempData.parent;
-//            parentCategory = store.getNodeById(parent);
-//            if (parentCategory) {
-//                parentName = parentCategory.get("text");
-//                parentLevel = parentCategory.get("level");
-//            }
-//        };
-//        if(level==0){
-//        	self.Warning("根目录不允许移动");
-//            return;
-//        }
-//        if(level==1){
-//        	if(orderIndex > 1){
-//        		 store.removeAt(index);  
-//        	     store.insert(index - 1, record);  
-//        	     grid.getView().refresh();  
-//        	     grid.getSelectionModel().selectRange(index - 1, index - 1); 
-//        	     var changeOrderGrid = BaseGrid.down("grid[xtype=coursetype.changeordergrid]");
-//                 var proxy = changeOrderGrid.getStore().getProxy();
-//                 proxy.extraParams.filter= "[{'type':'string','comparison':'=','value':'" + record.get("parent") +"','field':'parentNode'}]"
-//        	}
-//        }
-//        if(level==2){
-//        	if(orderIndex > 1){
-//        		 store.removeAt(index);  
-//        	     store.insert(index - 1, record);  
-//        	     grid.getView().refresh();  
-//        	     grid.getSelectionModel().selectRange(index - 1, index - 1); 
+    doupRemove: function (btn, cmd, grid, record) {
+        var self = this;
+        var baseGrid;
+        var recordData;
+        var selCount = 0;
+        var index ;
+
+        if (btn) {
+            baseGrid = btn.up("basetreegrid");
+            recordData = baseGrid.getSelectionModel().getSelection();
+            selCount = recordData.length;
+        } else {
+            baseGrid = grid;
+            recordData = record.getData();
+            selCount = 1;
+        }
+       
+
+        //得到组件
+        var funCode = baseGrid.funCode;
+        var tabPanel = baseGrid.up("tabpanel[xtype=app-main]"); //标签页
+        var basePanel = baseGrid.up("panel[funCode=" + funCode + "]");
+
+        //得到配置信息
+        var funData = basePanel.funData;
+        var detCode = basePanel.detCode;
+        var detLayout = basePanel.detLayout;
+
+        var operType = cmd;
+        var pkValue = null;
+
+        //关键：window的视图控制器
+        var otherController = basePanel.otherController;
+        if (!otherController)
+            otherController = '';
+
+        //处理特殊默认值
+        var defaultObj = funData.defaultObj;
+        var insertObj = self.getDefaultValue(defaultObj);
+
+        //当前节点
+        var pkValue;
+        var just = "3EF578B0-61EA-45EF-8731-839F798BA3CA";
+        var justName = "课程分类 ";
+        var parentCategory = "3EF578B0-61EA-45EF-8731-839F798BA3CA";
+        var parentName = "课程分类";
+        var parentLevel = 0;
+        var orderIndex =0;
+        var level=0;
+        var store = baseGrid.getStore();
+
+        var tempData;
+        if (selCount == 1) {
+            if (btn)
+                tempData = recordData[0].data;
+            else
+                tempData = recordData;
+            //当前节点
+            pkValue = tempData.id;
+            just = tempData.id;
+            justName = tempData.text;
+            orderIndex = tempData.orderIndex;
+            level=tempData.level;
+            index = store.indexOf(record);
+
+            //当前节点的上级节点
+            parent = tempData.parent;
+            parentCategory = store.getNodeById(parent);
+            if (parentCategory) {
+                parentName = parentCategory.get("text");
+                parentLevel = parentCategory.get("level");
+            }
+        };
+        if(level==0){
+        	self.Warning("根目录不允许移动");
+            return;
+        }
+        if(level==1){
+        	if(orderIndex > 1){
+        		 store.removeAt(index);  
+        	     store.insert(index - 1, record);  
+        	     grid.getView().refresh();  
+        	     grid.getSelectionModel().selectRange(index - 1, index - 1); 
+        	     var changeOrderGrid = BaseGrid.down("grid[xtype=coursetype.changeordergrid]");
+                 var proxy = changeOrderGrid.getStore().getProxy();
+                 proxy.extraParams.filter= "[{'type':'string','comparison':'=','value':'" + record.get("parent") +"','field':'parentNode'}]"
+        	}
+        }
+        if(level==2){
+        	if(orderIndex > 1){
+        		 store.removeAt(index);  
+        	     store.insert(index - 1, record);  
+        	     grid.getView().refresh();  
+        	     grid.getSelectionModel().selectRange(index - 1, index - 1); 
 //        	     var changeOrderGrid=Ext.getCmp("coursetypechangeordergrid");
 //                 var proxy = changeOrderGrid.getStore().getProxy();
 //                 proxy.extraParams.filter= "[{'type':'string','comparison':'=','value':'" + record.get("parent") +"','field':'parentNode'}]";
-//                 
-//        	   /*  var changeOrderStore=Ext.create('Ext.data.Store', {
-//        	    		model: factory.ModelFactory.getModelByName("com.zd.school.jw.train.model.TrainCoursecategory", "checked").modelName,
-//        	    		pageSize:20,
-//        	    		proxy: {
-//        	    			type: "ajax",
-//        	    			timeout:360000,
-//        	    			url: comm.get("baseUrl") + "/TrainCoursecategory/list", //对应后台controller路径or方法
-//        	    			extraParams: {
-//        	    				whereSql: "",
-//        	    				filter: "[{'type':'string','comparison':'=','value':'" + record.get("parent") +"','field':'parentNode'}]"
-//        	    			},
-//        	    			reader: {
-//        	    				type: "json",
-//        	    				root: "rows",
-//        	    				totalProperty: 'totalCount'
-//        	    			},
-//        	    			writer: {
-//        	    				type: "json"
-//        	    			}
-//        	    		},
-//        	    		autoLoad: true
-//        	    	})*/
+                 
+        	     Ext.define("myStore",{
+        	    	    extend:"Ext.data.Store",
+        	    	    id:"mycourseStore",
+        	         model: factory.ModelFactory.getModelByName("com.zd.school.jw.train.model.TrainCoursecategory", "checked").modelName,
+        	         proxy: {
+        	             type: 'ajax',
+        	             url: comm.get("baseUrl") + "/TrainCoursecategory/list",
+        	             extraParams: {
+     	    				filter: "[{'type':'string','comparison':'=','value':'" + record.get("parent") +"','field':'parentNode'}]"
+     	    			},
+        	             reader: {
+        	                 type: 'json',
+        	                 root: "rows",
+     	    				totalProperty: 'totalCount'
+        	             },
+        	             writer: {
+        	                 type: 'json'
+        	             }
+        	         },
+        	         autoLoad: true
+        	     });
+        	     var OrderStore = Ext.create('myStore');
+        	     var changeOrderStore = Ext.getCmp("mycourseStore");
 //                 var record;
 //                 var iCount = changeOrderStore.getCount();
 //                 for(var i=0;i<iCount;i++){
@@ -313,9 +314,9 @@ Ext.define("core.train.coursetype.controller.MainController", {
 //                     ids.push(record.get("uuid"));
 //                     order.push(record.get("orderIndex"));
 //                 }
-//        	}
-//        }
-//    },
+        	}
+        }
+    },
     
     /**
      * 详细相关操作处理

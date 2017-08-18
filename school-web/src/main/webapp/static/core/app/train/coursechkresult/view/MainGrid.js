@@ -19,12 +19,6 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
         xtype: 'toolbar',
         items: [{
             xtype: 'button',
-            text: '分析',
-            ref: 'gridAnalyze',
-            funCode: 'girdFuntionBtn', //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
-            iconCls: 'x-fa fa-plus-circle'
-        }, {
-            xtype: 'button',
             text: '详细',
             ref: 'gridDetail',
             funCode: 'girdFuntionBtn',
@@ -35,7 +29,7 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
             text: '导出',
             ref: 'gridExport',
             funCode: 'girdFuntionBtn',
-            disabled: true,
+//            disabled: true,
             iconCls: 'x-fa fa-file'
         }, '->', {
             xtype: 'tbtext',
@@ -87,7 +81,7 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
             text: '序号',
             align: 'center'
         }, {
-            width:100,
+            width:120,
             text: "班级类型",
             dataIndex: "classCategory",
             columnType: "basecombobox", //列类型
@@ -103,7 +97,7 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
                 return value;
             }
         },  {
-            width:90,
+            width:100,
             text: "开始日期",
             dataIndex: "beginDate",
             renderer: function(value, metaData) {
@@ -112,7 +106,7 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
                 return ss;
             }
         }, {
-            width:90,
+            width:100,
             text: "结束日期",
             dataIndex: "endDate",
             renderer: function(value, metaData) {

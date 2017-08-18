@@ -21,36 +21,17 @@ Ext.define('core.train.calcucredit.view.TraineesGrid', {
         xtype: 'toolbar',
         items: [{
             xtype: 'button',
+            text: '导出',
+            ref: 'gridExport',
+            funCode: 'girdFuntionBtn',
+            iconCls: 'x-fa fa-file'
+        },{
+            xtype: 'button',
             text: '学分汇总',
             ref: 'gridSumcredit',
             funCode: 'girdFuntionBtn',   //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             iconCls: 'x-fa fa-plus-circle'
-        }/*, {
-            xtype: 'button',
-            text: '课程排名',
-            ref: 'gridCourseRank',
-            funCode: 'girdFuntionBtn',
-            disabled: false,
-            iconCls: 'x-fa fa-file'
-        }, '->', {
-            xtype: 'tbtext',
-            html: '快速搜索：'
-        }, {
-            xtype: 'textfield',
-            name: 'className',
-            funCode: 'girdFastSearchText',
-            emptyText: '请输入课程名称'
-        }, {
-            xtype: 'button',
-            funCode: 'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型
-            ref: 'gridFastSearchBtn',
-            iconCls: 'x-fa fa-search',
-        }, ' ', {
-            xtype: 'button',
-            text: '高级搜索',
-            ref: 'gridHignSearch',
-            iconCls: 'x-fa fa-sliders'
-        }*/]
+        }]
     },
     /** 排序字段定义 */
     defSort: [
