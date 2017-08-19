@@ -47,13 +47,20 @@ Ext.define("core.train.alleval.controller.MainController", {
                 store.load(); // 给form赋值
                 return false;
             }
-            /*            groupclick:function  (view, node, group, e, eOpts) {
-             var self = this;
-             console.log(view);
-             console.log(node);
-             console.log(group);
-             }*/
         },
+        
+        //给右侧列表导出按钮增加权限控制
+        "basegrid[xtype=alleval.evalgrid]": {
+        	afterrender: function (grid, eOpts) {
+                var btngridExport = grid.down("button[ref=gridExport]");
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PXPJMANGER") == -1) {
+               	 btngridExport.setHidden(true);
+                }
+            }
+        },
+        
+        
         /**
          * 班级列表导出事件
          */
@@ -167,6 +174,78 @@ Ext.define("core.train.alleval.controller.MainController", {
                 return false;
             }
         },
+        
+        /**
+         * 班级列表导出事件
+         */
+        "basegrid[xtype=alleval.evalgrid] button[ref=gridExport]": {
+            beforeclick: function (btn) {
+                var self = this;
+                //得到组件
+                var baseGrid = btn.up("basegrid");
+                var funCode = baseGrid.funCode;
+                var mainLayout = baseGrid.up("basepanel[xtype=alleval.mainlayout]");
+                var classGrid=mainLayout.down("basegrid[xtype=alleval.maingrid]");
+                
+                //得到配置信息
+                var funData = basePanel.funData;
+                var pkName = funData.pkName;
+                //得到选中数据
+                var records = baseGrid.getSelectionModel().getSelection();
+                var title = "课程相关评价信息导出";
+                //var ids = [];
+                if (records.length!=1) {
+                    self.Warning("只能按课程导出，请重新选择");
+                    return false;
+                }
+                var ids = records[0].get("uuid");
+                Ext.Msg.confirm('提示', title, function (btn, text) {
+                    if (btn == "yes") {
+                        Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
+                        var component = Ext.create('Ext.Component', {
+                            title: 'HelloWorld',
+                            width: 0,
+                            height: 0,
+                            hidden: true,
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainCourseevalresult/exportExcel?ids=' + ids + '"></iframe>',
+                            renderTo: Ext.getBody()
+                        });
+
+                        var time = function () {
+                            self.syncAjax({
+                                url: comm.get('baseUrl') + '/TrainCourseevalresult/checkExportEnd?ids=' + ids,
+                                timeout: 1000 * 60 * 30,        //半个小时
+                                //回调代码必须写在里面
+                                success: function (response) {
+                                    data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                    if (data.success) {
+                                        Ext.Msg.hide();
+                                        self.msgbox(data.obj);
+                                        component.destroy();
+                                    } else {
+                                        setTimeout(function () {
+                                            time()
+                                        }, 1000);
+                                    }
+                                },
+                                failure: function (response) {
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    component.destroy();
+                                    clearInterval(interval)
+                                }
+                            });
+                        }
+                        setTimeout(function () {
+                            time()
+                        }, 1000);    //延迟1秒执行
+                    }
+                });
+                return false;
+            }
+        },
+        
+        
+        
         /**
          * 列表操作列事件
          */

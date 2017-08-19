@@ -77,7 +77,7 @@ Ext.define("core.train.class.controller.DetailController", {
                                     var grid = basetab.funData.grid; //此tab是否保存有grid参数
                                     if (!Ext.isEmpty(grid)) {
                                         var store = grid.getStore();
-        //                                store.load(); //刷新父窗体的grid
+                                        store.load(); //刷新父窗体的grid
                                     }
 
                                     loading.hide();
@@ -163,7 +163,7 @@ Ext.define("core.train.class.controller.DetailController", {
                                         var grid = basetab.funData.grid; //此tab是否保存有grid参数
                                         if (!Ext.isEmpty(grid)) {
                                             var store = grid.getStore();
-        //                                    store.load(); //刷新父窗体的grid
+                                            store.load(); //刷新父窗体的grid
                                         }
 
                                         loading.hide();
@@ -261,7 +261,7 @@ Ext.define("core.train.class.controller.DetailController", {
                                         var grid = basetab.funData.grid; //此tab是否保存有grid参数
                                         if (!Ext.isEmpty(grid)) {
                                             var store = grid.getStore();
-        //                                    store.load(); //刷新父窗体的grid
+                                            store.load(); //刷新父窗体的grid
                                         }
 
                                         loading.hide();
@@ -1144,7 +1144,6 @@ Ext.define("core.train.class.controller.DetailController", {
             recordData = record.data;
         }
 
-
         //得到组件
         var funCode = baseGrid.funCode;
         var basePanel = baseGrid.up("basepanel[funCode=" + funCode +"]");
@@ -1169,9 +1168,7 @@ Ext.define("core.train.class.controller.DetailController", {
         var defaultObj = funData.defaultObj;
             
         //关键：window的视图控制器
-        var otherController = basePanel.otherController;
-        if (!otherController)
-            otherController = '';
+        var otherController = "class.otherController";
 
         //处理特殊默认值
         var insertObj = { classId:classId,className:className };
