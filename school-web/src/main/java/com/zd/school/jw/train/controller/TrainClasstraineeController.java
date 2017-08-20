@@ -597,13 +597,16 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
         Integer limit = super.limit(request);
         String sort = super.sort(request);
         String filter = super.filter(request);
+        String xm = request.getParameter("xm");
         String classId = request.getParameter("classId");
         String classScheduleId = request.getParameter("classScheduleId");
-        if(StringUtils.isEmpty(classId) && StringUtils.isEmpty(classScheduleId)){
-            writeJSON(response, jsonBuilder.returnFailureJson("'没有传入查询考勤的参数：班级或课程'"));
-            return;
-        }
-        QueryResult<VoTrainClassCheck> qResult = thisService.getCheckList(start, limit, classId, classScheduleId);
+        /*if(StringUtils.isEmpty(classId) && StringUtils.isEmpty(classScheduleId)){
+            //writeJSON(response, jsonBuilder.returnFailureJson("\"没有传入查询考勤的参数：班级或课程\""));
+        	 strData = jsonBuilder.buildObjListToJson((long)0, new ArrayList<>(), true);
+        	 writeJSON(response, strData);// 返回数据
+        	return;
+        }*/
+        QueryResult<VoTrainClassCheck> qResult = thisService.getCheckList(start, limit, classId, classScheduleId,xm);
         strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
         writeJSON(response, strData);// 返回数据
     }

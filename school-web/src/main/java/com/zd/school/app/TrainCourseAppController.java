@@ -132,7 +132,8 @@ public class TrainCourseAppController {
 					if(voList==null){
 						sql = MessageFormat.format(" SELECT CLASS_ID AS classId,xm,CLASS_TRAINEE_ID AS traineeId,"
 								+ "CONVERT(VARCHAR(36),(ISNULL((SELECT top 1 a.FACT_NUMB FROM CARD_T_USEINFO a where a.USER_ID=TRAIN_T_CLASSTRAINEE.CLASS_TRAINEE_ID order BY a.CREATE_TIME desc),''0''))) AS factoryfixId,"
-								+ "CONVERT(VARCHAR(36),(isnull((SELECT top 1 a.UP_CARD_ID FROM CARD_T_USEINFO a where a.USER_ID=TRAIN_T_CLASSTRAINEE.CLASS_TRAINEE_ID order by a.CREATE_TIME desc),''0''))) AS cardNo "
+								+ "CONVERT(VARCHAR(36),(isnull((SELECT top 1 a.UP_CARD_ID FROM CARD_T_USEINFO a where a.USER_ID=TRAIN_T_CLASSTRAINEE.CLASS_TRAINEE_ID order by a.CREATE_TIME desc),''0''))) AS cardNo, "
+								+ "isnull((SELECT top 1 a.USE_STATE FROM CARD_T_USEINFO a where a.USER_ID=TRAIN_T_CLASSTRAINEE.CLASS_TRAINEE_ID order by a.CREATE_TIME desc),0) AS useState "
 								+ " FROM dbo.TRAIN_T_CLASSTRAINEE WHERE ISDELETE=0 and  CLASS_ID=''{0}''", classId);
 						voList=classService.doQuerySqlObject(sql, VoTrainClasstrainee.class);
 						voMapList.put(classId,voList);
@@ -162,6 +163,12 @@ public class TrainCourseAppController {
 					isSameClass=1;
 				}
 
+				//如果map大于2，则代表3个班都不同,将考勤模式强制设置为1（按节次考勤）
+				if(voMapRule.size()>2){
+					for (Map.Entry<String,TrainCheckrule> entry : voMapRule.entrySet()) {  
+						entry.getValue().setCheckMode((short) 1);
+					}  
+				}
 			}else{
 				tca.setCode(false);
 				tca.setMessage("没有找到该终端设备！");

@@ -20,9 +20,9 @@ Ext.define("core.train.coursechkresult.view.DetailLayout", {
         region: "west",
         width: 700,
         split: true,
-        style: {
+        /*style: {
             border: '1px solid #ddd'
-        },
+        },*/
         frame: false
 	},{
         xtype: "coursechkresult.classstudentgrid",

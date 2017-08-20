@@ -353,12 +353,14 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                     }
                     recordData = rescords[0].data;
                 }
-                insertObj = recordData;
-                tabTitle = recordData.xm + "-学分详情";
-                tabItemId = funCode + "_gridDetail";
-                //获取主键值
+                 //获取主键值
                 var pkName = funData.pkName;
                 pkValue = recordData[pkName];
+
+                insertObj = recordData;
+                tabTitle = recordData.xm + "-学分详情";
+                tabItemId = funCode + "_gridDetail"+pkValue;
+               
                 break;
         }
         var popFunData = Ext.apply(funData, {
