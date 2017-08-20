@@ -137,6 +137,147 @@ public class exportMeetingInfo {
         return result;
     }
 
+	public final static boolean exportCourseEvalResultExcel(HttpServletResponse response, String fileName,String sheetTitle, List<Map<String, Object>> listContent) throws IOException {
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		boolean result = false;
+		OutputStream fileOutputStream = null;
+		response.reset();// 清空输出流
+		response.setHeader("Content-disposition","attachment; filename=" + new String((fileName + ".xls").getBytes("GB2312"), "ISO8859-1"));
+		response.setContentType("application/msexcel");
+		if (null != listContent && !listContent.isEmpty()) {
+			try {
+				Map<String, Object> exportInfo = listContent.get(0);
+				Integer[] columnWidth= (Integer[]) exportInfo.get("columnWidth");
+				Integer headColumnCount = (Integer) exportInfo.get("headColumnCount");
+				int columnCount = headColumnCount;
+
+				CellStyle headStyle = getCellStyle(workbook, "", (short) 12, false, HorizontalAlignment.CENTER,VerticalAlignment.CENTER);
+				CellStyle titleStyle = getCellStyle(workbook, "", (short) 26, true, HorizontalAlignment.CENTER,VerticalAlignment.CENTER);
+					// 课程基本信息
+					String className = (String) exportInfo.get("className");
+					String courseName = (String) exportInfo.get("courseName");
+					String teachTypeName=(String) exportInfo.get("teachTypeName");
+					String teacherName = (String) exportInfo.get("teacherName");
+					String advise = (String) exportInfo.get("advise");
+					String verySatisfaction = (String) exportInfo.get("verySatisfaction");
+					String satisfaction = (String) exportInfo.get("satisfaction");
+					
+					// 创建sheet 一课程一个sheet
+					String sheetName =className+ "教学评估表";
+					
+					//创建表格
+					Row row = null;
+					Cell cell = null;
+					Sheet sheet = workbook.createSheet(sheetName);
+					//创建表头
+					for (int j = 0; j < 7; j++) {
+						row = sheet.createRow(j);
+						row.setHeight((short) 0x200);
+						for (int k = 0; k < columnCount; k++) {
+							cell = row.createCell(k);
+							cell.setCellStyle(headStyle);
+							sheet.setColumnWidth(k, columnWidth[k] * 256);
+						}
+					}
+					// 标题
+					sheet.getRow(0).getCell(0).setCellStyle(titleStyle);
+					sheet.getRow(0).getCell(0).setCellValue(className+"班教学评估表");
+					sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 7));
+					
+					// 第1行
+					sheet.getRow(3).getCell(0).setCellValue("课程名称");
+					sheet.getRow(3).getCell(1).setCellValue(courseName);
+					sheet.addMergedRegion(new CellRangeAddress(3, 3, 1, 7));
+
+					// 第2行
+					sheet.getRow(4).getCell(0).setCellValue("教学形式");
+					sheet.getRow(4).getCell(1).setCellValue(teachTypeName);
+					sheet.addMergedRegion(new CellRangeAddress(4, 4, 1, 7));
+
+					// 第3行
+					sheet.getRow(5).getCell(0).setCellValue("授课教师");
+                    sheet.getRow(5).getCell(1).setCellValue(teacherName);
+                    sheet.addMergedRegion(new CellRangeAddress(5, 5, 1,7));
+                    
+                    // 第4行
+					sheet.getRow(6).getCell(0).setCellValue("评估指标");
+					sheet.getRow(6).getCell(1).setCellValue("评估标准");
+					sheet.getRow(6).getCell(2).setCellValue("很满意");
+					sheet.getRow(6).getCell(3).setCellValue("满意");
+					sheet.getRow(6).getCell(4).setCellValue("基本满意");
+					sheet.getRow(6).getCell(5).setCellValue("不满意");
+					sheet.getRow(6).getCell(6).setCellValue("很满意度");
+					sheet.getRow(6).getCell(7).setCellValue("满意度");
+					
+					//处理评估指标部分数据
+					List<List<Map<String, String>>> standList = new ArrayList<>();
+					standList=(List<List<Map<String, String>>>)exportInfo.get("standList");
+					 int standListCount = standList.size();
+					 for(int k=0;k<standListCount;k++){
+						 List<Map<String, String>> detail = standList.get(k);
+						 Map<String, String> details =detail.get(0);
+						 row = sheet.createRow(7+k);
+						 row.setHeight((short) 0x500);
+						 for (int j = 0; j < 8; j++) {
+								cell = row.createCell(j);
+								cell.setCellStyle(headStyle);
+								if(j==0){
+									cell.setCellValue(String.valueOf(details.get("INDICATOR_NAME")));
+								}
+								if(j==1){
+									cell.setCellValue(String.valueOf(details.get("INDICATOR_STAND")));
+								}
+								if(j==2){
+									cell.setCellValue(String.valueOf(details.get("VERY_SATISFACTIONCOUNT")));
+								}
+								if(j==3){
+									cell.setCellValue(String.valueOf(details.get("SATISFACTIONCOUNT")));
+								}
+								if(j==4){
+									cell.setCellValue(String.valueOf(details.get("BAS_SATISFACTIONCOUNT")));
+								}
+								if(j==5){
+									cell.setCellValue(String.valueOf(details.get("NO_SATISFACTIONCOUNT")));
+								}
+								if(j==6){
+									cell.setCellValue(String.valueOf(details.get("VERY_SATISFACTION")));
+								}
+								if(j==7){
+									cell.setCellValue(String.valueOf(details.get("SATISFACTION")));
+								}
+							}
+					 }
+					
+					 //创建汇总和评价栏
+					 for (int j = 0; j < 2; j++) {
+							row = sheet.createRow(7+standListCount+j);
+							row.setHeight((short) 0x500);
+							for (int k = 0; k < columnCount; k++) {
+								cell = row.createCell(k);
+								cell.setCellStyle(headStyle);
+								sheet.setColumnWidth(k, columnWidth[k] * 256);
+							}
+						}
+					 sheet.getRow(7+standListCount).getCell(0).setCellValue("汇总：");
+	                 sheet.addMergedRegion(new CellRangeAddress(7+standListCount, 7+standListCount, 0,5));
+					 sheet.getRow(7+standListCount).getCell(6).setCellValue(verySatisfaction);
+					 sheet.getRow(7+standListCount).getCell(7).setCellValue(satisfaction);
+					 
+					 sheet.getRow(8+standListCount).getCell(0).setCellValue("意见建议");
+					 sheet.getRow(8+standListCount).getCell(1).setCellValue(advise);
+	                 sheet.addMergedRegion(new CellRangeAddress(8+standListCount, 8+standListCount, 1,7));
+				
+	                 fileOutputStream = response.getOutputStream();
+	                 workbook.write(fileOutputStream);
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				return false;
+			}
+			result = true;
+		}
+		return result;
+	}
+    
 	public final static boolean exportCheckResultInfoExcel(HttpServletResponse response, String fileName,String sheetTitle, List<Map<String, Object>> listContent) throws IOException {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 		boolean result = false;
@@ -147,11 +288,8 @@ public class exportMeetingInfo {
 		if (null != listContent && !listContent.isEmpty()) {
 			try {
 				Map<String, Object> exportInfo = listContent.get(0);
-				//String[] headArray = (String[]) exportInfo.get("head");
 				Integer columnWidth= (Integer) exportInfo.get("columnWidth");
 				Integer headColumnCount = (Integer) exportInfo.get("headColumnCount");
-				//Integer[] headAlignmentArray = (Integer[]) exportInfo.get("headAlignment");
-				//Integer[] columnAlignmentArray = (Integer[]) exportInfo.get("columnAlignment");
 				int columnCount = headColumnCount;
 
 				List<Map<String, Object>> mapMeetingList = (List<Map<String, Object>>) exportInfo.get("data");
@@ -184,7 +322,6 @@ public class exportMeetingInfo {
 					sheet.getRow(0).getCell(0).setCellStyle(titleStyle);
 					sheet.getRow(0).getCell(0).setCellValue(className+"班考勤详细");
 					sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 7));
-					
 					
 					// 第1行
 					sheet.getRow(3).getCell(0).setCellValue("班级名称");
@@ -223,7 +360,7 @@ public class exportMeetingInfo {
 					int trainClassscheduleCount = trainClassscheduleList.size();
 					for (int k = 0; k< 3; k++) {
 						row = sheet.createRow(8+k);
-						row.setHeight((short) 0x200);
+						row.setHeight((short) 0x250);
 						for (int j = 0; j < trainClassscheduleCount*3+2; j++) {
 							cell = row.createCell(j);
 							cell.setCellStyle(headStyle);
@@ -282,10 +419,25 @@ public class exportMeetingInfo {
 						 for (int j = 0; j < trainClassscheduleCount*3+2; j++) {
 								cell = row.createCell(j);
 								cell.setCellStyle(headStyle);
-								cell.setCellValue(val.get(j));
+								if(j==0){
+									cell.setCellValue(val.get(j));
+								}else if(val.get(j).equals("null")){
+									cell.setCellValue(" ");
+								}else if(val.get(j).equals("1")){
+									cell.setCellValue("正常");
+								}else if(val.get(j).equals("2")){
+									cell.setCellValue("迟到");
+								}else if(val.get(j).equals("3")){
+									cell.setCellValue("早退");
+								}else if(val.get(j).equals("4")){
+									cell.setCellValue("缺勤");
+								}else if(val.get(j).equals("5")){
+									cell.setCellValue("迟到早退");
+								}else{
+									cell.setCellValue(val.get(j));
+								}
 							}
 					 }
-					 
 				}
 				fileOutputStream = response.getOutputStream();
 				workbook.write(fileOutputStream);
@@ -297,8 +449,6 @@ public class exportMeetingInfo {
 		}
 		return result;
 	}
-    
-    
     
     private static CellStyle getCellStyle(HSSFWorkbook workbook, String fontName, Short fontSize, Boolean isBold, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment) {
         HSSFFont font = workbook.createFont();

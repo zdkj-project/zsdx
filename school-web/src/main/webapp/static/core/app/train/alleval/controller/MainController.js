@@ -175,9 +175,7 @@ Ext.define("core.train.alleval.controller.MainController", {
             }
         },
         
-        /**
-         * 班级列表导出事件
-         */
+       //课程列表的导出功能
         "basegrid[xtype=alleval.evalgrid] button[ref=gridExport]": {
             beforeclick: function (btn) {
                 var self = this;
@@ -187,9 +185,6 @@ Ext.define("core.train.alleval.controller.MainController", {
                 var mainLayout = baseGrid.up("basepanel[xtype=alleval.mainlayout]");
                 var classGrid=mainLayout.down("basegrid[xtype=alleval.maingrid]");
                 
-                //得到配置信息
-                var funData = basePanel.funData;
-                var pkName = funData.pkName;
                 //得到选中数据
                 var records = baseGrid.getSelectionModel().getSelection();
                 var title = "课程相关评价信息导出";
@@ -198,7 +193,7 @@ Ext.define("core.train.alleval.controller.MainController", {
                     self.Warning("只能按课程导出，请重新选择");
                     return false;
                 }
-                var ids = records[0].get("uuid");
+                var ids = records[0].get("classScheduleId");
                 Ext.Msg.confirm('提示', title, function (btn, text) {
                     if (btn == "yes") {
                         Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
