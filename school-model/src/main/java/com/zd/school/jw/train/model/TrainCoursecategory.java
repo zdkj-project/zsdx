@@ -4,6 +4,9 @@ import com.zd.core.annotation.FieldInfo;
 import com.zd.core.model.TreeNodeEntity;
 
 import javax.persistence.*;
+
+import org.hibernate.annotations.Formula;
+
 import java.io.Serializable;
 
 /**
@@ -80,4 +83,17 @@ public class TrainCoursecategory extends TreeNodeEntity implements Serializable 
      * @Transient
      * @FieldInfo(name = "") private String field1;
      */
+    @FieldInfo(name = "上级类型名称")
+    @Formula("(SELECT a.CATEGORY_NAME FROM dbo.TRAIN_T_COURSECATEGORY a WHERE a.CATEGORY_ID=PARENT_CATEGORY)")
+    private String parantCategoryName;
+
+	public String getParantCategoryName() {
+		return parantCategoryName;
+	}
+
+	public void setParantCategoryName(String parantCategoryName) {
+		this.parantCategoryName = parantCategoryName;
+	}
+    
+   
 }

@@ -151,7 +151,76 @@ Ext.define("core.train.calcucredit.controller.MainController", {
 
                 return false;
             }
-        }
+        },
+        /**
+         * 学分列表导出按钮事件
+         */
+        "basegrid[xtype=calcucredit.traineesgrid] button[ref=gridExport]": {
+            beforeclick: function (btn) {
+                var self = this;
+                var baseGrid = btn.up("basegrid");
+                var records = baseGrid.getSelectionModel().getSelection();
+                //获取班级ID
+                var mainlayout=baseGrid.up("panel[xtype=calcucredit.mainlayout]");
+                var mainGrid=mainlayout.down("panel[xtype=calcucredit.maingrid]");
+                var records1=mainGrid.getSelectionModel().getSelection();
+                var classId = records1[0].data.uuid;
+                if (records.length != 1) {
+                    self.Warning("请选择一名学员");
+                    return false;
+                }
+                var record = records[0].data;
+                var title = "确定要导出此学员的学分信息吗？";
+                Ext.Msg.confirm('提示', title, function (btn, text) {
+                    if (btn == "yes") {
+                        Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
+                        var component = Ext.create('Ext.Component', {
+                            title: 'HelloWorld',
+                            width: 0,
+                            height: 0,
+                            hidden: true,
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClasstrainee/getCreditsexportExcel?classId=' + classId + 'ids=' + record.uuid + '"></iframe>',
+                            renderTo: Ext.getBody()
+                        });
+
+                        var time = function () {
+                            self.syncAjax({
+                                url: comm.get('baseUrl') + '/TrainClasstrainee/getCreditscheckExportEnd',
+                                timeout: 1000 * 60 * 30,        //半个小时
+                                //回调代码必须写在里面
+                                success: function (response) {
+                                    data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                    if (data.success) {
+                                        Ext.Msg.hide();
+                                        self.msgbox(data.obj);
+                                        component.destroy();
+                                    } else {
+                                        if (data.obj == 0) {    //当为此值，则表明导出失败
+                                            Ext.Msg.hide();
+                                            self.Error("导出失败，请重试或联系管理员！");
+                                            component.destroy();
+                                        } else {
+                                            setTimeout(function () {
+                                                time()
+                                            }, 1000);
+                                        }
+                                    }
+                                },
+                                failure: function (response) {
+                                    Ext.Msg.hide();
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    component.destroy();
+                                }
+                            });
+                        };
+                        setTimeout(function () {
+                            time()
+                        }, 1000);    //延迟1秒执行
+                    }
+                });
+                return false;
+            }
+        },
     },
     /**
      * 学分汇总

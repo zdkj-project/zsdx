@@ -25,14 +25,22 @@ Ext.define('core.train.alleval.view.EvalGrid', {
             ref: 'gridClassEval',
             funCode: 'girdFuntionBtn',   //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             iconCls: 'x-fa fa-plus-circle',          
-        }, {
+        },{
+            xtype: 'button',
+            text: '导出',
+            ref: 'gridExport',
+            funCode: 'girdFuntionBtn',
+            iconCls: 'x-fa fa-file'
+        }, 
+        {
             xtype: 'button',
             text: '课程排名',
             ref: 'gridCourseRank',
             funCode: 'girdFuntionBtn',
             disabled: false,
             iconCls: 'x-fa fa-file'
-        },/* '->', {
+        },
+        /* '->', {
             xtype: 'tbtext',
             html: '快速搜索：'
         }, {

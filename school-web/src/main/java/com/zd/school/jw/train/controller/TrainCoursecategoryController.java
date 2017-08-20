@@ -219,21 +219,7 @@ public class TrainCoursecategoryController extends FrameWorkController<TrainCour
         request.getSession().removeAttribute("exportTrainCoursecategoryIsState");
         String ids = request.getParameter("ids");
         String orderSql = request.getParameter("orderSql");
-
-//        try {
-//           
-//            
-//            
-//            
-//            //FastExcel.exportExcel(response, "课程分类信息", list);
-//            request.getSession().setAttribute("exportTrainCoursecategoryIsEnd", "1");
-//        } catch (IOException e) {
-//            logger.error(e.getMessage());
-//            request.getSession().setAttribute("exportTrainCoursecategoryIsEnd", "0");
-//			request.getSession().setAttribute("exportTrainCoursecategoryIsState", "0");
-//            //writeJSON(response,jsonBuilder.returnFailureJson("\"文件导出失败，详情请见错误日志\""));
-//        }
-        
+        String whereSql = request.getParameter("whereSql");
 		Map<String, String> mapHeadshipLevel = new HashMap<>();
 		Map<String, String> mapXbm = new HashMap<>();
 		Map<String, String> mapClassCategory = new HashMap<>();
@@ -249,31 +235,42 @@ public class TrainCoursecategoryController extends FrameWorkController<TrainCour
 		}
 
 		List<Map<String, Object>> allList = new ArrayList<>();
-		
 
 		// 1.班级信息
-		
 		List<TrainCoursecategory> list = thisService.listExport(ids, orderSql);
+		
 		// 处理学员基本数据
 		List<Map<String, String>> roomList = new ArrayList<>();
+		List<Map<String, String>> parentList = new ArrayList<>();
 		Map<String, String> roomMap = null;
+		Map<String, String> parentMap =null;
 		for (TrainCoursecategory classTrainee : list) {
-			roomMap = new LinkedHashMap<>();
+			roomMap= new LinkedHashMap<>();
+			String pcn="";
+			if(classTrainee.getNodeLevel()==1){
+				pcn=classTrainee.getParantCategoryName()+"（一级分类）";
+			}else if(classTrainee.getNodeLevel()==2){
+				pcn=classTrainee.getParantCategoryName()+"（二级分类）";
+			}else if(classTrainee.getNodeLevel()==3){
+				pcn=classTrainee.getParantCategoryName()+"（三级分类）";
+			}else{
+				break;
+			}
+			roomMap.put("type", pcn);
 			roomMap.put("name", classTrainee.getNodeText());
 			roomMap.put("code", classTrainee.getNodeCode());
 			roomMap.put("note", classTrainee.getCategoryDesc());
 			roomList.add(roomMap);
 		}
 		
-		Integer[] columnWidth = new Integer[] { 35, 20, 35 };
+		Integer[] columnWidth = new Integer[] {35, 35, 20, 45 };
 		
 		Map<String, Object> roomAllMap = new LinkedHashMap<>();
 		roomAllMap.put("data", roomList);
-//		roomAllMap.put("title", "班级学员住宿安排信息表");
-		roomAllMap.put("head", new String[] { "分类名称", "分类编码", "分类说明"}); // 规定名字相同的，设定为合并
+		roomAllMap.put("head", new String[] { "分类名称","课程名称", "分类编码", "分类说明"}); // 规定名字相同的，设定为合并
 		roomAllMap.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
-		roomAllMap.put("columnAlignment", new Integer[] { 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
-		roomAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+		roomAllMap.put("columnAlignment", new Integer[] {0, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
+		roomAllMap.put("mergeCondition",  new String[] { "type" }); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
 		allList.add(roomAllMap);
 
 		// 在导出方法中进行解析
@@ -286,6 +283,8 @@ public class TrainCoursecategoryController extends FrameWorkController<TrainCour
 			request.getSession().setAttribute("exportTrainClassRoomIsState", "0");
 		}
     }
+
+
 
     @RequestMapping("/checkExportEnd")
     public void checkExportEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {

@@ -509,6 +509,85 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
         writeJSON(response, strData);// 返回数据
     }
 
+	/**
+	 * 导出班级学员导入UP模版排信息
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/getCreditsexportExcel")
+	public void getCreditsexportExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getSession().setAttribute("exportgetCreditsIsEnd", "0");
+		request.getSession().removeAttribute("exportgetCreditsIsState");
+
+		List<Map<String, Object>> allList = new ArrayList<>();
+		Integer[] columnWidth = new Integer[] { 30, 15, 20, 40, 20 };
+
+		// 1.班级信息
+		String classId = request.getParameter("classId"); // 程序中限定每次只能导出一个班级
+        String classTraineeId = request.getParameter("ids");
+        
+        List<Map<String, Object>> list = thisService.getClassTraineeCreditsList(classTraineeId);
+		
+		// 处理班级基本数据
+		List<Map<String, String>> traineeList = new ArrayList<>();
+		Map<String, String> traineeMap = null;
+		for (Map<String, Object> list1 : list) {
+			traineeMap = new LinkedHashMap<>();
+			traineeMap.put("className", "1");
+			traineeMap.put("traineeName", list1.values().toString());
+			traineeMap.put("date",  list1.values().toString());
+			traineeMap.put("sfzjh",  list1.values().toString());
+			traineeMap.put("uuid",  list1.values().toString());
+			traineeList.add(traineeMap);
+		}
+		// --------2.组装课程表格数据
+		Map<String, Object> courseAllMap = new LinkedHashMap<>();
+		courseAllMap.put("data", traineeList);
+		courseAllMap.put("title", null);
+		courseAllMap.put("head", new String[] { "班级名称", "课程名称", "上课日期", "上课时间", "学分" }); // 规定名字相同的，设定为合并
+		courseAllMap.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
+		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
+		courseAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+		allList.add(courseAllMap);
+        
+		// 在导出方法中进行解析
+		boolean result = PoiExportExcel.exportExcel(response, "班级学员发卡模版表格", null, allList);
+		if (result == true) {
+			request.getSession().setAttribute("exportgetCreditsIsEnd", "1");
+		} else {
+			request.getSession().setAttribute("exportgetCreditsIsEnd", "0");
+			request.getSession().setAttribute("exportgetCreditsIsState", "0");
+		}
+	}
+	
+	/**
+	 * 判断导出时，是否导出完毕
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/getCreditscheckExportEnd")
+	public void getCreditsexportcheckExportRoomEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Object isEnd = request.getSession().getAttribute("exportgetCreditsIsEnd");
+		Object state = request.getSession().getAttribute("exportgetCreditsIsState");
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+		}
+	}
+	
+	
     @RequestMapping(value = { "/getCheckList" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
             org.springframework.web.bind.annotation.RequestMethod.POST })
     public void getCheckList( HttpServletRequest request, HttpServletResponse response)

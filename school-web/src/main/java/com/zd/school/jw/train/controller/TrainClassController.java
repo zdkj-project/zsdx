@@ -1,10 +1,38 @@
-
 package com.zd.school.jw.train.controller;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.util.*;
+import com.zd.core.util.DBContextHolder;
+import com.zd.core.util.ImportExcelUtil;
+import com.zd.core.util.ModelUtil;
+import com.zd.core.util.PoiExportExcel;
+import com.zd.core.util.StringUtils;
+import com.zd.core.util.exportMeetingInfo;
 import com.zd.school.excel.FastExcel;
 import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClassschedule;
@@ -64,6 +92,9 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 
 	@Resource
 	TrainClassscheduleService classScheduleSerive;
+	
+	@Resource
+	TrainClasstraineeService trainClasstraineeService;
 
 	@Resource
 	BaseDicitemService dicitemService;
@@ -1055,6 +1086,160 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 	 * @param response
 	 * @throws Exception
 	 */
+	@RequestMapping("/exportCourseCheckExcel")
+	public void exportCourseCheckExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getSession().setAttribute("exportCourseCheckIsEnd", "0");
+		request.getSession().removeAttribute("exportCourseCheckIsState");
+
+		SimpleDateFormat fmtDate = new SimpleDateFormat("yyyy年MM月dd日");
+		SimpleDateFormat fmtDateWeek = new SimpleDateFormat("yyyy年M月d日 （E）");
+		SimpleDateFormat fmtTime = new SimpleDateFormat("h:mm");
+
+		Map<String, String> mapHeadshipLevel = new HashMap<>();
+		Map<String, String> mapXbm = new HashMap<>();
+		Map<String, String> mapClassCategory = new HashMap<>();
+		Map<String, String> mapMzmCategory = new HashMap<>();
+		Map<String, String> mapTraineeCategory = new HashMap<>();
+		String hql1 = " from BaseDicitem where dicCode in ('HEADSHIPLEVEL','XBM','ZXXBJLX','TRAINEECATEGORY','MZM')";
+		List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
+		for (BaseDicitem baseDicitem : listBaseDicItems1) {
+			if (baseDicitem.getDicCode().equals("XBM"))
+				mapXbm.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
+			else if (baseDicitem.getDicCode().equals("HEADSHIPLEVEL"))
+				mapHeadshipLevel.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
+			else if (baseDicitem.getDicCode().equals("MZM"))
+				mapMzmCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
+			else if (baseDicitem.getDicCode().equals("TRAINEECATEGORY"))
+				mapTraineeCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
+			else
+				mapClassCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
+		}
+
+		Integer[] columnWidth = new Integer[] { 15, 15, 15, 15, 15, 15, 15,15,15};
+		
+		// 1.班级信息
+				String ids = request.getParameter("ids"); // 程序中限定每次只能导出一个班级
+				TrainClass trainClass = thisService.get(ids);
+
+				// 2.班级学员信息
+				List<TrainClasstrainee> trainClasstraineeList = null;
+				String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2) ";
+				String sql ="";		
+				if (StringUtils.isNotEmpty(ids)) {
+					hql += " and classId in ('" + ids.replace(",", "','") + "')";
+				}
+				hql += " order by xm asc";
+				trainClasstraineeList = classTraineeService.doQuery(hql);
+				// 处理学员基本数据
+				List<Map<String, String>> traineeList = new ArrayList<>();
+				Map<String, String> traineeMap = null;
+				int traineeNum =0; // 学员人数
+				for (TrainClasstrainee classTrainee : trainClasstraineeList) {
+					traineeMap = new LinkedHashMap<>();
+					traineeMap.put("xm", classTrainee.getXm());
+					traineeNum++;
+					//只统计不为1的数据
+					traineeList.add(traineeMap);
+				}
+				// 3.班级课程信息
+				List<Map<String,Object>> trainClassscheduleList = null;
+				sql = "SELECT CLASS_SCHEDULE_ID,COURSE_NAME,BEGIN_TIME,END_TIME FROM TRAIN_T_CLASSSCHEDULE where ISDELETE=0";
+		        sql += " and CLASS_ID='" + ids +"'";
+		        sql += " order by CLASS_SCHEDULE_ID asc";
+				trainClassscheduleList = classScheduleSerive.getForValuesToSql(sql);
+
+				// 4.班级学员信息
+				List<Map<String,Object>> voTrainClassCheckList = null;
+				List<String> classScheduleIdList = new ArrayList<>();
+				sql="SELECT xm,classTraineeId,classScheduleId,incardTime,outcardTime,attendResult FROM TRAIN_V_CHECKRESULT WHERE classId='" + ids +"'"+" order by classScheduleId asc";
+				voTrainClassCheckList = trainClasstraineeService.getForValuesToSql(sql);
+				int voTrainClassCheckListCount = voTrainClassCheckList.size();
+				
+				Map<String,List<String>> traineeResult=new LinkedHashMap<>();	
+				List<String> lists=null;
+				Map<String,Object> tcc=null;
+				for(int i=0;i<voTrainClassCheckListCount;i++){
+					tcc=voTrainClassCheckList.get(i);
+					lists=traineeResult.get(tcc.get("classTraineeId"));
+					if(lists==null){
+						lists=new ArrayList<>();
+						lists.add(String.valueOf(i+1));
+						lists.add(String.valueOf(tcc.get("xm")));
+					}
+					lists.add(String.valueOf(tcc.get("incardTime")));
+					lists.add(String.valueOf(tcc.get("outcardTime")));
+					lists.add(String.valueOf(tcc.get("attendResult")));
+					
+					traineeResult.put(String.valueOf(tcc.get("classTraineeId")), lists);
+				}
+				System.out.println(traineeResult);
+				
+				// ----------------------组装导出数据----------------------------------
+				List<Map<String, Object>> allList = new ArrayList<>();
+
+				// --------1.处理班级基本数据，并组装表格数据（特殊：一行分作两行显示）
+				List<Map<String, Object>> classList1 = new ArrayList<>(); // 虽然内容只有一行，但是由于接口的设定，所以依旧使用list存入数据
+				Map<String, Object> classMap1 = new LinkedHashMap<>();
+				classMap1.put("className", trainClass.getClassName());
+				classMap1.put("classCategory", mapClassCategory.get(trainClass.getClassCategory()));
+				classMap1.put("traineeNum", String.valueOf(traineeNum));
+				classMap1.put("beginDate",fmtDate.format(trainClass.getBeginDate())+" "+ fmtTime.format(trainClass.getBeginDate()));
+				classMap1.put("endDate", fmtDate.format(trainClass.getEndDate())+" "+fmtTime.format(trainClass.getEndDate()));
+				classMap1.put("needChecking", trainClass.getNeedChecking()==1?"需要":"不需要");
+				classMap1.put("checkCourse", trainClassscheduleList);
+				classMap1.put("voTrainClassCheck", traineeResult);
+				classList1.add(classMap1);
+				// 第一行数据
+				Map<String, Object> classAllMap1 = new LinkedHashMap<>();
+				classAllMap1.put("data", classList1);
+				classAllMap1.put("title", "班级基本信息表");
+				classAllMap1.put("columnWidth", 15);
+				classAllMap1.put("headColumnCount", 8);
+				allList.add(classAllMap1);
+				
+		// 在导出方法中进行解析
+		boolean result = exportMeetingInfo.exportCheckResultInfoExcel(response, trainClass.getClassName()+"班级信息", trainClass.getClassName()+"班考勤表", allList);
+		if (result == true) {
+			request.getSession().setAttribute("exportCourseCheckIsEnd", "1");
+		} else {
+			request.getSession().setAttribute("exportCourseCheckIsEnd", "0");
+			request.getSession().setAttribute("exportCourseCheckIsState", "0");
+		}
+
+	}
+
+	/**
+	 * 判断是否导出完毕
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/checkCourseCheckExcelEnd")
+	public void checkCourseCheckExcelEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Object isEnd = request.getSession().getAttribute("exportCourseCheckIsEnd");
+		Object state = request.getSession().getAttribute("exportCourseCheckIsState");
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+		}
+	}
+	
+	/**
+	 * 导出班级所有信息
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
 	@RequestMapping("/exportExcel")
 	public void exportExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		request.getSession().setAttribute("exportTrainClassIsEnd", "0");
@@ -1453,6 +1638,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
 		}
 	}
+	
 
 	/**
 	 * 通过传入的时间参数，获得时段值
