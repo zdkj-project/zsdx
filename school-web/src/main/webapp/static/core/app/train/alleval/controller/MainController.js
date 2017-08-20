@@ -182,7 +182,7 @@ Ext.define("core.train.alleval.controller.MainController", {
                 //得到组件
                 var baseGrid = btn.up("basegrid");
                 var funCode = baseGrid.funCode;
-                var mainLayout = baseGrid.up("basepanel[xtype=alleval.mainlayout]");
+                var basePanel = baseGrid.up("basepanel[xtype=alleval.mainlayout]");
                 var classGrid=mainLayout.down("basegrid[xtype=alleval.maingrid]");
                 
                 //得到选中数据

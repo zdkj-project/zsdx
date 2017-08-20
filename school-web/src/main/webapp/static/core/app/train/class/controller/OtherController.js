@@ -1047,13 +1047,13 @@ Ext.define("core.train.class.controller.OtherController", {
                     });
                     loading.show();
 
-                    // self.asyncAjax({
-                    //     url: funData.action + "/addSendUser",
-                    //     params: params,
-                    //     //回调代码必须写在里面
-                    //     success: function (response) {
-                    //         data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                    //         if (data.success) {
+                    self.asyncAjax({
+                        url: funData.action + "/addSendUser",
+                        params: params,
+                        //回调代码必须写在里面
+                        success: function (response) {
+                            data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                            if (data.success) {
                             
                                 self.asyncAjax({
                                     url: funData.action + "/doClassUse",
@@ -1087,16 +1087,16 @@ Ext.define("core.train.class.controller.OtherController", {
 
                                                                 loading.hide();
                                                                 tabPanel.remove(tabItem);*/
-                        //     } else {
-                        //         loading.hide();
-                        //         self.Error(data.obj);                            
-                        //     }
-                        // },
-                        // failure: function (response) {
-                        //     loading.hide();
-                        //     alert('数据请求出错了！！！！\n错误信息：\n' + response.responseText);
-                        // }
-                    //});
+                            } else {
+                                loading.hide();
+                                self.Error(data.obj);                            
+                            }
+                        },
+                        failure: function (response) {
+                            loading.hide();
+                            alert('数据请求出错了！！！！\n错误信息：\n' + response.responseText);
+                        }
+                    });
 
                 } else {
                     var errors = ["前台验证失败，错误信息："];

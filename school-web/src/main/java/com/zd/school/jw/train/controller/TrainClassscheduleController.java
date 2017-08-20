@@ -252,11 +252,11 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
         // 获取当前操作用户
         SysUser currentUser = getCurrentSysUser();
 
-        String roomId = request.getParameter("roomId");
-        String roomName = request.getParameter("roomName");
+        String roomIds = request.getParameter("roomIds");
+        String roomNames = request.getParameter("roomNames");
         String ids = request.getParameter("ids");
 
-        int result = thisService.doUpdateRoomInfo(roomId, roomName, ids, currentUser);
+        int result = thisService.doUpdateRoomInfo(roomIds, roomNames, ids, currentUser);
 
         if (result == 1) {
             writeJSON(response, jsonBuilder.returnSuccessJson("\"设置场地成功！\""));

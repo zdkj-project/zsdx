@@ -22,10 +22,22 @@ public class MeetingCheck {
 	private String attendResult;
 	//设备号
 	private String termCode;
-	//签到签退标识0-签到，1-签退
+	//签到签退标识0-签到，1-签退,-1缺勤
 	private String lg;
 	
+	/**
+     * 考勤人员Id
+     */
+	private String userId;
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+    
 	public String getWlkh() {
 		return wlkh;
 	}

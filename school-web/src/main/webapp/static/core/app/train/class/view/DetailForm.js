@@ -257,7 +257,7 @@ Ext.define("core.train.class.view.DetailForm", {
                 columnWidth:0.25,
                 xtype: "basefuncfield",
                 refController: "", //该功能主控制器，这里重新指定为当前视图的控制器了
-                funcPanel: "checkrule.mainlayout", //该功能显示的主视图
+                funcPanel: "coursecheckrule.mainlayout", //该功能显示的主视图
                 formPanel: "class.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
                 funcTitle: "考勤规则选择", //查询窗口的标题
                 configInfo: {

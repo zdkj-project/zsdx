@@ -56,6 +56,7 @@ public class TrainCreditsrule extends BaseEntity implements Serializable{
         return ruleName;
     }
         
+    //不需要了，默认为课程的学分
 //    @FieldInfo(name = "正常出勤学分")
 //    @Column(name = "NORMAL_CREDITS", length = 5, nullable = false)
 //    private Short normalCredits;

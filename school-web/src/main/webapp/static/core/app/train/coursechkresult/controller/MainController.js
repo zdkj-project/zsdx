@@ -175,11 +175,14 @@ Ext.define("core.train.coursechkresult.controller.MainController", {
         switch (cmd) {
             case "detail":
                 insertObj = Ext.apply(insertObj, recordData);
-                tabTitle = funData.tabConfig.detailTitle;
-                tabItemId = funCode + "_gridDetail";
-                itemXtype = "meetinginfo.DetailPanel";
+                tabTitle = recordData["className"] +"_"+funData.tabConfig.detailTitle;
+
                 //获取主键值
                 pkValue = recordData[pkName];
+
+                tabItemId = funCode + "_gridDetail"+pkValue;
+                itemXtype = "meetinginfo.DetailPanel";
+             
                 break;
         }
         var popFunData = Ext.apply(funData, {
@@ -228,8 +231,7 @@ Ext.define("core.train.coursechkresult.controller.MainController", {
                         courseStore.loadPage(1);
 
                         //设置表格的默认filter为这个有classId的filter，使得快速查询正常使用
-                       courseGrid.extParams.filter=filter;
-                       
+                        courseGrid.extParams.filter=filter;
                         /*                        var detailhtmlpanel = item.down("container[xtype=meetinginfo.DetailPanel]");
                                                 //处理数据字典的值
                                                 var ddItem = factory.DDCache.getItemByDDCode("MEETINGCATEGORY");

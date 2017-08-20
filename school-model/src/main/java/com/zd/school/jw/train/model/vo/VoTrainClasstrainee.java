@@ -12,6 +12,9 @@ public class VoTrainClasstrainee {
 	private String factoryfixId;
 	//流水号
 	private String cardNo;
+	//卡片使用状态
+	private Integer useState;
+	
 	public String getClassId() {
 		return classId;
 	}
@@ -42,5 +45,13 @@ public class VoTrainClasstrainee {
 	public void setCardNo(String cardNo) {
 		this.cardNo = cardNo;
 	}
+	public Integer getUseState() {
+		return useState;
+	}
+	public void setUseState(Integer useState) {
+		this.useState = useState;
+	}
+	
+	
 
 }

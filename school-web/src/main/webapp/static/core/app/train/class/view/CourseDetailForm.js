@@ -309,17 +309,6 @@ Ext.define("core.train.class.view.CourseDetailForm", {
         layout: "column",
         labelAlign: "right",
         items: [ /*{
-            beforeLabelTextTpl: comm.get('required'),
-            allowBlank: false,
-            fieldLabel: "授课模式",
-            columnWidth: 0.5,
-            name: "courseMode",
-            xtype: "basecombobox",
-            ddCode: "COURSEMODE",
-            emptyText: "请选择授课模式",
-            value:"1",
-            editable:false
-        },*/{
             fieldLabel: "授课地点",
             columnWidth: 1,
             name: "scheduleAddress",
@@ -327,6 +316,35 @@ Ext.define("core.train.class.view.CourseDetailForm", {
             emptyText: "请输入授课地点",
             maxLength: 64,
             maxLengthText: "最多64个字符,汉字占2个字符",
+        }*/
+         {
+            columnWidth: 0.5,
+            xtype: "basefuncfield",
+            // refController: "meetinginfo.otherController", //该功能主控制器，这里重新指定为当前视图的控制器了
+            refController: "pubselect.selectroomcontroller",
+            funcPanel: "pubselect.selectroomlayout", //该功能显示的主视图
+            funcGrid: "pubselect.isselectroomgrid", //该功能显示的主视图
+            formPanel: "class.coursedetailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
+            funcTitle: "授课地点选择", //查询窗口的标题
+            configInfo: {
+                width: 1200,
+                height: 700,
+                fieldInfo: "roomId~scheduleAddress,uuid~roomName",
+                whereSql: " and isDelete='0' ",
+                orderSql: " order by areaUpName, areaName,orderIndex asc",
+                muiltSelect: true //是否多选
+            },
+            fieldLabel: "授课地点",
+            emptyText: "请选择授课地点",
+            name: "scheduleAddress"
+
+        }, {
+            fieldLabel: "房间ID",
+            // columnWidth: 0.5,
+            name: "roomId",
+            xtype: "textfield",
+            emptyText: "请输入房间ID",
+            hidden: true
         }]
     }]
 });

@@ -13,6 +13,8 @@ import com.zd.school.jw.train.service.TrainClasstraineeService;
 import com.zd.school.plartform.system.model.CardUserInfoToUP;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.service.SysUserService;
+
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,6 +47,8 @@ import java.util.Map;
 @RequestMapping("/TrainClasstrainee")
 public class TrainClasstraineeController extends FrameWorkController<TrainClasstrainee> implements Constant {
 
+	private static Logger logger = Logger.getLogger(TrainClasstraineeController.class);
+	
 	@Resource
 	TrainClasstraineeService thisService; // service层接口
 	
@@ -290,12 +294,12 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			
 			//g.isDelete=0 or g.isDelete=1 and 
 			//new: 不查询状态为1的
-			String hql = "select new TrainClasstrainee(g.uuid,g.xm,g.xbm,g.siesta,g.sleep,g.roomId,g.roomName,g.isDelete) from TrainClasstrainee g "
+			String hql = "select new TrainClasstrainee(g.uuid,g.xm,g.xbm,g.siesta,g.sleep,g.roomId,g.roomName,g.workUnit,g.isDelete) from TrainClasstrainee g "
 					+ " where g.classId='"+ classId + "'";
 			if(isDelete!=null){
 				hql+=" and g.isDelete!=1 ";
 			}
-			hql+="  order by g.siesta desc,g.sleep desc,g.xbm asc";
+			hql+="  order by g.siesta desc,g.sleep desc,g.xbm asc,g.workUnit asc";
 				
 			QueryResult<TrainClasstrainee> result = thisService.doQueryResult(hql, start, limit);
 
@@ -403,6 +407,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			}
 
 		} catch (Exception e) {
+			logger.error(e.getMessage());
 			returnJson = new StringBuffer("{ \"success\" : false, \"msg\":\"更新发卡数据失败，请联系管理员！\"}");
 		}
 
@@ -592,13 +597,16 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
         Integer limit = super.limit(request);
         String sort = super.sort(request);
         String filter = super.filter(request);
+        String xm = request.getParameter("xm");
         String classId = request.getParameter("classId");
         String classScheduleId = request.getParameter("classScheduleId");
-        if(StringUtils.isEmpty(classId) && StringUtils.isEmpty(classScheduleId)){
-            writeJSON(response, jsonBuilder.returnFailureJson("'没有传入查询考勤的参数：班级或课程'"));
-            return;
-        }
-        QueryResult<VoTrainClassCheck> qResult = thisService.getCheckList(start, limit, classId, classScheduleId);
+        /*if(StringUtils.isEmpty(classId) && StringUtils.isEmpty(classScheduleId)){
+            //writeJSON(response, jsonBuilder.returnFailureJson("\"没有传入查询考勤的参数：班级或课程\""));
+        	 strData = jsonBuilder.buildObjListToJson((long)0, new ArrayList<>(), true);
+        	 writeJSON(response, strData);// 返回数据
+        	return;
+        }*/
+        QueryResult<VoTrainClassCheck> qResult = thisService.getCheckList(start, limit, classId, classScheduleId,xm);
         strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
         writeJSON(response, strData);// 返回数据
     }

@@ -199,7 +199,7 @@ Ext.define("core.train.arrange.view.MainGrid", {
         },{
             xtype: 'actiontextcolumn',
             text: "操作",
-            width: 250,
+            width: 300,
             align:'center',
             fixed: true,
             items: [{

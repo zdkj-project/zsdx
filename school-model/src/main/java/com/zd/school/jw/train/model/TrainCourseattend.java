@@ -106,6 +106,7 @@ public class TrainCourseattend extends BaseEntity implements Serializable{
         return outcardTime;
     }
 
+    //考勤结果 1-正常 2-迟到 3-早退 4-缺勤5-迟到早退
     @FieldInfo(name = "考勤结果")
     @Column(name = "ATTENT_RESULT",length = 16,nullable = true)
     private String attendResult;

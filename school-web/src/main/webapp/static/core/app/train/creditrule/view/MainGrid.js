@@ -120,11 +120,11 @@ Ext.define("core.train.creditrule.view.MainGrid", {
             minWidth: 150,
             text: "规则名称",
             dataIndex: "ruleName",
-        }, {
+        },/* {
             width: 150,
             text: "正常出勤学分",
             dataIndex: "normalCredits",
-        }, {
+        },*/ {
             width: 150,
             text: "迟到扣除学分",
             dataIndex: "lateCredits",
@@ -132,6 +132,18 @@ Ext.define("core.train.creditrule.view.MainGrid", {
             width: 150,
             text: "早退扣除学分",
             dataIndex: "earlyCredits",
+        }, {
+            width: 150,
+            text: "迟到早退扣除学分",
+            renderer: function(value,metaData,record) {  
+                return record.get("lateCredits")+record.get("earlyCredits");
+            }
+        }, {
+            width: 150,
+            text: "缺勤学分",
+            renderer: function(value,metaData) {  
+                return 0;
+            }
         }, {
             width: 150,
             text: "规则是否启用",

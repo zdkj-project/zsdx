@@ -342,8 +342,9 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         return roomName;
     }
     
-    @FieldInfo(name = "具体细化小班级，A班，B班，null正常班级")
-    @Column(name = "小班级名称", length = 8, nullable = true)
+  //具体细化小班级，A班，B班，null正常班级
+    @FieldInfo(name = "小班级名称")
+    @Column(name = "SMALL_CLASSNAME", length = 8, nullable = true)
     private String smallClassName;
 
     public String getSmallClassName() {
@@ -353,7 +354,6 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
     public void setSmallClassName(String smallClassName) {
         this.smallClassName = smallClassName;
     }
-
 
     public TrainClasstrainee() {
         super();
@@ -506,7 +506,7 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         this.setIsDelete(isDelete);
     }
 
-    public TrainClasstrainee(String uuid, String xm, String xbm, Integer siesta, Integer sleep, String roomId, String roomName,Integer isDelete) {
+    public TrainClasstrainee(String uuid, String xm, String xbm, Integer siesta, Integer sleep, String roomId, String roomName,String workUnit,Integer isDelete) {
         super(uuid);       
         this.xm = xm;
         this.xbm = xbm;
@@ -514,6 +514,7 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         this.sleep = sleep;
         this.roomId = roomId;
         this.roomName = roomName;
+        this.workUnit=workUnit;
         this.setIsDelete(isDelete);
     }
 

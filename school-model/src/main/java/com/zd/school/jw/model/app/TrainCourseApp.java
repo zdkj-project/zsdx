@@ -1,8 +1,6 @@
 package com.zd.school.jw.model.app;
 
-import com.zd.school.jw.train.model.TrainCheckrule;
 import com.zd.school.jw.train.model.TrainClassschedule;
-import com.zd.school.plartform.comm.model.CommAttachment;
 
 import java.util.List;
 
@@ -30,7 +28,29 @@ public class TrainCourseApp {
     public void setMessage(String message) {
         this.message = message;
     }
+    
+    //判断返回的课程，是否同属于一个班级，相同为0，否则为1
+    private int isSameClass;
 
+    public int getIsSameClass() {
+        return isSameClass;
+    }
+
+    public void setIsSameClass(int isSameClass) {
+        this.isSameClass = isSameClass;
+    }
+    
+    //返回房间名称信息
+    private String roomName;
+
+    public String getRoomName() {
+        return roomName;
+    }
+
+    public void setRoomName(String roomName) {
+        this.roomName = roomName;
+    }
+    
     /**
      * 考勤课程列表
      */
@@ -47,27 +67,27 @@ public class TrainCourseApp {
     /**
      * 课程考勤规则
      */
-    private TrainCheckrule checkrule;
-
-    public TrainCheckrule getCheckrule() {
-        return checkrule;
-    }
-
-    public void setCheckrule(TrainCheckrule checkrule) {
-        this.checkrule = checkrule;
-    }
+//    private TrainCheckrule checkrule;
+//
+//    public TrainCheckrule getCheckrule() {
+//        return checkrule;
+//    }
+//
+//    public void setCheckrule(TrainCheckrule checkrule) {
+//        this.checkrule = checkrule;
+//    }
 
 
     /**
      * APP需要的会议相关附件下载
      */
-    private List<CommAttachment> attachment;
-
-    public List<CommAttachment> getAttachment() {
-        return attachment;
-    }
-
-    public void setAttachment(List<CommAttachment> attachment) {
-        this.attachment = attachment;
-    }
+//    private List<CommAttachment> attachment;
+//
+//    public List<CommAttachment> getAttachment() {
+//        return attachment;
+//    }
+//
+//    public void setAttachment(List<CommAttachment> attachment) {
+//        this.attachment = attachment;
+//    }
 }

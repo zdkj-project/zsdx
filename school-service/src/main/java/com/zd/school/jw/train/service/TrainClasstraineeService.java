@@ -91,5 +91,5 @@ public interface TrainClasstraineeService extends BaseService<TrainClasstrainee>
      */
     public List<Map<String, Object>> getClassTraineeCreditsList(String classTraineeId);
 
-    public QueryResult<VoTrainClassCheck> getCheckList(Integer start, Integer limit, String classId, String classScheduleId);
+    public QueryResult<VoTrainClassCheck> getCheckList(Integer start, Integer limit, String classId, String classScheduleId, String xm);
 }
