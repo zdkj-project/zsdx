@@ -210,14 +210,14 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 	}
 
 	@Override
-	public int doUpdateRoomInfo(String roomId, String roomName, String ids, SysUser currentUser) {
+	public int doUpdateRoomInfo(String roomIds, String roomNames, String ids, SysUser currentUser) {
 		int result = 0;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 		try {
 
-			String hqlUpdate = "update TrainClassschedule t set t.roomId='" + roomId + "',t.scheduleAddress='"
-					+ roomName + "'," + "	t.updateUser='" + currentUser.getXm() + "',t.updateTime='"
+			String hqlUpdate = "update TrainClassschedule t set t.roomId='" + roomIds + "',t.scheduleAddress='"
+					+ roomNames + "'," + "	t.updateUser='" + currentUser.getXm() + "',t.updateTime='"
 					+ sdf.format(new Date()) + "' " + "where t.isDelete!=1 and t.uuid in ('" + ids.replace(",", "','")
 					+ "')";
 			this.executeHql(hqlUpdate);

@@ -31,18 +31,25 @@ Ext.define("core.train.creditrule.view.DetailForm", {
     		emptyText: "请输入规则名称",
             maxLength:36,
             maxLengthText:"最多36个字符,汉字占2个字符",	
-        },{ 		
-            beforeLabelTextTpl: comm.get("required"),
-            allowBlank: false,
-    		fieldLabel: "正常出勤学分",
+        },{
             columnWidth: 0.5,
-            name: "normalCredits",
-            xtype: "numberfield",    
-    		emptyText: "请输入正常出勤学分",
-            minValue: 0, 
-            maxValue:99999,     
-            value:4
-		}]
+            xtype: "label",
+            margin:'5 0 0 5 ',
+            html: " （<font color=red,size=14>正常出勤的分数为对应课程分数，缺勤0分；迟到、早退会从课程分数中减去分数</font>）",
+        }
+  //       { 		
+  //           beforeLabelTextTpl: comm.get("required"),
+  //           allowBlank: false,
+  //   		fieldLabel: "正常出勤学分",
+  //           columnWidth: 0.5,
+  //           name: "normalCredits",
+  //           xtype: "numberfield",    
+  //   		emptyText: "请输入正常出勤学分",
+  //           minValue: 0, 
+  //           maxValue:99999,     
+  //           value:4
+		// }
+        ]
     },{
         xtype: "container",
         layout: "column",

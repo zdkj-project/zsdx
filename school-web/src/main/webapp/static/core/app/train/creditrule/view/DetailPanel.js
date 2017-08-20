@@ -7,9 +7,9 @@
         layout: "form", //从上往下布局
         autoHeight: true,
         frame: false,
-        style: {
+        /*style: {
             border: '1px solid #ddd'
-        },
+        },*/
         fieldDefaults: { // 统一设置表单字段默认属性
             labelSeparator: "：", // 分隔符
             msgTarget: "qtip",
@@ -22,9 +22,10 @@
                 '<div class="trainClass_title">规则详请：</div>',
                 '<ul>',
                     '<li style="width:30%">规则名称：{ruleName}</li>',
-                    '<li style="width:30%">正常出勤学分：{normalCredits}</li>',
                     '<li style="width:30%">迟到扣除学分：{lateCredits}</li>',
                     '<li style="width:30%">早退扣除学分：{earlyCredits}</li>',
+                    '<li style="width:30%">早退扣除学分：{[values.lateCredits + values.earlyCredits]}</li>',
+                    '<li style="width:30%">缺勤学分：0</li>',
                     '<li style="width:30%">规则是否启用：<tpl if="startUsing == 1">已启用<tpl else>不启用</tpl></li>',
                     '<div style="clear:both"></div>',
                 '</ul>',

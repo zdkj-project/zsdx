@@ -119,12 +119,13 @@ Ext.define("core.train.arrange.view.ArrangeRoomDetailForm", {
                     text: '序号',
                     align: 'center'
                 },
-                { align: 'center',titleAlign: "center",text: '姓名', dataIndex: 'xm', flex: 1.5 },
+                { align: 'center',titleAlign: "center",text: '姓名', dataIndex: 'xm', flex: 1 },
                 { align: 'center',titleAlign: "center", text: '性别', dataIndex: 'xbm', flex: 1,
                     renderer : function(v, p, record){                                 
                         return v=="1"?"男":"女";      
                     }
                 },
+                { align: 'center',titleAlign: "center",text: '单位', dataIndex: 'workUnit', flex: 1.5 },
                 { 
                     text: '午休', dataIndex: 'siesta', flex: 1,
                     align: 'center',titleAlign: "center",

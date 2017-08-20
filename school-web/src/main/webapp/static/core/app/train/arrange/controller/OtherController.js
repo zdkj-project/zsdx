@@ -341,31 +341,7 @@ Ext.define("core.train.arrange.controller.OtherController", {
                     funCode: "arrangesite_detail",    //修改此funCode，方便用于捕获window的确定按钮
                     insertObj: insertObj,
                     items: [{
-                        xtype:'room.mainlayout',
-                        bodyPadding:5,
-                        items: [{
-                            collapsible: true,
-                            split: true,
-                            xtype: "room.areagrid",                      
-                            tbar:null,
-                            region: "west",
-                            style:{
-                                border: '1px solid #ddd'
-                            },
-                            width:450
-                        }, {
-                            xtype: "room.RoomGrid",                          
-                            tbar:null,
-                            style:{
-                                border: '1px solid #ddd'
-                            },
-                            selModel: {
-                                type: "checkboxmodel",   
-                                headerWidth:50,    //设置这个值为50。 但columns中的defaults中设置宽度，会影响他
-                                mode:'single', 
-                            },
-                            region: "center"
-                        }]
+                        xtype:'pubselect.selectroomlayout'
                     }]
                 });
                 win.show();
@@ -378,35 +354,33 @@ Ext.define("core.train.arrange.controller.OtherController", {
         "window[funCode=arrangesite_detail] button[ref=formSave]":{
             beforeclick: function(btn) {               
                 var self=this;
-
                 var win=btn.up("window[funCode=arrangesite_detail]");
-                var baseGrid=win.down("grid[xtype=room.RoomGrid]");        
-
-                                    
-                var records = baseGrid.getSelectionModel().getSelection();
-                if (records.length != 1) {
-                    self.msgbox("请选择一个场地！");
+                var baseGrid=win.down("grid[xtype=pubselect.isselectroomgrid]");        
+       
+                var records = baseGrid.getStore().getData();
+                if (records.length ==0) {
+                    self.msgbox("请选择场地！");
                     return false;
                 }
 
                 var funCode = baseGrid.funCode;
                 var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
                 //得到配置信息
-                var funData = basePanel.funData;
-                var pkName = funData.pkName;
-            
-                var roomId=records[0].get(pkName);
-                var areaUpName=records[0].get("areaUpName");
-                var areaName=records[0].get("areaName");
-                var roomName=records[0].get("roomName");
+                var ids=new Array();
+                var roomNames=new Array();
+                for(var i=0;i<records.length;i++){
+                    ids.push(records.getAt(i).get("uuid"));
+                    roomNames.push(records.getAt(i).get("roomName"));
+                }
+
                 var classCourseIds=win.insertObj.ids;              
         
                 //提交设置班级学员的房间信息
                 self.asyncAjax({
                     url: comm.get("baseUrl")  + "/TrainClassschedule/updateRoomInfo",
                     params: {
-                        roomId: roomId,
-                        roomName:areaUpName+"-"+areaName+"-"+roomName,
+                        roomIds: ids.join(","),
+                        roomNames:roomNames.join(","),
                         ids:classCourseIds.join(",")                        
                     },
                     //回调代码必须写在里面

@@ -16,32 +16,36 @@ Ext.define("ccore.public.SelectRoom.view.IsSelectRoomGrid", {
     store: {
         type: "class.isselectedteacherStore"
     },
-    columns: [{
-        xtype: "rownumberer",
-        flex: 0,
-        width: 50,
-        text: '序号',
-        align: 'center'
-    }, {
-        width: 70,
-        text: "姓名",
-        dataIndex: "xm"
-    }, {
-        width: 50,
-        text: "性别",
-        dataIndex: "xbm",
-        renderer: function(value){
-            return value == 1 ? "男" : "女";
-        }
-    }, {
-        flex:1,
-        text: "部门",
-        dataIndex: "deptName"
-    }, {
-        width: 120,
-        text: "岗位",
-        dataIndex: "jobName"
-    }],
+    columns: {
+        defaults: {
+            titleAlign: "center"
+        },
+        items: [{
+            xtype: "rownumberer",
+            flex: 0,
+            width: 50,
+            text: '序号',
+            align: 'center'
+        }, {
+            width: 100,
+            text: "所属楼栋",
+            dataIndex: "areaUpName"
+        }, {
+            width: 100,
+            text: "所属楼层",
+            dataIndex: "areaName"
+        }, {
+            flex: 100,
+            text: "房间名称",
+            dataIndex: "roomName"
+        }, {
+            width: 100,
+            text: "房间类型",
+            dataIndex: "roomType",
+            columnType: "basecombobox",
+            ddCode: "FJLX"
+        }]
+    },
     viewConfig: {
         plugins: {
             ptype: 'gridviewdragdrop',

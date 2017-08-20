@@ -924,7 +924,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 
     public Boolean doSumCredit(String classId){
         String sql = MessageFormat.format("EXECUTE TRAIN_P_SUMTRAINEECREDIT ''{0}''", classId);
-        List<?> alist = this.doQuerySql(sql);
+        this.doQuerySql(sql);
 
 	    return true;
     }

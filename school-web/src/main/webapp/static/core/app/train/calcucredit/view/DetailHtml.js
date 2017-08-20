@@ -34,16 +34,17 @@ Ext.define("core.train.calcucredit.view.DetailHtml", {
             '<div class="trainClass_classTraineeInfo">',
             '<div class="trainClass_title">所获学分明细：</div>',
             '<ul class="trainClass_gridUl trainClassTrainee_gridUl">',
-            '<li><span style="width:5%">序号</span><span style="width:20%" data-align="center">班级名称</span><span style="width:20%" data-align="center">课程名称</span>' +
+            '<li><span style="width:5%">序号</span><span style="width:25%" data-align="center">班级名称</span><span style="width:30%" data-align="center">课程名称</span>' +
             '<span style="width:10%" data-align="center">上课日期</span><span style="width:10%" data-align="center">上课时间</span>' +
-            '<span style="width:10%" data-align="center">课程学分</span></li>',
-            '{% if (values.length == 0) %}',
-            '<li style="width:100%;font-size: 20px;font-weight: 400;text-align: center;line-height: 100px;">此指标暂无评价标准...</li>',
-            '{% if (values.length == 0 ) return  %}',   //reutrun 表示不执行下面的了，在for里面可以使用break、continue
+            '<span style="width:10%" data-align="center">课程学分</span><span style="width:10%" data-align="center">实际学分</span></li>',
+            '{% if (values.rows.length == 0) %}',
+            '<li style="width:100%;font-size: 14px;font-weight: 400;text-align: center;line-height: 100px;">此指标暂无评价标准...</li>',
+            '{% if (values.rows.length == 0 ) return  %}',   //reutrun 表示不执行下面的了，在for里面可以使用break、continue
             '<tpl for="rows">',
-            '<li><span style="width:5%">{[xindex]}</span><span style="width: 20%;text-align:left;" >{className}</span><span style="width: 20%;text-align:left;" >{courseName}</span>' +
+            '<li><span style="width:5%">{[xindex]}</span><span style="width: 25%;text-align:left;" >{className}</span><span style="width: 30%;text-align:left;" >{courseName}</span>' +
             '<span style="width: 10%;text-align:left;" >{courseDate}</span><span style="width: 10%;text-align:left;" >{courseTime}</span>' +
-            '<span style="width: 10%;text-align:left;" >{courseCredits}</span></li>',
+            '<span style="width: 10%;text-align:left;" >{courseCredits}</span>',
+            '<span style="width: 10%;text-align:left;" >{realCredits}</span></li>',
             '</tpl>',
             '<div style="clear:both"></div>',
             '</ul>',

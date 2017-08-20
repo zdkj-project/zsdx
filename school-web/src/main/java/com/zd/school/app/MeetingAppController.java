@@ -137,6 +137,7 @@ public class MeetingAppController {
     MeetCheckApp update(String meetcheck, HttpServletRequest request,
                         HttpServletResponse response) throws IOException, ParseException {
         List<MeetingCheck> check = null;
+        Date currentDate=new Date();
         if (null != meetcheck) {
             check = (List<MeetingCheck>) JsonBuilder.getInstance().fromJsonArray(meetcheck,
                     MeetingCheck.class);
@@ -146,28 +147,29 @@ public class MeetingAppController {
             for (MeetingCheck mc : check) {
                 OaMeeting meeting = meetingService.get(mc.getMeetingId());
                 //考勤人员id
-                String uid = "";
-                List<Object[]> obj = empService.ObjectQuerySql("select USER_ID,CARDNO from dbo.CARD_T_USEINFO where FACT_NUMB='" + mc.getWlkh() + "'");
-                uid = obj.get(0)[0].toString();
-                String[] param = {"meetingId", "employeeId"};
-                Object[] values = {mc.getMeetingId(), uid};
-                OaMeetingemp emp = empService.getByProerties(param, values);
+                //String uid = empService.getForValueToSql("select USER_ID from dbo.CARD_T_USEINFO where FACT_NUMB='" + mc.getWlkh() + "'");
+            
+                //String[] param = {"meetingId", "employeeId"};
+                //Object[] values = {mc.getMeetingId(),mc.getUserId()};
+                OaMeetingemp emp = empService.getByProerties("uuid", mc.getUserId());
                 if (emp != null) {
                     emp.setMeetingId(meeting.getUuid());
                     if (mc.getLg().equals("0")) {
                         emp.setIncardTime(mc.getTime());
                         emp.setInResult(mc.getInResult());
-                    } else {
+                    } else if(mc.getLg().equals("1")) {
                         emp.setOutcardTime(mc.getTime());
                         emp.setOutResult(mc.getOutResult());
                     }
                     emp.setAttendResult(mc.getAttendResult());
+                    emp.setUpdateTime(currentDate);
                     empService.merge(emp);
-                } else {
+                }
+                /*else {
                     mca.setCode(false);
                     mca.setMessage("会议或者人员ID错误，找不到对应参会人员信息。");
                     return mca;
-                }
+                }*/
             }
             mca.setCode(true);
             mca.setMessage("存储数据成功");
