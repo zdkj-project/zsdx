@@ -56,73 +56,79 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
     public void meeting(HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
         request.getSession().setAttribute("syncMeetingInfoIsEnd", "0");
         request.getSession().removeAttribute("syncMeetingInfoState");
-        //启用orcl数据库
-        CustomerContextHolder.setCustomerType(CustomerContextHolder.SESSION_FACTORY_ORACLE);
-
-        //3.打开session
-        Session session = sssssss.openSession();
-        //4.开启事务
-        session.beginTransaction();
-
-        Query query = session.createSQLQuery("select MEETING_ID,cast(MEETING_TITLE as VARCHAR2(255)),cast(CONTENT as VARCHAR2(2048))," +
-                "cast(MEETING_CATEGORY as VARCHAR2(255)),BEGIN_TIME,END_TIME,cast(ROOM_NAME as VARCHAR2(255)) from zsdx_sync.meeting_msg ORDER BY  BEGIN_TIME ASC");
-        //session.createSQLQuery("update dept set dname='SALES1' where deptno=30").executeUpdate();
-        List<Object[]> list = query.list();
-
-        //6.提交事务
-        session.getTransaction().commit();
-        //7.关闭session
-        session.flush();
-
-        CustomerContextHolder.setCustomerType(CustomerContextHolder.SESSION_FACTORY_MYSQL);
-        OaMeeting m = null;
-        //获取房间实体，拿到roomid
-        //会议类型数据字典
-        String mapKey = null;
-        String[] propValue = {"MEETINGCATEGORY"};
-        Map<String, String> mapDicItem = new HashMap<>();
-        List<BaseDicitem> listDicItem = dicitemService.queryByProerties("dicCode", propValue);
-        for (BaseDicitem baseDicitem : listDicItem) {
-            mapKey = baseDicitem.getItemName() + baseDicitem.getDicCode();
-            mapDicItem.put(mapKey, baseDicitem.getItemCode());
+        
+        try{
+	        //启用orcl数据库
+	        CustomerContextHolder.setCustomerType(CustomerContextHolder.SESSION_FACTORY_ORACLE);
+	
+	        //3.打开session
+	        Session session = sssssss.openSession();
+	        //4.开启事务
+	        session.beginTransaction();
+	
+	        Query query = session.createSQLQuery("select MEETING_ID,cast(MEETING_TITLE as VARCHAR2(255)),cast(CONTENT as VARCHAR2(2048))," +
+	                "cast(MEETING_CATEGORY as VARCHAR2(255)),BEGIN_TIME,END_TIME,cast(ROOM_NAME as VARCHAR2(255)) from zsdx_sync.meeting_msg ORDER BY  BEGIN_TIME ASC");
+	        //session.createSQLQuery("update dept set dname='SALES1' where deptno=30").executeUpdate();
+	        List<Object[]> list = query.list();
+	
+	        //6.提交事务
+	        session.getTransaction().commit();
+	        //7.关闭session
+	        session.flush();
+	
+	        CustomerContextHolder.setCustomerType(CustomerContextHolder.SESSION_FACTORY_MYSQL);
+	        OaMeeting m = null;
+	        //获取房间实体，拿到roomid
+	        //会议类型数据字典
+	        String mapKey = null;
+	        String[] propValue = {"MEETINGCATEGORY"};
+	        Map<String, String> mapDicItem = new HashMap<>();
+	        List<BaseDicitem> listDicItem = dicitemService.queryByProerties("dicCode", propValue);
+	        for (BaseDicitem baseDicitem : listDicItem) {
+	            mapKey = baseDicitem.getItemName() + baseDicitem.getDicCode();
+	            mapDicItem.put(mapKey, baseDicitem.getItemCode());
+	        }
+	        BuildRoominfo build = null;
+	        Map<String, String> mapRoomInfo = new HashMap<>();
+	        List<BuildRoominfo> roominfoList = buildService.doQueryAll();
+	        for (BuildRoominfo buildRoominfo : roominfoList) {
+	            mapRoomInfo.put(buildRoominfo.getRoomName(), buildRoominfo.getUuid());
+	        }
+	        //默认的会议考勤规则
+	        String[] rulePropertyName = {"isDelete","startUsing"};
+	        Object[] rulpropValue = {0,(short)1};
+	        List<OaMeetingcheckrule> ruleList = oaMeetingcheckruleService.queryByProerties(rulePropertyName, rulpropValue);
+	        OaMeetingcheckrule checkRule = ruleList.get(0);
+	        for (Object[] o : list) {
+	            m = meetingService.get(o[0].toString());
+	            if (m == null) {
+	                m = new OaMeeting(o[0].toString());
+	            }
+	            m.setMeetingTitle(o[1].toString());
+	            m.setMeetingName(o[1].toString());
+	            m.setMeetingContent(o[2].toString());
+	            //会议类型数据字典转换
+	            if (o[3] != null)
+	                m.setMeetingCategory(mapDicItem.get(o[3].toString() + "MEETINGCATEGORY"));
+	            //m.setMeetingCategory(o[3].toString());
+	
+	            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
+	            m.setBeginTime(sdf.parse(o[4].toString()));
+	            m.setEndTime(sdf.parse(o[5].toString()));
+	            //m.setRoomId(o[7].toString());
+	            m.setRoomName(o[6].toString());
+	            if (mapRoomInfo.get(o[6]) != null)
+	                m.setRoomId(mapRoomInfo.get(o[6]));
+	            m.setNeedChecking((short) 1);
+	            m.setCheckruleId(checkRule.getUuid());
+	            m.setCheckruleName(checkRule.getRuleName());
+	            meetingService.merge(m);
+	        }
+	        employee();
+        }catch(Exception e){
+        	request.getSession().setAttribute("syncMeetingInfoIsEnd", "0");
+			request.getSession().setAttribute("syncMeetingInfoState", "0");
         }
-        BuildRoominfo build = null;
-        Map<String, String> mapRoomInfo = new HashMap<>();
-        List<BuildRoominfo> roominfoList = buildService.doQueryAll();
-        for (BuildRoominfo buildRoominfo : roominfoList) {
-            mapRoomInfo.put(buildRoominfo.getRoomName(), buildRoominfo.getUuid());
-        }
-        //默认的会议考勤规则
-        String[] rulePropertyName = {"isDelete","startUsing"};
-        Object[] rulpropValue = {0,1};
-        List<OaMeetingcheckrule> ruleList = oaMeetingcheckruleService.queryByProerties(rulePropertyName, rulpropValue);
-        OaMeetingcheckrule checkRule = ruleList.get(0);
-        for (Object[] o : list) {
-            m = meetingService.get(o[0].toString());
-            if (m == null) {
-                m = new OaMeeting(o[0].toString());
-            }
-            m.setMeetingTitle(o[1].toString());
-            m.setMeetingName(o[1].toString());
-            m.setMeetingContent(o[2].toString());
-            //会议类型数据字典转换
-            if (o[3] != null)
-                m.setMeetingCategory(mapDicItem.get(o[3].toString() + "MEETINGCATEGORY"));
-            //m.setMeetingCategory(o[3].toString());
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
-            m.setBeginTime(sdf.parse(o[4].toString()));
-            m.setEndTime(sdf.parse(o[5].toString()));
-            //m.setRoomId(o[7].toString());
-            m.setRoomName(o[6].toString());
-            if (mapRoomInfo.get(o[6]) != null)
-                m.setRoomId(mapRoomInfo.get(o[6]));
-            m.setNeedChecking((short) 1);
-            m.setCheckruleId(checkRule.getUuid());
-            m.setCheckruleName(checkRule.getRuleName());
-            meetingService.merge(m);
-        }
-        employee();
 
         request.getSession().setAttribute("syncMeetingInfoIsEnd", "1");
 

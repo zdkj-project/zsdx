@@ -1,5 +1,6 @@
 package com.zd.school.app;
 
+import com.zd.core.util.BeanUtils;
 import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.ModelUtil;
 import com.zd.school.jw.model.app.CourseCheckApp;
@@ -73,7 +74,7 @@ public class TrainCourseAppController {
 			Map<String,List<CommAttachment>> voMapAttaList = new HashMap<>();
 			List<CommAttachment> voAttaList=null;
 			List<TrainClassschedule> course = null;
-			
+			String bothClassId=null;
 			int isSameClass=0;	//如果班级一样， 就返回0，否则1
 			if (ModelUtil.isNotNull(roomTerm)) {
 				if (date.getTime() < date2.getTime()) {
@@ -142,10 +143,15 @@ public class TrainCourseAppController {
 					
 					voRule=voMapRule.get(classId);
 					if(voRule==null){
-						voRule = ruleService.get(classInfo.getCheckruleId());
-						voMapRule.put(classId,voRule);
+						TrainCheckrule checkRule = new TrainCheckrule();
+						voRule=ruleService.get(classInfo.getCheckruleId());
+						BeanUtils.copyProperties(checkRule, voRule);
+						voMapRule.put(classId,checkRule);
+						c.setCheckRule(checkRule);
+					}else{
+						bothClassId=classId;
+						c.setCheckRule(voRule);
 					}
-					c.setCheckRule(voRule);
 					
 					voAttaList=voMapAttaList.get(classId);
 					if(voAttaList==null){
@@ -167,6 +173,11 @@ public class TrainCourseAppController {
 				if(voMapRule.size()>2){
 					for (Map.Entry<String,TrainCheckrule> entry : voMapRule.entrySet()) {  
 						entry.getValue().setCheckMode((short) 1);
+					}  
+				}else if(voMapRule.size()==2){	//如果等于2，则表明有两个班一样，
+					for (String key: voMapRule.keySet()) {  
+						if(!key.equals(bothClassId))
+							voMapRule.get(key).setCheckMode((short) 1);					
 					}  
 				}
 			}else{
