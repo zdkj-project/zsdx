@@ -788,8 +788,9 @@ public class PoiExportExcel {
                         cell.setCellStyle(baseContentStyle);
                     k++;
                 }
-            }
-            sheet.addMergedRegion(new CellRangeAddress(rowBegin, rowEnd - 1, 0, 0));
+            } 
+            if(rowBegin != rowEnd - 1)	//若行一样，就不合并
+            	sheet.addMergedRegion(new CellRangeAddress(rowBegin, rowEnd - 1, 0, 0));
             rowBegin += standCount;
         }
         //满意度合计

@@ -530,7 +530,30 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 					upCardUser = upCardUserInfos.get(i);
 					sqlStr = "";
 					isExist = false;
+					
+					// 【new：放在前面，因为下面的一个if会continue】若积累的语句长度大于3000（大约50条语句左右），则执行
+					if (sqlSb.length() > 3000) {
+						row += this.executeSql(sqlSb.toString());
+						sqlSb.setLength(0); // 清空
+					}
+					
+					if (upCardUser.getUpCardId() == null){
+						sqlStr = "delete from CARD_T_USEINFO where USER_ID='" + upCardUser.getUserId()
+								+ "';";
+						sqlSb.append(sqlStr + "  ");
+						continue;
+					}else if(upCardUser.getUseState()!=1){	//若卡片状态不为1，则直接设置为卡片无效
+						
+						updateTime = DateUtil.formatDateTime(new Date());
+						sqlStr = "update CARD_T_USEINFO set " + "	FACT_NUMB='" + 0
+								+ "',USE_STATE='" + upCardUser.getUseState() + "'," + "	UP_CARD_ID='"
+								+ 0 + "',UPDATE_TIME=CONVERT(datetime,'" + updateTime
+								+ "')" + " where USER_ID='" + upCardUser.getUserId() + "';";
 
+						sqlSb.append(sqlStr + "  ");
+						continue;
+					}
+					
 					for (int j = 0; j < webCardUserInfos.size(); j++) {
 						webCardUser = webCardUserInfos.get(j);
 						// 若web库中存在此发卡信息
@@ -573,12 +596,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 						sqlSb.append(sqlStr + "  ");
 
 					}
-
-					// 若积累的语句长度大于3000（大约50条语句左右），则执行
-					if (sqlSb.length() > 3000) {
-						row += this.executeSql(sqlSb.toString());
-						sqlSb.setLength(0); // 清空
-					}
+					
 				}
 
 				// 最后执行一次
@@ -641,13 +659,37 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 					upCardUser = upCardUserInfos.get(i);
 					sqlStr = "";
 					isExist = false;
+					
+					// 【new：放在前面，因为下面的一个if会continue】若积累的语句长度大于3000（大约50条语句左右），则执行
+					if (sqlSb.length() > 3000) {
+						row += this.executeSql(sqlSb.toString());
+						sqlSb.setLength(0); // 清空
+					}
+					
+					if (upCardUser.getUpCardId() == null){
+						sqlStr = "delete from CARD_T_USEINFO where USER_ID='" + upCardUser.getUserId()
+								+ "';";
+						sqlSb.append(sqlStr + "  ");
+						continue;
+					}else if(upCardUser.getUseState()!=1){	//若卡片状态不为1，则直接设置为卡片无效
+						
+						updateTime = DateUtil.formatDateTime(new Date());
+						sqlStr = "update CARD_T_USEINFO set " + "	FACT_NUMB='" + 0
+								+ "',USE_STATE='" + upCardUser.getUseState() + "'," + "	UP_CARD_ID='"
+								+ 0 + "',UPDATE_TIME=CONVERT(datetime,'" + updateTime
+								+ "')" + " where USER_ID='" + upCardUser.getUserId() + "';";
 
+						sqlSb.append(sqlStr + "  ");
+						continue;
+					}
+					
 					for (int j = 0; j < webCardUserInfos.size(); j++) {
 						webCardUser = webCardUserInfos.get(j);
 						// 若web库中存在此发卡信息
 						if (upCardUser.getUserId().equals(webCardUser.getUserId())) {
 							// 执行代码
 							isExist = true;
+							
 							if (!upCardUser.equals(webCardUser)) { // 对比数据（一部分需要判断的数据）是否一致
 
 								if (upCardUser.getUpCardId() == null) { // 若发卡ID为null，表明没有发卡，所以物理删除卡片信息

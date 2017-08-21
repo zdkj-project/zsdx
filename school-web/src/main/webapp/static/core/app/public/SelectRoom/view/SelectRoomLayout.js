@@ -23,7 +23,7 @@ Ext.define("core.public.SelectRoom.view.SelectRoomLayout", {
     }, {
         xtype: "pubselect.isselectroomgrid",
         region: "east",
-        width:600,
+        width:500,
         margin:'5'
     }]
 })

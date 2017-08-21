@@ -110,6 +110,14 @@ Ext.define("core.train.arrange.view.ArrangeRoomDetailForm", {
                 text: '取消宿舍',
                 ref: 'gridCancelRoom',
                 iconCls: 'x-fa fa-minus-circle'
+            },{
+                xtype: 'tbtext',
+                html: '（每间宿舍最多只能安排三人，并且同性别）',
+                style: {
+                    fontSize: '14px',
+                    color: '#C44444',
+                    fontWeight:800
+                }
             }],
             columns: [
                 {

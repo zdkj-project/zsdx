@@ -107,6 +107,14 @@ Ext.define("core.train.arrange.view.ArrangeSiteDetailForm", {
                 text: '取消场地',
                 ref: 'gridCancelRoom',
                 iconCls: 'x-fa fa-minus-circle'
+            },{
+                xtype: 'tbtext',
+                html: '（一个教室，在同一个时间段，只能安排一个班级上课，不要冲突）',
+                style: {
+                    fontSize: '14px',
+                    color: '#C44444',
+                    fontWeight:800
+                }
             }],
             columns:{
                 defaults: {

@@ -2,7 +2,7 @@ Ext.define("ccore.public.SelectRoom.view.IsSelectRoomGrid", {
     extend: "Ext.grid.Panel",
     alias: "widget.pubselect.isselectroomgrid",
     ref: 'isselectroomgrid',
-    title: "<font color='#ffeb00'>已选用户(选中后向左拖动或双击移除）</font>",
+    title: "<font color='#ffeb00'>已选房间(选中后向左拖动或双击移除）</font>",
     columnLines: true,
     loadMask: true,
     multiSelect: true,
@@ -35,16 +35,16 @@ Ext.define("ccore.public.SelectRoom.view.IsSelectRoomGrid", {
             text: "所属楼层",
             dataIndex: "areaName"
         }, {
-            flex: 100,
+            flex: 1,
             text: "房间名称",
             dataIndex: "roomName"
-        }, {
+        }/*, {
             width: 100,
             text: "房间类型",
             dataIndex: "roomType",
             columnType: "basecombobox",
             ddCode: "FJLX"
-        }]
+        }*/]
     },
     viewConfig: {
         plugins: {

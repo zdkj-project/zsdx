@@ -6,9 +6,9 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
 	al: false,
     frame: false,
     columnLines: false,
-    style: {
-        border: '1px solid #ddd'
-    },
+    // style: {
+    //     border: '1px solid #ddd'
+    // },
 	//排序字段及模式定义
 	defSort: [{
 		property: 'xm',

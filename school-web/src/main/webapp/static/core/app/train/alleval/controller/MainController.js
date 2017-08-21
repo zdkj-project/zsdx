@@ -107,15 +107,22 @@ Ext.define("core.train.alleval.controller.MainController", {
                                         self.msgbox(data.obj);
                                         component.destroy();
                                     } else {
-                                        setTimeout(function () {
-                                            time()
-                                        }, 1000);
+                                        if (data.obj == 0) {    //当为此值，则表明导出失败
+                                            Ext.Msg.hide();
+                                            self.Error("导出失败，请重试或联系管理员！");
+                                            component.destroy();
+                                        } else {
+                                            setTimeout(function () {
+                                                time()
+                                            }, 1000);
+                                        }
+
                                     }
                                 },
                                 failure: function (response) {
+                                    Ext.Msg.hide();
                                     Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
                                     component.destroy();
-                                    clearInterval(interval)
                                 }
                             });
                         }
@@ -183,7 +190,7 @@ Ext.define("core.train.alleval.controller.MainController", {
                 var baseGrid = btn.up("basegrid");
                 var funCode = baseGrid.funCode;
                 var basePanel = baseGrid.up("basepanel[xtype=alleval.mainlayout]");
-                var classGrid=mainLayout.down("basegrid[xtype=alleval.maingrid]");
+                var classGrid = basePanel.down("basegrid[xtype=alleval.maingrid]");
                 
                 //得到选中数据
                 var records = baseGrid.getSelectionModel().getSelection();
@@ -218,15 +225,21 @@ Ext.define("core.train.alleval.controller.MainController", {
                                         self.msgbox(data.obj);
                                         component.destroy();
                                     } else {
-                                        setTimeout(function () {
-                                            time()
-                                        }, 1000);
+                                        if (data.obj == 0) {    //当为此值，则表明导出失败
+                                            Ext.Msg.hide();
+                                            self.Error("导出失败，请重试或联系管理员！");
+                                            component.destroy();
+                                        } else {
+                                            setTimeout(function () {
+                                                time()
+                                            }, 1000);
+                                        }                                
                                     }
                                 },
                                 failure: function (response) {
+                                    Ext.Msg.hide();
                                     Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
                                     component.destroy();
-                                    clearInterval(interval)
                                 }
                             });
                         }

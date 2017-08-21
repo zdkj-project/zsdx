@@ -255,7 +255,24 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
         String roomIds = request.getParameter("roomIds");
         String roomNames = request.getParameter("roomNames");
         String ids = request.getParameter("ids");
-
+        
+        //判断房间是否被其他课程使用
+        String idArray[]=ids.split(",");
+        String roomIdArray[]=roomIds.split(",");
+        String id=null;
+        String roomId=null;
+        for(int i=0;i<idArray.length;i++){
+        	id=idArray[i];
+        	for(int j=0;j<roomIdArray.length;j++){
+        		roomId=roomIdArray[j];
+        		List lists = thisService.doQuerySql("EXECUTE TRAIN_P_ISUSESITE '"+id+"','"+roomId+"'");
+        		if("0".equals(lists.get(0).toString())){
+        			writeJSON(response, jsonBuilder.returnSuccessJson("\"该教室在此时间段内，已被其他课程使用！\""));
+        			return;
+        		}
+        	}
+        }
+    	
         int result = thisService.doUpdateRoomInfo(roomIds, roomNames, ids, currentUser);
 
         if (result == 1) {

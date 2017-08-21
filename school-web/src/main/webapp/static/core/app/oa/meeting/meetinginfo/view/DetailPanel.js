@@ -7,9 +7,9 @@ Ext.define('core.oa.meeting.meetinginfo.view.DetailPanel', {
     layout: "form", //从上往下布局
     autoHeight: true,
     frame: false,
-    style: {
-        border: '1px solid #ddd'
-    },
+    // style: {
+    //     border: '1px solid #ddd'
+    // },
     fieldDefaults: { // 统一设置表单字段默认属性
         labelSeparator: "：", // 分隔符
         msgTarget: "qtip",

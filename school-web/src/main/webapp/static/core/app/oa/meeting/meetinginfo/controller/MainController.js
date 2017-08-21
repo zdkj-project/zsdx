@@ -263,22 +263,25 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
         switch (cmd) {
             case "edit":
                 insertObj = Ext.apply(insertObj, recordData);
-                tabTitle = funData.tabConfig.editTitle;
+                tabTitle = recordData["meetingTitle"]+"_"+funData.tabConfig.editTitle;
                 tabItemId = funCode + "_gridEdit";
                 //获取主键值
                 pkValue = recordData[pkName];
                 break;
             case "detail":
                 insertObj = Ext.apply(insertObj, recordData);
-                tabTitle = funData.tabConfig.detailTitle;
-                tabItemId = funCode + "_gridDetail";
-                itemXtype = "meetinginfo.DetailPanel";
-                //获取主键值
+
+                 //获取主键值
                 pkValue = recordData[pkName];
+
+                tabTitle = recordData["meetingTitle"]+"_"+funData.tabConfig.detailTitle;
+                tabItemId = funCode + "_gridDetail"+pkValue;
+                itemXtype = "meetinginfo.DetailPanel";
+               
                 break;
             case "meetingEmp": //参会人员
                 insertObj = Ext.apply(insertObj, recordData);
-                tabTitle = "参会人员";
+                tabTitle = recordData["meetingTitle"]+"_"+"参会人员";
                 tabItemId = funCode + "_gridMeetingUser";
                 itemXtype = "meetinginfo.meetingusergrid";
                 //获取主键值
