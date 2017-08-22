@@ -174,7 +174,7 @@ public class TrainCourseAppController {
 					for (Map.Entry<String,TrainCheckrule> entry : voMapRule.entrySet()) {  
 						entry.getValue().setCheckMode((short) 1);
 					}  
-				}else if(voMapRule.size()==2){	//如果等于2，则表明有两个班一样，
+				}else if(voMapRule.size()==2){	//如果等于2，则表明有两个班一样 或者 两个不同的班，则设置为考勤模式为1
 					for (String key: voMapRule.keySet()) {  
 						if(!key.equals(bothClassId))
 							voMapRule.get(key).setCheckMode((short) 1);					

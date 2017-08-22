@@ -241,18 +241,6 @@ public class TrainClassschedule extends BaseEntity implements Serializable {
 		this.credits = credits;
 	}
 
-	// 具体细化小班级，A班，B班，null正常班级
-	@FieldInfo(name = "小班级名称")
-	@Column(name = "SMALL_CLASSNAME", length = 8, nullable = true)
-	private String smallClassName;
-
-	public String getSmallClassName() {
-		return smallClassName;
-	}
-
-	public void setSmallClassName(String smallClassName) {
-		this.smallClassName = smallClassName;
-	}
 
 	// 自选课程，则学员没有刷卡，则不会算做缺勤
 	@FieldInfo(name = "是否自选课程")
@@ -266,7 +254,19 @@ public class TrainClassschedule extends BaseEntity implements Serializable {
 	public void setIsOptional(Integer isOptional) {
 		this.isOptional = isOptional;
 	}
+	
+	 //具体细化小班级，A班，B班，正常班级 （0、1、2）
+    @FieldInfo(name = "分组班级名称 CLASSGROUP字典")
+    @Column(name = "CLASSGROUP", length = 8, nullable = true)
+    private String classGroup;
 
+    public String getClassGroup() {
+        return classGroup;
+    }
+
+    public void setClassGroup(String classGroup) {
+        this.classGroup = classGroup;
+    }
 	/**
 	 * 以下为不需要持久化到数据库中的字段,根据项目的需要手工增加
 	 * 

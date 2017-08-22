@@ -342,17 +342,17 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         return roomName;
     }
     
-  //具体细化小班级，A班，B班，null正常班级
-    @FieldInfo(name = "小班级名称")
-    @Column(name = "SMALL_CLASSNAME", length = 8, nullable = true)
-    private String smallClassName;
+    //具体细化小班级，A班，B班，正常班级 （0、1、2）
+    @FieldInfo(name = "分组班级名称 CLASSGROUP字典")
+    @Column(name = "CLASSGROUP", length = 8, nullable = true)
+    private String classGroup;
 
-    public String getSmallClassName() {
-        return smallClassName;
+    public String getClassGroup() {
+        return classGroup;
     }
 
-    public void setSmallClassName(String smallClassName) {
-        this.smallClassName = smallClassName;
+    public void setClassGroup(String classGroup) {
+        this.classGroup = classGroup;
     }
 
     public TrainClasstrainee() {
