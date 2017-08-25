@@ -1037,7 +1037,7 @@ Ext.define("core.train.class.controller.DetailController", {
                 Ext.Msg.confirm('提示', title, function (btn, text) {
                     if (btn == "yes") {
                         //window.location.href = comm.get('baseUrl') + "/static/upload/template/trainee.xls";    
-                        window.open(comm.get('baseUrl') + "/static/upload/template/trainee.xls");                  
+                        window.open(comm.get('baseUrl') + "/static/upload/template/classTrainee.xls");                  
                     }
                 });
                 return false;

@@ -219,13 +219,16 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 		// TRAINEECATEGORY;XWM;XLM;ZZMMM;MZM 同步时需要的项
 		Map<String, String> mapHeadshipLevel = new HashMap<>();
 		Map<String, String> mapXbm = new HashMap<>();
-		String hql1 = " from BaseDicitem where dicCode in ('HEADSHIPLEVEL','XBM')";
+		Map<String, String> mapClassGroup = new HashMap<>();
+		String hql1 = " from BaseDicitem where dicCode in ('HEADSHIPLEVEL','XBM','CLASSGROUP')";
 		List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
 		for (BaseDicitem baseDicitem : listBaseDicItems1) {
 			if (baseDicitem.getDicCode().equals("XBM"))
 				mapXbm.put(baseDicitem.getItemName(), baseDicitem.getItemCode());
-			else
+			else if (baseDicitem.getDicCode().equals("HEADSHIPLEVEL"))
 				mapHeadshipLevel.put(baseDicitem.getItemName(), baseDicitem.getItemCode());
+			else
+				mapClassGroup.put(baseDicitem.getItemName(), baseDicitem.getItemCode());
 		}
 
 		// 若值为1，则要加载这些字典项。
@@ -300,6 +303,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			trainee.setWorkUnit(String.valueOf(lo.get(4)));
 			trainee.setPosition(String.valueOf(lo.get(5)));
 			trainee.setHeadshipLevel(mapHeadshipLevel.get(lo.get(6)));
+			trainee.setClassGroup(mapClassGroup.get(lo.get(8)));
 			trainee.setIsDelete(isDelete);	//设置isdelte值
 				
 			if (needSync.equals("1")) { // 同步到学员库
@@ -308,19 +312,19 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 					
 					//当学员库没有此学员的时候，暂时加入这些数据（已存在的学员暂时不处理）
 					trainTrainee.setTraineeCategory(mapTraineeCategory.get(lo.get(7)));
-					trainTrainee.setMzm(mapMzm.get(lo.get(8)));
-					trainTrainee.setZzmmm(mapZzmm.get(lo.get(9)));
-					trainTrainee.setXlm(mapXlm.get(lo.get(10)));
-					trainTrainee.setXwm(mapXwm.get(lo.get(11)));
+					trainTrainee.setMzm(mapMzm.get(lo.get(9)));
+					trainTrainee.setZzmmm(mapZzmm.get(lo.get(10)));
+					trainTrainee.setXlm(mapXlm.get(lo.get(11)));
+					trainTrainee.setXwm(mapXwm.get(lo.get(12)));
 					
-					trainTrainee.setZym(String.valueOf(lo.get(12)));
-					trainTrainee.setGraduateSchool(String.valueOf(lo.get(13)));
-					trainTrainee.setDzxx(String.valueOf(lo.get(14)));
-					trainTrainee.setAddress(String.valueOf(lo.get(15)));
-					trainTrainee.setPartySchoolNumb(String.valueOf(lo.get(16)));
-					trainTrainee.setNationalSchoolNumb(String.valueOf(lo.get(17)));
+					trainTrainee.setZym(String.valueOf(lo.get(13)));
+					trainTrainee.setGraduateSchool(String.valueOf(lo.get(14)));
+					trainTrainee.setDzxx(String.valueOf(lo.get(15)));
+					trainTrainee.setAddress(String.valueOf(lo.get(16)));
+					trainTrainee.setPartySchoolNumb(String.valueOf(lo.get(17)));
+					trainTrainee.setNationalSchoolNumb(String.valueOf(lo.get(18)));
 					
-					//trainTrainee.setZp(String.valueOf(lo.get(18)));
+					//trainTrainee.setZp(String.valueOf(lo.get(19)));
 					//照片使用身份证号码.jpg
 					trainTrainee.setZp("/static/upload/traineePhoto/" +trainee.getSfzjh() + ".jpg");	
 					

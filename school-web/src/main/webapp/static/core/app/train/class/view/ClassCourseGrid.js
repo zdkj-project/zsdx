@@ -103,7 +103,7 @@ Ext.define("core.train.class.view.ClassCourseGrid", {
             text: "教学形式",
             dataIndex: "teachTypeName", 
         },{
-            width:150,
+            width:125,
             text: "开始日期",
             dataIndex: "beginTime",            
             renderer: function(value, metaData) {
@@ -115,7 +115,7 @@ Ext.define("core.train.class.view.ClassCourseGrid", {
                 return ss;
             }
         }, {
-            width:150,
+            width:125,
             text: "结束日期",
             dataIndex: "endTime",            
             renderer: function(value, metaData) {
@@ -127,7 +127,7 @@ Ext.define("core.train.class.view.ClassCourseGrid", {
                 return ss;
             }
         },{
-            width:150,
+            width:120,
             text: "讲师",
             dataIndex: "mainTeacherName"          
         },/*{
@@ -162,6 +162,22 @@ Ext.define("core.train.class.view.ClassCourseGrid", {
             dataIndex: "credits"
         },{
             width:80,
+            text: "是否选修",
+            dataIndex: "isOptional",
+            renderer: function(value, metaData) {
+                if(value==1)
+                    return "<span style='color:green'>是</span>";
+                else
+                    return "<span style='color:red'>否</span>";
+            }
+        },{
+            width: 80,
+            text: "课程分班",
+            dataIndex: "classGroup",
+            columnType: "basecombobox", //列类型
+            ddCode: "CLASSGROUP" //字典代码
+        },{
+            width:80,
             text: "课程状态",
             dataIndex: "isDelete",
             renderer: function(value, metaData) {
@@ -176,7 +192,7 @@ Ext.define("core.train.class.view.ClassCourseGrid", {
             xtype: 'actiontextcolumn',
             text: "操作",
             align: 'center',
-            width: 150,
+            width: 100,
             fixed: true,
             items: [{
                 text:'开启评价',  

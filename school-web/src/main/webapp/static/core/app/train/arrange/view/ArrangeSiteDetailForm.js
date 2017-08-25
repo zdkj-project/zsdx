@@ -141,7 +141,7 @@ Ext.define("core.train.arrange.view.ArrangeSiteDetailForm", {
                     text: "教学形式",
                     dataIndex: "teachTypeName", 
                 },{
-                    width:150,
+                    width:125,
                     text: "开始日期",
                     dataIndex: "beginTime",            
                     renderer: function(value, metaData) {
@@ -153,7 +153,7 @@ Ext.define("core.train.arrange.view.ArrangeSiteDetailForm", {
                         return ss;
                     }
                 }, {
-                    width:150,
+                    width:125,
                     text: "结束日期",
                     dataIndex: "endTime",            
                     renderer: function(value, metaData) {
@@ -185,7 +185,7 @@ Ext.define("core.train.arrange.view.ArrangeSiteDetailForm", {
                         return value;
                     }
                 },{
-                    width:100,
+                    width:80,
                     text: "是否评价",
                     dataIndex: "isEval",
                     renderer: function(value, metaData) {
@@ -194,6 +194,22 @@ Ext.define("core.train.arrange.view.ArrangeSiteDetailForm", {
                         else
                             return "<span style='color:red'>否</span>";
                     }
+                },{
+                    width:80,
+                    text: "是否选修",
+                    dataIndex: "isOptional",
+                    renderer: function(value, metaData) {
+                        if(value==1)
+                            return "<span style='color:green'>是</span>";
+                        else
+                            return "<span style='color:red'>否</span>";
+                    }
+                },{
+                    width: 80,
+                    text: "课程分班",
+                    dataIndex: "classGroup",
+                    columnType: "basecombobox", //列类型
+                    ddCode: "CLASSGROUP" //字典代码
                 },{ 
                     align: 'center',titleAlign: "center", text: '课程状态', dataIndex: 'isDelete',width:80,
                     renderer: function(value, metaData) {

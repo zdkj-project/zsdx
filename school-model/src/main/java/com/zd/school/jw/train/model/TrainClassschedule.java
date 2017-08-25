@@ -255,7 +255,7 @@ public class TrainClassschedule extends BaseEntity implements Serializable {
 		this.isOptional = isOptional;
 	}
 	
-	 //具体细化小班级，A班，B班，正常班级 （0、1、2）
+	//课程分班：不分班、A班、B班 （0、1、2）
     @FieldInfo(name = "分组班级名称 CLASSGROUP字典")
     @Column(name = "CLASSGROUP", length = 8, nullable = true)
     private String classGroup;

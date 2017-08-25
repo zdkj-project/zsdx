@@ -239,7 +239,7 @@ public class TrainCourseAppController {
 
 					for (int i = 0; i < courseIds.length; i++) {
 						course = courseService.get(courseIds[i]);
-
+						
 						Object[] values = { t.getClassId(), courseIds[i], t.getUserId() };
 						// Object[] values = {t.getClassId(), t.getCourseId(),
 						// uid};

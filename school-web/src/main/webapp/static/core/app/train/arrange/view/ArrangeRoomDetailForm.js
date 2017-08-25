@@ -155,6 +155,15 @@ Ext.define("core.train.arrange.view.ArrangeRoomDetailForm", {
                     }
                 },               
                 { align: 'center',titleAlign: "center", text: '宿舍名称', dataIndex: 'roomName', flex: 1},
+                {
+                    align: 'center',
+                    titleAlign: "center",
+                    width:80,
+                    text: "课程分班",
+                    dataIndex: "classGroup",
+                    columnType: "basecombobox", //列类型
+                    ddCode: "CLASSGROUP" //字典代码
+                },
                 { align: 'center',titleAlign: "center", text: '学员状态', dataIndex: 'isDelete',width:80,
                     renderer: function(value, metaData) {
                         if(value==0)
