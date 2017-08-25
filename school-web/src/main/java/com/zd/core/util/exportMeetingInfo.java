@@ -471,4 +471,116 @@ public class exportMeetingInfo {
         return style;
     }
     
+    /*
+     * 学分汇总的格式 
+     */
+     public final static boolean exportCourseCreditExcel(HttpServletResponse response, String fileName,String sheetTitle, List<Map<String, Object>> listContent) throws IOException {
+ 		HSSFWorkbook workbook = new HSSFWorkbook();
+ 		boolean result = false;
+ 		OutputStream fileOutputStream = null;
+ 		response.reset();// 清空输出流
+ 		response.setHeader("Content-disposition","attachment; filename=" + new String((fileName + ".xls").getBytes("GB2312"), "ISO8859-1"));
+ 		response.setContentType("application/msexcel");
+ 		if (null != listContent && !listContent.isEmpty()) {
+ 			try {
+ 				Map<String, Object> exportInfo = listContent.get(0);
+ 				//获取表头详细
+ 				List<Map<String,Object>> classTraineeinfo =(List<Map<String,Object>>)exportInfo.get("headinfo");
+ 				//获取学分详细数据
+ 				List<Map<String,Object>> traineeList =(List<Map<String,Object>>)exportInfo.get("data");
+ 				int traineeListCount = traineeList.size();
+ 				//获取列宽
+ 				Integer[] columnWidth= (Integer[]) exportInfo.get("columnWidth");
+ 				//获取字段
+ 				String[] head =(String[])exportInfo.get("head");
+ 				int columnCount = columnWidth.length;
+
+ 				CellStyle headStyle = getCellStyle(workbook, "", (short) 12, false, HorizontalAlignment.CENTER,VerticalAlignment.CENTER);
+ 				CellStyle titleStyle = getCellStyle(workbook, "", (short) 26, true, HorizontalAlignment.CENTER,VerticalAlignment.CENTER);
+ 					// 课程基本信息
+ 				String name = String.valueOf(classTraineeinfo.get(0).get("XM"));
+ 				String xbm = String.valueOf(classTraineeinfo.get(0).get("XBM"));
+ 				String mobile_phone = String.valueOf(classTraineeinfo.get(0).get("MOBILE_PHONE"));
+ 				String position = String.valueOf(classTraineeinfo.get(0).get("POSITION"));
+ 				String work_unit = String.valueOf(classTraineeinfo.get(0).get("WORK_UNIT"));
+ 					
+ 					// 创建sheet 一课程一个sheet
+ 				String sheetName =sheetTitle;
+ 					
+ 					//创建表格
+ 					Row row = null;
+ 					Cell cell = null;
+ 					Sheet sheet = workbook.createSheet(sheetName);
+ 					//创建表头
+ 					for (int j = 0; j < 7; j++) {
+ 						row = sheet.createRow(j);
+ 						row.setHeight((short) 0x200);
+ 						for (int k = 0; k < columnCount; k++) {
+ 							cell = row.createCell(k);
+ 							cell.setCellStyle(headStyle);
+ 							sheet.setColumnWidth(k, columnWidth[k] * 256);
+ 						}
+ 					}
+ 					// 标题
+ 					sheet.getRow(0).getCell(0).setCellStyle(titleStyle);
+ 					sheet.getRow(0).getCell(0).setCellValue(sheetName);
+ 					sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 6));
+ 					
+ 					// 第1行
+ 					sheet.getRow(3).getCell(0).setCellValue("性别");
+ 					sheet.getRow(3).getCell(1).setCellValue((xbm.equals("1"))?"男":"女");
+ 					sheet.addMergedRegion(new CellRangeAddress(3, 3, 1, 6));
+
+ 					// 第2行
+ 					sheet.getRow(4).getCell(0).setCellValue("移动电话");
+ 					sheet.getRow(4).getCell(1).setCellValue(mobile_phone);
+ 					sheet.addMergedRegion(new CellRangeAddress(4, 4, 1, 6));
+
+ 					// 第3行
+ 					sheet.getRow(5).getCell(0).setCellValue("职务");
+                    sheet.getRow(5).getCell(1).setCellValue(position);
+                    sheet.addMergedRegion(new CellRangeAddress(5, 5, 1,6));
+                     
+                  // 第4行
+  					sheet.getRow(6).getCell(0).setCellValue("所在岗位");
+                    sheet.getRow(6).getCell(1).setCellValue(work_unit);
+                    sheet.addMergedRegion(new CellRangeAddress(6, 6, 1,6));
+                    
+                    //处理字段行
+                    row = sheet.createRow(7);
+					row.setHeight((short) 0x200);
+					 for (int j = 0; j <columnCount ; j++) {
+	                        cell = row.createCell(j);
+	                        cell.setCellStyle(headStyle);
+	                        cell.setCellValue(head[j]);
+	                    } 
+					 
+					 //填入数据
+					 Map<String, Object> traineeMap = null;
+                    for(int j = 0; j <traineeListCount ; j++){
+                    	row = sheet.createRow(8+j);
+                    	row.setHeight((short) 0x250);
+                    	traineeMap=traineeList.get(j);
+                    	List<String> keylist = new LinkedList<String>();
+                    	for (String s : traineeMap.keySet()) {
+   						 	keylist.add(s);
+   					 	}
+                    	for(int k = 0; k <columnCount ; k++){
+                    		cell = row.createCell(k);
+	                        cell.setCellStyle(headStyle);
+	                        cell.setCellValue(String.valueOf(traineeMap.get(keylist.get(k))));
+                    	}
+                    }
+ 					
+ 					//处理评估指标部分数据
+ 	                 fileOutputStream = response.getOutputStream();
+ 	                 workbook.write(fileOutputStream);
+ 			} catch (Exception e) {
+ 				System.out.println(e.getMessage());
+ 				return false;
+ 			}
+ 			result = true;
+ 		}
+ 		return result;
+ 	}
 }

@@ -86,7 +86,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 
 	@Resource
 	TrainClassService thisService; // service层接口
-
+	
 	@Resource
 	TrainClasstraineeService classTraineeService; // service层接口
 
@@ -1715,78 +1715,129 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		}
 	}
 
-	/**
+	
+			
+			/**
 	 * 导出指定班级的学员学分
 	 * 
 	 * @param request
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping("/exportCredit")
-	public void doexportCredit(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		SysUser currentUser = getCurrentSysUser();
-		String endFlag = currentUser.getUserName() + "exportCreditIsEnd";
-		String stateFlag = currentUser.getUserName() + "exportCreditState";
-		String ids = request.getParameter("ids");
-		request.getSession().setAttribute(endFlag, "0");
-		request.getSession().removeAttribute(stateFlag);
+//	@RequestMapping("/exportCredit")
+//	public void doexportCredit(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//		request.getSession().setAttribute("exportCreditsIsEnd", "0");
+//		request.getSession().removeAttribute("exportCreditsIsState");
+//
+//			List<Map<String, Object>> allList = new ArrayList<>();
+//			Integer[] columnWidth = new Integer[] { 10,30, 30, 20, 20, 20, 20 };
+//		
+//			List<TrainClasstrainee> exportList = new ArrayList<>();
+//			String ids = request.getParameter("ids");
+//			// 职称数据字典
+//			String mapKey = null;
+//			String[] propValue = { "XBM", "HEADSHIPLEVEL" };
+//			Map<String, String> mapDicItem = new HashMap<>();
+//			List<BaseDicitem> listDicItem = dicitemService.queryByProerties("dicCode", propValue);
+//			for (BaseDicitem baseDicitem : listDicItem) {
+//				mapKey = baseDicitem.getItemCode() + baseDicitem.getDicCode();
+//				mapDicItem.put(mapKey, baseDicitem.getItemName());
+//			}
+//
+//			//获取学员数据,
+//			List<TrainClasstrainee> trainClasstraineeList = null;
+//			String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2) and classId='";
+//			hql += ids;
+//			hql += "' order by xm asc";
+//			trainClasstraineeList = classTraineeService.doQuery(hql);
+//			//将sheet第一页学员数据以Map<String (uuid), Object (trainTeacher)>存储
+//			Map<String, Object> trainClasstraineeMap = new HashMap<>();
+//			//将traineeId存储在traineeIdList中
+//			List<String> traineeIdList = new ArrayList<>();
+//			for (TrainClasstrainee trainTeacher : trainClasstraineeList) {
+//				trainTeacher.setXbm(mapDicItem.get(trainTeacher.getXbm() + "XBM"));
+//				trainTeacher.setHeadshipLevel(mapDicItem.get(trainTeacher.getHeadshipLevel() + "HEADSHIPLEVEL"));
+//				traineeIdList.add(trainTeacher.getUuid());
+//				trainClasstraineeMap.put(trainTeacher.getUuid(), trainTeacher);
+//			}
+//			
+//			//将所有学员的表头数据以存储在classTraineeinfoList中
+//			List<Map<String,Object>> classTraineeinfo=null;
+//			List<Map<String,Object>> classTraineeinfoList=new ArrayList<>();
+//			for(int i=0;i<traineeIdList.size();i++){
+//				classTraineeinfo= new ArrayList<>();
+//				String classTraineeId =traineeIdList.get(i);
+//				String sql="SELECT * FROM TRAIN_T_CLASSTRAINEE WHERE CLASS_TRAINEE_ID='" +classTraineeId+"'";
+//				classTraineeinfo = classTraineeService.getForValuesToSql(sql);
+//				classTraineeinfoList.add(classTraineeinfo.get(0));
+//			}
+//			
+//			List<Map<String,Object>> classTrainCreditList= null;
+//			List<String> classScheduleIdList = new ArrayList<>();
+//			String sql="SELECT * FROM dbo.TRAIN_V_CLASSTRAINEECREDITS WHERE classId='" + ids +"' order by xm asc";
+//			classTrainCreditList = classTraineeService.getForValuesToSql(sql);
+//			int voTrainClassCheckListCount = classTrainCreditList.size();
+//			
+//			
+//			
+//			
+//			
+//			List<List<Map<String, String>>> traineeCreditList = new ArrayList<>();
+//			for(int i=0;i<traineeIdList.size();i++){
+//				String classTraineeId =traineeIdList.get(i).trim();
+//				List<Map<String, String>> traineeList = new ArrayList<>();
+//				List<Map<String, Object>> list = classTraineeService.getClassTraineeCreditsList(classTraineeId);
+//				Map<String, String> traineeMap = null;
+//				int k=0;
+//				for (Map<String, Object> list1 : list) {
+//					traineeMap = new LinkedHashMap<>();
+//					traineeMap.put("xh", String.valueOf(k++));
+//					traineeMap.put("className", String.valueOf(list1.get("className")));
+//					traineeMap.put("courseName", String.valueOf(list1.get("courseName")));
+//					traineeMap.put("date",  String.valueOf(list1.get("courseDate")));
+//					traineeMap.put("time",  String.valueOf(list1.get("courseTime")));
+//					traineeMap.put("courseCredits",  String.valueOf(list1.get("courseCredits")));
+//					traineeMap.put("realCredits",  String.valueOf(list1.get("realCredits")));
+//					traineeList.add(traineeMap);
+//				}
+//				traineeCreditList.add(traineeList);
+//			}
+//			
+//			
+//			
+//			
+//			boolean result = exportMeetingInfo.exportCourseCreditExcel(response,"学分详细信息", "学分详细信息", allList);
+//			if (result == true) {
+//				request.getSession().setAttribute("exportCreditsIsEnd", "1");
+//			} else {
+//				request.getSession().setAttribute("exportCreditsIsEnd", "0");
+//				request.getSession().setAttribute("exportCreditsIsState", "0");
+//			}
+//	}
 
-		if (StringUtils.isEmpty(ids)) {
-			request.getSession().setAttribute(endFlag, "0");
-			request.getSession().setAttribute(stateFlag, "0");
-		} else {
-			List<TrainClasstrainee> exportList = new ArrayList<>();
-			// 职称数据字典
-			String mapKey = null;
-			String[] propValue = { "XBM", "HEADSHIPLEVEL" };
-			Map<String, String> mapDicItem = new HashMap<>();
-			List<BaseDicitem> listDicItem = dicitemService.queryByProerties("dicCode", propValue);
-			for (BaseDicitem baseDicitem : listDicItem) {
-				mapKey = baseDicitem.getItemCode() + baseDicitem.getDicCode();
-				mapDicItem.put(mapKey, baseDicitem.getItemName());
-			}
-
-			List<TrainClasstrainee> trainClasstraineeList = null;
-			String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2) and classId='";
-			hql += ids;
-			hql += "' order by xm asc";
-			trainClasstraineeList = classTraineeService.doQuery(hql);
-			for (TrainClasstrainee trainTeacher : trainClasstraineeList) {
-				trainTeacher.setXbm(mapDicItem.get(trainTeacher.getXbm() + "XBM"));
-				trainTeacher.setHeadshipLevel(mapDicItem.get(trainTeacher.getHeadshipLevel() + "HEADSHIPLEVEL"));
-			}
-			exportList.addAll(trainClasstraineeList);
-			FastExcel.exportExcel(response, "学员学分", exportList);
-			request.getSession().setAttribute(endFlag, "1");
-		}
-	}
-
-	/**
-	 * 检查学分导出是否完成
-	 * 
-	 * @param request
-	 * @param response
-	 * @throws IOException
-	 */
-	@RequestMapping("/checkExportCreditEnd")
-	public void docheckExportCreditEnd(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		SysUser currentUser = getCurrentSysUser();
-		String endFlag = currentUser.getUserName() + "exportCreditIsEnd";
-		String stateFlag = currentUser.getUserName() + "exportCreditState";
-		Object isEnd = request.getSession().getAttribute(endFlag);
-		Object state = request.getSession().getAttribute(stateFlag);
-		if (isEnd != null) {
-			if ("1".equals(isEnd.toString())) {
-				writeJSON(response, jsonBuilder.returnSuccessJson("\"导出完成！\""));
-			} else if (state != null && state.equals("0")) {
-				writeJSON(response, jsonBuilder.returnFailureJson("0"));
-			} else {
-				writeJSON(response, jsonBuilder.returnFailureJson("\"导出未完成！\""));
-			}
-		} else {
-			writeJSON(response, jsonBuilder.returnFailureJson("\"导出未完成！\""));
-		}
-	}
+//	/**
+//	 * 检查学分导出是否完成
+//	 * 
+//	 * @param request
+//	 * @param response
+//	 * @throws IOException
+//	 */
+//	@RequestMapping("/checkExportCreditEnd")
+//	public void docheckExportCreditEnd(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//		Object isEnd = request.getSession().getAttribute("exportCreditsIsEnd");
+//		Object state = request.getSession().getAttribute("exportCreditsIsState");
+//		if (isEnd != null) {
+//			if ("1".equals(isEnd.toString())) {
+//				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+//			} else if (state != null && state.equals("0")) {
+//				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+//			} else {
+//				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+//			}
+//		} else {
+//			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+//		}
+//	}
 
 	@RequestMapping("/addSendUser")
 	public void doaddSendUser(HttpServletRequest request, HttpServletResponse response) throws IOException {

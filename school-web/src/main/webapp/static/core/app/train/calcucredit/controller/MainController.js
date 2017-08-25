@@ -14,9 +14,11 @@ Ext.define("core.train.calcucredit.controller.MainController", {
         "basegrid[xtype=calcucredit.traineesgrid]": {
             afterrender: function (grid, eOpts) {
                 var btngridSumcredit = grid.down("button[ref=gridSumcredit]");
+                var btngridExport = grid.down("button[ref=gridExport]");
                 var roleKey = comm.get("roleKey");
                 if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1) {
                 	btngridSumcredit.setHidden(true);
+                	btngridExport.setHidden(true);
                 }
             }
         },
@@ -79,13 +81,13 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                             width: 0,
                             height: 0,
                             hidden: true,
-                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClass/exportCredit?ids=' + record.uuid + '"></iframe>',
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClasstrainee/exportCredit?ids=' + record.uuid + '"></iframe>',
                             renderTo: Ext.getBody()
                         });
 
                         var time = function () {
                             self.syncAjax({
-                                url: comm.get('baseUrl') + '/TrainClass/checkExportCreditEnd',
+                                url: comm.get('baseUrl') + '/TrainClasstrainee/checkExportCreditEnd',
                                 timeout: 1000 * 60 * 30,        //半个小时
                                 //回调代码必须写在里面
                                 success: function (response) {
@@ -165,6 +167,7 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                 var mainGrid=mainlayout.down("panel[xtype=calcucredit.maingrid]");
                 var records1=mainGrid.getSelectionModel().getSelection();
                 var classId = records1[0].data.uuid;
+                var ids=records[0].data.uuid;
                 if (records.length != 1) {
                     self.Warning("请选择一名学员");
                     return false;
@@ -179,7 +182,7 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                             width: 0,
                             height: 0,
                             hidden: true,
-                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClasstrainee/getCreditsexportExcel?classId=' + classId + 'ids=' + record.uuid + '"></iframe>',
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClasstrainee/getCreditsexportExcel?ids=' + ids +'&classId='+classId+'&classId='+classId+'&classId='+classId+'&classId='+classId+'&classId='+classId+'&classId='+classId+'&classId='+classId+'"></iframe>',
                             renderTo: Ext.getBody()
                         });
 
