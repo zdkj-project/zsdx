@@ -201,7 +201,13 @@ Ext.define('core.train.courseeval.view.EvalGrid', {
                         record: rec,
                         cmd: 'CourseEvalResult'
                     });
-                }
+                },
+                getClass: function (v, metadata, record) {
+                    if (record.get("evalState") === 0 )
+                        return 'x-hidden-display';
+                    else
+                        return null;
+                },
             }]
         }]
     },

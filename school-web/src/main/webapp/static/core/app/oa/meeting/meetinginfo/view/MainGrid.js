@@ -161,6 +161,13 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
                         record: rec,
                         cmd:"meetingEmp"
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("HYKQMANAGER") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             }, {
             	text:'详细',  
@@ -188,6 +195,13 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
                         record: rec,
                         cmd:"detail"
                     });
+                },
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("HYKQMANAGER") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 }
             }]
         }]

@@ -10,6 +10,8 @@ import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.jw.train.model.vo.VoTrainClassCheck;
 import com.zd.school.jw.train.service.TrainClassService;
 import com.zd.school.jw.train.service.TrainClasstraineeService;
+import com.zd.school.plartform.baseset.model.BaseDicitem;
+import com.zd.school.plartform.baseset.service.BaseDicitemService;
 import com.zd.school.plartform.system.model.CardUserInfoToUP;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.service.SysUserService;
@@ -29,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,16 +51,19 @@ import java.util.Map;
 public class TrainClasstraineeController extends FrameWorkController<TrainClasstrainee> implements Constant {
 
 	private static Logger logger = Logger.getLogger(TrainClasstraineeController.class);
-	
+
 	@Resource
 	TrainClasstraineeService thisService; // service层接口
-	
+
 	@Resource
 	TrainClassService trainClassService; // service层接口
 
 	@Resource
 	SysUserService sysUserService; // service层接口
-	
+
+	@Resource
+	BaseDicitemService dicitemService;// 字典项service层接口
+
 	/**
 	 * @Title: list
 	 * @Description: 查询数据列表
@@ -132,14 +138,14 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 	@RequestMapping("/dodelete")
 	public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String delIds = request.getParameter("ids");
-		String classId=request.getParameter("classId");
+		String classId = request.getParameter("classId");
 		if (StringUtils.isEmpty(delIds)) {
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
 			return;
 		} else {
 			SysUser currentUser = getCurrentSysUser();
 			try {
-				boolean flag = thisService.doLogicDeleteByIds(classId,delIds, currentUser);
+				boolean flag = thisService.doLogicDeleteByIds(classId, delIds, currentUser);
 				if (flag) {
 					writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
 				} else {
@@ -258,16 +264,16 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			Integer limit = super.limit(request);
 			String classId = request.getParameter("classId");
 			String isDelete = request.getParameter("isDelete");
-			
-			//g.isDelete=0 and  查询所有状态的
-			//new 不查询状态为1的
+
+			// g.isDelete=0 and 查询所有状态的
+			// new 不查询状态为1的
 			String hql = "select  new TrainClasstrainee(g.uuid,g.xm,g.xbm,g.breakfast,g.lunch,g.dinner,g.isDelete) from TrainClasstrainee g "
 					+ " where g.classId='" + classId + "'";
-			if(isDelete!=null){
-				hql+=" and g.isDelete!=1 ";
+			if (isDelete != null) {
+				hql += " and g.isDelete!=1 ";
 			}
-			hql+=" order by g.breakfast desc,g.lunch desc,g.dinner desc";
-			
+			hql += " order by g.breakfast desc,g.lunch desc,g.dinner desc";
+
 			QueryResult<TrainClasstrainee> result = thisService.doQueryResult(hql, start, limit);
 
 			strData = jsonBuilder.buildObjListToJson(result.getTotalCount(), result.getResultList(), true);
@@ -291,16 +297,16 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			Integer limit = super.limit(request);
 			String classId = request.getParameter("classId");
 			String isDelete = request.getParameter("isDelete");
-			
-			//g.isDelete=0 or g.isDelete=1 and 
-			//new: 不查询状态为1的
+
+			// g.isDelete=0 or g.isDelete=1 and
+			// new: 不查询状态为1的
 			String hql = "select new TrainClasstrainee(g.uuid,g.xm,g.xbm,g.siesta,g.sleep,g.roomId,g.roomName,g.workUnit,g.isDelete) from TrainClasstrainee g "
-					+ " where g.classId='"+ classId + "'";
-			if(isDelete!=null){
-				hql+=" and g.isDelete!=1 ";
+					+ " where g.classId='" + classId + "'";
+			if (isDelete != null) {
+				hql += " and g.isDelete!=1 ";
 			}
-			hql+="  order by g.siesta desc,g.sleep desc,g.xbm asc,g.workUnit asc";
-				
+			hql += "  order by g.siesta desc,g.sleep desc,g.xbm asc,g.workUnit asc";
+
 			QueryResult<TrainClasstrainee> result = thisService.doQueryResult(hql, start, limit);
 
 			strData = jsonBuilder.buildObjListToJson(result.getTotalCount(), result.getResultList(), true);
@@ -361,7 +367,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			writeJSON(response, jsonBuilder.returnFailureJson("\"请求失败，请联系管理员\""));
 		}
 	}
-	
+
 	/*
 	 * 一键同步UP的方式
 	 */
@@ -369,15 +375,21 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 	public void doSyncClassCardInfoFromUp(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		StringBuffer returnJson = null;
 		try {
-			String classId = request.getParameter("classId");	
+			String classId = request.getParameter("classId");
 			TrainClass trainClass = trainClassService.get(classId);
-			//设置部门ID：Train20170505（Train+班级编号）【班级编号不可变化】
+			// 设置部门ID：Train20170505（Train+班级编号）【班级编号不可变化】
 			String departmentId = "Train" + trainClass.getClassNumb();
-			
+
 			// 1.切换数据源
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
 
 			// 2.查询UP中的发卡信息(查询班级学员的卡片信息)
+			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
+					+ " convert(int,a.CardStatusIDXF) as useState,"
+					+ " b.SID as sid,b.EmployeeStatusID as employeeStatusID "
+					+ " from Tc_Employee b join TC_Card a on b.CardID=a.CardID" + " where b.DepartmentID='"
+					+ departmentId + "'" + "	order by a.CardID asc,a.ModifyDate asc";
+
 //			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
 //					+ " convert(int,a.CardStatusIDXF) as useState,"
 //					+ " b.SID as sid,b.EmployeeStatusID as employeeStatusID "
@@ -386,7 +398,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 //					+ "	order by a.CardID asc,a.ModifyDate asc";
 			
 			//修改了查询的方式，以发卡表中的最新的一条数据为准
-			String sql="select a.UserId as userId,a.SID as sid,a.EmployeeStatusID as employeeStatusID,"
+			sql="select a.UserId as userId,a.SID as sid,a.EmployeeStatusID as employeeStatusID,"
 					+ " convert(varchar,b.CardID) as upCardId,convert(varchar,b.FactoryFixID) as factNumb,"
 					+ " convert(int,b.CardStatusIDXF) as useState from Tc_Employee a join TC_Card b"
 					+ " on b.CardID=("
@@ -400,9 +412,9 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 
 			int row = 0;
 			if (upCardUserInfos.size() > 0) {
-				row = sysUserService.syncClassCardInfoFromUp(upCardUserInfos,classId);
+				row = sysUserService.syncClassCardInfoFromUp(upCardUserInfos, classId);
 			} else {
-				row = sysUserService.syncClassCardInfoFromUp(null,classId);
+				row = sysUserService.syncClassCardInfoFromUp(null, classId);
 			}
 
 			if (row == 0) {
@@ -420,7 +432,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 
 		writeAppJSON(response, returnJson.toString());
 	}
-	
+
 	/**
 	 * 导出班级学员导入UP模版排信息
 	 *
@@ -447,7 +459,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		}
 		hql += " order by createTime desc";
 		trainClasstraineeList = thisService.doQuery(hql);
-		
+
 		// 处理班级基本数据
 		List<Map<String, String>> traineeList = new ArrayList<>();
 		Map<String, String> traineeMap = null;
@@ -480,7 +492,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			request.getSession().setAttribute("exportTrainClassTraineeIsState", "0");
 		}
 	}
-	
+
 	/**
 	 * 判断导出时，是否导出完毕
 	 * 
@@ -507,14 +519,14 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 	}
 
 	@RequestMapping("/getCreditsDetail")
-    public void doGetCreditsDetail(HttpServletRequest request,HttpServletResponse response) throws  IOException{
-        String strData = "";
-	    String classId = request.getParameter("classId");
-        String classTraineeId = request.getParameter("ids");
-        List<Map<String, Object>> list = thisService.getClassTraineeCreditsList(classTraineeId);
-        strData = jsonBuilder.buildObjListToJson((long) list.size(), list, true);// 处理数据
-        writeJSON(response, strData);// 返回数据
-    }
+	public void doGetCreditsDetail(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String strData = "";
+		String classId = request.getParameter("classId");
+		String classTraineeId = request.getParameter("ids");
+		List<Map<String, Object>> list = thisService.getClassTraineeCreditsList(classTraineeId);
+		strData = jsonBuilder.buildObjListToJson((long) list.size(), list, true);// 处理数据
+		writeJSON(response, strData);// 返回数据
+	}
 
 	/**
 	 * 导出班级学员导入UP模版排信息
@@ -529,38 +541,45 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		request.getSession().removeAttribute("exportgetCreditsIsState");
 
 		List<Map<String, Object>> allList = new ArrayList<>();
-		Integer[] columnWidth = new Integer[] { 30, 15, 20, 40, 20 };
+		Integer[] columnWidth = new Integer[] { 10, 30, 30, 20, 20, 20, 20 };
 
 		// 1.班级信息
 		String classId = request.getParameter("classId"); // 程序中限定每次只能导出一个班级
-        String classTraineeId = request.getParameter("ids");
-        
-        List<Map<String, Object>> list = thisService.getClassTraineeCreditsList(classTraineeId);
-		
+		String classTraineeId = request.getParameter("ids");
+
+		List<Map<String, Object>> classTraineeinfo = new ArrayList<>();
+		String sql = "SELECT * FROM TRAIN_T_CLASSTRAINEE WHERE CLASS_TRAINEE_ID='" + classTraineeId + "'";
+		classTraineeinfo = thisService.getForValuesToSql(sql);
+		String name = String.valueOf(classTraineeinfo.get(0).get("XM"));
+
+		List<Map<String, Object>> list = thisService.getClassTraineeCreditsList(classTraineeId);
 		// 处理班级基本数据
 		List<Map<String, String>> traineeList = new ArrayList<>();
 		Map<String, String> traineeMap = null;
+		int k = 0;
 		for (Map<String, Object> list1 : list) {
 			traineeMap = new LinkedHashMap<>();
-			traineeMap.put("className", "1");
-			traineeMap.put("traineeName", list1.values().toString());
-			traineeMap.put("date",  list1.values().toString());
-			traineeMap.put("sfzjh",  list1.values().toString());
-			traineeMap.put("uuid",  list1.values().toString());
+			traineeMap.put("xh", String.valueOf(k++));
+			traineeMap.put("className", String.valueOf(list1.get("className")));
+			traineeMap.put("courseName", String.valueOf(list1.get("courseName")));
+			traineeMap.put("date", String.valueOf(list1.get("courseDate")));
+			traineeMap.put("time", String.valueOf(list1.get("courseTime")));
+			traineeMap.put("courseCredits", String.valueOf(list1.get("courseCredits")));
+			traineeMap.put("realCredits", String.valueOf(list1.get("realCredits")));
 			traineeList.add(traineeMap);
 		}
 		// --------2.组装课程表格数据
 		Map<String, Object> courseAllMap = new LinkedHashMap<>();
 		courseAllMap.put("data", traineeList);
-		courseAllMap.put("title", null);
-		courseAllMap.put("head", new String[] { "班级名称", "课程名称", "上课日期", "上课时间", "学分" }); // 规定名字相同的，设定为合并
+		courseAllMap.put("headinfo", classTraineeinfo);
+		courseAllMap.put("head", new String[] { "序号", "班级名称", "课程名称", "上课日期", "上课时间", "实际学分", "实际学分" }); // 规定名字相同的，设定为合并
 		courseAllMap.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
-		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
+		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
 		courseAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
 		allList.add(courseAllMap);
-        
+
 		// 在导出方法中进行解析
-		boolean result = PoiExportExcel.exportExcel(response, "班级学员发卡模版表格", null, allList);
+		boolean result = exportMeetingInfo.exportCourseCreditExcel(response, name + "学分详细信息", name + "学分详细信息", allList);
 		if (result == true) {
 			request.getSession().setAttribute("exportgetCreditsIsEnd", "1");
 		} else {
@@ -568,7 +587,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			request.getSession().setAttribute("exportgetCreditsIsState", "0");
 		}
 	}
-	
+
 	/**
 	 * 判断导出时，是否导出完毕
 	 * 
@@ -577,7 +596,8 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 	 * @throws Exception
 	 */
 	@RequestMapping("/getCreditscheckExportEnd")
-	public void getCreditsexportcheckExportRoomEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+	public void getCreditsexportcheckExportRoomEnd(HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
 
 		Object isEnd = request.getSession().getAttribute("exportgetCreditsIsEnd");
 		Object state = request.getSession().getAttribute("exportgetCreditsIsState");
@@ -593,28 +613,91 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
 		}
 	}
-	
-	
-    @RequestMapping(value = { "/getCheckList" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
-            org.springframework.web.bind.annotation.RequestMethod.POST })
-    public void getCheckList( HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        String strData = ""; // 返回给js的数据
-        Integer start = super.start(request);
-        Integer limit = super.limit(request);
-        String sort = super.sort(request);
-        String filter = super.filter(request);
-        String xm = request.getParameter("xm");
-        String classId = request.getParameter("classId");
-        String classScheduleId = request.getParameter("classScheduleId");
-        /*if(StringUtils.isEmpty(classId) && StringUtils.isEmpty(classScheduleId)){
-            //writeJSON(response, jsonBuilder.returnFailureJson("\"没有传入查询考勤的参数：班级或课程\""));
-        	 strData = jsonBuilder.buildObjListToJson((long)0, new ArrayList<>(), true);
-        	 writeJSON(response, strData);// 返回数据
-        	return;
-        }*/
-        QueryResult<VoTrainClassCheck> qResult = thisService.getCheckList(start, limit, classId, classScheduleId,xm);
-        strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
-        writeJSON(response, strData);// 返回数据
-    }
+
+	@RequestMapping(value = { "/getCheckList" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
+			org.springframework.web.bind.annotation.RequestMethod.POST })
+	public void getCheckList(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String strData = ""; // 返回给js的数据
+		Integer start = super.start(request);
+		Integer limit = super.limit(request);
+		String sort = super.sort(request);
+		String filter = super.filter(request);
+		String xm = request.getParameter("xm");
+		String classId = request.getParameter("classId");
+		String classScheduleId = request.getParameter("classScheduleId");
+		/*
+		 * if(StringUtils.isEmpty(classId) && StringUtils.isEmpty(classScheduleId)){
+		 * //writeJSON(response,
+		 * jsonBuilder.returnFailureJson("\"没有传入查询考勤的参数：班级或课程\"")); strData =
+		 * jsonBuilder.buildObjListToJson((long)0, new ArrayList<>(), true);
+		 * writeJSON(response, strData);// 返回数据 return; }
+		 */
+		QueryResult<VoTrainClassCheck> qResult = thisService.getCheckList(start, limit, classId, classScheduleId, xm);
+		strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
+		writeJSON(response, strData);// 返回数据
+	}
+
+	/**
+	 * 导出指定班级的学员学分
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping("/exportCredit")
+	public void doexportCredit(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		request.getSession().setAttribute("exportCreditsIsEnd", "0");
+		request.getSession().removeAttribute("exportCreditsIsState");
+		
+		//获取班级ID
+		String classId = request.getParameter("ids");
+
+		List<Map<String, Object>> allList = new ArrayList<>();
+		Integer[] columnWidth = new Integer[] { 10,30, 30, 20, 20, 20, 20 };
+		
+		List<Map<String, Object>> classTraineetList = new ArrayList<>();
+		String sql="SELECT className,courseName,courseDate,courseTime,courseCredits,changeCredits,realCredits FROM dbo.TRAIN_V_CLASSTRAINEECREDITS WHERE classId='" + classId +"' order by xm asc";
+		System.out.println(sql);
+		classTraineetList = thisService.getForValuesToSql(sql);
+
+
+		List<Map<String, Object>> classTrainCreditList = thisService.getClassTraineeCreditsListInClass(classId);
+		sql="SELECT className,courseName,courseDate,courseTime,courseCredits,changeCredits,realCredits FROM dbo.TRAIN_V_CLASSTRAINEECREDITS WHERE classId='" + classId +"' order by xm asc";
+		System.out.println(sql);
+		classTrainCreditList = thisService.getForValuesToSql(sql);
+		int voTrainClassCheckListCount = classTrainCreditList.size();
+
+		boolean result = exportMeetingInfo.exportCourseCreditExcel(response, "学分详细信息", "学分详细信息", allList);
+		if (result == true) {
+			request.getSession().setAttribute("exportCreditsIsEnd", "1");
+		} else {
+			request.getSession().setAttribute("exportCreditsIsEnd", "0");
+			request.getSession().setAttribute("exportCreditsIsState", "0");
+		}
+	}
+
+	/**
+	 * 检查学分导出是否完成
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping("/checkExportCreditEnd")
+	public void docheckExportCreditEnd(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		Object isEnd = request.getSession().getAttribute("exportCreditsIsEnd");
+		Object state = request.getSession().getAttribute("exportCreditsIsState");
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+		}
+	}
+
 }

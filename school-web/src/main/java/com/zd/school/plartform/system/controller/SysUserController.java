@@ -614,20 +614,11 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
 
 			// 2.查询UP中所有的发卡信息
-//			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
-//					+ " convert(int,a.CardStatusIDXF) as useState,"
-//					+ " b.SID as sid,b.EmployeeStatusID as employeeStatusID "
-//					+ " from Tc_Employee b join TC_Card a on b.CardID=a.CardID" + " where b.UserId is not null "
-//					+ "	order by a.CardID asc,a.ModifyDate asc";
-			
-			// 修改发卡数据的查询方式
-			String sql="select a.UserId as userId,a.SID as sid,a.EmployeeStatusID as employeeStatusID,"
-					+ " convert(varchar,b.CardID) as upCardId,convert(varchar,b.FactoryFixID) as factNumb,"
-					+ " convert(int,b.CardStatusIDXF) as useState from Tc_Employee a join TC_Card b"
-					+ " on b.CardID=("
-					+ "		select top 1 CardID from TC_Card where EmployeeID=a.EmployeeID order by ModifyDate desc"
-					+ " ) where a.UserId is not null ";
-			
+			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
+					+ " convert(int,a.CardStatusIDXF) as useState,"
+					+ " b.SID as sid,b.EmployeeStatusID as employeeStatusID "
+					+ " from Tc_Employee b join TC_Card a on b.CardID=a.CardID" + " where b.UserId is not null "
+					+ "	order by a.CardID asc,a.ModifyDate asc";
 
 			List<CardUserInfoToUP> upCardUserInfos = thisService.doQuerySqlObject(sql, CardUserInfoToUP.class);
 
