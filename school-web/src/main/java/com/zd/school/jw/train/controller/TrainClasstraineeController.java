@@ -390,6 +390,21 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 					+ " from Tc_Employee b join TC_Card a on b.CardID=a.CardID" + " where b.DepartmentID='"
 					+ departmentId + "'" + "	order by a.CardID asc,a.ModifyDate asc";
 
+//			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
+//					+ " convert(int,a.CardStatusIDXF) as useState,"
+//					+ " b.SID as sid,b.EmployeeStatusID as employeeStatusID "
+//					+ " from Tc_Employee b join TC_Card a on b.CardID=a.CardID"
+//					+ " where b.DepartmentID='"+departmentId+"'"
+//					+ "	order by a.CardID asc,a.ModifyDate asc";
+			
+			//修改了查询的方式，以发卡表中的最新的一条数据为准
+			sql="select a.UserId as userId,a.SID as sid,a.EmployeeStatusID as employeeStatusID,"
+					+ " convert(varchar,b.CardID) as upCardId,convert(varchar,b.FactoryFixID) as factNumb,"
+					+ " convert(int,b.CardStatusIDXF) as useState from Tc_Employee a join TC_Card b"
+					+ " on b.CardID=("
+					+ "		select top 1 CardID from TC_Card where EmployeeID=a.EmployeeID order by ModifyDate desc"
+					+ " ) where a.DepartmentID='"+departmentId+"' and a.UserId is not null ";
+			
 			List<CardUserInfoToUP> upCardUserInfos = thisService.doQuerySqlObject(sql, CardUserInfoToUP.class);
 
 			// 3.恢复数据源
