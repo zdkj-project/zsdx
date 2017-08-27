@@ -3,19 +3,19 @@ Ext.define("core.train.coursecheckrule.view.MainQueryPanel", {
 	alias: "widget.coursecheckrule.mainquerypanel",
     layout: "form",
     frame: false,
-	height: 180,
+	height: 140,
 
     items: [{
         xtype: "container",
         layout: "column",
         items: [{
-            columnWidth: 0.333,
+            columnWidth: 0.25,
             xtype: "basequeryfield",
             queryType: "textfield",
             name: "ruleName",
             fieldLabel: "规则名称",
         }, {
-            columnWidth: 0.333,
+            columnWidth: 0.25,
             xtype: "basequeryfield",
             queryType: "basecombobox",
             dataType:'short',
@@ -24,40 +24,8 @@ Ext.define("core.train.coursecheckrule.view.MainQueryPanel", {
             config: {
                 ddCode: "CHECKMODE"
             }
-        }]
-    },{
-        xtype: "container",
-        layout: "column",
-        items: [{
-            columnWidth: 0.333,
-            xtype: "basequeryfield",
-            name: "inBefore",
-            fieldLabel: "签到提前分钟",
-            queryType: "numberfield",
-            dataType:'short',
-            value:''
         },{
-            columnWidth: 0.333,
-            xtype: "basequeryfield",
-            name: "beLate",
-            fieldLabel: "迟到分钟",
-            queryType: "numberfield",
-            dataType:'short',
-            value:''
-        },{
-            columnWidth: 0.333,
-            xtype: "basequeryfield",
-            name: "absenteeism",
-            fieldLabel: "缺勤分钟",
-            queryType: "numberfield",
-            dataType:'short',
-            value:''
-        }]
-    },{
-        xtype: "container",
-        layout: "column",
-        items: [{
-            columnWidth: 0.333,
+            columnWidth: 0.25,
             labelAlign: "right",
             xtype: "basequeryfield",
             queryType: "combobox",
@@ -78,7 +46,7 @@ Ext.define("core.train.coursecheckrule.view.MainQueryPanel", {
                 editable:false,
             }
         },{
-            columnWidth: 0.333,
+            columnWidth: 0.25,
             labelAlign: "right",
             xtype: "basequeryfield",
             queryType: "combobox",
@@ -97,7 +65,35 @@ Ext.define("core.train.coursecheckrule.view.MainQueryPanel", {
                 displayField: 'name',
                 valueField: 'val',
                 editable:false,
-            },
+            }
+        }]
+    },{
+        xtype: "container",
+        layout: "column",
+        items: [{
+            columnWidth: 0.25,
+            xtype: "basequeryfield",
+            name: "inBefore",
+            fieldLabel: "签到提前分钟",
+            queryType: "numberfield",
+            dataType:'short',
+            value:''
+        },{
+            columnWidth: 0.25,
+            xtype: "basequeryfield",
+            name: "beLate",
+            fieldLabel: "迟到分钟",
+            queryType: "numberfield",
+            dataType:'short',
+            value:''
+        },{
+            columnWidth: 0.25,
+            xtype: "basequeryfield",
+            name: "absenteeism",
+            fieldLabel: "缺勤分钟",
+            queryType: "numberfield",
+            dataType:'short',
+            value:''
         }]
     }],
     buttonAlign: "center",

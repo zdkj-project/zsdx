@@ -38,8 +38,9 @@ Ext.define("core.system.ip.view.ipGrid", {
             html:'快速搜索：'
         },{
             xtype:'textfield',
-            name:'jobName',
-            emptyText: '请输入职务名称'
+            name:'ipName',
+            emptyText: '请输入IP名称',
+            funCode: 'girdFastSearchText'
         },{
             xtype: 'button',            
             ref: 'gridFastSearchBtn',  

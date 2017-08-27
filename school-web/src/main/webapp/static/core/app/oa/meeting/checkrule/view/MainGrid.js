@@ -32,7 +32,7 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
             iconCls: 'x-fa fa-minus-circle'
         }, {
             xtype: 'button',
-            text: '启用/禁用',
+            text: '启用规则',
             ref: 'gridSetUse',
             funCode: 'girdFuntionBtn',
             //disabled: true,
@@ -192,7 +192,7 @@ Ext.define("core.oa.meeting.checkrule.view.MainGrid", {
                 },
                 getClass: function (v, metadata, record) {
                     var roleKey = comm.get("roleKey");
-                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("HYKQMANAGER") == -1){
+                    if (record.get("startUsing")==1||(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("HYKQMANAGER") == -1)){
                         return 'x-hidden-display';
                     } else
                         return null;

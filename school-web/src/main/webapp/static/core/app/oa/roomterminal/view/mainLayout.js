@@ -33,20 +33,25 @@ Ext.define("core.oa.roomterminal.view.mainLayout", {
         defaultObj: {
         },
     },
+
+    /*设置最小宽度，并且自动滚动*/
+    minWidth:1200,
+    scrollable:'x',
+
     items: [{
         //collapsible: true,
         split: true,
         xtype: "roomterminal.roomtree",
         region: "west",
-        style:{
-            border: '1px solid #ddd'
-        },
+        // style:{
+        //     border: '1px solid #ddd'
+        // },
         width: comm.get("clientWidth") * 0.2
     }, {
         xtype: "roomterminal.listgrid",
-        style:{
-            border: '1px solid #ddd'
-        },
+        // style:{
+        //     border: '1px solid #ddd'
+        // },
         region: "center"
     }]
 })

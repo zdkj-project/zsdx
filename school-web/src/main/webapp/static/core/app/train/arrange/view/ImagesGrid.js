@@ -41,7 +41,7 @@ Ext.define("core.train.arrange.view.ImagesGrid", {
         overItemCls: 'x-item-hover',  
         itemSelector:'div.thumb-wrap',
         multiSelect: true,
-        emptyText:'<div style="width:100%;line-height: 100px;text-align:center">暂无活动图片数据！</div>',
+        emptyText:'<div style="width:100%;line-height: 100px;text-align:center">暂无此班级图片数据！</div>',
         // plugins: [
         //     Ext.create('Ext.ux.DataView.DragSelector', {})
         // ]

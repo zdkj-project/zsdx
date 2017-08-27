@@ -660,8 +660,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		System.out.println(sql);
 		classTraineetList = thisService.getForValuesToSql(sql);
 
-
-		List<Map<String, Object>> classTrainCreditList = thisService.getClassTraineeCreditsListInClass(classId);
+		List<Map<String, Object>> classTrainCreditList =null;//thisService.getClassTraineeCreditsListInClass(classId);
 		sql="SELECT className,courseName,courseDate,courseTime,courseCredits,changeCredits,realCredits FROM dbo.TRAIN_V_CLASSTRAINEECREDITS WHERE classId='" + classId +"' order by xm asc";
 		System.out.println(sql);
 		classTrainCreditList = thisService.getForValuesToSql(sql);

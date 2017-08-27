@@ -174,19 +174,23 @@ Ext.define("core.system.role.controller.RoleController", {
                 break;
             case "detail":
                 insertObj = Ext.apply(insertObj, recordData);
-                tabTitle = funData.tabConfig.detailTitle;
-                tabItemId = funCode + "_gridDetail";
-                itemXtype = "role.detailhtml";
                 //获取主键值
                 pkValue = recordData[pkName];
+
+                tabTitle = insertObj.roleName +"-"+funData.tabConfig.detailTitle;
+                tabItemId = funCode + "_gridDetail"+pkValue;
+                itemXtype = "role.detailhtml";
+                
                 break;
             case "roleUser": //角色用户
                 insertObj = Ext.apply(insertObj, recordData);
-                tabTitle = insertObj.roleName + "-角色用户";
-                tabItemId = funCode + "_gridRoleUser";
-                itemXtype = "role.roleusergrid";
                 //获取主键值
                 pkValue = recordData[pkName];
+
+                tabTitle = insertObj.roleName + "-角色用户";
+                tabItemId = funCode + "_gridRoleUser"+pkValue;
+                itemXtype = "role.roleusergrid";
+                
                 break;
         }
         var popFunData = Ext.apply(funData, {
