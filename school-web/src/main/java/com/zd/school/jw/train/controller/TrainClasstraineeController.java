@@ -654,20 +654,74 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 
 		List<Map<String, Object>> allList = new ArrayList<>();
 		Integer[] columnWidth = new Integer[] { 10,30, 30, 20, 20, 20, 20 };
+		Integer[] headColumnWidth = new Integer[] { 10,15, 15, 25, 25, 25, 30 };
 		
+		//获取班级所有学员信息
 		List<Map<String, Object>> classTraineetList = new ArrayList<>();
-		String sql="SELECT className,courseName,courseDate,courseTime,courseCredits,changeCredits,realCredits FROM dbo.TRAIN_V_CLASSTRAINEECREDITS WHERE classId='" + classId +"' order by xm asc";
-		System.out.println(sql);
+		String sql="select CLASS_TRAINEE_ID,XM,XBM,MOBILE_PHONE,WORK_UNIT,POSITION,HEADSHIP_LEVEL from TRAIN_T_CLASSTRAINEE where ISDELETE=0 AND CLASS_ID='" + classId +"' order by xm asc";
 		classTraineetList = thisService.getForValuesToSql(sql);
-
-
+		
+		//处理班级所有学员数据
+		List<Map<String, String>> traineeList = new ArrayList<>();
+		List<String> classTraineeIdList = new ArrayList<>();
+		Map<String, String> traineeMap = null;
+		int j =0;
+		for (Map<String, Object> list : classTraineetList) {
+			traineeMap = new LinkedHashMap<>();
+			classTraineeIdList.add(String.valueOf(list.get("CLASS_TRAINEE_ID")));
+			traineeMap.put("xh", String.valueOf(j++));
+			traineeMap.put("xm", String.valueOf(list.get("XM")));
+			traineeMap.put("xb", String.valueOf(list.get("XBM")));
+			traineeMap.put("phone", String.valueOf(list.get("MOBILE_PHONE")));
+			traineeMap.put("position", String.valueOf(list.get("POSITION")));
+			traineeMap.put("headShipLevel", String.valueOf(list.get("HEADSHIP_LEVEL")));
+			traineeMap.put("workUnit", String.valueOf(list.get("WORK_UNIT")));
+			traineeMap.put("classTraineeId", String.valueOf(list.get("CLASS_TRAINEE_ID")));
+			traineeList.add(traineeMap);
+		}
+		
+		//获取该班级下所有学员的学分成绩
 		List<Map<String, Object>> classTrainCreditList = thisService.getClassTraineeCreditsListInClass(classId);
-		sql="SELECT className,courseName,courseDate,courseTime,courseCredits,changeCredits,realCredits FROM dbo.TRAIN_V_CLASSTRAINEECREDITS WHERE classId='" + classId +"' order by xm asc";
-		System.out.println(sql);
+		sql="SELECT classTraineeId,className,courseName,courseDate,courseTime,courseCredits,changeCredits,realCredits FROM dbo.TRAIN_V_CLASSTRAINEECREDITS WHERE classId='" + classId +"' order by xm asc";
 		classTrainCreditList = thisService.getForValuesToSql(sql);
-		int voTrainClassCheckListCount = classTrainCreditList.size();
-
-		boolean result = exportMeetingInfo.exportCourseCreditExcel(response, "学分详细信息", "学分详细信息", allList);
+		
+		//处理学分数据，按照classTaineeId进行分组
+		Map<String,List<Map<String, String>>> traineeCreditMaps = new LinkedHashMap<>();
+		Map<String, String> traineeCreditMap = null;
+		List<Map<String, String>> traineeCreditList = null;
+		String titleName = null;
+		for(int i=0;i<classTraineeIdList.size();i++) {
+			traineeCreditList= new ArrayList<>();
+			String classTraineeId = classTraineeIdList.get(i);
+			int k=0;
+			for (Map<String, Object> list : classTrainCreditList) {
+				traineeCreditMap = new LinkedHashMap<>();
+				if(classTraineeId.equals(String.valueOf(list.get("classTraineeId")))) {
+					traineeCreditMap.put("xh", String.valueOf(k++));
+					titleName=String.valueOf(list.get("className"));
+					traineeCreditMap.put("className", String.valueOf(list.get("className")));
+					traineeCreditMap.put("courseName", String.valueOf(list.get("courseName")));
+					traineeCreditMap.put("date", String.valueOf(list.get("courseDate")));
+					traineeCreditMap.put("time", String.valueOf(list.get("courseTime")));
+					traineeCreditMap.put("courseCredits", String.valueOf(list.get("courseCredits")));
+					traineeCreditMap.put("realCredits", String.valueOf(list.get("realCredits")));
+					traineeCreditList.add(traineeCreditMap);
+				}
+			}
+			traineeCreditMaps.put(classTraineeId, traineeCreditList);
+		}
+		// --------2.组装课程表格数据
+		Map<String, Object> courseAllMap = new LinkedHashMap<>();
+		courseAllMap.put("data", traineeCreditMaps);
+		courseAllMap.put("headinfo", traineeList);
+		courseAllMap.put("head", new String[] { "序号", "班级名称", "课程名称", "上课日期", "上课时间", "实际学分", "实际学分" }); // 规定名字相同的，设定为合并
+		courseAllMap.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
+		courseAllMap.put("headColumnWidth", headColumnWidth); // 30代表30个字节，15个字符
+		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
+		courseAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+		allList.add(courseAllMap);
+		
+		boolean result = exportMeetingInfo.exportTraineeCreditExcel(response, titleName+"学分详细信息", titleName+"学员列表", allList);
 		if (result == true) {
 			request.getSession().setAttribute("exportCreditsIsEnd", "1");
 		} else {
