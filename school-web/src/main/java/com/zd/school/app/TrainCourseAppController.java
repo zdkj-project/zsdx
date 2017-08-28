@@ -239,11 +239,16 @@ public class TrainCourseAppController {
 
 					for (int i = 0; i < courseIds.length; i++) {
 						course = courseService.get(courseIds[i]);
-
+						//当课程为自选课程，且学生为缺勤的时候，不计入考勤数据(课程分班和学员分班的数据，在sql统计中处理)
+						if(course.getIsOptional()==1){
+							if("4".equals(t.getAttendResult()))
+								continue;
+						}
+						
 						Object[] values = { t.getClassId(), courseIds[i], t.getUserId() };
 						// Object[] values = {t.getClassId(), t.getCourseId(),
 						// uid};
-						attend = attendService.getByProerties(param, values);
+						attend = attendService.getByProerties(param, values);	//造成每次查库，是否有必要
 						if (attend == null)
 							attend = new TrainCourseattend();
 						// if (attend != null) {

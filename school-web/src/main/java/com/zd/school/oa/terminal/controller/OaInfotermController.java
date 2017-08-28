@@ -181,9 +181,15 @@ public class OaInfotermController extends FrameWorkController<OaInfoterm> implem
     public void getRoomInfo(String roomId, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String sql = "select * from OA_V_ROOMTERM where roomId='" + roomId + "'";
-        OaRoomTerm roominfo = thisService.doQuerySqlObject(sql, OaRoomTerm.class).get(0);
-        String strData = jsonBuilder.toJson(roominfo);
-        writeJSON(response, jsonBuilder.returnSuccessJson(strData));
+        List<OaRoomTerm> roomTerms= thisService.doQuerySqlObject(sql, OaRoomTerm.class);
+        if(roomTerms.size()==0){        	
+              writeJSON(response, jsonBuilder.returnFailureJson("\"请选择房间！\""));
+        }else{
+        	  OaRoomTerm roominfo = roomTerms.get(0);
+              String strData = jsonBuilder.toJson(roominfo);
+              writeJSON(response, jsonBuilder.returnSuccessJson(strData));
+        }
+      
     }
 
     @RequestMapping("/exportExcel")

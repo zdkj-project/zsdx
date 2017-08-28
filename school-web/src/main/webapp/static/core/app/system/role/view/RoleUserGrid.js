@@ -61,25 +61,26 @@ Ext.define("core.system.role.view.RoleUserGrid", {
             text: "用户名",
 			dataIndex: "userName"
 		},{
-            width:100,
+            width:120,
             text: "姓名",
 			dataIndex: "xm"
 		}, {
-            width:50,
+            width:80,
             text: "性别",
 			dataIndex: "xbm",
 			columnType: "basecombobox",
 			ddCode: "XBM"
 		}, {
-            width:160,
+            minWidth:160,
+            flex:1,
 			text: "部门",
 			dataIndex: "deptName"
 		}, {
-            width:160,
+            minWidth:160,
+            flex:1,
             text: "岗位",
             dataIndex: "jobName"
         }, {
-            width:100,
             text: "账户状态",
             dataIndex: "state",
             width:100,

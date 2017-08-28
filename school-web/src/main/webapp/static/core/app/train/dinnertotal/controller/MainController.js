@@ -6,7 +6,8 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
         messageUtil: "core.util.MessageUtil",
         formUtil: "core.util.FormUtil",
         gridActionUtil: "core.util.GridActionUtil",
-        dateUtil: 'core.util.DateUtil'       
+        dateUtil: 'core.util.DateUtil',    
+        queryUtil:"core.util.QueryUtil"
     },
     init: function() {
         /*control事件声明代码，可以写在这里
@@ -182,7 +183,31 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                 return false;
             }
         },
+        "basequeryform[xtype=dinnertotal.mainquerypanel] button[ref=gridSearchFormReset]":{
+            beforeclick:function(btn){      
+                var self=this;
+                          
+                var queryPanel=btn.up("basequeryform");
+                self.resetQueryPanel(queryPanel);
 
+                //触发点击提交事件
+                var submitBtn=queryPanel.down("button[ref=gridSearchFormOk]");            
+                submitBtn.fireEvent('beforeclick',submitBtn);
+
+                /*
+                var funCode = queryPanel.funCode;
+                var basePanel = queryPanel.up("basepanel[funCode=" + funCode + "]");
+                var baseGrid = basePanel.down("basegrid[funCode=" + funCode + "]");
+                var store = baseGrid.getStore();
+                var proxy = store.getProxy();
+            
+                //只重置这两个数据，还有一个extParams参数是来自baseGrid中设置的，不用去改变。
+                proxy.extraParams=null;
+                store.load();
+                */
+                return false;
+            }
+        },  
 
         /**
          * 导出班级就餐汇总数据

@@ -3,20 +3,20 @@ Ext.define("core.train.creditrule.view.MainQueryPanel", {
     alias: "widget.creditrule.mainquerypanel",
     layout: "form",
     frame: false,
-    height: 140,
+    height: 100,
 
     items: [{
         xtype: "container",
         layout: "column",
         items: [{
-            columnWidth: 0.333,
+            columnWidth: 0.25,
             xtype: "basequeryfield",
             queryType: "textfield",
             name: "ruleName",
             fieldLabel: "规则名称",
            
         },{        
-            columnWidth: 0.333,
+            columnWidth: 0.25,
             labelAlign: "right",
             xtype: "basequeryfield",
             name: "startUsing",
@@ -37,19 +37,7 @@ Ext.define("core.train.creditrule.view.MainQueryPanel", {
             editable:false,
         
         },{
-            columnWidth: 0.333,
-            xtype: "basequeryfield",
-            name: "normalCredits",
-            fieldLabel: "正常出勤学分",
-            queryType: "numberfield",
-            dataType:'short',
-            value:''
-        }]
-    },{
-        xtype: "container",
-        layout: "column",
-        items: [{
-            columnWidth: 0.333,
+            columnWidth: 0.25,
             xtype: "basequeryfield",
             name: "lateCredits",
             fieldLabel: "迟到扣除学分",
@@ -57,7 +45,7 @@ Ext.define("core.train.creditrule.view.MainQueryPanel", {
             dataType:'short',        
             value:''
         },{
-            columnWidth: 0.333,
+            columnWidth: 0.25,
             xtype: "basequeryfield",
             name: "earlyCredits",
             fieldLabel: "早退扣除学分",

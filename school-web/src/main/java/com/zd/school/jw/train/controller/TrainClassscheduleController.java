@@ -91,14 +91,30 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
         // 获取当前操作用户
         SysUser currentUser = getCurrentSysUser();
         try {
+        	
             String teachType = request.getParameter("teachType");
             String courseDate = request.getParameter("courseDate");
             String courseBeginTime = request.getParameter("courseBeginTime");
             String courseEndTime = request.getParameter("courseEndTime");
-
+            
             entity.setBeginTime(sdf.parse(courseDate + " " + courseBeginTime));
             entity.setEndTime(sdf.parse(courseDate + " " + courseEndTime));
-
+            	
+            //判断房间是否被其他课程使用
+//          if(StringUtils.isNotEmpty(entity.getRoomId())){
+//	            String roomIdArray[]=entity.getRoomId().split(",");
+//	            String id="";
+//	            String roomId=null;	        
+//            	for(int j=0;j<roomIdArray.length;j++){
+//            		roomId=roomIdArray[j];
+//            		List lists = thisService.doQuerySql("EXECUTE TRAIN_P_ISUSESITE '"+id+"','"+roomId+"'");
+//            		if("0".equals(lists.get(0).toString())){
+//            			writeJSON(response, jsonBuilder.returnSuccessJson("\"该教室在此时间段内，已被其他课程使用！\""));
+//            			return;
+//            		}
+//            	}
+//            }
+            
             entity = thisService.doAddEntity(entity, teachType, currentUser);// 执行增加方法
             if (ModelUtil.isNotNull(entity))
                 writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));

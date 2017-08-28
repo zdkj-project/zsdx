@@ -266,10 +266,14 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 
 		// 所有的教学形式字典项
 		Map<String, String> mapTeachType = new HashMap<>();
-		String hql = " from BaseDicitem where dicCode='TEACHTYPE'";
+		Map<String, String> mapClassGroup = new HashMap<>();
+		String hql = " from BaseDicitem where dicCode in ('TEACHTYPE','CLASSGROUP')";
 		List<BaseDicitem> listTeachType = dicitemService.doQuery(hql);
 		for (BaseDicitem baseDicitem : listTeachType) {
-			mapTeachType.put(baseDicitem.getItemName(), baseDicitem.getItemCode());
+			if(baseDicitem.getDicCode().equals("TEACHTYPE"))
+				mapTeachType.put(baseDicitem.getItemName(), baseDicitem.getItemCode());
+			else
+				mapClassGroup.put(baseDicitem.getItemName(), baseDicitem.getItemCode());
 		}
 
 		// 查询未分类的id
@@ -300,6 +304,8 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 		String courseName = null;
 		// String courseMode = null;
 		String courseCredits = null;
+		String isOptional = null;	
+		String classGroup = null;
 		TrainCourseinfo trainCourseInfo = null;
 		for (int i = 0; i < importData.size(); i++) {
 
@@ -318,7 +324,9 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 				courseName = String.valueOf(lo.get(4));
 				teacheName = String.valueOf(lo.get(5));
 				courseCredits = String.valueOf(lo.get(7));
-
+				isOptional = String.valueOf(lo.get(8));
+				classGroup = String.valueOf(lo.get(9));
+				
 				title = courseName;
 				doResult = "导入成功"; // 默认是成功
 				isError = false;
@@ -338,7 +346,9 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 				tcs.setIsEval(String.valueOf(lo.get(6)).equals("是") ? 1 : 0);
 				tcs.setIsDelete(isDelete); // 设置isdelete为特定的值。
 				tcs.setCredits(Integer.valueOf(courseCredits));
-
+				tcs.setIsOptional(String.valueOf(isOptional).equals("是") ? 1 : 0);	//课程是否选修课
+				tcs.setClassGroup(mapClassGroup.get(classGroup));	//课程分班
+				
 				// 查询课程表中是否存在 课程名、教师名一致的课程
 				trainCourseInfo = trainCourseinfoService.getByProerties(
 						new String[] { "courseName", "mainTeacherName", "isDelete" },

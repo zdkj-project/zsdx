@@ -19,6 +19,7 @@ Ext.define("core.train.alleval.controller.MainController", {
         "basegrid[xtype=alleval.maingrid]": {
         	afterrender: function (grid, eOpts) {
                 var btngridExport = grid.down("button[ref=gridExport]");
+                console.log(btngridExport);
                 var roleKey = comm.get("roleKey");
                 if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PXPJMANGER") == -1) {
                	 btngridExport.setHidden(true);
@@ -27,7 +28,10 @@ Ext.define("core.train.alleval.controller.MainController", {
             //列表点击事件
             beforeitemclick: function (grid, record, item, index, e, eOpts) {
                 var self = this;
+
+              
                 var mainLayout = grid.up("panel[xtype=alleval.mainlayout]");
+                
                 var filter = "[{'type':'string','comparison':'=','value':'" + record.get("uuid") + "','field':'classId'}]";
                 var funData = mainLayout.funData;
                 funData = Ext.apply(funData, {
@@ -44,7 +48,15 @@ Ext.define("core.train.alleval.controller.MainController", {
                     classId: record.get("uuid"),
                     orderSql: " order by ranking asc "
                 };
-                store.load(); // 给form赋值
+                store.load(function( records ){
+                    var btngridExport = mainLayout.down("basegrid[xtype=alleval.maingrid] button[ref=gridExport]");
+                    if(records.length==0){                    
+                        btngridExport.setDisabled(true);                        
+                    }else{
+                        btngridExport.setDisabled(false);  
+                    }
+                   
+                }); 
                 return false;
             }
         },

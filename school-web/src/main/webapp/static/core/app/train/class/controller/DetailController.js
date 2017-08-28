@@ -192,19 +192,26 @@ Ext.define("core.train.class.controller.DetailController", {
             beforeclick:function(btn){
                 var self=this;
 
+
+                var detPanel = btn.up("basepanel[xtype=class.classdetaillayout]");
+                var baseform=btn.up("baseform[xtype=class.detailform]");
+                var formObj = baseform.getForm();
+
+                var params = self.getFormValue(formObj);
+                //如果勾选了考勤，则清除规则的参数
+                if(params.needChecking==true){
+                    if(!params.checkruleId || !params.creditsruleId){
+                        self.Warning("请选择考勤规则和学分规则！");
+                        return false;
+                    }                
+                }
+
                 Ext.Msg.confirm('温馨提示', '您确定要将此信息保存入库吗？' , function(btn2, text) {
                     if (btn2 == 'yes') {
-
-                        var detPanel = btn.up("basepanel[xtype=class.classdetaillayout]");
-                        var baseform=btn.up("baseform[xtype=class.detailform]");
-                        var formObj = baseform.getForm();
-
-                        var params = self.getFormValue(formObj);
                         var funData = detPanel.funData;
                         var pkName = funData.pkName;
                         var pkField = formObj.findField(pkName);
-
-                    
+            
                         //把checkbox的值转换为数字
                         params.needChecking=params.needChecking==true?1:0;
                         params.needSynctrainee=params.needSynctrainee==true?1:0;
@@ -1037,7 +1044,7 @@ Ext.define("core.train.class.controller.DetailController", {
                 Ext.Msg.confirm('提示', title, function (btn, text) {
                     if (btn == "yes") {
                         //window.location.href = comm.get('baseUrl') + "/static/upload/template/trainee.xls";    
-                        window.open(comm.get('baseUrl') + "/static/upload/template/trainee.xls");                  
+                        window.open(comm.get('baseUrl') + "/static/upload/template/classTrainee.xls");                  
                     }
                 });
                 return false;

@@ -251,9 +251,9 @@ Ext.define("core.train.class.view.DetailForm", {
                 xtype: "textfield",
                 hidden: true
             }, {
-                beforeLabelTextTpl: "",
+                beforeLabelTextTpl: comm.get('required'),
                 allowBlank: true,
-                blankText: "考勤规则不能为空",
+               // blankText: "考勤规则不能为空",
                 columnWidth:0.25,
                 xtype: "basefuncfield",
                 refController: "", //该功能主控制器，这里重新指定为当前视图的控制器了
@@ -277,9 +277,9 @@ Ext.define("core.train.class.view.DetailForm", {
                 xtype: "textfield",
                 hidden: true
             }, {
-                beforeLabelTextTpl: "",
+                beforeLabelTextTpl: comm.get('required'),
                 allowBlank: true,
-                blankText: "学分规则不能为空",
+                //blankText: "学分规则不能为空",
                 columnWidth: 0.25,
                 xtype: "basefuncfield",
                 refController: "", //该功能主控制器，这里重新指定为当前视图的控制器了

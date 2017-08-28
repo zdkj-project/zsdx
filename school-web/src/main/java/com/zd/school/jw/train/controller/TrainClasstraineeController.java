@@ -681,7 +681,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		}
 		
 		//获取该班级下所有学员的学分成绩
-		List<Map<String, Object>> classTrainCreditList = thisService.getClassTraineeCreditsListInClass(classId);
+		List<Map<String, Object>> classTrainCreditList = new ArrayList<>();
 		sql="SELECT classTraineeId,className,courseName,courseDate,courseTime,courseCredits,changeCredits,realCredits FROM dbo.TRAIN_V_CLASSTRAINEECREDITS WHERE classId='" + classId +"' order by xm asc";
 		classTrainCreditList = thisService.getForValuesToSql(sql);
 		

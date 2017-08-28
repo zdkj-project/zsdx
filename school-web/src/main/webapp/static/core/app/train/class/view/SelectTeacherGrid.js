@@ -53,6 +53,7 @@ Ext.define("core.train.class.view.SelectTeacherGrid", {
         },
         listeners: {
             drop: function(node, data, dropRec, dropPosition) {
+                 var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
                 //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
                 //Ext.example.msg("Drag from right to left", 'Dropped ' + data.records[0].get('name') + dropOn);
             },

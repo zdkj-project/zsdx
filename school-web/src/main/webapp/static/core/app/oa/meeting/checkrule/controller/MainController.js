@@ -44,6 +44,31 @@ Ext.define("core.oa.meeting.checkrule.controller.MainController", {
                 }
             }
         },
+
+        "basegrid[xtype=checkrule.maingrid] button[ref=gridDelete]": {
+            beforeclick: function(btn) {
+                var self=this;
+
+                var baseGrid = btn.up("basegrid");
+             
+                //得到选中数据
+                var records = baseGrid.getSelectionModel().getSelection();
+                if (records.length > 0) {
+                    var mark=0;
+                    Ext.each(records, function(rec) {                       
+                        if(rec.get("startUsing")==1){                            
+                            mark=1;
+                            return;
+                        }
+                    });
+                    if(mark==1){
+                        self.Info("不能删除已启用的规则！");
+                        return false;
+                    }
+                }
+                
+            }
+        },
         /**
          * 设置规则的启用与禁用
          */
@@ -56,21 +81,26 @@ Ext.define("core.oa.meeting.checkrule.controller.MainController", {
 
                 var records = baseGrid.getSelectionModel().getSelection();
                 if (records.length != 1) {
-                    self.Warning("请选择数据!");
+                    self.Warning("请选择一条规则!");
                     return;
                 }
 
                 var uuid = records[0].get("uuid");
                 var startUsing=records[0].get("startUsing");
                 
-                Ext.MessageBox.confirm('温馨提示', '你确定要设置启用/禁用状态吗？', function(btn, text) {
+                if(startUsing==1){
+                    self.Warning("此规则已被启用，不必重复启用!");
+                    return;
+                }
+                Ext.MessageBox.confirm('温馨提示', '你确定要设置规则为启用状态吗？', function(btn, text) {
                     if (btn == 'yes') {
                         Ext.Msg.wait('正在执行中,请稍后...', '温馨提示');
                         self.asyncAjax({
                             url: comm.get("baseUrl")  + "/OaMeetingcheckrule/doUse",
                             params: {
                                 uuid:uuid,
-                                startUsing:startUsing==1?0:1                   
+                                startUsing:1
+                                //startUsing:startUsing==1?0:1                   
                             },
                             timeout:1000*60*60, //1个小时
                             //回调代码必须写在里面
@@ -93,7 +123,7 @@ Ext.define("core.oa.meeting.checkrule.controller.MainController", {
                         });  
                     }
                 });
-                // return false;
+                return false;
             }
         },
 

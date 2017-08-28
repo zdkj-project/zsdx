@@ -304,6 +304,41 @@ Ext.define("core.train.class.view.CourseDetailForm", {
             displayField: 'name',
             valueField: 'value',
         }]
+    },{
+        xtype: "container",
+        layout: "column",
+        labelAlign: "right",
+        items: [{
+            beforeLabelTextTpl: comm.get('required'),
+            allowBlank: false,
+            fieldLabel: "课程分班",
+            columnWidth: 0.5,
+            name: "classGroup",
+            xtype: "basecombobox",
+            ddCode: "CLASSGROUP",
+            value:"0",
+            emptyText: "请选择课程分班",
+            editable:false
+        },{
+            beforeLabelTextTpl: comm.get('required'),
+            allowBlank: false,
+            editable:false,
+            fieldLabel: "是否选修课",
+            columnWidth: 0.5,
+            name: "isOptional",
+            xtype: 'combo',
+            store: Ext.create('Ext.data.Store', {
+                fields: ['name', 'value'],
+                data : [
+                    {"name":"是", "value":1},    
+                    {"name":"否", "value":0}
+                ]
+            }),
+            value:0,
+            queryMode: 'local',
+            displayField: 'name',
+            valueField: 'value',
+        }]
     }, {
         xtype: "container",
         layout: "column",
@@ -317,6 +352,7 @@ Ext.define("core.train.class.view.CourseDetailForm", {
             maxLength: 64,
             maxLengthText: "最多64个字符,汉字占2个字符",
         }*/
+        /* 暂时取消掉这里的选择场地功能，改为由总务处进行安排场地
          {
             columnWidth: 0.5,
             xtype: "basefuncfield",
@@ -345,6 +381,7 @@ Ext.define("core.train.class.view.CourseDetailForm", {
             xtype: "textfield",
             emptyText: "请输入房间ID",
             hidden: true
-        }]
+        }*/
+        ]
     }]
 });

@@ -91,15 +91,16 @@ Ext.define("core.oa.roomterminal.controller.MainController", {
                     var baseGrid = btn.up("basegrid");
                     var funCode = baseGrid.funCode;
                     var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+
                     //得到配置信息
                     var funData = basePanel.funData;
                     var pkName = funData.pkName;
                     //得到选中数据
                     var records = baseGrid.getSelectionModel().getSelection();
-                    var title = "将导出所有的终端信息";
+                    var title = "将导出系统中所有的终端信息";
                     var ids = new Array();
                     if (records.length > 0) {
-                        title = "将导出所选终端分配的信息";
+                        title = "将导出选择的终端分配的信息";
                         Ext.each(records, function (rec) {
                             var pkValue = rec.get(pkName);
                             ids.push(pkValue);
@@ -207,6 +208,21 @@ Ext.define("core.oa.roomterminal.controller.MainController", {
             case "addReturn":
                 title = "分配终端";
                 iconCls = "x-fa fa-plus-circle";
+
+                 //获取要分配的房间的详细信息
+                var resObj = self.ajax({
+                    url: funData.action + "/getRoomTermInfo",
+                    params: {
+                        roomId: roomId,
+                    }
+                });
+                if (resObj.success) {
+                    insertObj = resObj.obj;
+                } else {
+                    if (!Ext.isEmpty(resObj.obj)) self.msgbox(resObj.obj);
+                    return;
+                }
+
                 break;
             case "edit":
                 title = "编辑";
@@ -277,18 +293,7 @@ Ext.define("core.oa.roomterminal.controller.MainController", {
         var objDetForm = null;
         var detailPanel = win.down("basepanel[funCode=" + detCode + "]");
         var objDetailForm = detailPanel.down("panel[xtype=" + itemXtype + "]");
-        //获取要分配的房间的详细信息
-        var resObj = self.ajax({
-            url: funData.action + "/getRoomTermInfo",
-            params: {
-                roomId: roomId,
-            }
-        });
-        if (resObj.success) {
-            insertObj = resObj.obj;
-        } else {
-            if (!Ext.isEmpty(resObj.obj)) self.msgbox(resObj.obj);
-        }
+       
         var detailForm = objDetailForm.getForm();
         self.setFormValue(detailForm, insertObj);
         // if (cmd == "read")

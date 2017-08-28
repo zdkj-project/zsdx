@@ -101,7 +101,7 @@ Ext.define('core.main.view.Viewport', {
                                 if(currentResult.children.length>0){
                                     //递归查询子菜单
                                     var isExist=searchChild(currentResult.children,code);
-                                    if(isExist==true){
+                                    if(isExist==true){                                    
                                         currentMenu.push(myDeskMenu[i]);
                                         break;
                                     }

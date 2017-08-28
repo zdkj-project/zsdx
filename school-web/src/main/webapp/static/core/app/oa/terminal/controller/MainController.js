@@ -175,7 +175,7 @@ Ext.define("core.oa.terminal.controller.MainController", {
                 baseGrid = btn.up("basegrid");
             } else {
                 baseGrid = grid;
-                recordData = record.data;
+                recordData = record.getData();
             }
 
             //得到组件
@@ -206,6 +206,11 @@ Ext.define("core.oa.terminal.controller.MainController", {
             var tabItemId=funCode+"_gridAdd";     //命名规则：funCode+'_ref名称',确保不重复
             var pkValue= null;
             var operType = cmd;    // 只显示关闭按钮
+            var itemXtype=[{
+                xtype:detLayout,                        
+                funCode: detCode,             
+            }];
+
             switch (cmd) {
                 case "edit":
                     if (btn) {
@@ -214,7 +219,7 @@ Ext.define("core.oa.terminal.controller.MainController", {
                             self.msgbox("请选择一条数据！");
                             return;
                         }
-                        recordData = rescords[0].data;
+                        recordData = rescords[0].getData();
                     }
                     //获取主键值
                     var pkName = funData.pkName;
@@ -231,7 +236,7 @@ Ext.define("core.oa.terminal.controller.MainController", {
                             self.msgbox("请选择一条数据！");
                             return;
                         }
-                        recordData = rescords[0].data;
+                        recordData = rescords[0].getData();
                     }
                     //获取主键值
                     var pkName = funData.pkName;
@@ -239,6 +244,15 @@ Ext.define("core.oa.terminal.controller.MainController", {
                     insertObj = recordData;
                     tabTitle =  funData.tabConfig.detailTitle;
                     tabItemId=funCode+"_gridDetail"+pkValue; 
+
+                    itemXtype=[{
+                        xtype:detLayout,                        
+                        funCode: detCode,
+                        items: [{
+                            xtype: "terminal.detailhtml"
+                        }]          
+                    }];
+
                     break;
             }
 
@@ -268,20 +282,31 @@ Ext.define("core.oa.terminal.controller.MainController", {
                         tabItemId:tabItemId,                //指定tab页的itemId
                         insertObj:insertObj,                //保存一些需要默认值，提供给提交事件中使用
                         funData: popFunData,                //保存funData数据，提供给提交事件中使用
-                        items:[{
-                            xtype:detLayout,                        
-                            funCode: detCode             
-                        }]
+                        items:itemXtype
                     }); 
                     tabItem.add(item);  
                    
-                    //将数据显示到表单中（或者通过请求ajax后台数据之后，再对应的处理相应的数据，显示到界面中）             
-                    var objDetForm = item.down("baseform[funCode=" + detCode + "]");
-                    var formDeptObj = objDetForm.getForm();
-                    self.setFormValue(formDeptObj, insertObj);
-
+                 
                     if(cmd=="detail"){
-                        self.setFuncReadOnly(funData, objDetForm, true);
+                        //self.setFuncReadOnly(funData, objDetForm, true);
+                        var ddItem = factory.DDCache.getItemByDDCode("INFOTERTYPE");                      
+                        var value=insertObj.termType;
+                        for (var j = 0; j < ddItem.length; j++) {
+                            var ddObj = ddItem[j];
+                            if (value == ddObj["itemCode"]) {
+                                insertObj.termType = ddObj["itemName"];
+                                break;
+                            }
+                        }
+
+                        var detailHtml = item.down("container[xtype=terminal.detailhtml]");
+                        detailHtml.setData(insertObj);
+                        console.log(insertObj);
+                    }else{
+                        //将数据显示到表单中（或者通过请求ajax后台数据之后，再对应的处理相应的数据，显示到界面中）             
+                        var objDetForm = item.down("baseform[funCode=" + detCode + "]");
+                        var formDeptObj = objDetForm.getForm();
+                        self.setFormValue(formDeptObj, insertObj);
                     }
                 },30);
                                

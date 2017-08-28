@@ -90,7 +90,7 @@ Ext.define("core.train.class.view.ClassStudentGrid", {
             text: "姓名",
             dataIndex: "xm",
         }, {
-            width: 80,
+            width: 60,
             text: "性别",
             dataIndex: "xbm",
             columnType: "basecombobox", //列类型
@@ -102,7 +102,7 @@ Ext.define("core.train.class.view.ClassStudentGrid", {
             columnType: "basecombobox", //列类型
             ddCode: "MZM" //字典代码    
         }, {
-            width: 120,
+            width: 100,
             text: "职务",
             dataIndex: "position",
         }, {
@@ -116,12 +116,12 @@ Ext.define("core.train.class.view.ClassStudentGrid", {
             text: "身份证件号",
             dataIndex: "sfzjh",
         }, */{
-            width: 120,
+            width: 100,
             text: "手机号码",
             dataIndex: "mobilePhone",
         }, {
             flex: 1,
-            minWidth: 150,
+            minWidth: 120,
             text: "所在单位",
             dataIndex: "workUnit",
             renderer: function (value, metaData) {
@@ -137,7 +137,13 @@ Ext.define("core.train.class.view.ClassStudentGrid", {
             columnType: "basecombobox", //列类型
             ddCode: "TRAINEECATEGORY" //字典代码
         },{
-            width: 150,
+            width: 80,
+            text: "学员分班",
+            dataIndex: "classGroup",
+            columnType: "basecombobox", //列类型
+            ddCode: "CLASSGROUP" //字典代码
+        },{
+            width: 125,
             text: "更新时间",
             dataIndex: "updateTime",
             renderer: function(value, metaData) {

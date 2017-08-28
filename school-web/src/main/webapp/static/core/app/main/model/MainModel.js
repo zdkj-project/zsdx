@@ -98,7 +98,7 @@ Ext.define('core.main.model.MainModel', {
             "issystem": 1
         },
         {
-            "parent": "db1a7814-9928-42cf-911a-4924ccc48d75",
+            "parent": "4461a88a-59ef-4a40-be2c-b75b6b4bb001",
             "menuLeaf": "LEAF",
             "bigIcon": "/static/core/resources/images/icon/peixunanpai.png",
             "level": 2,
@@ -152,7 +152,7 @@ Ext.define('core.main.model.MainModel', {
             "orderIndex": 1,
             "menuType": "FUNC",
             "smallIcon": "icon_huiyiguanli",
-            "id": "5d65c9b9-424c-48f0-a1de-834e88d370af",
+            "id": "24f9ec34-0bab-4afb-8f55-c5bf8c5c9cac",
             "text": "会议管理",
             "iconCls": "",
             "issystem": 1

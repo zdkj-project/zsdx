@@ -74,6 +74,8 @@ Ext.define('core.main.view.menu.MainMenuIcon', {
             }
         });            
 
+        iconStore.loadData(me.datas);
+        me.store=iconStore;
 
         this.callParent(arguments);  
     },
