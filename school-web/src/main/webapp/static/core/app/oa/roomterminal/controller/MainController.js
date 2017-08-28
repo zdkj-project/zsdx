@@ -208,6 +208,21 @@ Ext.define("core.oa.roomterminal.controller.MainController", {
             case "addReturn":
                 title = "分配终端";
                 iconCls = "x-fa fa-plus-circle";
+
+                 //获取要分配的房间的详细信息
+                var resObj = self.ajax({
+                    url: funData.action + "/getRoomTermInfo",
+                    params: {
+                        roomId: roomId,
+                    }
+                });
+                if (resObj.success) {
+                    insertObj = resObj.obj;
+                } else {
+                    if (!Ext.isEmpty(resObj.obj)) self.msgbox(resObj.obj);
+                    return;
+                }
+
                 break;
             case "edit":
                 title = "编辑";
@@ -278,18 +293,7 @@ Ext.define("core.oa.roomterminal.controller.MainController", {
         var objDetForm = null;
         var detailPanel = win.down("basepanel[funCode=" + detCode + "]");
         var objDetailForm = detailPanel.down("panel[xtype=" + itemXtype + "]");
-        //获取要分配的房间的详细信息
-        var resObj = self.ajax({
-            url: funData.action + "/getRoomTermInfo",
-            params: {
-                roomId: roomId,
-            }
-        });
-        if (resObj.success) {
-            insertObj = resObj.obj;
-        } else {
-            if (!Ext.isEmpty(resObj.obj)) self.msgbox(resObj.obj);
-        }
+       
         var detailForm = objDetailForm.getForm();
         self.setFormValue(detailForm, insertObj);
         // if (cmd == "read")

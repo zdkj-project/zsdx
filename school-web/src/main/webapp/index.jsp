@@ -77,10 +77,6 @@
   
 </script>
     
-<script type="text/javascript"  src="${contextPath}/ueditor/ueditor.config.js"></script>
-<script type="text/javascript"  src="${contextPath}/ueditor/ueditor.all.min.js"></script>
-<script type="text/javascript"  src="${contextPath}/ueditor/ueditor.parse.min.js"></script>
-
 </body>
 
 </html>
