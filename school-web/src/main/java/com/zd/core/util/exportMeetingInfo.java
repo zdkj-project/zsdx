@@ -703,7 +703,7 @@ public class exportMeetingInfo {
   					
   					// 第1行
   					sheet.getRow(3).getCell(0).setCellValue("性别");
-  					sheet.getRow(3).getCell(1).setCellValue((xbm.equals("1"))?"男":"女");
+  					sheet.getRow(3).getCell(1).setCellValue(xbm);
   					sheet.addMergedRegion(new CellRangeAddress(3, 3, 1, 6));
 
   					// 第2行

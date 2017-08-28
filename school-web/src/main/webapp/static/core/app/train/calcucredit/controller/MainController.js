@@ -67,10 +67,17 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                 var self = this;
                 var baseGrid = btn.up("basegrid");
                 var records = baseGrid.getSelectionModel().getSelection();
+                var mainlayout=baseGrid.up("panel[xtype=calcucredit.mainlayout]");
+                var traineesGrid=mainlayout.down("panel[xtype=calcucredit.traineesgrid]");
                 if (records.length != 1) {
                     self.Warning("只能按班级导出，请重新选择");
                     return false;
                 }
+                if (traineesGrid.getStore().data.length == 0) {
+                    self.Warning("请选择有学员数据的班级");
+                    return false;
+                }
+                
                 var record = records[0].data;
                 var title = "确定要导出此班级学员的学分信息吗？";
                 Ext.Msg.confirm('提示', title, function (btn, text) {

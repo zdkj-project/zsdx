@@ -656,6 +656,16 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		Integer[] columnWidth = new Integer[] { 10,30, 30, 20, 20, 20, 20 };
 		Integer[] headColumnWidth = new Integer[] { 10,15, 15, 25, 25, 25, 30 };
 		
+		//数据字典项
+		String mapKey = null;
+		String[] propValue = { "XBM", "HEADSHIPLEVEL" };
+		Map<String, String> mapDicItem = new HashMap<>();
+		List<BaseDicitem> listDicItem = dicitemService.queryByProerties("dicCode", propValue);
+		for (BaseDicitem baseDicitem : listDicItem) {
+			mapKey = baseDicitem.getItemCode() + baseDicitem.getDicCode();
+			mapDicItem.put(mapKey, baseDicitem.getItemName());
+		}
+		
 		//获取班级所有学员信息
 		List<Map<String, Object>> classTraineetList = new ArrayList<>();
 		String sql="select CLASS_TRAINEE_ID,XM,XBM,MOBILE_PHONE,WORK_UNIT,POSITION,HEADSHIP_LEVEL from TRAIN_T_CLASSTRAINEE where ISDELETE=0 AND CLASS_ID='" + classId +"' order by xm asc";
@@ -671,10 +681,10 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			classTraineeIdList.add(String.valueOf(list.get("CLASS_TRAINEE_ID")));
 			traineeMap.put("xh", String.valueOf(j++));
 			traineeMap.put("xm", String.valueOf(list.get("XM")));
-			traineeMap.put("xb", String.valueOf(list.get("XBM")));
+			traineeMap.put("xb", mapDicItem.get(String.valueOf(list.get("XBM")) + "XBM"));
 			traineeMap.put("phone", String.valueOf(list.get("MOBILE_PHONE")));
 			traineeMap.put("position", String.valueOf(list.get("POSITION")));
-			traineeMap.put("headShipLevel", String.valueOf(list.get("HEADSHIP_LEVEL")));
+			traineeMap.put("headShipLevel", mapDicItem.get(String.valueOf(list.get("HEADSHIP_LEVEL")) + "HEADSHIPLEVEL"));
 			traineeMap.put("workUnit", String.valueOf(list.get("WORK_UNIT")));
 			traineeMap.put("classTraineeId", String.valueOf(list.get("CLASS_TRAINEE_ID")));
 			traineeList.add(traineeMap);
