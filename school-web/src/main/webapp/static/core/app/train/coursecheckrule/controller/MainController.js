@@ -26,7 +26,76 @@ Ext.define("core.train.coursecheckrule.controller.MainController", {
                 btnDelete.setHidden(true);
                 btngridStartUsing.setHidden(true);
             }
-        }
+        },
+		beforeitemclick: function(grid, record, item, index, e, eOpts) {
+			var basePanel = grid.up("basepanel");
+			var funCode = basePanel.funCode;
+			var baseGrid = basePanel.down("basegrid[funCode=" + funCode + "]");
+			var records = baseGrid.getSelectionModel().getSelection();
+			var btnEdit = baseGrid.down("button[ref=gridEdit]");
+			var btnDelete = baseGrid.down("button[ref=gridDelete]");
+			var btnDetail = baseGrid.down("button[ref=gridDetail]");
+			var btnStartUsing = baseGrid.down("button[ref=gridStartUsing]");
+			
+            var btnEdit_Tab = baseGrid.down("button[ref=gridEdit_Tab]");
+            var btnDetail_Tab = baseGrid.down("button[ref=gridDetail_Tab]");
+            var StartUsing=false;
+
+			if (records.length == 0) {
+				if (btnEdit)
+					btnEdit.setDisabled(true);
+				if (btnDelete)
+					btnDelete.setDisabled(true);
+				if (btnDetail)
+					btnDetail.setDisabled(true);
+
+                if (btnEdit_Tab)
+                    btnEdit_Tab.setDisabled(true);
+                if (btnDetail_Tab)
+                    btnDetail_Tab.setDisabled(true);
+
+			} else if (records.length == 1) {
+				if (record.data.startUsing == 1) {
+	            	btnStartUsing.setDisabled(true);
+	            	btnDelete.setDisabled(true);
+	            }else{
+	            	btnStartUsing.setDisabled(false);
+	            	btnDelete.setDisabled(false);
+	            }
+				if (btnEdit)
+					btnEdit.setDisabled(false);
+				if (btnDetail)
+					btnDetail.setDisabled(false);
+
+                if (btnEdit_Tab)
+                    btnEdit_Tab.setDisabled(false);
+                if (btnDetail_Tab)
+                    btnDetail_Tab.setDisabled(false);
+                
+			} 
+			if (records.length > 1){
+				if (btnEdit)
+					btnEdit.setDisabled(true);
+				for(var i=0;i<records.length;i++){
+					if(records[i].data.startUsing==1){
+						StartUsing=true;
+					}
+				}
+				if (btnDelete)
+					btnDelete.setDisabled(StartUsing);
+				if (btnStartUsing)
+					btnStartUsing.setDisabled(StartUsing);
+				if (btnDetail)
+					btnDetail.setDisabled(true);
+
+                if (btnEdit_Tab)
+                    btnEdit_Tab.setDisabled(true);
+                if (btnDetail_Tab)
+                    btnDetail_Tab.setDisabled(true);
+			}
+			 return false;
+		}
+        
     },
         "basegrid button[ref=gridAdd_Tab]": {
             beforeclick: function(btn) {

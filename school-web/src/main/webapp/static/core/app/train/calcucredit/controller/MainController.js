@@ -55,7 +55,15 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                     orderSql: " order by createTime asc ",
                     filter: filter
                 };
-                store.load(); // 给form赋值
+                store.load(function( records ){
+                    var btngridExport = mainLayout.down("basegrid[xtype=calcucredit.maingrid] button[ref=gridExport]");
+                    if(records.length==0){                    
+                        btngridExport.setDisabled(true);                        
+                    }else{
+                        btngridExport.setDisabled(false);  
+                    }
+                   
+                }); 
                 return false;
             }
         },

@@ -526,12 +526,10 @@ public class PoiExportExcel {
                 sheetName = "教学组";
 
             for (String isSheet : mapSheetName.values()) {
-                if (sheetName == isSheet)
-                    sheetNameCount++;
-            }
-            if (sheetNameCount > 0) {
-                sheetName += String.valueOf(sheetNameCount);
-                sheetNameCount = 0;
+                if (sheetName == isSheet) {
+                	sheetNameCount++;
+                	sheetName += String.valueOf(sheetNameCount);
+                }
             }
             mapSheetName.put(classScheduleId, sheetName);
             int iColumn = headArray.length;

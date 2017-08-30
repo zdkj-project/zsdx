@@ -291,31 +291,36 @@ public class TrainClassevalresultController extends FrameWorkController<TrainCla
      */
     @RequestMapping("/exportEvalExcel")
     public void exportEvalExcel(String ids,HttpServletRequest request,HttpServletResponse response) throws Exception{
-        request.getSession().setAttribute("exportAllEvalIsEnd", "0");
-        request.getSession().removeAttribute("exportAllEvalIsState");
-        String orderSql = " order by ranking asc ";
-        TrainClassEval trainClass = classService.getClassEvalInfo(ids);
-        List<Map<String, Object>> allList = new ArrayList<>();
-        //班级课程评价的排名信息
-        Map<String, Object> mapCourseRanking = classevalresultService.getExportRankingData(ids);
-        allList.add(mapCourseRanking);
+        try {
+			request.getSession().setAttribute("exportAllEvalIsEnd", "0");
+			request.getSession().removeAttribute("exportAllEvalIsState");
+			String orderSql = " order by ranking asc ";
+			TrainClassEval trainClass = classService.getClassEvalInfo(ids);
+			List<Map<String, Object>> allList = new ArrayList<>();
+			//班级课程评价的排名信息
+			Map<String, Object> mapCourseRanking = classevalresultService.getExportRankingData(ids);
+			allList.add(mapCourseRanking);
 
-        //班级课程的评价结果
-        List<Map<String, Object>> mapCourseEval = classevalresultService.getClassCourseEvalResult(ids, orderSql);
-        allList.addAll(mapCourseEval);
+			//班级课程的评价结果
+			List<Map<String, Object>> mapCourseEval = classevalresultService.getClassCourseEvalResult(ids, orderSql);
+			allList.addAll(mapCourseEval);
 
-        //班级评价信息
-        Map<String, Object> mapOneClass = classevalresultService.getClassEvalResult(ids, trainClass);
-        allList.add(mapOneClass);
+			//班级评价信息
+			Map<String, Object> mapOneClass = classevalresultService.getClassEvalResult(ids, trainClass);
+			allList.add(mapOneClass);
 
-        // 在导出方法中进行解析
-        boolean result = PoiExportExcel.exportAllEvalExcel(response, "培训评价", trainClass.getClassName(), allList);
-        if (result == true) {
-            request.getSession().setAttribute("exportAllEvalIsEnd", "1");
-        } else {
-            request.getSession().setAttribute("exportAllEvalIsEnd", "0");
-            request.getSession().setAttribute("exportAllEvalIsState", "0");
-        }
+			// 在导出方法中进行解析
+			boolean result = PoiExportExcel.exportAllEvalExcel(response, "培训评价", trainClass.getClassName(), allList);
+			if (result == true) {
+			    request.getSession().setAttribute("exportAllEvalIsEnd", "1");
+			} else {
+			    request.getSession().setAttribute("exportAllEvalIsEnd", "0");
+			    request.getSession().setAttribute("exportAllEvalIsState", "0");
+			}
+		} catch (Exception e) {
+			request.getSession().setAttribute("exportAllEvalIsEnd", "0");
+		    request.getSession().setAttribute("exportAllEvalIsState", "0");
+		}
     }
 
     /**
