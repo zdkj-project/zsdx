@@ -1092,26 +1092,12 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		request.getSession().removeAttribute("exportCourseCheckIsState");
 
 		SimpleDateFormat fmtDate = new SimpleDateFormat("yyyy年MM月dd日");
-		SimpleDateFormat fmtDateWeek = new SimpleDateFormat("yyyy年M月d日 （E）");
 		SimpleDateFormat fmtTime = new SimpleDateFormat("h:mm");
 
-		Map<String, String> mapHeadshipLevel = new HashMap<>();
-		Map<String, String> mapXbm = new HashMap<>();
 		Map<String, String> mapClassCategory = new HashMap<>();
-		Map<String, String> mapMzmCategory = new HashMap<>();
-		Map<String, String> mapTraineeCategory = new HashMap<>();
-		String hql1 = " from BaseDicitem where dicCode in ('HEADSHIPLEVEL','XBM','ZXXBJLX','TRAINEECATEGORY','MZM')";
+		String hql1 = " from BaseDicitem where dicCode in ('ZXXBJLX')";
 		List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
 		for (BaseDicitem baseDicitem : listBaseDicItems1) {
-			if (baseDicitem.getDicCode().equals("XBM"))
-				mapXbm.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
-			else if (baseDicitem.getDicCode().equals("HEADSHIPLEVEL"))
-				mapHeadshipLevel.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
-			else if (baseDicitem.getDicCode().equals("MZM"))
-				mapMzmCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
-			else if (baseDicitem.getDicCode().equals("TRAINEECATEGORY"))
-				mapTraineeCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
-			else
 				mapClassCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
 		}
 
@@ -1151,7 +1137,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				// 4.班级学员信息
 				List<Map<String,Object>> voTrainClassCheckList = null;
 				List<String> classScheduleIdList = new ArrayList<>();
-				sql="SELECT xm,classTraineeId,classScheduleId,incardTime,outcardTime,attendResult FROM TRAIN_V_CHECKRESULT WHERE classId='" + ids +"'"+" order by classScheduleId asc";
+				sql="SELECT xm,classTraineeId,incardTime,outcardTime,attendResult FROM TRAIN_V_CHECKRESULT WHERE classId='" + ids +"'"+" order by classScheduleId asc";
 				voTrainClassCheckList = trainClasstraineeService.getForValuesToSql(sql);
 				int voTrainClassCheckListCount = voTrainClassCheckList.size();
 				
@@ -1166,8 +1152,16 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 						lists.add(String.valueOf(i+1));
 						lists.add(String.valueOf(tcc.get("xm")));
 					}
-					lists.add(String.valueOf(tcc.get("incardTime")));
-					lists.add(String.valueOf(tcc.get("outcardTime")));
+					String incardTime=String.valueOf(tcc.get("incardTime"));
+					if(incardTime.equals("null")==false) {
+						incardTime=incardTime.substring(11, incardTime.lastIndexOf("."));
+					}
+					String outcardTime=String.valueOf(tcc.get("outcardTime"));
+					if(outcardTime.equals("null")==false) {
+						outcardTime=outcardTime.substring(11, outcardTime.lastIndexOf("."));
+					}
+					lists.add(incardTime);
+					lists.add(outcardTime);
 					lists.add(String.valueOf(tcc.get("attendResult")));
 					
 					traineeResult.put(String.valueOf(tcc.get("classTraineeId")), lists);
