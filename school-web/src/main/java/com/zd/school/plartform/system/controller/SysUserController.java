@@ -566,11 +566,18 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 					+ "u.SFZJH AS identifier,'1' AS cardState, " // cardState
 																	// 和 sid
 																	// 都置默认值，现在不做特定的处理
-					+ "'' as sid,org.EXT_FIELD04 as departmentId,job.JOB_NAME as jobName  "
+					+ "'' as sid,org.EXT_FIELD04 as departmentId,"
+					//+ "job.JOB_NAME as jobName  "	不使用这个job数据了，转而使用编制来判断是否为合同工
+					+"("
+					+ "	select ITEM_NAME from BASE_T_DICITEM "
+					+ "		where ITEM_CODE=u.ZXXBZLB "
+					+ "			and DIC_ID= (select top 1 DIC_ID from BASE_T_DIC where DIC_CODE='ZXXBZLB')"
+					+ ") as jobName "
 					+ " from SYS_T_USER u" + " join BASE_T_ORG org on "
 					+ "		(select top 1 DEPT_ID from BASE_T_UserDeptJOB where USER_ID=u.USER_ID and ISDELETE=0 order by master_dept desc,CREATE_TIME desc)=org.dept_ID "
-					+ " join BASE_T_JOB job on "
-					+ "		(select top 1 JOB_ID from BASE_T_UserDeptJOB where USER_ID=u.USER_ID and ISDELETE=0 order by master_dept desc,CREATE_TIME desc)=job.JOB_ID "
+					//+ " join BASE_T_JOB job on "
+					//+ "		(select top 1 JOB_ID from BASE_T_UserDeptJOB where USER_ID=u.USER_ID and ISDELETE=0 order by master_dept desc,CREATE_TIME desc)=job.JOB_ID "
+					+ " where xm not like '%管理员%' and XM not Like '%测试%' and XM not like '%test%'"
 					+ " order by userId asc";
 
 			List<SysUserToUP> userInfos = thisService.doQuerySqlObject(sql, SysUserToUP.class);

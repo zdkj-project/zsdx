@@ -19,13 +19,13 @@ Ext.define("core.systemset.jobinfo.view.jobinfoGrid", {
             funCode:'girdFuntionBtn',   //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             disabled:true,
             iconCls: 'x-fa fa-pencil-square'
-        }, {
+        }/*, {
             xtype: 'button',
             text: '同步数据',
             ref: 'sync',
             funCode:'girdFuntionBtn',         
             iconCls: 'x-fa fa-rss'
-        },{
+        }*/,{
             xtype: 'button',
             text: '删除',
             ref: 'gridDelete',

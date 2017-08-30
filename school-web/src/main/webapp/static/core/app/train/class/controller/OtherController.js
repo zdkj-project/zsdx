@@ -215,10 +215,10 @@ Ext.define("core.train.class.controller.OtherController", {
         },
 
         "baseformtab[detCode=class_addCourseDetail] button[ref=formSave]": {
-        	beforeclick: function (btn) {
-        		var self=this;
+            beforeclick: function (btn) {
+                var self=this;
                 //得到组件
-        		var basetab = btn.up('baseformtab');
+                var basetab = btn.up('baseformtab');
                 var tabPanel = btn.up("tabpanel[xtype=app-main]");
                 var tabItemId = basetab.tabItemId;
                 var tabItem = tabPanel.getComponent(tabItemId);   //当前tab页
@@ -1047,13 +1047,13 @@ Ext.define("core.train.class.controller.OtherController", {
                     });
                     loading.show();
 
-                    // self.asyncAjax({
-                    //     url: funData.action + "/addSendUser",
-                    //     params: params,
-                    //     //回调代码必须写在里面
-                    //     success: function (response) {
-                    //         data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
-                    //         if (data.success) {
+                    self.asyncAjax({
+                        url: funData.action + "/addSendUser",
+                        params: params,
+                         //回调代码必须写在里面
+                        success: function (response) {
+                            data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                            if (data.success) {
                             
                                 self.asyncAjax({
                                     url: funData.action + "/doClassUse",
@@ -1067,6 +1067,12 @@ Ext.define("core.train.class.controller.OtherController", {
                                         loading.hide();
                                         if(data.success){                                                                                  
                                             self.Info(data.obj);
+                                            
+                                            var grid = basetab.funData.grid; //此tab是否保存有grid参数
+                                            if (!Ext.isEmpty(grid)) {
+                                                var store = grid.getStore();
+                                                store.loadPage(1); //刷新父窗体的grid
+                                            }           
                                             tabPanel.remove(tabItem);
                                         }else{
                                             self.Error(data.obj);
@@ -1087,16 +1093,16 @@ Ext.define("core.train.class.controller.OtherController", {
 
                                                                 loading.hide();
                                                                 tabPanel.remove(tabItem);*/
-                    //         } else {
-                    //             loading.hide();
-                    //             self.Error(data.obj);                            
-                    //         }
-                    //     },
-                    //     failure: function (response) {
-                    //         loading.hide();
-                    //         alert('数据请求出错了！！！！\n错误信息：\n' + response.responseText);
-                    //     }
-                    // });
+                            } else {
+                                loading.hide();
+                                self.Error(data.obj);                            
+                            }
+                        },
+                        failure: function (response) {
+                            loading.hide();
+                            alert('数据请求出错了！！！！\n错误信息：\n' + response.responseText);
+                        }
+                    });
 
                 } else {
                     var errors = ["前台验证失败，错误信息："];
