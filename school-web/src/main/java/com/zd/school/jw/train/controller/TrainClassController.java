@@ -434,7 +434,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			String sql = "select CLASS_TRAINEE_ID as userId,XM as employeeName,SFZJH as employeeStrId,"
 					+ "	'' as employeePwd,CASE XBM WHEN '2' THEN '0' ELSE '1' END AS sexId,"
 					+ " isDelete as isDelete,SFZJH AS identifier,'1' AS cardState, " + " '' as sid,'" + departmentId
-					+ "' as departmentId " + " from TRAIN_T_CLASSTRAINEE " + " where CLASS_ID='" + classId + "'"
+					+ "' as departmentId,'学员' as jobName " + " from TRAIN_T_CLASSTRAINEE " + " where CLASS_ID='" + classId + "'"
 					+ " order by CLASS_TRAINEE_ID asc";
 
 			List<SysUserToUP> userInfos = thisService.doQuerySqlObject(sql, SysUserToUP.class);

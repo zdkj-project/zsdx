@@ -509,17 +509,24 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			// String userId="8a8a8834533a065601533a065ae80234";
 
 			// 1.查询这个userId的最新的用户、部门信息
-			String sql = "select top 1 u.USER_ID as userId,u.XM as employeeName," + " u.user_numb as employeeStrId,"
-					+ " '' as employeePwd,CASE u.XBM WHEN '2' THEN '0' ELSE '1' END AS sexId,"
-					+ " job.JOB_NAME AS identifier,'1' AS cardState," // cardState
-																		// 和 sid
-																		// 都置默认值，现在不做特定的处理
-					+ " '' as sid,org.EXT_FIELD04 as departmentId,job.JOB_NAME as jobName "
-					+ " from SYS_T_USER as u "
-					+ " join BASE_T_UserDeptJOB udj on u.USER_ID=udj.USER_ID"
-					+ " join BASE_T_ORG org on udj.dept_ID=org.dept_ID"
-					+ " join BASE_T_JOB job on udj.job_id=job.JOB_ID" + " where u.ISDELETE=0 and udj.ISDELETE=0 "
-					+ " and u.USER_ID='" + userId + "' " + " order by udj.master_dept desc,udj.create_time asc";
+			String sql = "select top 1 u.USER_ID as userId,u.XM as employeeName, u.user_numb as employeeStrId,"
+					+ "'' as employeePwd,CASE u.XBM WHEN '2' THEN '0' ELSE '1' END AS sexId,u.isDelete as isDelete,"
+					+ "u.SFZJH AS identifier,'1' AS cardState, " // cardState
+																	// 和 sid
+																	// 都置默认值，现在不做特定的处理
+					+ "'' as sid,org.EXT_FIELD04 as departmentId,"
+					//+ "job.JOB_NAME as jobName  "	不使用这个job数据了，转而使用编制来判断是否为合同工
+					+"("
+					+ "	select ITEM_NAME from BASE_T_DICITEM "
+					+ "		where ITEM_CODE=u.ZXXBZLB "
+					+ "			and DIC_ID= (select top 1 DIC_ID from BASE_T_DIC where DIC_CODE='ZXXBZLB')"
+					+ ") as jobName "
+					+ " from SYS_T_USER u" + " join BASE_T_ORG org on "
+					+ "		(select top 1 DEPT_ID from BASE_T_UserDeptJOB where USER_ID=u.USER_ID and ISDELETE=0 order by master_dept desc,CREATE_TIME desc)=org.dept_ID "
+					//+ " join BASE_T_JOB job on "
+					//+ "		(select top 1 JOB_ID from BASE_T_UserDeptJOB where USER_ID=u.USER_ID and ISDELETE=0 order by master_dept desc,CREATE_TIME desc)=job.JOB_ID "
+					+ " where u.ISDELETE=0 and u.USER_ID='" + userId + "'";
+			
 
 			List<SysUserToUP> userInfo = thisService.doQuerySqlObject(sql, SysUserToUP.class);
 
