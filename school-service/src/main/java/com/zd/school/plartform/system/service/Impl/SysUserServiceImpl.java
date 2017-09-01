@@ -273,6 +273,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
         return qr;
     }
 
+    /*此代码已废弃*/
     @Override
 	public int syncUserInfoToUP(SysUserToUP sysUserInfo, String userId) {
 		int row = 0;
@@ -421,15 +422,29 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 						else if (!currentUser.equals(upUser)) { // 对比数据（一部分需要判断的数据）是否一致
 							//更新卡片状态
 							int cardTypeId=1;
-							if(currentUser.getJobName()!=null&&currentUser.getJobName().equals("合同工")){
-								cardTypeId=2;
+							if(currentUser.getJobName()!=null){
+								if(currentUser.getJobName().contains("合同工"))
+									cardTypeId=2;
+								else if(currentUser.getJobName().equals("学员"))
+									cardTypeId=3;
 							}
 							
 							String sqlUpdate = " update Tc_Employee set DepartmentID='" + currentUser.getDepartmentId()
 									+ "'," + "EmployeeName='" + currentUser.getEmployeeName() + "',EmployeeStrID='"
-									+ currentUser.getEmployeeStrId() + "'," + "SexID='" + currentUser.getSexId()
-									+ "',identifier='" + currentUser.getIdentifier()
-									+ "',EmployeeStatusID='24',CardTypeID="+cardTypeId+" where UserId='" + currentUser.getUserId() + "';";
+									+ currentUser.getEmployeeStrId() + "'";
+							
+							if(currentUser.getSexId()==null)
+								sqlUpdate+=",SexID=NULL";
+							else
+								sqlUpdate+=",SexID='" + currentUser.getSexId()+"'";
+							
+							if(currentUser.getIdentifier()==null)
+								sqlUpdate+=",identifier=NULL";
+							else
+								sqlUpdate+=	",identifier='" + currentUser.getIdentifier()+"'";
+									
+							sqlUpdate += ",EmployeeStatusID='24',CardTypeID="+cardTypeId+" "
+									+ " where UserId='" + currentUser.getUserId() + "';";
 
 							// this.executeSql(sqlUpdate);
 
@@ -445,15 +460,31 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				// 若上面的循环无法找到对应的人员，表明UP中不存在此用户
 				if (!isExist && currentUser.getIsDelete() != 1) {
 					int cardTypeId=1;
-					if(currentUser.getJobName()!=null&&currentUser.getJobName().equals("合同工")){
-						cardTypeId=2;
+					if(currentUser.getJobName()!=null){
+						if(currentUser.getJobName().contains("合同工"))
+							cardTypeId=2;
+						else if(currentUser.getJobName().equals("学员"))
+							cardTypeId=3;
 					}
+					
 					String sqlInsert = "insert into Tc_Employee(UserId,DepartmentID,EmployeeName,EmployeeStrID,SID,EmployeePWD,SexID,identifier,cardid,CardTypeID,EmployeeStatusID,PositionId) "
 							+ "values('" + currentUser.getUserId() + "','" + currentUser.getDepartmentId() + "','"
 							+ currentUser.getEmployeeName() + "'," + "'" + currentUser.getEmployeeStrId() + "','"
-							+ currentUser.getSid() + "','" + currentUser.getEmployeePwd() + "','"
-							+ currentUser.getSexId() + "','" + currentUser.getIdentifier() + "',0,"+cardTypeId+",24,19);";
-
+							+ currentUser.getSid() + "','" + currentUser.getEmployeePwd() + "'";
+							
+					
+					if(currentUser.getSexId()==null)
+						sqlInsert+=",NULL";
+					else
+						sqlInsert+=",'" + currentUser.getSexId()+"'";
+					
+					if(currentUser.getIdentifier()==null)
+						sqlInsert+=",NULL";
+					else
+						sqlInsert+=	",'" + currentUser.getIdentifier()+"'";
+							
+					sqlInsert += ",0,"+cardTypeId+",24,19);";
+					
 					sqlSb.append(sqlInsert);
 					// this.executeSql(sqlInsert);
 				}

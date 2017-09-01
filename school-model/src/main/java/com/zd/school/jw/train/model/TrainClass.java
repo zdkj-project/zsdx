@@ -17,7 +17,7 @@ import java.util.Date;
  * Reason: TODO ADD REASON(可选).
  * Description: 培训开班信息(TRAIN_T_CLASS)实体类.
  * date: 2017-03-07
- *
+ * 备用字段5：用来存放班级的结算单据编号（每次导出都要重新变化：例 20170830001，前缀年月日为导出时的日期，后缀三位数为这一天当前票据流水号）
  * @author luoyibo 创建文件
  * @version 0.1
  * @since JDK 1.8

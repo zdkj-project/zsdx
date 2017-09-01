@@ -15,7 +15,7 @@ public class SysUserToUP implements Serializable {
 	private String identifier;
 	private String sid;	//尚未明确SID的用处，此字段原本用于存放发卡后的卡片uuid，与CardInfo表对应，现在不使用了
 	private String departmentId;
-	private String jobName;	//用于获取用户的岗位名称，然后便于初始化卡片类型
+	private String jobName;	//用于获取用户的编制、或者是否为学员，然后便于初始化卡片类型
 	
 	private String employeePwd;
 	private String cardState;

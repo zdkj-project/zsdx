@@ -33,7 +33,15 @@ Ext.define("core.systemset.dictionary.view.itemGrid", {
 		text: '删除',
 		ref: 'gridDelete',
         iconCls: 'x-fa fa-minus-circle',
-	}],
+	},{
+        xtype: 'tbtext',
+        html: '（请慎重操作这些数据项）',
+        style: {
+            fontSize: '14px',
+            color: '#C44444',
+            fontWeight:800
+        }
+    }],
 	panelTopBar:false,
 	panelButtomBar:false,
     columns:  { 
