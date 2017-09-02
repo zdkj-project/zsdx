@@ -654,7 +654,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 
 		List<Map<String, Object>> allList = new ArrayList<>();
 		Integer[] columnWidth = new Integer[] { 10,30, 30, 20, 20, 20, 20 };
-		Integer[] headColumnWidth = new Integer[] { 10,15, 15, 25, 25, 25, 30 };
+		Integer[] headColumnWidth = new Integer[] { 10,15, 15,15, 25, 25, 25, 30 };
 		
 		//数据字典项
 		String mapKey = null;
@@ -668,7 +668,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		
 		//获取班级所有学员信息
 		List<Map<String, Object>> classTraineetList = new ArrayList<>();
-		String sql="select CLASS_TRAINEE_ID,XM,XBM,MOBILE_PHONE,WORK_UNIT,POSITION,HEADSHIP_LEVEL from TRAIN_T_CLASSTRAINEE where ISDELETE=0 AND CLASS_ID='" + classId +"' order by xm asc";
+		String sql="select CLASS_TRAINEE_ID,XM,XBM,REAL＿CREDIT,MOBILE_PHONE,WORK_UNIT,POSITION,HEADSHIP_LEVEL from TRAIN_T_CLASSTRAINEE where ISDELETE=0 AND CLASS_ID='" + classId +"' order by xm asc";
 		classTraineetList = thisService.getForValuesToSql(sql);
 		
 		//处理班级所有学员数据
@@ -682,6 +682,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			traineeMap.put("xh", String.valueOf(j++));
 			traineeMap.put("xm", String.valueOf(list.get("XM")));
 			traineeMap.put("xb", mapDicItem.get(String.valueOf(list.get("XBM")) + "XBM"));
+			traineeMap.put("xf", String.valueOf(list.get("REAL＿CREDIT")));
 			traineeMap.put("phone", String.valueOf(list.get("MOBILE_PHONE")));
 			traineeMap.put("position", String.valueOf(list.get("POSITION")));
 			traineeMap.put("headShipLevel", mapDicItem.get(String.valueOf(list.get("HEADSHIP_LEVEL")) + "HEADSHIPLEVEL"));

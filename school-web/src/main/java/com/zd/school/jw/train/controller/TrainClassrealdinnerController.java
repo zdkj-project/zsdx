@@ -3,6 +3,7 @@ package com.zd.school.jw.train.controller;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,11 +29,13 @@ import com.zd.core.util.PoiExportExcel;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.StringUtils;
+import com.zd.core.util.exportMeetingInfo;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClassrealdinner ;
 import com.zd.school.jw.train.model.TrainClassschedule;
 import com.zd.school.jw.train.dao.TrainClassrealdinnerDao ;
+import com.zd.school.jw.train.service.TrainClassService;
 import com.zd.school.jw.train.service.TrainClassrealdinnerService ;
 
 /**
@@ -53,6 +56,9 @@ public class TrainClassrealdinnerController extends FrameWorkController<TrainCla
 
     @Resource
     TrainClassrealdinnerService thisService; // service层接口
+    
+    @Resource
+	TrainClassService trainClassService; // service层接口
 
     /**
       * @Title: list
@@ -522,6 +528,220 @@ public class TrainClassrealdinnerController extends FrameWorkController<TrainCla
 
 		Object isEnd = request.getSession().getAttribute("exportTrainClassDinnerTotalIsEnd");
 		Object state = request.getSession().getAttribute("exportTrainClassDinnerTotalIsState");
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+		}
+	}
+	
+	/**
+	 * 导出财务要求汇总信息
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/exportClassTotalExcel")
+	public void exportClassTotalExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getSession().setAttribute("exportTrainClassTotalIsEnd", "0");
+		request.getSession().removeAttribute("exportTrainClassTotalIsState");
+
+		SimpleDateFormat fmtmDate = new SimpleDateFormat("MM");
+		SimpleDateFormat fmtdDate = new SimpleDateFormat("dd");
+		List<Map<String, Object>> allList = new ArrayList<>();
+		String classId = request.getParameter("classId"); 
+	
+		try{
+			String hql="from TrainClassrealdinner a where a.isDelete=0 and a.classId=? order by a.dinnerDate asc";
+			List<TrainClassrealdinner> lists=thisService.getForValues(hql,classId);
+			int listsCount = lists.size();
+			
+			//定义单据编号
+			
+			SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd");
+			String date = df.format(new Date());
+			String like ="XN"+date;
+			String sql = "SELECT EXT_FIELD05 FROM dbo.TRAIN_T_CLASS WHERE EXT_FIELD05 LIKE '%"+like+"%'"+" order by EXT_FIELD05 asc";
+			String trainClass = trainClassService.getForValueToSql(sql);
+			String djbh ;
+			if(trainClass==null) {
+				djbh = null;
+			}else {
+				djbh = trainClass;
+			}
+			int times = (listsCount%6==0)?(listsCount/6):((listsCount/6)+1);
+			List<String> djbhs = new ArrayList<>();
+			if(djbh==null||djbh.substring(0, 10).equals("XN"+date)==false) {
+				for(int time=0;time<times;time++){
+					if(time<10) {
+						djbh = "XN"+date+"00"+(time+1);
+					}else if(10<=time&&time<100) {
+						djbh = "XN"+date+"0"+(time+1);
+					}else {
+						djbh = "XN"+date+(time+1);
+					}
+					djbhs.add(djbh);
+				}
+			}else if(djbh!=null&&djbh.substring(0, 10).equals("XN"+date)) {
+				int oldTime = Integer.parseInt(djbh.substring(10));
+				for(int time=0;time<times;time++){
+					if((oldTime+time+1)<10) {
+						djbh = "XN"+date+"00"+(oldTime+time+1);
+					}else if(10<=(oldTime+time+1)&&(oldTime+time+1)<100) {
+						djbh = "XN"+date+"0"+(oldTime+time+1);
+					}else {
+						djbh = "XN"+date+(oldTime+time+1);
+					}
+					djbhs.add(djbh);
+				}
+			}
+			TrainClass trainClasss = trainClassService.get(classId);
+			trainClasss.setExtField05(djbh);
+			trainClassService.update(trainClasss);
+			//定义sheet标题
+			String sheetTitle="";
+			String dinnerType= "";
+			
+			//定义总合计￥
+			List<BigDecimal> totals =new ArrayList<>();
+			
+			//定义总合计大写
+			List<String> totalTexts = new ArrayList<>();
+			
+			// 处理课程基本数据
+			List<List<Map<String, String>>> exportLists = new ArrayList<>();
+			List<Map<String, String>>  exportList=null;
+			Map<String, String> dinnerMap = null;
+			for(int i=0;i<times;i++) {
+				exportList =new ArrayList<>();
+				BigDecimal total =new BigDecimal(0);
+				for (int j=0;j<6;j++) {
+					if((6*i+j)<listsCount) {
+					dinnerMap = new LinkedHashMap<>();
+					sheetTitle=lists.get(6*i+j).getClassName();
+					dinnerType = (lists.get(6*i+j).getDinnerType()==1)?"围餐":"自助";
+					BigDecimal moneyTotal=new BigDecimal(0);
+					int breakfastReal = lists.get(6*i+j).getBreakfastReal();
+					BigDecimal breakfastStandReal =lists.get(6*i+j).getBreakfastStandReal();
+					if(breakfastStandReal==null) {
+						breakfastStandReal=new BigDecimal(0);
+					}
+					BigDecimal breakfastTotal =breakfastStandReal.multiply(new BigDecimal(breakfastReal));
+					
+					int lunchReal = lists.get(6*i+j).getLunchReal();
+					BigDecimal lunchStandReal =lists.get(6*i+j).getLunchStandReal ();
+					if(lunchStandReal==null) {
+						lunchStandReal=new BigDecimal(0);
+					}
+					BigDecimal lunchTotal =lunchStandReal.multiply(new BigDecimal(lunchReal));
+					
+					int dinnerReal = lists.get(6*i+j).getDinnerReal();
+					BigDecimal dinnerStandReal =lists.get(6*i+j).getDinnerStandReal();
+					if(dinnerStandReal==null) {
+						dinnerStandReal=new BigDecimal(0);
+					}
+					BigDecimal dinnerTotal =dinnerStandReal.multiply(new BigDecimal(dinnerReal));
+					moneyTotal = breakfastTotal.add(lunchTotal).add(dinnerTotal);
+					
+					total = total.add(moneyTotal);
+					
+					dinnerMap.put("month", fmtmDate.format(lists.get(6*i+j).getDinnerDate()));
+					dinnerMap.put("day", fmtdDate.format(lists.get(6*i+j).getDinnerDate()));
+					
+					dinnerMap.put("breakfastReal", String.valueOf(breakfastReal));
+					dinnerMap.put("breakfastStandReal", String.valueOf(breakfastStandReal));
+					dinnerMap.put("breakfastTotal", String.valueOf(breakfastTotal));
+					
+					dinnerMap.put("lunchReal", String.valueOf(lunchReal));
+					dinnerMap.put("lunchStandReal", String.valueOf(lunchStandReal));
+					dinnerMap.put("lunchTotal", String.valueOf(lunchTotal));
+					
+					dinnerMap.put("dinnerReal", String.valueOf(dinnerReal));
+					dinnerMap.put("dinnerStandReal", String.valueOf(dinnerStandReal));
+					dinnerMap.put("dinnerTotal", String.valueOf(dinnerTotal));
+					
+					dinnerMap.put("other", String.valueOf("加菜[   ]"+'\n'+"纸巾[   ]"+'\n'+"其他[   ]"));			
+					dinnerMap.put("moneyTotal",String.valueOf(moneyTotal) );			
+					exportList.add(dinnerMap);
+					}
+				}
+				int  a = total.divide(new BigDecimal(100000)).intValue()%10;
+				int  b = total.divide(new BigDecimal(10000)).intValue()%10;
+				int  c = total.divide(new BigDecimal(1000)).intValue()%10;
+				int  d = total.divide(new BigDecimal(100)).intValue()%10;
+				int  e = total.divide(new BigDecimal(10)).intValue()%10;
+				int  f = total.divide(new BigDecimal(1)).intValue()%10;
+				int  g = total.multiply(new BigDecimal(10)).divide(new BigDecimal(1)).intValue()%10;
+				int  h = total.multiply(new BigDecimal(100)).divide(new BigDecimal(1)).intValue()%10;
+				int[] ss = new int[] {a,b,c,d,e,f,g,h};
+				List<String> sss = new ArrayList<>();
+				for(int k =0;k<ss.length;k++) {
+					switch(ss[k]) {
+					case 0:sss.add("零");break;
+					case 1:sss.add("壹");break;
+					case 2:sss.add("贰");break;
+					case 3:sss.add("叁");break;
+					case 4:sss.add("肆");break;
+					case 5:sss.add("伍");break;
+					case 6:sss.add("陆");break;
+					case 7:sss.add("柒");break;
+					case 8:sss.add("捌");break;
+					case 9:sss.add("玖");break;
+					}
+				}
+				String totaltext = sss.get(0)+" 拾   "+sss.get(1)+" 万  "+sss.get(2)+" 仟  "+sss.get(3)+" 佰  "+sss.get(4)+" 拾  "+sss.get(5)+" 元  "+sss.get(6)+" 角  "+sss.get(7)+" 分  ";
+				totals.add(total);
+				totalTexts.add(totaltext);
+				exportLists.add(exportList);
+			}
+			
+
+			// --------2.组装表格数据
+			Map<String, Object> dinnerAllMap = new LinkedHashMap<>();
+			dinnerAllMap.put("data", exportLists);
+			dinnerAllMap.put("title", "班级就餐登记详情表");
+			dinnerAllMap.put("dinnerType", dinnerType);
+			dinnerAllMap.put("djbhs",djbhs );
+			dinnerAllMap.put("totalTexts",totalTexts );
+			dinnerAllMap.put("totals",totals );
+			dinnerAllMap.put("head", new String[] { "月", "日", "数量", "餐标","小计","数量","餐标","小计","数量","餐标","小计","其他","金额合计" }); // 规定名字相同的，设定为合并
+			dinnerAllMap.put("columnWidth", new Integer[] { 10, 10, 15, 15, 15, 15, 15, 15, 15, 15, 15, 20, 20 }); // 30代表30个字节，15个字符
+			dinnerAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0 }); // 0代表居中，1代表居左，2代表居右
+			dinnerAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+			allList.add(dinnerAllMap);
+	
+			// 在导出方法中进行解析
+			boolean result = exportMeetingInfo.exportClassTotalsExcel(response, sheetTitle+"就餐内结单", sheetTitle, allList);
+			if (result == true) {
+				request.getSession().setAttribute("exportTrainClassTotalIsEnd", "1");
+			} else {
+				request.getSession().setAttribute("exportTrainClassTotalIsEnd", "0");
+				request.getSession().setAttribute("exportTrainClassTotalIsState", "0");
+			}
+		}catch(Exception e){
+			request.getSession().setAttribute("exportTrainClassTotalIsEnd", "0");
+			request.getSession().setAttribute("exportTrainClassTotalIsState", "0");
+		}
+	}
+	
+	/**
+	 * 判断是否导出完毕
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/checkExportClassTotalEnd")
+	public void checkExportClassTotalEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Object isEnd = request.getSession().getAttribute("exportTrainClassTotalIsEnd");
+		Object state = request.getSession().getAttribute("exportTrainClassTotalIsState");
 		if (isEnd != null) {
 			if ("1".equals(isEnd.toString())) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));

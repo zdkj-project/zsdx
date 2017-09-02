@@ -343,6 +343,73 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                 return false;
             }
         },
+        
+        /**
+         * 按照财务报表导出
+         */
+        "basepanel basegrid button[ref=gridClassTotalExport]": {
+            beforeclick: function (btn) {
+                var self = this;
+                //得到组件
+                var baseGrid=btn.up("basegrid");
+               
+                var records = baseGrid.getSelectionModel().getSelection();
+                if (records.length != 1) {
+                    self.Warning("请选择一个班级！");
+                    return;
+                }
+
+                var params="?classId="+records[0].get("CLASS_ID");
+                var title = "确定要导出["+records[0].get("CLASS_NAME")+"]的班级详细信息吗？";
+            
+                Ext.Msg.confirm('提示', title, function (btn, text) {
+                    if (btn == "yes") {
+                        Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
+                        //window.location.href = comm.get('baseUrl') + "/TrainClass/exportExcel?ids=" + ids.join(",");
+                        var component=Ext.create('Ext.Component', {
+                            title: 'HelloWorld',
+                            width: 0,
+                            height:0,
+                            hidden:true,
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClassrealdinner/exportClassTotalExcel' + params + '"></iframe>',
+                            renderTo: Ext.getBody()
+                        });
+                        
+                       
+                        var time=function(){
+                            self.syncAjax({
+                                url: comm.get('baseUrl') + '/TrainClassrealdinner/checkExportClassTotalEnd',
+                                timeout: 1000*60*30,        //半个小时         
+                                //回调代码必须写在里面
+                                success: function(response) {
+                                    data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                    if(data.success){
+                                        Ext.Msg.hide();
+                                        self.msgbox(data.obj);
+                                        component.destroy();                                
+                                    }else{                                    
+                                        if(data.obj==0){    //当为此值，则表明导出失败
+                                            Ext.Msg.hide();
+                                            self.Error("导出失败，请重试或联系管理员！");
+                                            component.destroy();                                        
+                                        }else{
+                                            setTimeout(function(){time()},1000);
+                                        }
+                                    }               
+                                },
+                                failure: function(response) {
+                                    Ext.Msg.hide();
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    component.destroy();
+                                }
+                            });
+                        }
+                        setTimeout(function(){time()},1000);    //延迟1秒执行
+                    }
+                });
+                return false;
+            }
+        },
 
         /**
          *通用表格详情事件（弹出tab的形式）

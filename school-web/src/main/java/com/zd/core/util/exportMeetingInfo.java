@@ -12,6 +12,7 @@ import com.zd.school.jw.train.model.TrainClasstrainee;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.sql.Array;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -632,16 +633,17 @@ public class exportMeetingInfo {
 				// 标题
 				sheet.getRow(0).getCell(0).setCellStyle(titleStyle);
 				sheet.getRow(0).getCell(0).setCellValue(sheetName);
-				sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 6));
+				sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 7));
 				
 				// 第1行
 				sheet.getRow(3).getCell(0).setCellValue("序号");
 				sheet.getRow(3).getCell(1).setCellValue("姓名");
 				sheet.getRow(3).getCell(2).setCellValue("性别");
-				sheet.getRow(3).getCell(3).setCellValue("移动电话");
-				sheet.getRow(3).getCell(4).setCellValue("职务");
-				sheet.getRow(3).getCell(5).setCellValue("职级");
-				sheet.getRow(3).getCell(6).setCellValue("所在单位");
+				sheet.getRow(3).getCell(3).setCellValue("学分");
+				sheet.getRow(3).getCell(4).setCellValue("移动电话");
+				sheet.getRow(3).getCell(5).setCellValue("职务");
+				sheet.getRow(3).getCell(6).setCellValue("职级");
+				sheet.getRow(3).getCell(7).setCellValue("所在单位");
 				
 				//导出第一页数据
 				Map<String, Object> traineeMap = null;
@@ -758,6 +760,204 @@ public class exportMeetingInfo {
   		}
   		return result;
   	} 
-     
-     
+      
+      /*
+       * 就餐汇总的格式 
+       */
+       public final static boolean exportClassTotalsExcel(HttpServletResponse response, String fileName,String sheetTitle, List<Map<String, Object>> listContent) throws IOException {
+   		HSSFWorkbook workbook = new HSSFWorkbook();
+   		boolean result = false;
+   		OutputStream fileOutputStream = null;
+   		response.reset();// 清空输出流
+   		response.setHeader("Content-disposition","attachment; filename=" + new String((fileName + ".xls").getBytes("GB2312"), "ISO8859-1"));
+   		response.setContentType("application/msexcel");
+   		if (null != listContent && !listContent.isEmpty()) {
+   			try {
+   				//设置格式
+   				CellStyle headsStyle = getCellNoBoderStyle(workbook, "", (short) 12, false, HorizontalAlignment.CENTER,VerticalAlignment.CENTER);
+   				CellStyle NBLeftStyle = getCellNBLeftStyle(workbook, "", (short) 12, false, HorizontalAlignment.CENTER,VerticalAlignment.CENTER);
+   				CellStyle headStyle = getCellStyle(workbook, "", (short) 12, false, HorizontalAlignment.CENTER,VerticalAlignment.CENTER);
+ 				CellStyle titleStyle = getCellStyle(workbook, "", (short) 26, true, HorizontalAlignment.CENTER,VerticalAlignment.CENTER);
+   				
+   				//获取数据
+   				Map<String, Object> exportInfo = listContent.get(0);
+   				List<List<Map<String, String>>> exportLists = (List<List<Map<String, String>>>)exportInfo.get("data");
+   				int exportListsCount = exportLists.size();
+   				String dinnerType = (String)exportInfo.get("dinnerType");
+   				List<String> djbhs = (List<String>)exportInfo.get("djbhs");
+   				
+   				//获取总合计
+   				List<String> totalTexts = (List<String>)exportInfo.get("totalTexts");
+   				List<BigDecimal> totals = (List<BigDecimal>)exportInfo.get("totals");
+   				
+   				//获取列宽
+   				Integer[] columnWidth=(Integer[])exportInfo.get("columnWidth");
+   				int columnWidthCount = columnWidth.length;
+   				
+   				//获取字段 
+   				String[] head = (String[])exportInfo.get("head");
+   				for(int s=0;s<exportListsCount;s++) {
+   					List<Map<String, String>>  exportList=new ArrayList<>();
+   					exportList=exportLists.get(s);
+   					String sheetName =sheetTitle+(s+1);
+   	 				Row row = null;
+   	 				Cell cell = null;
+   	 				Sheet sheet = workbook.createSheet(sheetName);
+   	 				for (int j = 0; j <5; j++) {
+   						row = sheet.createRow(j);
+   						row.setHeight((short) 0x200);
+   						for (int k = 0; k < columnWidthCount; k++) {
+   							cell = row.createCell(k);
+   							cell.setCellStyle(headsStyle);
+   							sheet.setColumnWidth(k, columnWidth[k] * 256);
+   						}
+   					}
+   	 				// 标题
+   	 				sheet.getRow(0).getCell(0).setCellStyle(titleStyle);
+   	 				sheet.getRow(0).getCell(0).setCellValue("中共中山市委党校餐饮部校内结算账单");
+   	 				sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 12));
+   	 				
+   	 				// 第4行
+   	 				sheet.getRow(3).getCell(0).setCellValue("用餐类型：");
+   	 				sheet.addMergedRegion(new CellRangeAddress(3, 3, 0, 1));
+   	 				sheet.getRow(3).getCell(2).setCellStyle(NBLeftStyle);
+   	 				sheet.getRow(3).getCell(2).setCellValue(dinnerType);
+   	 				sheet.addMergedRegion(new CellRangeAddress(3, 3, 2, 12));
+   	 				
+   	 				// 第5行
+   	 				sheet.getRow(4).getCell(0).setCellValue("培训班：");
+   	 				sheet.addMergedRegion(new CellRangeAddress(4, 4, 0, 1));
+   	 				sheet.getRow(4).getCell(2).setCellStyle(NBLeftStyle);
+   	 				sheet.getRow(4).getCell(2).setCellValue(sheetTitle);
+   	 				sheet.addMergedRegion(new CellRangeAddress(4, 4, 2, 8));
+   	 				
+   	 				sheet.getRow(4).getCell(9).setCellValue("单据编号：");
+   	 				sheet.addMergedRegion(new CellRangeAddress(4, 4, 9, 10));
+   	 				sheet.getRow(4).getCell(11).setCellStyle(NBLeftStyle);
+   	 				sheet.getRow(4).getCell(11).setCellValue(djbhs.get(s));
+   	 				sheet.addMergedRegion(new CellRangeAddress(4, 4, 11, 12));
+   	 				
+   	 				//创建表头
+   	 				for (int j = 0; j <2; j++) {
+   						row = sheet.createRow(5+j);
+   						row.setHeight((short) 0x200);
+   						for (int k = 0; k < columnWidthCount; k++) {
+   							cell = row.createCell(k);
+   							cell.setCellStyle(headStyle);
+   	   						sheet.setColumnWidth(k, columnWidth[k] * 256);
+   							if(j==1) {
+   								cell.setCellValue(head[k]);
+   							}
+   						}
+   					}
+   	 				//表格表头
+   	 				sheet.getRow(5).getCell(0).setCellValue("日期");
+   	 				sheet.addMergedRegion(new CellRangeAddress(5, 5, 0, 1));
+   	 				
+   	 				sheet.getRow(5).getCell(2).setCellValue("早餐");
+   	 				sheet.addMergedRegion(new CellRangeAddress(5, 5, 2, 4));
+   	 				
+   	 				sheet.getRow(5).getCell(5).setCellValue("午餐");
+   	 				sheet.addMergedRegion(new CellRangeAddress(5, 5, 5, 7));
+   	 				
+   	 				sheet.getRow(5).getCell(8).setCellValue("晚餐");
+   	 				sheet.addMergedRegion(new CellRangeAddress(5, 5, 8, 10));
+   	 				
+   	 				sheet.getRow(5).getCell(11).setCellValue("其他");
+   	 				sheet.addMergedRegion(new CellRangeAddress(5, 6, 11, 11));
+   	 				
+   	 				sheet.getRow(5).getCell(12).setCellValue("金额合计");
+   	 				sheet.addMergedRegion(new CellRangeAddress(5, 6, 12, 12));
+   	 				
+   	 				//处理数据
+   	 				 Map<String, String> traineeDinnerMap = null;
+   	                 for(int j = 0; j <6 ; j++){
+   	                 	row = sheet.createRow(7+j);
+   	                 	row.setHeight((short) 0x380);
+   	                 	if(j<exportList.size()) {
+   	                 		traineeDinnerMap=exportList.get(j);
+   	                 		List<String> keylist = new LinkedList<String>();
+   	                 		for (String key : traineeDinnerMap.keySet()) {
+   							 	keylist.add(key);
+   	                 		}
+   	                 		for(int k = 0; k <columnWidthCount ; k++){
+   	                 			cell = row.createCell(k);
+   		                        cell.setCellStyle(headStyle);
+   		                        if(k<columnWidthCount){
+   		                         cell.setCellValue(traineeDinnerMap.get(keylist.get(k)));
+   		                        }
+   	                 		}
+   	                 	}else {
+   	                 	for(int k = 0; k <columnWidthCount ; k++){
+	                 			cell = row.createCell(k);
+		                        cell.setCellStyle(headStyle);
+	                 		}
+   	                 	}
+   	                 }
+   	                 	//创建合计行
+   	                 	row = sheet.createRow(7+6);
+   						row.setHeight((short) 0x200);
+   						for (int k = 0; k < columnWidthCount; k++) {
+   							cell = row.createCell(k);
+   							cell.setCellStyle(headStyle);
+   						}
+   						sheet.getRow(7+6).getCell(0).setCellValue("总合计：大写："+totalTexts.get(s)+"   ￥ "+totals.get(s));
+   		 				sheet.addMergedRegion(new CellRangeAddress(7+6, 7+6, 0, 12));
+   	                 
+   		 				//创建签字行
+   		 				row = sheet.createRow(8+6);
+   						row.setHeight((short) 0x200);
+   						for (int k = 0; k < columnWidthCount; k++) {
+   							cell = row.createCell(k);
+   							cell.setCellStyle(headStyle);
+   						}
+   						sheet.getRow(8+6).getCell(0).setCellValue("用餐申请人：                          餐饮部经办人：                                                               ");
+   		 				sheet.addMergedRegion(new CellRangeAddress(8+6, 8+6, 0, 12));
+   		 				
+   				}
+   					//处理评估指标部分数据
+   	                 fileOutputStream = response.getOutputStream();
+   	                 workbook.write(fileOutputStream);
+   			} catch (Exception e) {
+   				System.out.println(e.getMessage());
+   				return false;
+   			}
+   			result = true;
+   		}
+   		return result;
+   	}   
+    
+       //无边框
+       private static CellStyle getCellNoBoderStyle(HSSFWorkbook workbook, String fontName, Short fontSize, Boolean isBold, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment) {
+           HSSFFont font = workbook.createFont();
+           if (StringUtils.isEmpty(fontName))
+               font.setFontName("方正黑体简体");
+           else
+               font.setFontName(fontName);
+           font.setFontHeightInPoints(fontSize);// 字体大小
+           font.setBold(isBold);  //是否加粗
+           CellStyle style = workbook.createCellStyle();
+           style.setFont(font);
+           style.setAlignment(horizontalAlignment);// 左右对齐
+           style.setVerticalAlignment(verticalAlignment);// 上下对齐
+           style.setWrapText(true); //是否自动换行
+           return style;
+       }
+       //无边框左对齐
+       private static CellStyle getCellNBLeftStyle(HSSFWorkbook workbook, String fontName, Short fontSize, Boolean isBold, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment) {
+           HSSFFont font = workbook.createFont();
+           if (StringUtils.isEmpty(fontName))
+               font.setFontName("方正黑体简体");
+           else
+               font.setFontName(fontName);
+           font.setFontHeightInPoints(fontSize);// 字体大小
+           font.setBold(isBold);  //是否加粗
+           CellStyle style = workbook.createCellStyle();
+           style.setFont(font);
+           style.setAlignment(horizontalAlignment.LEFT);// 左右对齐
+           style.setVerticalAlignment(verticalAlignment);// 上下对齐
+           style.setWrapText(true); //是否自动换行
+           return style;
+       }
+       
 }

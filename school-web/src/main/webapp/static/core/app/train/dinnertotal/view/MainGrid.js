@@ -37,6 +37,12 @@ Ext.define("core.train.dinnertotal.view.MainGrid", {
                 ref: 'gridDinnerDetailExport',
                 funCode: 'girdFuntionBtn',
                 iconCls: 'x-fa fa-file'
+            }, {
+                xtype: 'button',
+                text: '导出班级就餐汇总',
+                ref: 'gridClassTotalExport',
+                funCode: 'girdFuntionBtn',
+                iconCls: 'x-fa fa-file'
             },  '->', {
                 xtype: 'tbtext',
                 html: '快速搜索：'

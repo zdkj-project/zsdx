@@ -232,4 +232,17 @@ public class TrainClassrealdinner extends BaseEntity implements Serializable{
         return countMoneyReal;
     }
     
+    @FieldInfo(name = "用餐类型")
+    @Formula("(SELECT a.DINNER_TYPE FROM dbo.TRAIN_T_CLASS a WHERE a.CLASS_ID=CLASS_ID)")
+    private Integer dinnerType;
+	public Integer getDinnerType() {
+		return dinnerType;
+	}
+	public void setDinnerType(Integer dinnerType) {
+		this.dinnerType = dinnerType;
+	}
+
+    
+    
+    
 }
