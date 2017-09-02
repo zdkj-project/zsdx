@@ -43,7 +43,7 @@ Ext.define("core.base.view.BaseTreeGrid", {
 
         var columns = new Array();
 
-        if (!this.columns) {
+        if (this.columns) {
             var columnIitems = this.columns.items;  //取items里的数据，现在多了个配置项defaults
             if (!columnIitems)
                 columnIitems = this.columns;          //若没有，则取columns

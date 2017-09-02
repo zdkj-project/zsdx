@@ -93,32 +93,55 @@ Ext.define("core.train.arrange.controller.DetailController", {
                     funCode: "arrangeroom_detail",    //修改此funCode，方便用于捕获window的确定按钮
                     insertObj: insertObj,
                     items: [{
-                        xtype:'room.mainlayout',
-                        bodyPadding:5,
+                        xtype:'pubselect.selectroomlayout',
                         items: [{
-                            collapsible: true,
-                            split: true,
-                            xtype: "room.areagrid",                      
-                            tbar:null,
-                            region: "west",
-                            style:{
-                                border: '1px solid #ddd'
-                            },
-                            width:450
-                        }, {
-                            xtype: "room.RoomGrid",                          
-                            tbar:null,
-                            style:{
-                                border: '1px solid #ddd'
+                            xtype:'pubselect.selectroomgrid',
+                            //width:600,
+                            flex:1,
+                            region: "center",
+                            margin:'5',
+                            extParams: {
+                                whereSql: "",
+                                //查询的过滤字段
+                                //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
+                                filter: "[{\"type\":\"string\",\"comparison\":\"=\",\"value\":\"1\",\"field\":\"roomType\"}]"
                             },
                             selModel: {
                                 type: "checkboxmodel",   
                                 headerWidth:50,    //设置这个值为50。 但columns中的defaults中设置宽度，会影响他
-                                mode:'single', 
+                                mode:'single',  //multi,simple,single；默认为多选multi
+                                //checkOnly:false,    //如果值为true，则只用点击checkbox列才能选中此条记录
+                                //allowDeselect:true, //如果值true，并且mode值为单选（single）时，可以通过点击checkbox取消对其的选择
                             },
-                            region: "center"
                         }]
                     }]
+                    // items: [{
+                    //     xtype:'room.mainlayout',
+                    //     bodyPadding:5,
+                    //     items: [{
+                    //         collapsible: true,
+                    //         split: true,
+                    //         xtype: "room.areagrid",                      
+                    //         tbar:null,
+                    //         region: "west",
+                    //         style:{
+                    //             border: '1px solid #ddd'
+                    //         },
+                    //         width:450
+                    //     }, {
+                    //         xtype: "room.RoomGrid",                          
+                    //         tbar:null,
+                    //         style:{
+                    //             border: '1px solid #ddd'
+                    //         },
+                    //         selModel: {
+                    //             type: "checkboxmodel",   
+                    //             headerWidth:50,    //设置这个值为50。 但columns中的defaults中设置宽度，会影响他
+                    //             mode:'single', 
+                    //         },
+                    //         region: "center"
+                    //     }]
+                    // }]
                 });
                 win.show();                
                 return false;

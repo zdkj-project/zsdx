@@ -151,7 +151,7 @@ Ext.define("core.train.arrange.controller.OtherController", {
                 var self=this;
 
                 var win=btn.up("window[funCode=arrangeroom_detail]");
-                var baseGrid=win.down("grid[xtype=room.RoomGrid]");        
+                var baseGrid=win.down("grid[xtype=pubselect.selectroomgrid]");        
 
                                     
                 var records = baseGrid.getSelectionModel().getSelection();
@@ -167,8 +167,6 @@ Ext.define("core.train.arrange.controller.OtherController", {
                 var pkName = funData.pkName;
             
                 var roomId=records[0].get(pkName);
-                var areaUpName=records[0].get("areaUpName");
-                var areaName=records[0].get("areaName");
                 var roomName=records[0].get("roomName");
                            
                 var classTraineIds=win.insertObj.ids;
@@ -179,7 +177,7 @@ Ext.define("core.train.arrange.controller.OtherController", {
                     url: comm.get("baseUrl")  + "/TrainClasstrainee/updateRoomInfo",
                     params: {
                         roomId: roomId,
-                        roomName: areaUpName+"-"+areaName+"-"+roomName,
+                        roomName: roomName,
                         ids:classTraineIds.join(","),
                         xbm:xbm
                     },
@@ -341,7 +339,25 @@ Ext.define("core.train.arrange.controller.OtherController", {
                     funCode: "arrangesite_detail",    //修改此funCode，方便用于捕获window的确定按钮
                     insertObj: insertObj,
                     items: [{
-                        xtype:'pubselect.selectroomlayout'
+                        xtype:'pubselect.selectroomlayout',
+                        items: [{
+                            xtype:'pubselect.selectroomgrid',
+                            //width:600,
+                            flex:1,
+                            region: "center",
+                            margin:'5',
+                            extParams: {
+                                whereSql: "",
+                                //查询的过滤字段
+                                //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
+                                filter: "[{\"type\":\"string\",\"comparison\":\"=\",\"value\":\"3\",\"field\":\"roomType\"}]"
+                            },
+                        }, {
+                            xtype: "pubselect.isselectroomgrid",
+                            region: "east",
+                            width:500,
+                            margin:'5'
+                        }]
                     }]
                 });
                 win.show();

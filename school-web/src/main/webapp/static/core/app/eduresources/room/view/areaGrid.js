@@ -61,6 +61,10 @@ Ext.define("core.eduresources.room.view.areaGrid", {
         text: "顺序号",
         dataIndex: "orderIndex",
         flex:1,
+    },{
+        text: "区域说明",
+        dataIndex: "areaDesc",   
+        flex:2
     }, {
         text: "主键",
         dataIndex: 'id',
