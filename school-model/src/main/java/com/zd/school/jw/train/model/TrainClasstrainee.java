@@ -479,6 +479,19 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         this.factoryfixId = factoryfixId;
     }
     
+    @FieldInfo(name = "UP卡印刷卡号")
+    @Formula("(SELECT top 1 a.CARD_PRINT_ID FROM CARD_T_USEINFO a where a.USER_ID=CLASS_TRAINEE_ID order by a.CREATE_TIME desc)")
+    private String cardPrintId;
+
+   	public String getCardPrintId() {
+   		return cardPrintId;
+   	}
+
+   	public void setCardPrintId(String cardPrintId) {
+   		this.cardPrintId = cardPrintId;
+   	}
+    
+    
     @FieldInfo(name = "UP卡状态")
     @Formula("(SELECT top 1 a.USE_STATE FROM CARD_T_USEINFO a where a.USER_ID=CLASS_TRAINEE_ID order by a.CREATE_TIME desc)")
     private Integer useState;

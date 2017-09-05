@@ -565,9 +565,74 @@ Ext.define("core.system.user.controller.DeptUserController", {
 
                     tabPanel.setActiveTab( tabItem);
                 },
-            	
-            	
-            }
+            },
+            /**
+             * 导出
+             */
+            "basegrid[xtype=user.usergrid] button[ref=gridExport]": {
+                beforeclick: function (btn) {
+                    var self = this;
+                    //得到组件
+                    var baseGrid = btn.up("basegrid");
+                    var mainlayout=baseGrid.up("panel[xtype=user.mainlayout]");
+                    var treeGrid=mainlayout.down("panel[xtype=user.depttree]");
+                    var treeRecords = treeGrid.getSelectionModel().getSelection();
+                    var deptId = treeRecords[0].get("id");
+                    var funCode = baseGrid.funCode;
+                    var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+                    //得到配置信息
+                    var funData = basePanel.funData;
+                    var pkName = funData.pkName;
+                    //得到选中数据
+                    var title = "将导出所有的用户信息";
+                    if(deptId==null){
+                    	 self.Warning("请选择一个班级!");
+                         return;
+                    }
+                    Ext.Msg.confirm('提示', title, function (btn, text) {
+                        if (btn == "yes") {
+                            Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
+                            var component = Ext.create('Ext.Component', {
+                                title: 'HelloWorld',
+                                width: 0,
+                                height: 0,
+                                hidden: true,
+                                html: '<iframe src="' + comm.get('baseUrl') + '/sysuser/exportCardExcel?deptId=' + deptId + '"></iframe>',
+                                renderTo: Ext.getBody()
+                            });
+
+                            var time = function () {
+                                self.syncAjax({
+                                    url: comm.get('baseUrl') + '/sysuser/checkExportCardEnd',
+                                    timeout: 1000 * 60 * 30,        //半个小时
+                                    //回调代码必须写在里面
+                                    success: function (response) {
+                                        data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                        if (data.success) {
+                                            Ext.Msg.hide();
+                                            self.msgbox(data.obj);
+                                            component.destroy();
+                                        } else {
+                                            setTimeout(function () {
+                                                time()
+                                            }, 1000);
+                                        }
+                                    },
+                                    failure: function (response) {
+                                        Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                        component.destroy();
+                                        clearInterval(interval)
+                                    }
+                                });
+                            }
+                            setTimeout(function () {
+                                time()
+                            }, 1000);    //延迟1秒执行
+                        }
+                    });
+                    return false;
+                }
+            },
             
         });
     },

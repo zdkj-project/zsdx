@@ -26,6 +26,80 @@ Ext.define("core.train.cardcenter.controller.MainController", {
                 }
             }
            },
+           
+           /**
+            * 导出
+            */
+           "basegrid[xtype=cardcenter.maingrid] button[ref=gridExport]": {
+               beforeclick: function (btn) {
+                   var self = this;
+                   //得到组件
+                   var baseGrid = btn.up("basegrid");
+                   var mainlayout=baseGrid.up("panel[xtype=cardcenter.mainlayout]");
+                   var classGrid=mainlayout.down("panel[xtype=cardcenter.classgrid]");
+                   var classRecords = classGrid.getSelectionModel().getSelection();
+                   var classId = classRecords[0].data.uuid;
+                   var funCode = baseGrid.funCode;
+                   var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+                   //得到配置信息
+                   var funData = basePanel.funData;
+                   var pkName = funData.pkName;
+                   
+                   if(classId==null){
+                	   self.Warning("请选择一个班级!");
+                       return;
+                   }
+                   var title="学员卡务列表";
+                   Ext.Msg.confirm('提示', title, function (btn, text) {
+                       if (btn == "yes") {
+                           Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
+                           var component = Ext.create('Ext.Component', {
+                               title: 'HelloWorld',
+                               width: 0,
+                               height: 0,
+                               hidden: true,
+                               html: '<iframe src="' + comm.get('baseUrl') + '/TrainClasstrainee/exportCardExcel?classId=' + classId + '"></iframe>',
+                               renderTo: Ext.getBody()
+                           });
+
+                           var time = function () {
+                               self.syncAjax({
+                                   url: comm.get('baseUrl') + '/TrainClasstrainee/checkExportCardEnd',
+                                   timeout: 1000 * 60 * 30,        //半个小时
+                                   //回调代码必须写在里面
+                                   success: function (response) {
+                                       data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                       if (data.success) {
+                                           Ext.Msg.hide();
+                                           self.msgbox(data.obj);
+                                           component.destroy();
+                                       } else {
+                                           setTimeout(function () {
+                                               time()
+                                           }, 1000);
+                                       }
+                                   },
+                                   failure: function (response) {
+                                       Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                       component.destroy();
+                                       clearInterval(interval)
+                                   }
+                               });
+                           }
+                           setTimeout(function () {
+                               time()
+                           }, 1000);    //延迟1秒执行
+                       }
+                   });
+                   return false;
+               }
+           },
+           
+           
+           
+           
+           
+           
         /**
          * 导出班级学员发卡绑定模版
          */

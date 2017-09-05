@@ -24,6 +24,13 @@ Ext.define("core.train.cardcenter.view.MainGrid", {
                 color: '#C44444',
                 fontWeight:800
             }
+        },{
+            xtype: 'button',
+            text: '导出',
+            ref: 'gridExport',
+            funCode:'girdFuntionBtn',
+            disabled:false,
+            iconCls: 'x-fa fa-file'
         },'->',{
             xtype: 'tbtext', 
             html:'快速搜索：'
@@ -101,21 +108,29 @@ Ext.define("core.train.cardcenter.view.MainGrid", {
                 return "<span style='color:#FFAC00'>新增</span>";            
         }
     },{
-        width:100,
+        width:120,
         text: "卡片编号",
         dataIndex: "cardNo"        
+    },{
+        width:120,
+        text: "印刷卡编号",
+        dataIndex: "cardPrintId",
+        align:'left'       
     },{
         width:100,
         text: "发卡状态",
         dataIndex: "useState",
         renderer: function(value, metaData) {          
-            if(value==0)
+            if(value==0||value==3||value==null)
                 return "<span style='color:red'>未发卡</span>";
             else if(value==1)
                 return "<span style='color:green'>已发卡</span>";            
-            else 
-                return "<span style='color:#FFAC00'>卡片失效</span>";            
-        }        
+            else if(value==2){
+            	return "<span style='color:black'>挂失</span>";
+            }else {
+            	return "<span style='color:#FFAC00'>退卡</span>"; 
+            }
+        }      
     }],
     
     emptyText: '<span style="width:100%;text-align:center;display: block;">暂无数据</span>'

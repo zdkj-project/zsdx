@@ -765,4 +765,104 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		}
 	}
 
+	/**
+	 * 导出班级学员卡的信息
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/exportCardExcel")
+	public void exportCardExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getSession().setAttribute("exportTrainClassTraineeCardIsEnd", "0");
+		request.getSession().removeAttribute("exportTrainClassTraineeCardIIsState");
+
+		List<Map<String, Object>> allList = new ArrayList<>();
+		Integer[] columnWidth = new Integer[] { 15, 15, 20, 20, 20, 15, 20, 15 };
+
+		// 1.班级信息
+		String classId = request.getParameter("classId"); // 程序中限定每次只能导出一个班级
+		
+		//数据字典项
+		String mapKey = null;
+		String[] propValue = { "XBM", "CARDSTATE" };
+		Map<String, String> mapDicItem = new HashMap<>();
+		List<BaseDicitem> listDicItem = dicitemService.queryByProerties("dicCode", propValue);
+		for (BaseDicitem baseDicitem : listDicItem) {
+				mapKey = baseDicitem.getItemCode() + baseDicitem.getDicCode();
+				mapDicItem.put(mapKey, baseDicitem.getItemName());
+			}
+
+		// 2.班级学员信息
+		List<TrainClasstrainee> trainClasstraineeList = null;
+		String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2) ";
+		if (StringUtils.isNotEmpty(classId)) {
+			hql += " and classId ='" + classId + "'";
+		}
+		hql += " order by createTime desc";
+		trainClasstraineeList = thisService.doQuery(hql);
+
+		// 处理班级基本数据
+		List<Map<String, String>> traineeList = new ArrayList<>();
+		Map<String, String> traineeMap = null;
+		String ClassName="";
+		int i=1;
+		for (TrainClasstrainee classTrainee : trainClasstraineeList) {
+			traineeMap = new LinkedHashMap<>();
+			ClassName = classTrainee.getClassName();
+			traineeMap.put("xh",i+"");
+			traineeMap.put("name", classTrainee.getXm());
+			traineeMap.put("xb",  mapDicItem.get(classTrainee.getXbm()+"XBM"));
+			traineeMap.put("phone", classTrainee.getMobilePhone());
+			traineeMap.put("stustatus", (classTrainee.getIsDelete()==0)?"正常":((classTrainee.getIsDelete()==1)?"取消":"新增"));
+			traineeMap.put("cardNo", String.valueOf((classTrainee.getCardNo()==null)?" ":classTrainee.getCardNo()));
+			traineeMap.put("cardPrintNo", classTrainee.getCardPrintId());
+			traineeMap.put("useState", mapDicItem.get(String.valueOf((classTrainee.getUseState()==null)?0:classTrainee.getUseState())+"CARDSTATE"));
+			i++;
+			traineeList.add(traineeMap);
+		}
+		// --------2.组装课程表格数据
+		Map<String, Object> courseAllMap = new LinkedHashMap<>();
+		courseAllMap.put("data", traineeList);
+		courseAllMap.put("title", null);
+		courseAllMap.put("head", new String[] { "序号","姓名", "性别", "电话", "学员状态", "卡编号","印刷卡号","卡状态" }); // 规定名字相同的，设定为合并
+		courseAllMap.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
+		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
+		courseAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+		allList.add(courseAllMap);
+
+		// 在导出方法中进行解析
+		boolean result = PoiExportExcel.exportExcel(response, ClassName+"班学员卡详细", ClassName+"班学员卡信息", allList);
+		if (result == true) {
+			request.getSession().setAttribute("exportTrainClassTraineeCardIIsEnd", "1");
+		} else {
+			request.getSession().setAttribute("exportTrainClassTraineeCardIIsEnd", "0");
+			request.getSession().setAttribute("exportTrainClassTraineeCardIIsState", "0");
+		}
+	}
+	
+	/**
+	 * 判断导出时，是否导出完毕
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/checkExportCardEnd")
+	public void checkExportCardEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Object isEnd = request.getSession().getAttribute("exportTrainClassTraineeCardIIsEnd");
+		Object state = request.getSession().getAttribute("exportTrainClassTraineeCardIIsState");
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+		}
+	}
 }

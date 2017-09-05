@@ -64,6 +64,13 @@ Ext.define("core.system.user.view.UserGrid", {
             ref: 'syncCardInfoFromUP',
             funCode:'girdFuntionBtn',
             iconCls: 'x-fa fa-rss'
+        },{
+            xtype: 'button',
+            text: '导出',
+            ref: 'gridExport',
+            funCode:'girdFuntionBtn',
+            disabled:false,
+            iconCls: 'x-fa fa-file'
         },'->',{
             xtype: 'tbtext', 
             html:'快速搜索：'
@@ -136,9 +143,14 @@ Ext.define("core.system.user.view.UserGrid", {
 				return (value == '0') ? '<font color=green>正常</font>' : '<font color=red>锁定</font>';
 			}
 		},{
-            width:100,
+            width:120,
             text: "卡片编号",
             dataIndex: "upCardId",
+            align:'left'       
+        },{
+            width:120,
+            text: "印刷卡编号",
+            dataIndex: "cardPrintId",
             align:'left'       
         },{
             width:100,
@@ -146,12 +158,15 @@ Ext.define("core.system.user.view.UserGrid", {
             dataIndex: "useState",
             align:'left',
             renderer: function(value, metaData) {          
-                if(value==0)
+                if(value==0||value==3||value==null)
                     return "<span style='color:red'>未发卡</span>";
                 else if(value==1)
                     return "<span style='color:green'>已发卡</span>";            
-                else 
-                    return "<span style='color:#FFAC00'>卡片失效</span>";            
+                else if(value==2){
+                	return "<span style='color:black'>挂失</span>";
+                }else {
+                	return "<span style='color:#FFAC00'>退卡</span>"; 
+                }
             }        
         },{
             xtype:'actiontextcolumn',
