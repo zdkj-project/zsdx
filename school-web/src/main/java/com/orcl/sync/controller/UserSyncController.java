@@ -107,7 +107,7 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
             SysUser u = null;
             CustomerContextHolder.setCustomerType(CustomerContextHolder.SESSION_FACTORY_MYSQL);
             userservice.executeSql("delete BASE_T_USERDEPTJOB where user_id!='8a8a8834533a065601533a065ae80000' and user_id!='f111ebab-933b-4e48-b328-c731ae792ca0'");
-            userservice.executeSql("delete SYS_T_ROLEUSER where user_id!='8a8a8834533a065601533a065ae80000' and user_id!='f111ebab-933b-4e48-b328-c731ae792ca0'");
+//            userservice.executeSql("delete SYS_T_ROLEUSER where user_id!='8a8a8834533a065601533a065ae80000' and user_id!='f111ebab-933b-4e48-b328-c731ae792ca0'");
             Date justDate = new Date();
             String justYear = DateUtil.formatDate(justDate,"yyyy");
             Integer integer = 1;
@@ -117,30 +117,39 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
                 u = userservice.get(d.getId());
                 if (u == null) {
                     u = new SysUser(d.getId());
-                }
-                userNumb = justYear + StringUtils.addString(integer.toString(), "0", 6,"L");
-                u.setXm(d.getUserName());
-                u.setUserName(d.getAccounts());
-                u.setUserPwd(defaultPwd);
-                u.setUserNumb(userNumb);
-                u.setIsDelete(d.getIsOnthejob() == 0 ? 1 : 0);
-                u.setCategory("1");
-                u.setState(d.getIsEnable() == 0 ? "1" : "0");
-                u.setIssystem(1);
-                u.setIsHidden("0");
-                if (d.getUserSex() != null) {
-                    u.setXbm(mapDicItme.get(d.getUserSex()));
-                }
-                u.setSchoolId("2851655E-3390-4B80-B00C-52C7CA62CB39");
-                u.setCreateTime(d.getCreateDate());
-                u.setCreateUser(d.getCreateName());
+                    userNumb = justYear + StringUtils.addString(integer.toString(), "0", 6,"L");
+                    u.setXm(d.getUserName());
+                    u.setUserName(d.getAccounts());
+                    u.setUserPwd(defaultPwd);
+                    u.setUserNumb(userNumb);
+                    u.setIsDelete(d.getIsOnthejob() == 0 ? 1 : 0);
+                    u.setCategory("1");
+                    u.setState(d.getIsEnable() == 0 ? "1" : "0");
+                    u.setIssystem(1);
+                    u.setIsHidden("0");
+                    if (d.getUserSex() != null) {
+                        u.setXbm(mapDicItme.get(d.getUserSex()));
+                    }
+                    u.setSchoolId("2851655E-3390-4B80-B00C-52C7CA62CB39");
+                    u.setCreateTime(d.getCreateDate());
+                    u.setCreateUser(d.getCreateName());
 
-                Set<SysRole> theUserRole = u.getSysRoles();
-                theUserRole.add(defaultRole);
-                u.setSysRoles(theUserRole);
-
-                userservice.merge(u);
-                integer++;
+                    Set<SysRole> theUserRole = u.getSysRoles();
+                    theUserRole.add(defaultRole);
+                    u.setSysRoles(theUserRole);
+                    integer++;
+                    userservice.merge(u);
+                }else {
+                	 u.setXm(d.getUserName());
+                     u.setUserName(d.getAccounts());
+                     u.setIsDelete(d.getIsOnthejob() == 0 ? 1 : 0);
+                     u.setState(d.getIsEnable() == 0 ? "1" : "0");
+                     if (d.getUserSex() != null) {
+                         u.setXbm(mapDicItme.get(d.getUserSex()));
+                     }
+                     u.setCreateTime(d.getCreateDate());
+                     u.setCreateUser(d.getCreateName());
+                }
             }
 
             //}

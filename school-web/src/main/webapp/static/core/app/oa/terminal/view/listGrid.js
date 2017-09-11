@@ -26,12 +26,13 @@ Ext.define("core.oa.terminal.view.listGrid", {
         },{
             xtype:'textfield',
             name:'roomName',
-            emptyText: '请输入房间名称'
+            emptyText: '请输入房间名称',
+            funCode: 'girdFastSearchText',
         },{
-            xtype: 'button',            
-            ref: 'gridFastSearchBtn',  
-            funCode:'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型 
-            iconCls: 'x-fa fa-search',  
+            xtype: 'button',
+            funCode: 'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型
+            ref: 'gridFastSearchBtn',
+            iconCls: 'x-fa fa-search', 
         }],
     },
     panelBottomBar:false,

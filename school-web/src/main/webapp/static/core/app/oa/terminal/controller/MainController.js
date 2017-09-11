@@ -26,19 +26,45 @@ Ext.define("core.oa.terminal.controller.MainController", {
                         
                     var store = baseGrid.getStore();
                     var proxy = store.getProxy();
-
-
                     var roomName=baseGrid.down("textfield[name=roomName]").getValue();     
-                    
-                    proxy.extraParams.filter = '[{"type":"string","value":"'+roomName+'","field":"roomName","comparison":""}]';
-                    store.loadPage(1);
-
+                    if(roomName!=""){
+                    	proxy.extraParams.filter = '[{"type":"string","value":"'+roomName+'","field":"roomName","comparison":""}]';
+                        store.loadPage(1);
+                    }else{
+                    	proxy.extraParams.filter = "";
+                    	store.loadPage(1);
+                    }
                     return false;
                 }
             },	
         	
-        	
-        	
+            //快速搜索文本框回车事件
+            "basegrid[funCode=terminal_main] field[funCode=girdFastSearchText]": {
+                specialkey: function (field, e) {
+                    if (e.getKey() == e.ENTER) {
+
+                        //得到组件                 
+                        var baseGrid = field.up("basegrid");
+                        if (!baseGrid)
+                            return false;
+
+                        var toolBar = field.up("toolbar");
+                        if (!toolBar)
+                            return false;
+                        var store = baseGrid.getStore();
+                        var proxy = store.getProxy();
+                        var roomName=baseGrid.down("textfield[name=roomName]").getValue();     
+                        if(roomName!=""){
+                        	proxy.extraParams.filter = '[{"type":"string","value":"'+roomName+'","field":"roomName","comparison":""}]';
+                            store.loadPage(1);
+                        }else{
+                        	proxy.extraParams.filter = "";
+                        	store.loadPage(1);
+                        }
+                        return false;
+                    }
+                }
+            },
         
             "basegrid button[ref=gridAdd_Tab]": {
                 beforeclick: function(btn) {
