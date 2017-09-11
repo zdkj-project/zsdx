@@ -31,13 +31,14 @@
             </list>
         </property>
     </bean>
-    <bean id="dataSourceOne" class="com.alibaba.druid.pool.DruidDataSource"
+    <!-- Q1 平台数据库连接配置-->
+    <bean id="dataSourceQ1" class="com.alibaba.druid.pool.DruidDataSource"
           destroy-method="close">
         <!-- sql server 数据库连接配置 -->
-        <property name="driverClassName" value="${driverClass}"/>
-        <property name="url" value="${jdbcUrl}"/>
-        <property name="username" value="${username}"/>
-        <property name="password" value="${password}"/>
+        <property name="driverClassName" value="${driverClassQ1}"/>
+        <property name="url" value="${jdbcUrlQ1}"/>
+        <property name="username" value="${usernameQ1}"/>
+        <property name="password" value="${passwordQ1}"/>
 
         <!-- 配置初始化大小、最小、最大 -->
         <property name="initialSize" value="1"/>
@@ -59,10 +60,37 @@
         <property name="validationQuery">
             <value>SELECT 'x'</value>
         </property>
-
     </bean>
+    <!--UP6平台数据库连接配置-->
+    <bean id="dataSourceUP6" class="com.alibaba.druid.pool.DruidDataSource"
+          destroy-method="close">
+        <!-- sql server 数据库连接配置 -->
+        <property name="driverClassName" value="${jdbcUrlUp6}" />
+        <property name="url" value="${driverClassUp6}" />
+        <property name="username" value="${usernameUp6}" />
+        <property name="password" value="${passwordUp6}" />
 
-    <bean id="dataSourceFour" class="org.apache.commons.dbcp.BasicDataSource"
+        <!-- 配置初始化大小、最小、最大 -->
+        <property name="initialSize" value="1" />
+        <property name="minIdle" value="1" />
+        <property name="maxActive" value="20" />
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait" value="60000" />
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="60000" />
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="300000" />
+        <!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+        <property name="poolPreparedStatements" value="true" />
+        <property name="maxPoolPreparedStatementPerConnectionSize"
+                  value="20" />
+        <!-- 配置监控统计拦截的filters -->
+        <property name="filters" value="stat,log4j" />
+
+        <property name="validationQuery"><value>SELECT 'x'</value></property>
+    </bean>
+    <!--OA同步数据库连接配置-->
+    <bean id="dataSourceSyncOA" class="org.apache.commons.dbcp.BasicDataSource"
           destroy-method="close">
         <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
         <property name="url" value="jdbc:oracle:thin:@172.18.246.175:1521:orcl"/>
@@ -79,55 +107,15 @@
         <!-- end -->
     </bean>
 
-    <bean id="dataSourceFive" class="com.alibaba.druid.pool.DruidDataSource"
-          destroy-method="close">
-        <!-- sql server 数据库连接配置 -->
-        <property name="driverClassName" value="${driverClass5}"/>
-        <property name="url" value="${jdbcUrl5}"/>
-        <property name="username" value="${username5}"/>
-        <property name="password" value="${password5}"/>
-
-        <!-- 配置初始化大小、最小、最大 -->
-        <property name="initialSize" value="1"/>
-        <property name="minIdle" value="1"/>
-        <property name="maxActive" value="20"/>
-        <!-- 配置获取连接等待超时的时间 -->
-        <property name="maxWait" value="60000"/>
-        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
-        <property name="timeBetweenEvictionRunsMillis" value="60000"/>
-        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
-        <property name="minEvictableIdleTimeMillis" value="300000"/>
-        <!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
-        <property name="poolPreparedStatements" value="true"/>
-        <property name="maxPoolPreparedStatementPerConnectionSize"
-                  value="20"/>
-        <!-- 配置监控统计拦截的filters -->
-        <property name="filters" value="stat,log4j"/>
-
-        <property name="validationQuery">
-            <value>SELECT 'x'</value>
-        </property>
-
-    </bean>
-
-    <!-- 	<bean id="dataSource"
-          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
-        <property name="url" value="jdbc:oracle:thin:@172.19.34.6:1521:ORCL" />
-        <property name="username" value="orclight" />
-        <property name="password" value="123456" />
-    </bean>   -->
-
-
     <bean id="dynamicDataSource" class="com.zd.core.util.DynamicDataSource">
         <!-- 通过key-value的形式来关联数据源 -->
         <property name="targetDataSources">
             <map>
-                <entry value-ref="dataSourceOne" key="dataSourceOne"></entry>
-                <entry value-ref="dataSourceFive" key="dataSourceFive"></entry>
+                <entry value-ref="dataSourceQ1" key="dataSourceQ1"></entry>
+                <entry value-ref="dataSourceUP6" key="dataSourceUP6"></entry>
             </map>
         </property>
-        <property name="defaultTargetDataSource" ref="dataSourceOne"/>
+        <property name="defaultTargetDataSource" ref="dataSourceQ1"/>
     </bean>
     <!-- 配置SessionFactory，由spring提供 -->
     <bean id="sessionFactory"
@@ -140,11 +128,11 @@
         <property name="packagesToScan" value="com.zd"></property>
     </bean>
 
-    <!-- 配置SessionFactory，由spring提供 -->
+    <!-- 配置OA同步的SessionFactory，由spring提供 -->
     <bean id="oraclesessionFactory"
           class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
         <!-- 配置数据 源 -->
-        <property name="dataSource" ref="dataSourceFour"></property>
+        <property name="dataSource" ref="dataSourceSyncOA"></property>
         <!-- 配置hibernate配置文件所在的位置 -->
         <property name="configLocation" value="classpath:orcl-hibernate.cfg.xml"></property>
         <!-- 扫描的数据包 -->
