@@ -253,7 +253,8 @@ Ext.define('Ext.ux.DateTimeField', {
 
         if(me.dateType == 'date'){  //date 或者 datetime
             me.submitFormat  = 'Y-m-d';
-            me.format="Y年m月d日";
+            if(!me.format)
+                me.format="Y年m月d日";
         }
         /*else{
             if(!me.format)
