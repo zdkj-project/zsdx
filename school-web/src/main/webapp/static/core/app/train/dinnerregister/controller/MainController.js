@@ -284,6 +284,37 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                             xtype:'container',
                             layout:'column',
                             items:[{
+                                columnWidth: 0.3,
+                                fieldStyle : {                                          
+                                    fontSize:'18px',
+                                },
+                                fieldLabel: '预定早餐餐标',
+                                name: 'breakfastStand',
+                                xtype : 'displayfield',
+                                value: recordData.breakfastStand
+                            }, {
+                                columnWidth: 0.3,
+                                fieldStyle : {                                          
+                                    fontSize:'18px',
+                                },
+                                fieldLabel: '预定午餐餐标',
+                                name: 'lunchStand',
+                                xtype : 'displayfield',
+                                value: recordData.lunchStand
+                            }, {
+                                columnWidth: 0.3,
+                                fieldStyle : {                                          
+                                    fontSize:'18px',
+                                },
+                                fieldLabel: '预定晚餐餐标',
+                                name: 'dinnerStand',
+                                xtype : 'displayfield',
+                                value: recordData.dinnerStand
+                            }]
+                        },{
+                            xtype:'container',
+                            layout:'column',
+                            items:[{
                                 beforeLabelTextTpl: comm.get('required'),
                                 allowBlank: false, 
                                 columnWidth: 0.3,
@@ -293,7 +324,22 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                                 minValue: 0,
                                 maxValue:999, 
                                 value: recordData.breakfastReal,
-                                emptyText: "请输入实际数值"      
+                                emptyText: "请输入实际数值",
+                                listeners: {
+                                    change: function(field, record, index) {                  
+                                        var currentForm=field.up("baseform[xtype=dinnerregister.mainform]");
+                                        var breakfastStandReal=currentForm.down("field[name=breakfastStandReal]").getValue();
+                                        var lunchStandReal=currentForm.down("field[name=lunchStandReal]").getValue();
+                                        var dinnerStandReal=currentForm.down("field[name=dinnerStandReal]").getValue();
+                                        var breakfastReal=currentForm.down("field[name=breakfastReal]").getValue();
+                                        var lunchReal=currentForm.down("field[name=lunchReal]").getValue();
+                                        var dinnerReal=currentForm.down("field[name=dinnerReal]").getValue();
+
+                                        currentForm.down("field[name=breakfastInfCount]").setValue(breakfastStandReal*breakfastReal);
+                                        currentForm.down("field[name=lunchInfCount]").setValue(lunchStandReal*lunchReal);
+                                        currentForm.down("field[name=dinnerInfCount]").setValue(dinnerStandReal*dinnerReal);
+                                    }
+                                }      
                             }, {
                                
                                 beforeLabelTextTpl: comm.get('required'),
@@ -305,7 +351,22 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                                 minValue: 0,
                                 maxValue:999, 
                                 value: recordData.lunchReal,
-                                emptyText: "请输入实际数值"      
+                                emptyText: "请输入实际数值",
+                                listeners: {
+                                    change: function(field, record, index) {                  
+                                    	 var currentForm=field.up("baseform[xtype=dinnerregister.mainform]");
+                                         var breakfastStandReal=currentForm.down("field[name=breakfastStandReal]").getValue();
+                                         var lunchStandReal=currentForm.down("field[name=lunchStandReal]").getValue();
+                                         var dinnerStandReal=currentForm.down("field[name=dinnerStandReal]").getValue();
+                                         var breakfastReal=currentForm.down("field[name=breakfastReal]").getValue();
+                                         var lunchReal=currentForm.down("field[name=lunchReal]").getValue();
+                                         var dinnerReal=currentForm.down("field[name=dinnerReal]").getValue();
+
+                                         currentForm.down("field[name=breakfastInfCount]").setValue(breakfastStandReal*breakfastReal);
+                                         currentForm.down("field[name=lunchInfCount]").setValue(lunchStandReal*lunchReal);
+                                         currentForm.down("field[name=dinnerInfCount]").setValue(dinnerStandReal*dinnerReal);
+                                    }
+                                }      
                             }, {
                                 beforeLabelTextTpl: comm.get('required'),
                                 allowBlank: false, 
@@ -316,7 +377,22 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                                 minValue: 0,
                                 maxValue:999, 
                                 value: recordData.dinnerReal,
-                                emptyText: "请输入实际数值"      
+                                emptyText: "请输入实际数值",
+                                listeners: {
+                                    change: function(field, record, index) {                  
+                                    	 var currentForm=field.up("baseform[xtype=dinnerregister.mainform]");
+                                         var breakfastStandReal=currentForm.down("field[name=breakfastStandReal]").getValue();
+                                         var lunchStandReal=currentForm.down("field[name=lunchStandReal]").getValue();
+                                         var dinnerStandReal=currentForm.down("field[name=dinnerStandReal]").getValue();
+                                         var breakfastReal=currentForm.down("field[name=breakfastReal]").getValue();
+                                         var lunchReal=currentForm.down("field[name=lunchReal]").getValue();
+                                         var dinnerReal=currentForm.down("field[name=dinnerReal]").getValue();
+
+                                         currentForm.down("field[name=breakfastInfCount]").setValue(breakfastStandReal*breakfastReal);
+                                         currentForm.down("field[name=lunchInfCount]").setValue(lunchStandReal*lunchReal);
+                                         currentForm.down("field[name=dinnerInfCount]").setValue(dinnerStandReal*dinnerReal);
+                                    }
+                                }      
                             }]
                         },{                        
                             xtype: "container",
@@ -331,7 +407,22 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                                 xtype : 'numberfield',
                                 minValue: 0,
                                 maxValue:9999, 
-                                value: recordData.breakfastStandReal
+                                value: recordData.breakfastStandReal,
+                                listeners: {
+                                    change: function(field, record, index) {                  
+                                    	 var currentForm=field.up("baseform[xtype=dinnerregister.mainform]");
+                                         var breakfastStandReal=currentForm.down("field[name=breakfastStandReal]").getValue();
+                                         var lunchStandReal=currentForm.down("field[name=lunchStandReal]").getValue();
+                                         var dinnerStandReal=currentForm.down("field[name=dinnerStandReal]").getValue();
+                                         var breakfastReal=currentForm.down("field[name=breakfastReal]").getValue();
+                                         var lunchReal=currentForm.down("field[name=lunchReal]").getValue();
+                                         var dinnerReal=currentForm.down("field[name=dinnerReal]").getValue();
+
+                                         currentForm.down("field[name=breakfastInfCount]").setValue(breakfastStandReal*breakfastReal);
+                                         currentForm.down("field[name=lunchInfCount]").setValue(lunchStandReal*lunchReal);
+                                         currentForm.down("field[name=dinnerInfCount]").setValue(dinnerStandReal*dinnerReal);
+                                    }
+                                }      
                             }, {
                                 beforeLabelTextTpl: comm.get('required'),
                                 allowBlank: false, 
@@ -341,7 +432,22 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                                 xtype : 'numberfield',
                                 minValue: 0,
                                 maxValue:9999, 
-                                value: recordData.lunchStandReal
+                                value: recordData.lunchStandReal,
+                                listeners: {
+                                    change: function(field, record, index) {                  
+                                    	 var currentForm=field.up("baseform[xtype=dinnerregister.mainform]");
+                                         var breakfastStandReal=currentForm.down("field[name=breakfastStandReal]").getValue();
+                                         var lunchStandReal=currentForm.down("field[name=lunchStandReal]").getValue();
+                                         var dinnerStandReal=currentForm.down("field[name=dinnerStandReal]").getValue();
+                                         var breakfastReal=currentForm.down("field[name=breakfastReal]").getValue();
+                                         var lunchReal=currentForm.down("field[name=lunchReal]").getValue();
+                                         var dinnerReal=currentForm.down("field[name=dinnerReal]").getValue();
+
+                                         currentForm.down("field[name=breakfastInfCount]").setValue(breakfastStandReal*breakfastReal);
+                                         currentForm.down("field[name=lunchInfCount]").setValue(lunchStandReal*lunchReal);
+                                         currentForm.down("field[name=dinnerInfCount]").setValue(dinnerStandReal*dinnerReal);
+                                    }
+                                }      
                             }, {
                                 beforeLabelTextTpl: comm.get('required'),
                                 allowBlank: false, 
@@ -351,7 +457,57 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                                 xtype : 'numberfield',
                                 minValue: 0,
                                 maxValue:9999, 
-                                value: recordData.dinnerStandReal
+                                value: recordData.dinnerStandReal,
+                                listeners: {
+                                    change: function(field, record, index) {                  
+                                    	 var currentForm=field.up("baseform[xtype=dinnerregister.mainform]");
+                                         var breakfastStandReal=currentForm.down("field[name=breakfastStandReal]").getValue();
+                                         var lunchStandReal=currentForm.down("field[name=lunchStandReal]").getValue();
+                                         var dinnerStandReal=currentForm.down("field[name=dinnerStandReal]").getValue();
+                                         var breakfastReal=currentForm.down("field[name=breakfastReal]").getValue();
+                                         var lunchReal=currentForm.down("field[name=lunchReal]").getValue();
+                                         var dinnerReal=currentForm.down("field[name=dinnerReal]").getValue();
+
+                                         currentForm.down("field[name=breakfastInfCount]").setValue(breakfastStandReal*breakfastReal);
+                                         currentForm.down("field[name=lunchInfCount]").setValue(lunchStandReal*lunchReal);
+                                         currentForm.down("field[name=dinnerInfCount]").setValue(dinnerStandReal*dinnerReal);
+                                    }
+                                }      
+                            }]
+                        },{
+                            xtype: "container",
+                            layout: "column",
+                            labelAlign: "right",
+                            items: [{            
+                                columnWidth: 0.3,
+                                fieldStyle : {                                          
+                                    fontSize:'18px',
+                                },
+                                fieldLabel: "实际早餐总额",    
+                                name: "breakfastInfCount",
+                                xtype : 'displayfield',
+                                value:recordData.breakfastReal*recordData.breakfastStandReal,
+                                readOnly :true  
+                            },{          
+                                columnWidth: 0.3,
+                                fieldStyle : {                                          
+                                    fontSize:'18px',
+                                },
+                                fieldLabel: "实际午餐总额",    
+                                name: "lunchInfCount",
+                                xtype : 'displayfield',
+                                value:recordData.lunchReal*recordData.lunchStandReal,
+                                readOnly :true      
+                            },{    
+                                columnWidth: 0.3,
+                                fieldStyle : {                                          
+                                    fontSize:'18px',
+                                },
+                                fieldLabel: "实际晚餐总额",    
+                                name: "dinnerInfCount",
+                                xtype : 'displayfield',
+                                value:recordData.dinnerReal*recordData.dinnerStandReal,
+                                readOnly :true          
                             },{            
                                 columnAlign:'center',
                                 xtype:'button',
@@ -362,7 +518,7 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                                 ref:'submitRegister',
                                 iconCls:'x-fa fa-check-square',
                             }]
-                        }]
+                        }],
                     });                                                        
                 }
                 form.add(items);

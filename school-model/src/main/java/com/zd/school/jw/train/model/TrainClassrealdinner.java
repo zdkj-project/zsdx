@@ -106,6 +106,16 @@ public class TrainClassrealdinner extends BaseEntity implements Serializable{
     public BigDecimal getBreakfastStandReal() {
         return breakfastStandReal;
     }
+    
+    @FieldInfo(name = "早餐餐标")
+    @Column(name = "BREAKFAST_STAND", precision = 8, scale = 2, nullable = true)
+    private BigDecimal breakfastStand;
+    public void setBreakfastStand(BigDecimal breakfastStand) {
+        this.breakfastStand = breakfastStand;
+    }
+    public BigDecimal getBreakfastStand() {
+        return breakfastStand;
+    }
         
     @FieldInfo(name = "实际午餐餐标")
     @Column(name = "LUNCH_STAND_REAL", precision = 8, scale = 2, nullable = true)
@@ -116,6 +126,16 @@ public class TrainClassrealdinner extends BaseEntity implements Serializable{
     public BigDecimal getLunchStandReal() {
         return lunchStandReal;
     }
+    
+    @FieldInfo(name = "午餐餐标")
+    @Column(name = "LUNCH_STAND", precision = 8, scale = 2, nullable = true)
+    private BigDecimal lunchStand;
+    public void setLunchStand(BigDecimal lunchStand) {
+        this.lunchStand = lunchStand;
+    }
+    public BigDecimal getLunchStand() {
+        return lunchStand;
+    }
         
     @FieldInfo(name = "实际晚餐餐标")
     @Column(name = "DINNER_STAND_REAL", precision = 8, scale = 2, nullable = true)
@@ -125,6 +145,16 @@ public class TrainClassrealdinner extends BaseEntity implements Serializable{
     }
     public BigDecimal getDinnerStandReal() {
         return dinnerStandReal;
+    }
+    
+    @FieldInfo(name = "实际晚餐餐标")
+    @Column(name = "DINNER_STAND", precision = 8, scale = 2, nullable = true)
+    private BigDecimal dinnerStand;
+    public void setDinnerStand(BigDecimal dinnerStand) {
+        this.dinnerStand = dinnerStand;
+    }
+    public BigDecimal getDinnerStand() {
+        return dinnerStand;
     }
         
     @FieldInfo(name = "备注")
