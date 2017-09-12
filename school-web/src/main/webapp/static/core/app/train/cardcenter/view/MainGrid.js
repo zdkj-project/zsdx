@@ -26,6 +26,20 @@ Ext.define("core.train.cardcenter.view.MainGrid", {
             }
         },{
             xtype: 'button',
+            text: '卡片绑定',
+            ref: 'gridBindCard',
+            funCode:'girdFuntionBtn',
+            disabled:false,
+            iconCls: 'x-fa fa-plus-circle'
+        },{
+            xtype: 'button',
+            text: '卡片解绑',
+            ref: 'gridUnBindCard',
+            funCode:'girdFuntionBtn',
+            disabled:false,
+            iconCls: 'x-fa fa-minus-circle'
+        },{
+            xtype: 'button',
             text: '导出',
             ref: 'gridExport',
             funCode:'girdFuntionBtn',
@@ -44,18 +58,18 @@ Ext.define("core.train.cardcenter.view.MainGrid", {
             xtype: 'button',
             funCode:'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型
             ref: 'gridFastSearchBtn',   
-            iconCls: 'x-fa fa-search',  
-        },{
+            iconCls: 'x-fa fa-search'
+        }/*,{
             xtype: 'button',
             text:'更新发卡信息',
             ref: 'gridRefreshInfo',
-            iconCls: 'x-fa fa-refresh',
+            iconCls: 'x-fa fa-refresh'
         },{
             xtype: 'button',
             text:'下载学员发卡模版',
             ref: 'gridExportExcel',
-            iconCls: 'x-fa fa-file',
-        }],
+            iconCls: 'x-fa fa-file'
+        }*/]
     },
     /**
      * 高级查询面板
@@ -110,27 +124,66 @@ Ext.define("core.train.cardcenter.view.MainGrid", {
     },{
         width:120,
         text: "卡片编号",
-        dataIndex: "cardNo"        
+        dataIndex: "cardPrintId"
     },{
-        width:120,
-        text: "印刷卡编号",
-        dataIndex: "cardPrintId",
-        align:'left'       
-    },{
-        width:100,
-        text: "发卡状态",
-        dataIndex: "useState",
-        renderer: function(value, metaData) {          
-            if(value==0||value==3||value==null)
-                return "<span style='color:red'>未发卡</span>";
-            else if(value==1)
-                return "<span style='color:green'>已发卡</span>";            
-            else if(value==2){
-            	return "<span style='color:black'>挂失</span>";
-            }else {
-            	return "<span style='color:#FFAC00'>退卡</span>"; 
+        xtype: 'actiontextcolumn',
+        text: "操作",
+        width: 150,
+        fixed: true,
+        align: 'center',
+        items: [{
+            text: '绑定',
+            style: 'font-size:12px;',
+            tooltip: '卡片绑定',
+            ref: 'gridDetail',
+            handler: function (view, rowIndex, colIndex, item) {
+                var rec = view.getStore().getAt(rowIndex);
+                this.fireEvent('trainRecordClick_Tab', {
+                    view: view.grid,
+                    record: rec,
+                    cmd:"trainrecord"
+                });
             }
-        }      
+        }, {
+            text: '解绑',
+            style: 'font-size:12px;',
+            tooltip: '卡片解绑',
+            ref: 'gridEdit',
+            handler: function (view, rowIndex, colIndex, item) {
+                var rec = view.getStore().getAt(rowIndex);
+                this.fireEvent('editClick_Tab', {
+                    view: view.grid,
+                    record: rec,
+                    cmd:"edit"
+                });
+            },
+            getClass: function (v, metadata, record) {
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("PEIXUNROLE") == -1) {
+                    return 'x-hidden-display';
+                } else
+                    return null;
+            }
+        }, {
+            text: '挂失',
+            style: 'font-size:12px;',
+            tooltip: '删除',
+            ref: 'gridDelete',
+            handler: function (view, rowIndex, colIndex, item) {
+                var rec = view.getStore().getAt(rowIndex);
+                this.fireEvent('deleteClick', {
+                    view: view.grid,
+                    record: rec
+                });
+            },
+            getClass: function (v, metadata, record) {
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("PEIXUNROLE") == -1) {
+                    return 'x-hidden-display';
+                } else
+                    return null;
+            }
+        }]
     }],
     
     emptyText: '<span style="width:100%;text-align:center;display: block;">暂无数据</span>'
