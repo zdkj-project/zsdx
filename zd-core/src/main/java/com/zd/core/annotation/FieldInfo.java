@@ -27,7 +27,22 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface FieldInfo {
-    public String name() default ""; // 字段名称
+    /**
+     * 字段名称
+     * @return
+     */
+    public String name() default "";
 
-    public String type() default ""; // 字段类型
+    /**
+     * 字段类型
+     * @return
+     */
+
+    public String type() default "";
+
+    /**
+     * 字段说明
+     * @return
+     */
+    public String explain() default "";
 }
