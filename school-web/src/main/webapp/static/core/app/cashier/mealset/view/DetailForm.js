@@ -1,7 +1,7 @@
-Ext.define("core.cashier.dishes.view.DetailForm", {
+Ext.define("core.cashier.mealset.view.DetailForm", {
     extend: "core.base.view.BaseForm",
-    alias: "widget.dishes.detailform",
-    xtype: 'dishesdeailform',
+    alias: "widget.mealset.detailform",
+    xtype: 'mealsetdeailform',
     layout: "form", //从上往下布局
     autoHeight: true,
     frame: false,
@@ -14,7 +14,7 @@ Ext.define("core.cashier.dishes.view.DetailForm", {
     },
     items: [{
         xtype: 'fieldset',
-        title: '菜品分类',
+        title: '餐类',
         defaultType: 'textfield',
         border:1,
         style: {
@@ -29,7 +29,7 @@ Ext.define("core.cashier.dishes.view.DetailForm", {
         defaults: {anchor: '100%'},
         layout: 'column',
         items: [ {
-            fieldLabel: "菜品类型",
+            fieldLabel: "餐类",
             width:600,
             xtype: 'radiogroup',
             ref:'indicatorObject',

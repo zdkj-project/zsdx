@@ -68,17 +68,21 @@ Ext.define("core.cashier.mealset.view.MainGrid", {
             width: 50,
             text: '序号',
             align: 'center'
-        }, {
-            width: 220,
-            text: "餐名",
-            dataIndex: "mealName"
-        }, {
+        },{
             width: 120,
             text: "菜品类别",
             dataIndex: "dishesType",
             columnType: "basecombobox", //列类型
             ddCode: "DISHESTYPE" //字典代码			
-        }, {
+        },{
+            width: 120,
+            text: "菜品编号",
+            dataIndex: "dishesCode"
+        },{
+            width: 220,
+            text: "菜品名称",
+            dataIndex: "dishesName"
+        },{
             width: 120,
             text: "菜品单价",
             dataIndex: "dishesPrice",

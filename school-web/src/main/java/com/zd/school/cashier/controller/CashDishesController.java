@@ -25,6 +25,8 @@ import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.cashier.model.CashDishes ;
 import com.zd.school.cashier.dao.CashDishesDao ;
 import com.zd.school.cashier.service.CashDishesService ;
+import com.zd.school.jw.train.model.TrainEvalIndicator;
+import com.zd.school.jw.train.model.TrainIndicatorStand;
 
 /**
  * 
@@ -79,22 +81,33 @@ public class CashDishesController extends FrameWorkController<CashDishes> implem
       * @throws IOException    抛出异常
      */
     @RequestMapping("/doadd")
-    public void doAdd(CashDishes entity, HttpServletRequest request, HttpServletResponse response)
+    public void doAdd(HttpServletRequest request, HttpServletResponse response)
             throws IOException, IllegalAccessException, InvocationTargetException {
+        String cashDishes = request.getParameter("cashDishes");
+        String cashDishesStand = request.getParameter("cashDishesStand");
+
+        CashDishes entity = (CashDishes) jsonBuilder.fromJson(cashDishes,CashDishes.class);
+        List<CashDishes> stand = (List<CashDishes>) jsonBuilder.fromJsonArray(cashDishesStand, CashDishes.class);
+        int standCount = stand.size();
+        //获取当前操作用户
+        SysUser currentUser = getCurrentSysUser();
+        if(standCount!=0) {
+        	for(int i =0;i<standCount;i++){
+        		try {
+                    entity = thisService.doAddEntity(stand.get(i),currentUser);// 执行增加方法
+                    if (ModelUtil.isNotNull(entity))
+                        writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
+                    else
+                        writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
+                } catch (Exception e) {
+                    writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
+                }
+        	}
+        	
+        }else {
+        	writeJSON(response, jsonBuilder.returnFailureJson("'请添加菜品'"));
+        }
         
-		//此处为放在入库前的一些检查的代码，如唯一校验等
-		
-		//获取当前操作用户
-		SysUser currentUser = getCurrentSysUser();
-		try {
-			entity = thisService.doAddEntity(entity, currentUser);// 执行增加方法
-			if (ModelUtil.isNotNull(entity))
-				writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
-			else
-				writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
-		} catch (Exception e) {
-			writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
-		}
     }
 
     /**

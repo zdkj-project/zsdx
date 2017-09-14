@@ -30,20 +30,20 @@ Ext.define("core.cashier.dishes.view.MainGrid", {
             funCode: 'girdFuntionBtn',
             disabled: true,
             iconCls: 'x-fa fa-minus-circle'
-        }, /*'->', {
+        }, '->', {
             xtype: 'tbtext',
             html: '快速搜索：'
         }, {
             xtype: 'textfield',
-            name: 'xm',
+            name: 'dishesName',
             funCode: 'girdFastSearchText',
-            emptyText: '请输入姓名'
+            emptyText: '请输入菜品'
         }, {
             xtype: 'button',
             funCode: 'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型
             ref: 'gridFastSearchBtn',
             iconCls: 'x-fa fa-search',
-        }, ' ', {
+        }, /*' ', {
             xtype: 'button',
             text: '高级搜索',
             ref: 'gridHignSearch',
@@ -68,17 +68,21 @@ Ext.define("core.cashier.dishes.view.MainGrid", {
             width: 50,
             text: '序号',
             align: 'center'
-        }, {
-            width: 220,
-            text: "菜品名称",
-            dataIndex: "dishesName"
-        }, {
+        },{
             width: 120,
             text: "菜品类别",
             dataIndex: "dishesType",
             columnType: "basecombobox", //列类型
             ddCode: "DISHESTYPE" //字典代码			
-        }, {
+        },{
+            width: 120,
+            text: "菜品编号",
+            dataIndex: "dishesCode"
+        },{
+            width: 220,
+            text: "菜品名称",
+            dataIndex: "dishesName"
+        },{
             width: 120,
             text: "菜品单价",
             dataIndex: "dishesPrice",
@@ -107,13 +111,13 @@ Ext.define("core.cashier.dishes.view.MainGrid", {
                         cmd:"edit"
                     });
                 },
-//                getClass: function (v, metadata, record) {
-//                    var roleKey = comm.get("roleKey");
-//                    if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("PEIXUNROLE") == -1) {
-//                        return 'x-hidden-display';
-//                    } else
-//                        return null;
-//                }
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("ZONGWUROLE") == -1) {
+                        return 'x-hidden-display';
+                    } else
+                        return null;
+                }
             }, {
                 text: '删除',
                 style: 'font-size:12px;',
@@ -126,13 +130,13 @@ Ext.define("core.cashier.dishes.view.MainGrid", {
                         record: rec
                     });
                 },
-//                getClass: function (v, metadata, record) {
-//                    var roleKey = comm.get("roleKey");
-//                    if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("PEIXUNROLE") == -1) {
-//                        return 'x-hidden-display';
-//                    } else
-//                        return null;
-//                }
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("ZONGWUROLE") == -1) {
+                        return 'x-hidden-display';
+                    } else
+                        return null;
+                }
             }]
         }]
     },

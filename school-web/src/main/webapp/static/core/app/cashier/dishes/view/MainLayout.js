@@ -15,7 +15,7 @@ Ext.define("core.cashier.dishes.view.MainLayout", {
     detCode: "dishes_detail",
     detLayout: "dishes.detaillayout",
     /*标注这个视图控制器的别名，以此提供给window处使用*/
-//    otherController:'trainee.otherController',
+    otherController:'dishes.otherController',
     layout:'fit',
     border:false,
     funData: {
@@ -24,6 +24,7 @@ Ext.define("core.cashier.dishes.view.MainLayout", {
         orderSql: "", //表格排序条件
         filter: "",
         pkName: "uuid",
+        defaultObj: {} ,
         tabConfig: {
             addTitle: '添加菜品',
             editTitle: '编辑菜品',

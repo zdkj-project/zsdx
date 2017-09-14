@@ -2,9 +2,9 @@
  ( *非必须，只要需要使用时，才创建他 )
  此视图控制器，提供于DeatilLayout范围内的界面组件注册事件
  */
-Ext.define("core.cashier.dishes.controller.DetailController", {
+Ext.define("core.cashier.mealset.controller.DetailController", {
     extend: "Ext.app.ViewController",
-    alias: 'controller.dishes.detailController',
+    alias: 'controller.mealset.detailController',
     mixins: {
         /*
          suppleUtil: "core.util.SuppleUtil",
@@ -23,7 +23,7 @@ Ext.define("core.cashier.dishes.controller.DetailController", {
         /**
          * 增加一个菜品
          */
-        "basegrid[xtype=dishes.standgrid] button[ref=gridAddStand]": {
+        "basegrid[xtype=mealset.standgrid] button[ref=gridAddStand]": {
             beforeclick:function (btn) {
                 var baseGrid = btn.up("basegrid");
                 var store = baseGrid.getStore();
@@ -37,7 +37,7 @@ Ext.define("core.cashier.dishes.controller.DetailController", {
         /**
          * 删除一个菜品
          */
-        "basegrid[xtype=dishes.standgrid] button[ref=gridDelStand]": {
+        "basegrid[xtype=mealset.standgrid] button[ref=gridDelStand]": {
             beforeclick:function (btn) {
                 var self = this;
                 var baseGrid = btn.up("basegrid");

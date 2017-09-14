@@ -146,6 +146,27 @@ Ext.define("core.train.teacher.view.DetailForm", {
         layout: "column",
         labelAlign: "right",
         items: [{           
+            fieldLabel: "银行",
+            columnWidth: 0.5,
+            name: "bank",
+            xtype: "textfield",
+            emptyText: "请输入银行",
+            maxLength: 32,
+            maxLengthText: "最多32个字符",
+        }, {            
+            fieldLabel: "银行账户",
+            columnWidth: 0.5,
+            name: "bankAccount",
+            xtype: "textfield",
+            emptyText: "请输入银行账户",
+            maxLength: 32,
+            maxLengthText: "最多32个字符",
+        }]
+    },{
+        xtype: "container",
+        layout: "column",
+        labelAlign: "right",
+        items: [{           
             fieldLabel: "电子邮件",
             columnWidth: 0.5,
             name: "dzxx",

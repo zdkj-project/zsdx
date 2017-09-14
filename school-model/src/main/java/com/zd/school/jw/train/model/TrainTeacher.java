@@ -320,4 +320,30 @@ public class TrainTeacher extends BaseEntity implements Serializable {
     public void setInoutName(String inoutName) {
         this.inoutName = inoutName;
     }
+    
+    @MapperCell(cellName = "银行")
+    @FieldInfo(name = "银行")
+    @Column(name = "BANK", length = 32, nullable = true)
+    private String bank;
+
+    public String getBank() {
+        return bank;
+    }
+
+    public void setBank(String bank) {
+        this.bank = bank;
+    }
+    
+    @MapperCell(cellName = "银行账户")
+    @FieldInfo(name = "银行账户")
+    @Column(name = "BANK_ACCOUNT", length = 32, nullable = true)
+    private String bankAccount;
+
+    public String getBankAccount() {
+        return bankAccount;
+    }
+
+    public void setBankAccount(String bankAccount) {
+        this.bankAccount = bankAccount;
+    }
 }

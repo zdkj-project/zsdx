@@ -331,3 +331,18 @@
     background-image: url(../images/icon/peixunanpai.png) !important;
     background-size: cover;
 }
+
+.icon_kuaican_icon{
+	 background-image: url(../images/icon/kuaican_icon.png) !important;
+    background-size: cover;
+}
+
+.icon_caipin_icon{
+	 background-image: url(../images/icon/caipin_icon.png) !important;
+    background-size: cover;
+}
+
+.icon_jiucanshijian_icon{
+	 background-image: url(../images/icon/jiucanshijian_icon.png) !important;
+    background-size: cover;
+}
