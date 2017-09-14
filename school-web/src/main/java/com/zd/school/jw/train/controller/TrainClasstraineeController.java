@@ -865,4 +865,114 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
 		}
 	}
+	
+	/**
+	 * 绑定卡
+	 */
+	@RequestMapping("/cardBind")
+	public void cardBind(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		//获取班级ID
+		String classId = request.getParameter("classId"); 
+		
+		//获取学员ID
+		String ids = request.getParameter("ids");
+		String[] idsArray = ids.split(",");
+		int  idsCount  = idsArray.length;
+		 
+		if(ids.equals("")==false) {
+			for(int i=0;i<idsCount;i++) {
+				//获取未绑定卡的数量
+				List<Map<String, Object>> cardUnBindList = new ArrayList<>();
+				String sql="select * from CARD_T_USEINFO where USER_ID IS NULL AND USE_STATE !='2'";
+				cardUnBindList = thisService.getForValuesToSql(sql);
+				int cardUnBindListCount = cardUnBindList.size();
+				
+				if(cardUnBindListCount<(idsCount-i)) {
+					writeJSON(response, jsonBuilder.returnFailureJson("\"空闲卡数量不足！\""));
+					return;
+				}else {
+					//获取第一个
+					sql = "select top 1 CARD_ID from CARD_T_USEINFO where USER_ID IS NULL AND USE_STATE !='2' order by UP_CARD_ID asc";
+					cardUnBindList = thisService.getForValuesToSql(sql);
+					
+					String cardId = String.valueOf(cardUnBindList.get(0).get("CARD_ID"));
+					
+					sql = "update CARD_T_USEINFO SET USE_STATE='1' ,USER_ID='"+idsArray[i]+"' WHERE CARD_ID='"+cardId+"'";
+					thisService.executeSql(sql);
+				}
+			}
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"绑定成功！\""));
+		}else {
+			//获取班级学员
+			List<TrainClasstrainee> trainClasstraineeList = null;
+			String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2) ";
+			if (StringUtils.isNotEmpty(classId)) {
+				hql += " and classId ='" + classId + "'";
+			}
+			hql += " order by createTime desc";
+			trainClasstraineeList = thisService.doQuery(hql);
+			int trainClasstraineeListCount = trainClasstraineeList.size();
+			
+			for(int i=0;i<trainClasstraineeListCount;i++) {
+				//获取未绑定卡的数量
+				List<Map<String, Object>> cardUnBindList = new ArrayList<>();
+				String sql="select * from CARD_T_USEINFO where USER_ID IS NULL AND USE_STATE !='2'";
+				cardUnBindList = thisService.getForValuesToSql(sql);
+				int cardUnBindListCount = cardUnBindList.size();
+				
+				if(cardUnBindListCount<(trainClasstraineeListCount-i)) {
+					writeJSON(response, jsonBuilder.returnFailureJson("\"空闲卡数量不足！\""));
+					return;
+				}else {
+					//获取第一个
+					sql = "select top 1 CARD_ID from CARD_T_USEINFO where USER_ID IS NULL AND USE_STATE !='2' order by UP_CARD_ID asc";
+					cardUnBindList = thisService.getForValuesToSql(sql);
+					
+					String cardId = String.valueOf(cardUnBindList.get(0).get("CARD_ID"));
+					
+					sql = "update CARD_T_USEINFO SET USE_STATE='1' ,USER_ID='"+trainClasstraineeList.get(i).getUuid()+"' WHERE CARD_ID='"+cardId+"'";
+					thisService.executeSql(sql);
+				}
+			}
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"绑定成功！\""));
+		}
+	}
+	
+	/**
+	 * 解除绑定卡
+	 */
+	@RequestMapping("/cardUnBind")
+	public void cardUnBind(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		//获取班级ID
+		String classId = request.getParameter("classId"); 
+		
+		//获取学员ID
+		String ids = request.getParameter("ids");
+		String[] idsArray = ids.split(",");
+		int  idsCount  = idsArray.length;
+		 
+		if(ids.equals("")==false) {
+			for(int i=0;i<idsCount;i++) {
+				String sql = "update CARD_T_USEINFO SET USE_STATE='0' ,USER_ID=NULL WHERE USER_ID='"+idsArray[i]+"'";
+				thisService.executeSql(sql);
+			}
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"解除绑定成功！\""));
+		}else {
+			//获取班级学员
+			List<TrainClasstrainee> trainClasstraineeList = null;
+			String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2) ";
+			if (StringUtils.isNotEmpty(classId)) {
+				hql += " and classId ='" + classId + "'";
+			}
+			hql += " order by createTime desc";
+			trainClasstraineeList = thisService.doQuery(hql);
+			int trainClasstraineeListCount = trainClasstraineeList.size();
+			
+			for(int i=0;i<trainClasstraineeListCount;i++) {
+				String sql = "update CARD_T_USEINFO SET USE_STATE='0' ,USER_ID=NULL WHERE USER_ID='"+trainClasstraineeList.get(i).getUuid()+"'";
+				thisService.executeSql(sql);
+			}
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"解除绑定成功！\""));
+		}
+	}
 }

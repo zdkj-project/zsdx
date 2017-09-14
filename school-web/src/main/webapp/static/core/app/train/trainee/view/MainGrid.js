@@ -191,7 +191,7 @@ Ext.define("core.train.trainee.view.MainGrid", {
                 },
                 getClass: function (v, metadata, record) {
                     var roleKey = comm.get("roleKey");
-                    if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("PEIXUNROLE") == -1) {
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("XYMANGER") == -1) {
                         return 'x-hidden-display';
                     } else
                         return null;
@@ -210,7 +210,7 @@ Ext.define("core.train.trainee.view.MainGrid", {
                 },
                 getClass: function (v, metadata, record) {
                     var roleKey = comm.get("roleKey");
-                    if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("PEIXUNROLE") == -1) {
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("XYMANGER") == -1) {
                         return 'x-hidden-display';
                     } else
                         return null;
