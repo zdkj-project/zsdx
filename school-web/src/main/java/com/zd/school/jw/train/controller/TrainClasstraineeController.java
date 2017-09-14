@@ -975,4 +975,31 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			writeJSON(response, jsonBuilder.returnSuccessJson("\"解除绑定成功！\""));
 		}
 	}
+	
+	/**
+	 * 解除绑定卡
+	 */
+	@RequestMapping("/cardLose")
+	public void cardLose(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		//获取班级ID
+		String classId = request.getParameter("classId"); 
+		
+		//获取学员ID
+		String ids = request.getParameter("ids");
+		String[] idsArray = ids.split(",");
+		int  idsCount  = idsArray.length;
+		 
+				List<Map<String, Object>> cardUnBindList = new ArrayList<>();
+				String sql="select * from CARD_T_USEINFO where USER_ID='"+ids+"'";
+				cardUnBindList = thisService.getForValuesToSql(sql);
+				int cardUnBindListCount = cardUnBindList.size();
+				if(cardUnBindListCount==0) {
+					writeJSON(response, jsonBuilder.returnFailureJson("\"此学员未绑定卡！\""));
+					return;
+				}else {
+					sql = "update CARD_T_USEINFO SET USE_STATE='2' ,USER_ID=NULL WHERE USER_ID='"+ids+"'";
+					thisService.executeSql(sql);
+				}
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"挂失成功！\""));
+	}
 }

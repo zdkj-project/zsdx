@@ -402,9 +402,85 @@ Ext.define("core.train.cardcenter.controller.MainController", {
               }
                 
             }   
+        },
+        
+        /**
+         * 学员列表操作列事件
+         */
+        "basegrid[xtype=cardcenter.maingrid] actioncolumn": {
+            //操作列绑定
+        	cardBindClick_Tab: function (data) {
+        		var self = this;
+        		var baseGrid=data.view;
+        		var ids = data.record.data.uuid;
+                	Ext.Msg.confirm('提示', '是否绑定此学员?', function (btn, text) {
+                        if (btn == 'yes') {
+                            var classId = "";
+                            var resObj = self.ajax({
+                                url: comm.get("baseUrl")  + "/TrainClasstrainee/cardBind",
+                                params: {
+                                    ids: ids,
+                                    classId: classId
+                                }
+                            });
+                            if (resObj.success) {
+                                baseGrid.getStore().load();
+                                self.msgbox(resObj.obj);
+                            } else {
+                                self.Error(resObj.obj);
+                            }
+                     }
+                })
+            },
+            //操作列解绑
+            cardUnBindClick_Tab: function (data) {
+            	var self = this;
+            	var baseGrid=data.view;
+        		var ids =data.record.data.uuid;
+                	Ext.Msg.confirm('提示', '是否解除绑定此学员?', function (btn, text) {
+                        if (btn == 'yes') {
+                            var classId = "";
+                            var resObj = self.ajax({
+                                url: comm.get("baseUrl")  + "/TrainClasstrainee/cardUnBind",
+                                params: {
+                                    ids: ids,
+                                    classId: classId
+                                }
+                            });
+                            if (resObj.success) {
+                                baseGrid.getStore().load();
+                                self.msgbox(resObj.obj);
+                            } else {
+                                self.Error(resObj.obj);
+                            }
+                     }
+                })
+            },
+            //操作列挂失
+            cardLoseClick: function (data) {
+            	var self = this;
+            	var baseGrid=data.view;
+        		var ids = data.record.data.uuid;
+                	Ext.Msg.confirm('提示', '是否挂失此学员?', function (btn, text) {
+                        if (btn == 'yes') {
+                            var classId = "";
+                            var resObj = self.ajax({
+                                url: comm.get("baseUrl")  + "/TrainClasstrainee/cardLose",
+                                params: {
+                                    ids: ids,
+                                    classId: classId
+                                }
+                            });
+                            if (resObj.success) {
+                                baseGrid.getStore().load();
+                                self.msgbox(resObj.obj);
+                            } else {
+                                self.Error(resObj.obj);
+                            }
+                     }
+                })
+            },
         }
-        
-        
         
     }
 });

@@ -138,7 +138,7 @@ Ext.define("core.train.cardcenter.view.MainGrid", {
             ref: 'gridDetail',
             handler: function (view, rowIndex, colIndex, item) {
                 var rec = view.getStore().getAt(rowIndex);
-                this.fireEvent('trainRecordClick_Tab', {
+                this.fireEvent('cardBindClick_Tab', {
                     view: view.grid,
                     record: rec,
                     cmd:"trainrecord"
@@ -151,7 +151,7 @@ Ext.define("core.train.cardcenter.view.MainGrid", {
             ref: 'gridEdit',
             handler: function (view, rowIndex, colIndex, item) {
                 var rec = view.getStore().getAt(rowIndex);
-                this.fireEvent('editClick_Tab', {
+                this.fireEvent('cardUnBindClick_Tab', {
                     view: view.grid,
                     record: rec,
                     cmd:"edit"
@@ -171,7 +171,7 @@ Ext.define("core.train.cardcenter.view.MainGrid", {
             ref: 'gridDelete',
             handler: function (view, rowIndex, colIndex, item) {
                 var rec = view.getStore().getAt(rowIndex);
-                this.fireEvent('deleteClick', {
+                this.fireEvent('cardLoseClick', {
                     view: view.grid,
                     record: rec
                 });
