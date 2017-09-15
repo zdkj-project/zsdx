@@ -1,5 +1,7 @@
 package com.zd.school.cashier.service;
 
+import java.util.List;
+
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseService;
 import com.zd.school.plartform.system.model.SysUser;
@@ -69,5 +71,5 @@ public interface CashDishesService extends BaseService<CashDishes> {
 	 *            当前操作用户
 	 * @return
 	 */
-	public CashDishes doAddEntity(CashDishes entity, SysUser currentUser);
+	public void doAddEntity(List<CashDishes> stand, SysUser currentUser);
 }

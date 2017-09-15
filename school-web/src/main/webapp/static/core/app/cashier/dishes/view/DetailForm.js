@@ -13,6 +13,11 @@ Ext.define("core.cashier.dishes.view.DetailForm", {
         labelAlign: "right"
     },
     items: [{
+        fieldLabel: "主键",
+        name: "uuid",
+        xtype: "textfield",
+        hidden: true
+    },{
         xtype: 'fieldset',
         title: '菜品分类',
         defaultType: 'textfield',
@@ -32,27 +37,27 @@ Ext.define("core.cashier.dishes.view.DetailForm", {
             fieldLabel: "菜品类型",
             width:600,
             xtype: 'radiogroup',
-            ref:'indicatorObject',
+            ref:'dishesType',
             items: [
-                { boxLabel: '荤菜类', name: 'indicatorObject', inputValue: '1', checked: true },
-                { boxLabel: '素菜类', name: 'indicatorObject', inputValue: '2' },
-                { boxLabel: '汤类', name: 'indicatorObject', inputValue: '3' },
-                { boxLabel: '主食类', name: 'indicatorObject', inputValue: '4' },
-                { boxLabel: '酒水类', name: 'indicatorObject', inputValue: '5' }
+                { boxLabel: '荤菜类', name: 'dishesType', inputValue: '1', checked: true },
+                { boxLabel: '素菜类', name: 'dishesType', inputValue: '2' },
+                { boxLabel: '汤类', name: 'dishesType', inputValue: '3' },
+                { boxLabel: '主食类', name: 'dishesType', inputValue: '4' },
+                { boxLabel: '酒水类', name: 'dishesType', inputValue: '5' }
             ],
-            listeners: {
-                change: function(field, record, index) {  
-                    var currentForm=field.up("baseform[xtype=dishes.detailform]");
-                    var standgrid = currentForm.down("basegrid[xtype=dishes.standgrid]");
-                    var dishesType = record.indicatorObject;
-                    var standgridStore = standgrid.getStore();
-                    var standgridProxy = standgridStore.getProxy();
-                    standgridProxy.extraParams = {
-                    		filter: "[{'type':'short','comparison':'=','value':'"+dishesType+"','field':'dishesType'}]",
-                    }
-                    standgridStore.load();
-                }  
-            }
+//            listeners: {
+//                change: function(field, record, index) {  
+//                    var currentForm=field.up("baseform[xtype=dishes.detailform]");
+//                    var standgrid = currentForm.down("basegrid[xtype=dishes.standgrid]");
+//                    var dishesType = record.dishesType;
+//                    var standgridStore = standgrid.getStore();
+//                    var standgridProxy = standgridStore.getProxy();
+//                    standgridProxy.extraParams = {
+//                    		filter: "[{'type':'short','comparison':'=','value':'"+dishesType+"','field':'dishesType'}]",
+//                    }
+//                    standgridStore.load();
+//                }  
+//            }
         }]
     },{
         xtype: 'fieldset',

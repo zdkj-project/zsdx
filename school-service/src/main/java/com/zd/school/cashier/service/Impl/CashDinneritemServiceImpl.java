@@ -17,6 +17,7 @@ import com.zd.core.util.BeanUtils;
 import com.zd.core.util.StringUtils;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.cashier.model.CashDinneritem ;
+import com.zd.school.cashier.model.CashDishes;
 import com.zd.school.cashier.dao.CashDinneritemDao ;
 import com.zd.school.cashier.service.CashDinneritemService ;
 
@@ -110,22 +111,20 @@ public class CashDinneritemServiceImpl extends BaseServiceImpl<CashDinneritem> i
 	 * @return
 	 */
 	@Override
-	public CashDinneritem doAddEntity(CashDinneritem entity, SysUser currentUser) {
-		CashDinneritem saveEntity = new CashDinneritem();
+	public void doAddEntity(List<CashDinneritem> stand, SysUser currentUser) {
 		try {
-			List<String> excludedProp = new ArrayList<>();
-			excludedProp.add("uuid");
-			BeanUtils.copyProperties(saveEntity, entity,excludedProp);
-			saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
-
-			return entity;
+			for(int i = 0;i<stand.size();i++) {
+				CashDinneritem saveEntity = new CashDinneritem();
+				List<String> excludedProp = new ArrayList<>();
+				excludedProp.add("uuid");
+				BeanUtils.copyProperties(saveEntity, stand.get(i),excludedProp);
+				saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
+				CashDinneritem entity = this.merge(saveEntity);// 执行修改方法
+			}
 		} catch (IllegalAccessException e) {
 			logger.error(e.getMessage());
-			return null;
 		} catch (InvocationTargetException e) {
 			logger.error(e.getMessage());
-			return null;
 		}
 	}
 }

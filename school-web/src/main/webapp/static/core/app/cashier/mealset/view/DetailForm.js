@@ -13,6 +13,11 @@ Ext.define("core.cashier.mealset.view.DetailForm", {
         labelAlign: "right"
     },
     items: [{
+        fieldLabel: "主键",
+        name: "uuid",
+        xtype: "textfield",
+        hidden: true
+    },{
         xtype: 'fieldset',
         title: '餐类',
         defaultType: 'textfield',
@@ -32,26 +37,26 @@ Ext.define("core.cashier.mealset.view.DetailForm", {
             fieldLabel: "餐类",
             width:600,
             xtype: 'radiogroup',
-            ref:'indicatorObject',
+            ref:'mealType',
             items: [
-                { boxLabel: '早餐', name: 'indicatorObject', inputValue: '1', checked: true },
-                { boxLabel: '午餐', name: 'indicatorObject', inputValue: '2' },
-                { boxLabel: '晚餐', name: 'indicatorObject', inputValue: '3' },
-                { boxLabel: '夜宵', name: 'indicatorObject', inputValue: '4' },
+                { boxLabel: '早餐', name: 'mealType', inputValue: '1', checked: true },
+                { boxLabel: '午餐', name: 'mealType', inputValue: '2' },
+                { boxLabel: '晚餐', name: 'mealType', inputValue: '3' },
+                { boxLabel: '夜宵', name: 'mealType', inputValue: '4' },
             ],
-            listeners: {
-                change: function(field, record, index) {  
-                    var currentForm=field.up("baseform[xtype=mealset.detailform]");
-                    var standgrid = currentForm.down("basegrid[xtype=mealset.standgrid]");
-                    var mealType = record.indicatorObject;
-                    var standgridStore = standgrid.getStore();
-                    var standgridProxy = standgridStore.getProxy();
-                    standgridProxy.extraParams = {
-                    		filter: "[{'type':'short','comparison':'=','value':'"+mealType+"','field':'mealType'}]",
-                    }
-                    standgridStore.load();
-                }  
-            }
+//            listeners: {
+//                change: function(field, record, index) {  
+//                    var currentForm=field.up("baseform[xtype=mealset.detailform]");
+//                    var standgrid = currentForm.down("basegrid[xtype=mealset.standgrid]");
+//                    var mealType = record.mealType;
+//                    var standgridStore = standgrid.getStore();
+//                    var standgridProxy = standgridStore.getProxy();
+//                    standgridProxy.extraParams = {
+//                    		filter: "[{'type':'short','comparison':'=','value':'"+mealType+"','field':'mealType'}]",
+//                    }
+//                    standgridStore.load();
+//                }  
+//            }
         }]
     },{
         xtype: 'fieldset',

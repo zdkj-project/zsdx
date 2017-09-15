@@ -110,22 +110,21 @@ public class CashDishesServiceImpl extends BaseServiceImpl<CashDishes> implement
 	 * @return
 	 */
 	@Override
-	public CashDishes doAddEntity(CashDishes entity, SysUser currentUser) {
-		CashDishes saveEntity = new CashDishes();
+	public void doAddEntity(List<CashDishes> stand, SysUser currentUser) {
 		try {
-			List<String> excludedProp = new ArrayList<>();
-			excludedProp.add("uuid");
-			BeanUtils.copyProperties(saveEntity, entity,excludedProp);
-			saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			for(int i = 0;i<stand.size();i++) {
+				CashDishes saveEntity = new CashDishes();
+				List<String> excludedProp = new ArrayList<>();
+				excludedProp.add("uuid");
+				BeanUtils.copyProperties(saveEntity, stand.get(i),excludedProp);
+				saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
+				CashDishes entity = this.merge(saveEntity);// 执行修改方法
 
-			return entity;
+			}
 		} catch (IllegalAccessException e) {
 			logger.error(e.getMessage());
-			return null;
 		} catch (InvocationTargetException e) {
 			logger.error(e.getMessage());
-			return null;
 		}
 	}
 }

@@ -49,7 +49,7 @@ Ext.define("core.cashier.dishes.controller.OtherController", {
         var pkName = funData.pkName;
         var pkField = formObj.findField(pkName);
         //处理单选按钮组
-        var radioObject = objForm.down("radiogroup[ref=indicatorObject]").getChecked();
+        var radioObject = objForm.down("radiogroup[ref=dishesType]").getChecked();
         var sValue = radioObject[0].inputValue;
         
         //组装指标评估标准对象
@@ -61,7 +61,7 @@ Ext.define("core.cashier.dishes.controller.OtherController", {
         var emptyStand = 0;
         for (var i = 0; i < iLen; i++) {
             record = recordData.getAt(i);
-            if (record.data.dishesCode != null||record.data.dishesName != null||record.data.dishesPrice != 0) {
+            if (record.data.dishesCode === ""||record.data.dishesName ===""||record.data.dishesPrice ===0) {
                 emptyStand = 1;
                 break;
             }
@@ -79,8 +79,7 @@ Ext.define("core.cashier.dishes.controller.OtherController", {
         var cashDishesStand = "[" + stand.join(",") + "]";
 
         //判断当前是保存还是修改操作
-//        var act = Ext.isEmpty(pkField.getValue()) ? "doadd" : "doupdate";
-        var act = "doadd";
+        var act = Ext.isEmpty(pkField.getValue()) ? "doadd" : "doupdate";
         //发送ajax请求
         var resObj = self.ajax({
             url: funData.action + "/" + act,
@@ -90,6 +89,11 @@ Ext.define("core.cashier.dishes.controller.OtherController", {
         });
         if (resObj.success) {
             self.msgbox(resObj.obj);
+          var grid = basetab.funData.grid; //此tab是否保存有grid参数
+             if (!Ext.isEmpty(grid)) {
+                 var store = grid.getStore();
+                 store.loadPage(1);
+             }//刷新父窗体的grid
             tabPanel.remove(tabItem);
         } else {
             self.Error(resObj.obj);

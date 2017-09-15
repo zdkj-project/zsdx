@@ -35,7 +35,7 @@ Ext.define("core.cashier.mealset.view.MainGrid", {
             html: '快速搜索：'
         }, {
             xtype: 'textfield',
-            name: 'xm',
+            name: 'mealName',
             funCode: 'girdFastSearchText',
             emptyText: '请输入餐名'
         }, {
@@ -91,7 +91,6 @@ Ext.define("core.cashier.mealset.view.MainGrid", {
             xtype: 'actiontextcolumn',
             text: "操作",
             width: 180,
-            //resizable: false,
             fixed: true,
             align: 'center',
             items: [{

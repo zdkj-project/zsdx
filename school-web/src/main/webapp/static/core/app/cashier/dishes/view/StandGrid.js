@@ -43,7 +43,7 @@ Ext.define("core.cashier.dishes.view.StandGrid", {
         whereSql: "",
         //查询的过滤字段
         //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
-        filter: "[{'type':'short','comparison':'=','value':'1','field':'dishesType'}]"
+        filter: "[{'type':'short','comparison':'=','value':'22','field':'dishesType'}]"
     },
     plugins: {
         ptype: 'cellediting',
@@ -62,7 +62,7 @@ Ext.define("core.cashier.dishes.view.StandGrid", {
                 xtype: 'numberfield'
             },
             renderer: function (value, metaData) {
-                  var title = "菜品名称";
+                  var title = "菜品编号";
                   var html = value;
                   metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                   return html;
@@ -101,7 +101,7 @@ Ext.define("core.cashier.dishes.view.StandGrid", {
             text: "菜品说明",
             dataIndex: "dishesExplain",
             editor: {
-                allowBlank: false,
+                allowBlank: true,
                 type: 'string'
             },
             renderer: function (value, metaData) {

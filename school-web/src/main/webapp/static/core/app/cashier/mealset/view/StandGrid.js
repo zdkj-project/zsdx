@@ -43,7 +43,7 @@ Ext.define("core.cashier.mealset.view.StandGrid", {
         whereSql: "",
         //查询的过滤字段
         //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
-        filter: "[{'type':'short','comparison':'=','value':'1','field':'mealType'}]"
+        filter: "[{'type':'short','comparison':'=','value':'22','field':'mealType'}]"
     },
     plugins: {
         ptype: 'cellediting',
@@ -87,7 +87,7 @@ Ext.define("core.cashier.mealset.view.StandGrid", {
             text: "说明",
             dataIndex: "mealExplain",
             editor: {
-                allowBlank: false,
+                allowBlank: true,
                 type: 'string'
             },
             renderer: function (value, metaData) {

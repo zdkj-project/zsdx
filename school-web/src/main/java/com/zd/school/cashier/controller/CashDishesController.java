@@ -90,16 +90,11 @@ public class CashDishesController extends FrameWorkController<CashDishes> implem
         //获取当前操作用户
         SysUser currentUser = getCurrentSysUser();
         if(standCount!=0) {
-        	for(int i =0;i<standCount;i++){
         		try {
-        			CashDishes entity = thisService.doAddEntity(stand.get(i),currentUser);// 执行增加方法
-                    if (ModelUtil.isNotNull(entity))
-                        writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
-                    else
-                        writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
+        			thisService.doAddEntity(stand,currentUser);// 执行增加方法
+                        writeJSON(response, jsonBuilder.returnSuccessJson("'数据添加成功'"));
                 } catch (Exception e) {
                     writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
-                }
         	}
         	
         }else {
@@ -147,21 +142,27 @@ public class CashDishesController extends FrameWorkController<CashDishes> implem
      * @throws IOException  抛出异常
     */
     @RequestMapping("/doupdate")
-    public void doUpdates(CashDishes entity, HttpServletRequest request, HttpServletResponse response)
+    public void doUpdates( HttpServletRequest request, HttpServletResponse response)
             throws IOException, IllegalAccessException, InvocationTargetException {
-		
 		//入库前检查代码
-		
+    	String cashDishesStand = request.getParameter("cashDishesStand");
+        List<CashDishes> stand = (List<CashDishes>) jsonBuilder.fromJsonArray(cashDishesStand, CashDishes.class);
+        int standCount = stand.size();
+        CashDishes entity = stand.get(0);
 		//获取当前的操作用户
 		SysUser currentUser = getCurrentSysUser();
+		if(standCount!=0) {
 		try {
 			entity = thisService.doUpdateEntity(entity, currentUser);// 执行修改方法
 			if (ModelUtil.isNotNull(entity))
-				writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
+				writeJSON(response, jsonBuilder.returnSuccessJson("'数据更新成功'"));
 			else
 				writeJSON(response, jsonBuilder.returnFailureJson("'数据修改失败,详情见错误日志'"));
 		} catch (Exception e) {
 			writeJSON(response, jsonBuilder.returnFailureJson("'数据修改失败,详情见错误日志'"));
 		}
+		}else {
+        	writeJSON(response, jsonBuilder.returnFailureJson("'请选择菜品'"));
+        }
     }
 }

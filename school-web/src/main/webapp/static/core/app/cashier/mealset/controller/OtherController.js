@@ -49,7 +49,7 @@ Ext.define("core.cashier.mealset.controller.OtherController", {
         var pkName = funData.pkName;
         var pkField = formObj.findField(pkName);
         //处理单选按钮组
-        var radioObject = objForm.down("radiogroup[ref=indicatorObject]").getChecked();
+        var radioObject = objForm.down("radiogroup[ref=mealType]").getChecked();
         var sValue = radioObject[0].inputValue;
         
         //组装指标评估标准对象
@@ -72,14 +72,13 @@ Ext.define("core.cashier.mealset.controller.OtherController", {
         }
         for (var i = 0; i < iLen; i++) {
             record = recordData.getAt(i);
-            stand.push('{"uuid":"' + record.get("uuid") + '","mealName":"' + record.get("mealName") +'","mealType":"' + sValue + '","mealPrice":"' + record.get("mealPrice")+'"}');
+            stand.push('{"uuid":"' + record.get("uuid") + '","mealName":"' + record.get("mealName") +'","mealType":"' + sValue + '","mealPrice":"' + record.get("mealPrice")+'","mealExplain":"' + record.get("mealExplain")+'"}');
         }
 
         var mealStand = "[" + stand.join(",") + "]";
 
         //判断当前是保存还是修改操作
-//        var act = Ext.isEmpty(pkField.getValue()) ? "doadd" : "doupdate";
-        var act = "doadd";
+        var act = Ext.isEmpty(pkField.getValue()) ? "doadd" : "doupdate";
         //发送ajax请求
         var resObj = self.ajax({
             url: funData.action + "/" + act,
@@ -89,6 +88,11 @@ Ext.define("core.cashier.mealset.controller.OtherController", {
         });
         if (resObj.success) {
             self.msgbox(resObj.obj);
+          var grid = basetab.funData.grid; //此tab是否保存有grid参数
+             if (!Ext.isEmpty(grid)) {
+                 var store = grid.getStore();
+                 store.loadPage(1);
+             }//刷新父窗体的grid
             tabPanel.remove(tabItem);
         } else {
             self.Error(resObj.obj);
