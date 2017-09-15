@@ -324,8 +324,10 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
 		List<Map<String, Object>> mapList = new ArrayList<>();
         List<Map<String, Object>> mapMeetingUserList = new ArrayList<>();
 		Map<String, Object> map = null;
+		String meetingTitle="";
 		for (OaMeeting oaMeeting : list) {
 			map = new LinkedHashMap<>();
+			meetingTitle=oaMeeting.getMeetingTitle();
 			map.put("meetingTitle",oaMeeting.getMeetingTitle());
 			map.put("meetingName",oaMeeting.getMeetingName());
 			map.put("meetingCategory",mapMeetingCategory.get("MEETINGCATEGORY"+oaMeeting.getMeetingCategory()));
@@ -354,7 +356,7 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
 		allList.add(allMap);
 
 		// 在导出方法中进行解析
-		boolean result = exportMeetingInfo.exportMeetingInfoExcel(response, "会议考勤信息表", "会议考勤信息", allList);
+		boolean result = exportMeetingInfo.exportMeetingInfoExcel(response, meetingTitle+"(会议)考勤信息表", "会议考勤信息", allList);
 		if (result == true) {
 			request.getSession().setAttribute("exportMeetingIsEnd", "1");
 		} else {

@@ -3,6 +3,7 @@ package com.zd.school.oa.meeting.controller;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -69,7 +70,17 @@ public class OaMeetingcheckruleController extends FrameWorkController<OaMeetingc
         String whereSql = super.whereSql(request);
         QueryResult<OaMeetingcheckrule> qResult = thisService.list(start, limit, sort, filter,whereSql);
 //        QueryResult<OaMeetingcheckrule> qResult = thisService.list(start, limit, sort, filter,true);
-        strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
+//        strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
+        Long count ;
+                List<OaMeetingcheckrule> lists;
+                if(qResult==null) {
+                	count =0L;
+                	lists = new ArrayList<>();
+                }else {
+                	count=qResult.getTotalCount();
+                	lists = qResult.getResultList();
+               }
+        strData = jsonBuilder.buildObjListToJson(count,lists, true);
         writeJSON(response, strData);// 返回数据
     }
 
