@@ -332,6 +332,8 @@ public class TrainCourseevalresultController extends FrameWorkController<TrainCo
 			Map<String, Object> mapCouseEvalResult = thisService.getCourseEvalResultDetail(ids);
 			List<Map<String, Object>> allList = new ArrayList<>();
 			
+			String className = String.valueOf(mapCouseEvalResult.get("className"));
+			String courseName = String.valueOf(mapCouseEvalResult.get("courseName"));
 			mapCouseEvalResult.put("columnWidth", columnWidth);
 			mapCouseEvalResult.put("headColumnCount", 8);
 			allList.add(mapCouseEvalResult);
@@ -339,7 +341,7 @@ public class TrainCourseevalresultController extends FrameWorkController<TrainCo
 
 		// 在导出方法中进行解析
 		String sheetTitle = "评价详细";
-		boolean result = exportMeetingInfo.exportCourseEvalResultExcel(response, "班级信息", sheetTitle, allList);
+		boolean result = exportMeetingInfo.exportCourseEvalResultExcel(response, className+"(班) "+courseName+"评价详情", sheetTitle, allList);
 		if (result == true) {
 			request.getSession().setAttribute("exportCourseEvalResultIsEnd", "1");
 		} else {
