@@ -10,6 +10,19 @@ Ext.define("core.cashier.mealset.controller.MainController", {
     },
     init: function () {
     },
-    control: {},
+    control: {
+    	"basegrid[xtype=mealset.maingrid]": {
+            afterrender: function (grid, eOpts) {
+                var btngridAdd_Tab = grid.down("button[ref=gridAdd_Tab]");
+                var btngridDelete = grid.down("button[ref=gridDelete]");
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("ZONGWUROLE") == -1) {
+               	 btngridArrangeRoom.setHidden(true);
+               	 btngridArrangeSite.setHidden(true);
+                }
+            }
+           },
+    	
+    },
 
 });

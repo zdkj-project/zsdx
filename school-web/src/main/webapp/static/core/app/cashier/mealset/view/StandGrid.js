@@ -1,10 +1,10 @@
-Ext.define("core.cashier.dishes.view.StandGrid", {
+Ext.define("core.cashier.mealset.view.StandGrid", {
     extend: "core.base.view.BaseGrid",
-    alias: "widget.dishes.standgrid",
+    alias: "widget.mealset.standgrid",
     frame: false,
     columnLines: false,
-    dataUrl: comm.get("baseUrl") + "/CashDishes/list", //数据获取地址
-    model: "com.zd.school.cashier.model.CashDishes", //对应的数据模型
+    dataUrl: comm.get("baseUrl") + "/CashDinneritem/list", //数据获取地址
+    model: "com.zd.school.cashier.model.CashDinneritem", //对应的数据模型
     style: {
         border: '1px solid #ddd'
     },
@@ -43,7 +43,7 @@ Ext.define("core.cashier.dishes.view.StandGrid", {
         whereSql: "",
         //查询的过滤字段
         //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
-        filter: "[{'type':'short','comparison':'=','value':'1','field':'dishesType'}]"
+        filter: "[{'type':'short','comparison':'=','value':'1','field':'mealType'}]"
     },
     plugins: {
         ptype: 'cellediting',
@@ -54,43 +54,29 @@ Ext.define("core.cashier.dishes.view.StandGrid", {
             titleAlign: "center"
         },
         items: [{
-            width: 120,
-            text: "菜品编号",
-            dataIndex: "dishesCode",
-            editor: {
-                allowBlank: false,
-                xtype: 'numberfield'
-            },
-            renderer: function (value, metaData) {
-                  var title = "菜品名称";
-                  var html = value;
-                  metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
-                  return html;
-            }	
-        },{
         	width: 220,
-            text: "菜品名称",
-            dataIndex: "dishesName",
+            text: "餐名",
+            dataIndex: "mealName",
             editor: {
                 allowBlank: false,
                 type: 'string'
             },
             renderer: function (value, metaData) {
-                var title = "菜品名称";
+                var title = "餐名";
                 var html = value;
                 metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return html;
             }
         },{
             width: 120,
-            text: "菜品单价",
-            dataIndex: "dishesPrice",
+            text: "餐标",
+            dataIndex: "mealPrice",
             editor: {
                 allowBlank: false,
                 xtype: 'numberfield'
             },
             renderer: function (value, metaData) {
-                  var title = "菜品单价";
+                  var title = "餐标";
                   var html = value;
                   metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                   return html;
@@ -98,14 +84,14 @@ Ext.define("core.cashier.dishes.view.StandGrid", {
         }, {
         	flex: 1,
             minWidth: 150,
-            text: "菜品说明",
-            dataIndex: "dishesExplain",
+            text: "说明",
+            dataIndex: "mealExplain",
             editor: {
                 allowBlank: false,
                 type: 'string'
             },
             renderer: function (value, metaData) {
-                  var title = "菜品说明";
+                  var title = "说明";
                   var html = value;
                   metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                   return html;

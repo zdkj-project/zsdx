@@ -34,21 +34,20 @@ Ext.define("core.cashier.mealset.view.DetailForm", {
             xtype: 'radiogroup',
             ref:'indicatorObject',
             items: [
-                { boxLabel: '荤菜类', name: 'indicatorObject', inputValue: '1', checked: true },
-                { boxLabel: '素菜类', name: 'indicatorObject', inputValue: '2' },
-                { boxLabel: '汤类', name: 'indicatorObject', inputValue: '3' },
-                { boxLabel: '主食类', name: 'indicatorObject', inputValue: '4' },
-                { boxLabel: '酒水类', name: 'indicatorObject', inputValue: '5' }
+                { boxLabel: '早餐', name: 'indicatorObject', inputValue: '1', checked: true },
+                { boxLabel: '午餐', name: 'indicatorObject', inputValue: '2' },
+                { boxLabel: '晚餐', name: 'indicatorObject', inputValue: '3' },
+                { boxLabel: '夜宵', name: 'indicatorObject', inputValue: '4' },
             ],
             listeners: {
                 change: function(field, record, index) {  
-                    var currentForm=field.up("baseform[xtype=dishes.detailform]");
-                    var standgrid = currentForm.down("basegrid[xtype=dishes.standgrid]");
-                    var dishesType = record.indicatorObject;
+                    var currentForm=field.up("baseform[xtype=mealset.detailform]");
+                    var standgrid = currentForm.down("basegrid[xtype=mealset.standgrid]");
+                    var mealType = record.indicatorObject;
                     var standgridStore = standgrid.getStore();
                     var standgridProxy = standgridStore.getProxy();
                     standgridProxy.extraParams = {
-                    		filter: "[{'type':'short','comparison':'=','value':'"+dishesType+"','field':'dishesType'}]",
+                    		filter: "[{'type':'short','comparison':'=','value':'"+mealType+"','field':'mealType'}]",
                     }
                     standgridStore.load();
                 }  
@@ -56,7 +55,7 @@ Ext.define("core.cashier.mealset.view.DetailForm", {
         }]
     },{
         xtype: 'fieldset',
-        title: '菜单',
+        title: '快餐',
         border:1,
         style: {
             fontSize:'14px',
@@ -67,7 +66,7 @@ Ext.define("core.cashier.mealset.view.DetailForm", {
             borderStyle: 'solid'
         },
         items:[{
-            xtype:'dishes.standgrid',
+            xtype:'mealset.standgrid',
             height:600
         }]
     }]

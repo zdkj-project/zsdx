@@ -61,7 +61,7 @@ Ext.define("core.cashier.mealset.controller.OtherController", {
         var emptyStand = 0;
         for (var i = 0; i < iLen; i++) {
             record = recordData.getAt(i);
-            if (record.data.dishesCode != null||record.data.dishesName != null||record.data.dishesPrice != 0) {
+            if (record.data.mealName === ""||record.data.mealPrice === "") {
                 emptyStand = 1;
                 break;
             }
@@ -72,11 +72,10 @@ Ext.define("core.cashier.mealset.controller.OtherController", {
         }
         for (var i = 0; i < iLen; i++) {
             record = recordData.getAt(i);
-            if (record.get("dishesCode").length > 0);
-            stand.push('{"uuid":"' + record.get("uuid") + '","dishesCode":"' + record.get("dishesCode") +'","dishesType":"' + sValue + '","dishesName":"' + record.get("dishesName")+ '","dishesPrice":"' + record.get("dishesPrice")+ '","dishesExplain":"' + record.get("dishesExplain")+'"}');
+            stand.push('{"uuid":"' + record.get("uuid") + '","mealName":"' + record.get("mealName") +'","mealType":"' + sValue + '","mealPrice":"' + record.get("mealPrice")+'"}');
         }
 
-        var cashDishesStand = "[" + stand.join(",") + "]";
+        var mealStand = "[" + stand.join(",") + "]";
 
         //判断当前是保存还是修改操作
 //        var act = Ext.isEmpty(pkField.getValue()) ? "doadd" : "doupdate";
@@ -85,7 +84,7 @@ Ext.define("core.cashier.mealset.controller.OtherController", {
         var resObj = self.ajax({
             url: funData.action + "/" + act,
             params: {
-            	cashDishesStand: cashDishesStand
+            	mealStand: mealStand
             }
         });
         if (resObj.success) {

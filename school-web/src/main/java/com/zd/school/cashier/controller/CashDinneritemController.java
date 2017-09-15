@@ -23,6 +23,7 @@ import com.zd.core.util.BeanUtils;
 import com.zd.core.util.StringUtils;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.cashier.model.CashDinneritem ;
+import com.zd.school.cashier.model.CashDishes;
 import com.zd.school.cashier.dao.CashDinneritemDao ;
 import com.zd.school.cashier.service.CashDinneritemService ;
 
@@ -79,22 +80,30 @@ public class CashDinneritemController extends FrameWorkController<CashDinneritem
       * @throws IOException    抛出异常
      */
     @RequestMapping("/doadd")
-    public void doAdd(CashDinneritem entity, HttpServletRequest request, HttpServletResponse response)
+    public void doAdd(HttpServletRequest request, HttpServletResponse response)
             throws IOException, IllegalAccessException, InvocationTargetException {
+        String mealStand = request.getParameter("mealStand");
+        List<CashDinneritem> stand = (List<CashDinneritem>) jsonBuilder.fromJsonArray(mealStand, CashDinneritem.class);
+        int standCount = stand.size();
+        //获取当前操作用户
+        SysUser currentUser = getCurrentSysUser();
+        if(standCount!=0) {
+        	for(int i =0;i<standCount;i++){
+        		try {
+        			CashDinneritem entity = thisService.doAddEntity(stand.get(i),currentUser);// 执行增加方法
+                    if (ModelUtil.isNotNull(entity))
+                        writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
+                    else
+                        writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
+                } catch (Exception e) {
+                    writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
+                }
+        	}
+        	
+        }else {
+        	writeJSON(response, jsonBuilder.returnFailureJson("'请添加菜品'"));
+        }
         
-		//此处为放在入库前的一些检查的代码，如唯一校验等
-		
-		//获取当前操作用户
-		SysUser currentUser = getCurrentSysUser();
-		try {
-			entity = thisService.doAddEntity(entity, currentUser);// 执行增加方法
-			if (ModelUtil.isNotNull(entity))
-				writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
-			else
-				writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
-		} catch (Exception e) {
-			writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
-		}
     }
 
     /**

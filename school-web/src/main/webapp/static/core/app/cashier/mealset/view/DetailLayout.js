@@ -5,7 +5,7 @@ Ext.define("core.cashier.mealset.view.DetailLayout", {
     detCode: "mealset_detail",
     detLayout: "mealset.detaillayout",
 	funData: {
-		action: comm.get("baseUrl") + "/CashDishes", //请求Action
+		action: comm.get("baseUrl") + "/CashDinneritem", //请求Action
 		whereSql: "", //表格查询条件
 		orderSql: "", //表格排序条件
 		pkName: "uuid",

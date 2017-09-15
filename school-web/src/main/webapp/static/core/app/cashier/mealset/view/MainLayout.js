@@ -1,25 +1,25 @@
-Ext.define("core.cashier.dishes.view.MainLayout", {
+Ext.define("core.cashier.mealset.view.MainLayout", {
     extend: "core.base.view.BasePanel",
-    alias: "widget.dishes.mainlayout",
+    alias: "widget.mealset.mainlayout",
     /** 引入必须的文件 */
     requires: [ 
-        'core.cashier.dishes.controller.MainController',
-        'core.cashier.dishes.view.MainGrid',
+        'core.cashier.mealset.controller.MainController',
+        'core.cashier.mealset.view.MainGrid',
 //        'core.train.trainee.view.MainQueryPanel',
-        "core.cashier.dishes.view.DetailLayout",
+        "core.cashier.mealset.view.DetailLayout",
     ],    
     /** 关联此视图控制器 */
-    controller: 'dishes.mainController',
+    controller: 'mealset.mainController',
     /** 页面代码定义 */
-    funCode: "dishes_main",
-    detCode: "dishes_detail",
-    detLayout: "dishes.detaillayout",
+    funCode: "mealset_main",
+    detCode: "mealset_detail",
+    detLayout: "mealset.detaillayout",
     /*标注这个视图控制器的别名，以此提供给window处使用*/
-    otherController:'dishes.otherController',
+    otherController:'mealset.otherController',
     layout:'fit',
     border:false,
     funData: {
-        action: comm.get("baseUrl") + "/CashDishes", //请求Action
+        action: comm.get("baseUrl") + "/CashDinneritem", //请求Action
         whereSql: "", //表格查询条件
         orderSql: "", //表格排序条件
         filter: "",
@@ -37,6 +37,6 @@ Ext.define("core.cashier.dishes.view.MainLayout", {
     scrollable:true,
     
     items: [{
-        xtype: "dishes.maingrid",
+        xtype: "mealset.maingrid",
     }]
 })

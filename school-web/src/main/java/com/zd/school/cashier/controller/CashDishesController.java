@@ -83,10 +83,8 @@ public class CashDishesController extends FrameWorkController<CashDishes> implem
     @RequestMapping("/doadd")
     public void doAdd(HttpServletRequest request, HttpServletResponse response)
             throws IOException, IllegalAccessException, InvocationTargetException {
-        String cashDishes = request.getParameter("cashDishes");
         String cashDishesStand = request.getParameter("cashDishesStand");
 
-        CashDishes entity = (CashDishes) jsonBuilder.fromJson(cashDishes,CashDishes.class);
         List<CashDishes> stand = (List<CashDishes>) jsonBuilder.fromJsonArray(cashDishesStand, CashDishes.class);
         int standCount = stand.size();
         //获取当前操作用户
@@ -94,7 +92,7 @@ public class CashDishesController extends FrameWorkController<CashDishes> implem
         if(standCount!=0) {
         	for(int i =0;i<standCount;i++){
         		try {
-                    entity = thisService.doAddEntity(stand.get(i),currentUser);// 执行增加方法
+        			CashDishes entity = thisService.doAddEntity(stand.get(i),currentUser);// 执行增加方法
                     if (ModelUtil.isNotNull(entity))
                         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
                     else
