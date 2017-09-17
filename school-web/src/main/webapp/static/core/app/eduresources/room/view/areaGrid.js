@@ -4,6 +4,11 @@ Ext.define("core.eduresources.room.view.areaGrid", {
     dataUrl: comm.get('baseUrl') + "/BuildRoomarea/list",
     model: "com.zd.school.build.define.model.BuildRoomAreaTree",
     al: true,
+    selModel: {
+        selType: "checkboxmodel",
+        headerWidth: 50,    //设置这个值为50。 但columns中的defaults中设置宽度，会影响他
+        mode:'single'
+    },
     extParams: {
         whereSql: " and isDelete='0' ",
         orderSql: "",
