@@ -10,11 +10,6 @@ Ext.define("core.train.cardinfo.controller.MainController", {
 
     },
     init: function() {
-        /*control事件声明代码，可以写在这里
-        this.control({
-    
-        });
-        */
     },
     control: {}
 });

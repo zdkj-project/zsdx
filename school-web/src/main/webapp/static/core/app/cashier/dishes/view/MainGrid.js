@@ -5,12 +5,6 @@ Ext.define("core.cashier.dishes.view.MainGrid", {
     columnLines: false,
     dataUrl: comm.get("baseUrl") + "/CashDishes/list", //数据获取地址
     model: "com.zd.school.cashier.model.CashDishes", //对应的数据模型
-//    /**
-//     * 高级查询面板
-//     */
-//    panelButtomBar: {
-//        xtype: 'trainee.mainquerypanel'
-//    },
     /**
      * 工具栏操作按钮
      * 继承自core.base.view.BaseGrid可以在此覆盖重写
@@ -43,12 +37,7 @@ Ext.define("core.cashier.dishes.view.MainGrid", {
             funCode: 'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型
             ref: 'gridFastSearchBtn',
             iconCls: 'x-fa fa-search',
-        }, /*' ', {
-            xtype: 'button',
-            text: '高级搜索',
-            ref: 'gridHignSearch',
-            iconCls: 'x-fa fa-sliders'
-        }*/],
+        }],
     },
     /** 排序字段定义 */
     defSort: [{

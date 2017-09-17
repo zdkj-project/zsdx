@@ -21,19 +21,14 @@ Ext.define("core.train.cardinfo.view.MainGrid", {
             html: '快速搜索：'
         }, {
             xtype: 'textfield',
-            name: 'upCardId',
+            name: 'cardPrintId',
             funCode: 'girdFastSearchText',
-            emptyText: '请输卡流水号'
+            emptyText: '请输印刷卡号'
         }, {
             xtype: 'button',
             funCode: 'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型
             ref: 'gridFastSearchBtn',
             iconCls: 'x-fa fa-search',
-        }, ' ', {
-            xtype: 'button',
-            text: '高级搜索',
-            ref: 'gridHignSearch',
-            iconCls: 'x-fa fa-sliders'
         }]
     },
     /**
@@ -54,29 +49,26 @@ Ext.define("core.train.cardinfo.view.MainGrid", {
         width: 50,
         text: '序号',
         align: 'center'
-    }, {
-        flex:1,
-        minWidth: 100,
+    },{
+    	flex:1,
+        width:100,
+        text: "印刷卡号",
+        dataIndex: "cardPrintId",
+    },{
+        
+        minWidth: 350,
         text: "卡流水号",
         dataIndex: "upCardId"
     }, {
-        minWidth: 240,
+        minWidth: 350,
         text: "物理卡号",
         dataIndex: "factNumb"
     }, {
-        width: 240,
+        width: 350,
         text: "卡的使用状态",
         dataIndex: "useState",
         columnType: "basecombobox", //列类型
         ddCode: "USESTATE" //字典代码  
-    }, {
-        width: 240,
-        text: "发卡对象",
-        dataIndex: "userId" 
-    },{
-        width:240,
-        text: "印刷卡号",
-        dataIndex: "cardPrintId",
     }],
     
     emptyText: '<span style="width:100%;text-align:center;display: block;">暂无数据</span>'

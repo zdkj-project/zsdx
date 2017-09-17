@@ -19,7 +19,7 @@ Ext.define("core.train.cardinfo.view.MainLayout", {
     layout: 'border',
     border: false,
     funData: {
-        action: comm.get("baseUrl") + "/TrainClasstrainee", //请求Action
+        action: comm.get("baseUrl") + "/CardUserInfo", //请求Action
         whereSql: "", //表格查询条件
         orderSql: "", //表格排序条件
         filter: "",
