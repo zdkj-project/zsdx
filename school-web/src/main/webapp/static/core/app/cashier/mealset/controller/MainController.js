@@ -17,8 +17,8 @@ Ext.define("core.cashier.mealset.controller.MainController", {
                 var btngridDelete = grid.down("button[ref=gridDelete]");
                 var roleKey = comm.get("roleKey");
                 if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("ZONGWUROLE") == -1) {
-               	 btngridArrangeRoom.setHidden(true);
-               	 btngridArrangeSite.setHidden(true);
+                	btngridAdd_Tab.setHidden(true);
+                	btngridDelete.setHidden(true);
                 }
             }
            },

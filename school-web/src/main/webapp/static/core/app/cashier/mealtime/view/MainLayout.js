@@ -15,7 +15,7 @@ Ext.define("core.cashier.mealtime.view.MainLayout", {
     detCode: "mealtime_detail",
     detLayout: "mealtime.detaillayout",
     /*标注这个视图控制器的别名，以此提供给window处使用*/
-    otherController:'mealtime.otherController',
+//    otherController:'mealtime.otherController',
     layout:'fit',
     border:false,
     funData: {
@@ -26,9 +26,9 @@ Ext.define("core.cashier.mealtime.view.MainLayout", {
         pkName: "uuid",
         defaultObj: {} ,
         tabConfig: {
-            addTitle: '添加菜品',
-            editTitle: '编辑菜品',
-            detailTitle: '菜品详情'
+            addTitle: '添加就餐时间',
+            editTitle: '编辑就餐时间',
+            detailTitle: '菜品就餐时间'
         }
     },
 
