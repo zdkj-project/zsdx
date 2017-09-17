@@ -682,7 +682,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			traineeMap.put("xh", String.valueOf(j++));
 			traineeMap.put("xm", String.valueOf(list.get("XM")));
 			traineeMap.put("xb", mapDicItem.get(String.valueOf(list.get("XBM")) + "XBM"));
-			traineeMap.put("xf", String.valueOf(list.get("REAL＿CREDIT")));
+			traineeMap.put("xf", (String.valueOf(list.get("REAL＿CREDIT"))).equals("null")?"":String.valueOf(list.get("REAL＿CREDIT")));
 			traineeMap.put("phone", String.valueOf(list.get("MOBILE_PHONE")));
 			traineeMap.put("position", String.valueOf(list.get("POSITION")));
 			traineeMap.put("headShipLevel", mapDicItem.get(String.valueOf(list.get("HEADSHIP_LEVEL")) + "HEADSHIPLEVEL"));
@@ -725,7 +725,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		Map<String, Object> courseAllMap = new LinkedHashMap<>();
 		courseAllMap.put("data", traineeCreditMaps);
 		courseAllMap.put("headinfo", traineeList);
-		courseAllMap.put("head", new String[] { "序号", "班级名称", "课程名称", "上课日期", "上课时间", "实际学分", "实际学分" }); // 规定名字相同的，设定为合并
+		courseAllMap.put("head", new String[] { "序号", "班级名称", "课程名称", "上课日期", "上课时间", "课程学分", "实际学分" }); // 规定名字相同的，设定为合并
 		courseAllMap.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
 		courseAllMap.put("headColumnWidth", headColumnWidth); // 30代表30个字节，15个字符
 		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右

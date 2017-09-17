@@ -76,7 +76,7 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                 var baseGrid = btn.up("basegrid");
                 var records = baseGrid.getSelectionModel().getSelection();
                 if (records.length != 1) {
-                    self.Warning("只能按班级导出，请重新选择");
+                    self.Warning("按班级导出，请选择班级");
                     return false;
                 }
                 var record = records[0].data;
@@ -174,12 +174,16 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                 var mainlayout=baseGrid.up("panel[xtype=calcucredit.mainlayout]");
                 var mainGrid=mainlayout.down("panel[xtype=calcucredit.maingrid]");
                 var records1=mainGrid.getSelectionModel().getSelection();
-                var classId = records1[0].data.uuid;
-                var ids=records[0].data.uuid;
                 if (records.length != 1) {
                     self.Warning("请选择一名学员");
                     return false;
                 }
+                if (records1.length != 1) {
+                    self.Warning("请选择一个班级");
+                    return false;
+                }
+                var classId = records1[0].data.uuid;
+                var ids=records[0].data.uuid;
                 var record = records[0].data;
                 var title = "确定要导出此学员的学分信息吗？";
                 Ext.Msg.confirm('提示', title, function (btn, text) {
