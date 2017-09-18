@@ -33,18 +33,18 @@ Ext.define("core.train.dinnertotal.view.MainQueryPanel", {
 			operationType:"<=",		//运算符
 			name: "endDate",
 			fieldLabel: "登记结束日期",
-		},{
-			columnWidth: 0.2,
-			xtype: "basequeryfield",
-			name: "className",
-			fieldLabel: "班级名称",
-			queryType: "textfield",		
 		}, {
 			columnWidth: 0.2,
 			xtype: "basequeryfield",
 			name: "classNumb",
 			fieldLabel: "班级编号",
 			queryType: "textfield",
+		},{
+			columnWidth: 0.2,
+			xtype: "basequeryfield",
+			name: "className",
+			fieldLabel: "班级名称",
+			queryType: "textfield",		
 		}]
 	}],
 	buttonAlign: "center",
