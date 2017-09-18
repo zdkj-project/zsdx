@@ -143,7 +143,7 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
                 	 u.setXm(d.getUserName());
                      u.setUserName(d.getAccounts());
                      u.setIsDelete(d.getIsOnthejob() == 0 ? 1 : 0);
-                     u.setState(d.getIsEnable() == 0 ? "1" : "0");
+//                     u.setState(d.getIsEnable() == 0 ? "1" : "0");
                      if (d.getUserSex() != null) {
                          u.setXbm(mapDicItme.get(d.getUserSex()));
                      }

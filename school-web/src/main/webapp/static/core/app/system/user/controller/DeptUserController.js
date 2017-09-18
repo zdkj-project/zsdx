@@ -133,7 +133,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
                 beforeclick: function (btn) {
                     var userGrid = btn.up("basegrid[xtype=user.usergrid]");
                     var basePanel = userGrid.up("panel[xtype=user.mainlayout]");
-                    var deptGrid = basePanel.down("basetreerid[xtype=user.depttree]");
+                    var deptGrid = basePanel.down("basetreegrid[xtype=user.depttree]");
                     var title = "确定要从OA同步人员信息吗？";
                     Ext.Msg.confirm('提示', title, function (btnOper, text) {
                         if (btnOper == "yes") {
@@ -159,7 +159,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
                                             self.msgbox(data.obj);
                                             component.destroy();
                                             userGrid.getStore().load();
-                                            deptGrid.getScore().load();
+                                            deptGrid.getStore().load();
                                             //转汇总结果显示的tab页面
                                         } else {
                                             if (data.obj == 0) { //当为此值，则表明导出失败
