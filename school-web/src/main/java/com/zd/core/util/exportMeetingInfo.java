@@ -163,13 +163,10 @@ public class exportMeetingInfo {
 					String verySatisfaction = (String) exportInfo.get("verySatisfaction");
 					String satisfaction = (String) exportInfo.get("satisfaction");
 					
-					// 创建sheet 一课程一个sheet
-					String sheetName =className+ "教学评估表";
-					
 					//创建表格
 					Row row = null;
 					Cell cell = null;
-					Sheet sheet = workbook.createSheet(sheetName);
+					Sheet sheet = workbook.createSheet(courseName);
 					//创建表头
 					for (int j = 0; j < 7; j++) {
 						row = sheet.createRow(j);

@@ -154,11 +154,11 @@
                     '<th class="coursename" colspan=8; style="width:1000px">{className}</br>评价汇总表</th>',
 
                  '<tr style="line-height:45px">',
-                     '<td id="ten" style="width:100px">主办单位</td><td colspan=7; style="width:90%;border-right: 1px solid #cecece;">{Zb}</td>',
+                     '<td id="ten" style="width:100px">主办单位</td><td colspan=7; style="width:90%;border-right: 1px solid #cecece;">{holdUnit}</td>',
                  '</tr>',
 
                   '<tr style="line-height:45px">',
-                      '<td id="ten" style="width:100px">承办单位</td><td colspan=7; style="width:90%;border-right: 1px solid #cecece;">{cb}</td>',
+                      '<td id="ten" style="width:100px">承办单位</td><td colspan=7; style="width:90%;border-right: 1px solid #cecece;">{undertaker}</td>',
                  '</tr>',
                 '</tr>',
                  '<tr style="line-height:45px">',

@@ -209,7 +209,7 @@ Ext.define("core.train.alleval.controller.MainController", {
                 var title = "课程相关评价信息导出";
                 //var ids = [];
                 if (records.length!=1) {
-                    self.Warning("只能按课程导出，请重新选择");
+                    self.Warning("每次只能选择一门课程导出，请重新选择");
                     return false;
                 }
                 var ids = records[0].get("classScheduleId");

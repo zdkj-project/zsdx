@@ -251,6 +251,11 @@ Ext.define("core.train.arrange.controller.MainController", {
                 }
 
                 var rec=records[0];
+                
+                if(rec.get("isuse")===2){
+                    self.Warning("未提交数据无法导出！");
+                    return;
+                }
 
                 var title = "确定要导出【"+rec.get("className")+"】班级课程场地安排信息吗？";
             

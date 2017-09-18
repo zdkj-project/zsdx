@@ -682,7 +682,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			traineeMap.put("xh", String.valueOf(j++));
 			traineeMap.put("xm", String.valueOf(list.get("XM")));
 			traineeMap.put("xb", mapDicItem.get(String.valueOf(list.get("XBM")) + "XBM"));
-			traineeMap.put("xf", String.valueOf(list.get("REAL＿CREDIT")));
+			traineeMap.put("xf", (String.valueOf(list.get("REAL＿CREDIT"))).equals("null")?"":String.valueOf(list.get("REAL＿CREDIT")));
 			traineeMap.put("phone", String.valueOf(list.get("MOBILE_PHONE")));
 			traineeMap.put("position", String.valueOf(list.get("POSITION")));
 			traineeMap.put("headShipLevel", mapDicItem.get(String.valueOf(list.get("HEADSHIP_LEVEL")) + "HEADSHIPLEVEL"));
@@ -725,7 +725,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		Map<String, Object> courseAllMap = new LinkedHashMap<>();
 		courseAllMap.put("data", traineeCreditMaps);
 		courseAllMap.put("headinfo", traineeList);
-		courseAllMap.put("head", new String[] { "序号", "班级名称", "课程名称", "上课日期", "上课时间", "实际学分", "实际学分" }); // 规定名字相同的，设定为合并
+		courseAllMap.put("head", new String[] { "序号", "班级名称", "课程名称", "上课日期", "上课时间", "课程学分", "实际学分" }); // 规定名字相同的，设定为合并
 		courseAllMap.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
 		courseAllMap.put("headColumnWidth", headColumnWidth); // 30代表30个字节，15个字符
 		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
@@ -778,7 +778,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		request.getSession().removeAttribute("exportTrainClassTraineeCardIIsState");
 
 		List<Map<String, Object>> allList = new ArrayList<>();
-		Integer[] columnWidth = new Integer[] { 15, 15, 20, 20, 20, 15, 20, 15 };
+		Integer[] columnWidth = new Integer[] { 15, 15, 20, 20, 20, 20 };
 
 		// 1.班级信息
 		String classId = request.getParameter("classId"); // 程序中限定每次只能导出一个班级
@@ -815,9 +815,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			traineeMap.put("xb",  mapDicItem.get(classTrainee.getXbm()+"XBM"));
 			traineeMap.put("phone", classTrainee.getMobilePhone());
 			traineeMap.put("stustatus", (classTrainee.getIsDelete()==0)?"正常":((classTrainee.getIsDelete()==1)?"取消":"新增"));
-			traineeMap.put("cardNo", String.valueOf((classTrainee.getCardNo()==null)?" ":classTrainee.getCardNo()));
 			traineeMap.put("cardPrintNo", classTrainee.getCardPrintId());
-			traineeMap.put("useState", mapDicItem.get(String.valueOf((classTrainee.getUseState()==null)?0:classTrainee.getUseState())+"CARDSTATE"));
 			i++;
 			traineeList.add(traineeMap);
 		}
@@ -825,9 +823,9 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		Map<String, Object> courseAllMap = new LinkedHashMap<>();
 		courseAllMap.put("data", traineeList);
 		courseAllMap.put("title", null);
-		courseAllMap.put("head", new String[] { "序号","姓名", "性别", "电话", "学员状态", "卡编号","印刷卡号","卡状态" }); // 规定名字相同的，设定为合并
+		courseAllMap.put("head", new String[] { "序号","姓名", "性别", "电话", "学员状态","印刷卡号" }); // 规定名字相同的，设定为合并
 		courseAllMap.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
-		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
+		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0}); // 0代表居中，1代表居左，2代表居右
 		courseAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
 		allList.add(courseAllMap);
 
@@ -864,5 +862,168 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		} else {
 			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
 		}
+	}
+	
+	/**
+	 * 绑定卡
+	 */
+	@RequestMapping("/cardBind")
+	public void cardBind(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		//获取班级ID
+		String classId = request.getParameter("classId"); 
+		
+		//获取学员ID
+		String ids = request.getParameter("ids");
+		String[] idsArray = ids.split(",");
+		int  idsCount  = idsArray.length;
+		 
+		if(ids.equals("")==false) {
+			//判断原先是否已经有学员已经绑定
+			for(int i=0;i<idsCount;i++) {
+				List<Map<String, Object>> cardBindTraineeList = new ArrayList<>();
+				String sql="select * from CARD_T_USEINFO where USER_ID ='"+idsArray[i]+"'";
+				cardBindTraineeList = thisService.getForValuesToSql(sql);
+				int cardUnBindListCount = cardBindTraineeList.size();
+				if(cardUnBindListCount!=0) {
+					writeJSON(response, jsonBuilder.returnFailureJson("\"所选学员已经有部分绑定！\""));
+					return;
+				}
+			}
+			for(int i=0;i<idsCount;i++) {
+				//获取未绑定卡的数量
+				List<Map<String, Object>> cardUnBindList = new ArrayList<>();
+				String sql="select * from CARD_T_USEINFO where USER_ID IS NULL AND USE_STATE !='2'";
+				cardUnBindList = thisService.getForValuesToSql(sql);
+				int cardUnBindListCount = cardUnBindList.size();
+				
+				//判断空闲卡数量
+				if(cardUnBindListCount<(idsCount-i)) {
+					writeJSON(response, jsonBuilder.returnFailureJson("\"空闲卡数量不足！\""));
+					return;
+				}else {
+					//获取第一个空闲卡信息
+					sql = "select top 1 CARD_ID from CARD_T_USEINFO where USER_ID IS NULL AND USE_STATE !='2' order by UP_CARD_ID asc";
+					cardUnBindList = thisService.getForValuesToSql(sql);
+					String cardId = String.valueOf(cardUnBindList.get(0).get("CARD_ID"));
+					
+					//通过卡ID绑定学员更新卡状态
+					sql = "update CARD_T_USEINFO SET USE_STATE='1' ,USER_ID='"+idsArray[i]+"' WHERE CARD_ID='"+cardId+"'";
+					thisService.executeSql(sql);
+				}
+			}
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"绑定成功！\""));
+		}else {
+			//获取班级学员
+			List<TrainClasstrainee> trainClasstraineeList = null;
+			String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2) ";
+			if (StringUtils.isNotEmpty(classId)) {
+				hql += " and classId ='" + classId + "'";
+			}
+			hql += " order by createTime desc";
+			trainClasstraineeList = thisService.doQuery(hql);
+			int trainClasstraineeListCount = trainClasstraineeList.size();
+			
+			//判断班级当中是否已经有人绑定过
+			for(int i=0;i<trainClasstraineeListCount;i++) {
+				List<Map<String, Object>> cardBindTraineeList = new ArrayList<>();
+				String sql="select * from CARD_T_USEINFO where USER_ID ='"+trainClasstraineeList.get(i).getUuid()+"'";
+				cardBindTraineeList = thisService.getForValuesToSql(sql);
+				int cardUnBindListCount = cardBindTraineeList.size();
+				if(cardUnBindListCount!=0) {
+					writeJSON(response, jsonBuilder.returnFailureJson("\"所选班级已经有部分学员绑定！\""));
+					return;
+				}
+			}
+			
+			//绑定卡操作
+			for(int i=0;i<trainClasstraineeListCount;i++) {
+				//获取未绑定卡的数量
+				List<Map<String, Object>> cardUnBindList = new ArrayList<>();
+				String sql="select * from CARD_T_USEINFO where USER_ID IS NULL AND USE_STATE !='2'";
+				cardUnBindList = thisService.getForValuesToSql(sql);
+				int cardUnBindListCount = cardUnBindList.size();
+				
+				//判断空闲卡数目
+				if(cardUnBindListCount<(trainClasstraineeListCount-i)) {
+					writeJSON(response, jsonBuilder.returnFailureJson("\"空闲卡数量不足！\""));
+					return;
+				}else {
+					//获取第一个
+					sql = "select top 1 CARD_ID from CARD_T_USEINFO where USER_ID IS NULL AND USE_STATE !='2' order by UP_CARD_ID asc";
+					cardUnBindList = thisService.getForValuesToSql(sql);
+					
+					String cardId = String.valueOf(cardUnBindList.get(0).get("CARD_ID"));
+					
+					sql = "update CARD_T_USEINFO SET USE_STATE='1' ,USER_ID='"+trainClasstraineeList.get(i).getUuid()+"' WHERE CARD_ID='"+cardId+"'";
+					thisService.executeSql(sql);
+				}
+			}
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"绑定成功！\""));
+		}
+	}
+	
+	/**
+	 * 解除绑定卡
+	 */
+	@RequestMapping("/cardUnBind")
+	public void cardUnBind(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		//获取班级ID
+		String classId = request.getParameter("classId"); 
+		
+		//获取学员ID
+		String ids = request.getParameter("ids");
+		String[] idsArray = ids.split(",");
+		int  idsCount  = idsArray.length;
+		 
+		if(ids.equals("")==false) {
+			for(int i=0;i<idsCount;i++) {
+				String sql = "update CARD_T_USEINFO SET USE_STATE='0' ,USER_ID=NULL WHERE USER_ID='"+idsArray[i]+"'";
+				thisService.executeSql(sql);
+			}
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"解除绑定成功！\""));
+		}else {
+			//获取班级学员
+			List<TrainClasstrainee> trainClasstraineeList = null;
+			String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2) ";
+			if (StringUtils.isNotEmpty(classId)) {
+				hql += " and classId ='" + classId + "'";
+			}
+			hql += " order by createTime desc";
+			trainClasstraineeList = thisService.doQuery(hql);
+			int trainClasstraineeListCount = trainClasstraineeList.size();
+			
+			for(int i=0;i<trainClasstraineeListCount;i++) {
+				String sql = "update CARD_T_USEINFO SET USE_STATE='0' ,USER_ID=NULL WHERE USER_ID='"+trainClasstraineeList.get(i).getUuid()+"'";
+				thisService.executeSql(sql);
+			}
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"解除绑定成功！\""));
+		}
+	}
+	
+	/**
+	 * 解除绑定卡
+	 */
+	@RequestMapping("/cardLose")
+	public void cardLose(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		//获取班级ID
+		String classId = request.getParameter("classId"); 
+		
+		//获取学员ID
+		String ids = request.getParameter("ids");
+		String[] idsArray = ids.split(",");
+		int  idsCount  = idsArray.length;
+		 
+				List<Map<String, Object>> cardUnBindList = new ArrayList<>();
+				String sql="select * from CARD_T_USEINFO where USER_ID='"+ids+"'";
+				cardUnBindList = thisService.getForValuesToSql(sql);
+				int cardUnBindListCount = cardUnBindList.size();
+				if(cardUnBindListCount==0) {
+					writeJSON(response, jsonBuilder.returnFailureJson("\"此学员未绑定卡！\""));
+					return;
+				}else {
+					sql = "update CARD_T_USEINFO SET USE_STATE='2' ,USER_ID=NULL WHERE USER_ID='"+ids+"'";
+					thisService.executeSql(sql);
+				}
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"挂失成功！\""));
 	}
 }

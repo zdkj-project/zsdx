@@ -259,6 +259,228 @@ Ext.define("core.train.cardcenter.controller.MainController", {
                 return false;
             }
         },
-    }
+        
+        /**
+         * 学员发卡绑定
+         */
+        "basegrid[xtype=cardcenter.maingrid] button[ref=gridBindCard]": {
+            beforeclick: function (btn) {
+                var self = this;
+                //得到组件               
+                var baseGrid = btn.up("basegrid");
+                var basePanel = baseGrid.up("basepanel");
+                var calssGrid=basePanel.down("basegrid[xtype=cardcenter.classgrid]");
 
+                var calssRecords = calssGrid.getSelectionModel().getSelection();
+                var traineeRecords = baseGrid.getSelectionModel().getSelection();
+                
+                if(calssRecords.length==0&&traineeRecords.length==0){
+                	 self.Warning("请选择一个班级或者一些学员");
+                     return;
+                }
+                
+                if(calssRecords.length!=0&&traineeRecords.length!=0){
+                	Ext.Msg.confirm('提示', '是否绑定这些学员?', function (btn, text) {
+                        if (btn == 'yes') {
+                            var ids = new Array();
+                            var classId = "";
+                            Ext.each(traineeRecords, function (rec) {
+                                var uuid = rec.data.uuid;
+                                ids.push(uuid);
+                            });
+                	
+                            var resObj = self.ajax({
+                                url: comm.get("baseUrl")  + "/TrainClasstrainee/cardBind",
+                                params: {
+                                    ids: ids.join(","),
+                                    classId: classId
+                                }
+                            });
+                            if (resObj.success) {
+                                baseGrid.getStore().load();
+                                self.msgbox(resObj.obj);
+                            } else {
+                                self.Error(resObj.obj);
+                            }
+                     }
+                })
+              }
+                
+                if(calssRecords.length!=0&&traineeRecords.length==0){
+                	Ext.Msg.confirm('提示', '是否绑定班级学员?', function (btn, text) {
+                        if (btn == 'yes') {
+                            var ids = "";
+                            var classId = calssRecords[0].data.uuid;
+                	
+                            var resObj = self.ajax({
+                                url: comm.get("baseUrl")  + "/TrainClasstrainee/cardBind",
+                                params: {
+                                    ids: ids,
+                                    classId: classId
+                                }
+                            });
+                            if (resObj.success) {
+                                baseGrid.getStore().load();
+                                self.msgbox(resObj.obj);
+                            } else {
+                                self.Error(resObj.obj);
+                            }
+                     }
+                })
+              }
+                
+            }   
+        },
+        
+        /**
+         * 学员发卡绑定
+         */
+        "basegrid[xtype=cardcenter.maingrid] button[ref=gridUnBindCard]": {
+            beforeclick: function (btn) {
+                var self = this;
+                //得到组件               
+                var baseGrid = btn.up("basegrid");
+                var basePanel = baseGrid.up("basepanel");
+                var calssGrid=basePanel.down("basegrid[xtype=cardcenter.classgrid]");
+
+                var calssRecords = calssGrid.getSelectionModel().getSelection();
+                var traineeRecords = baseGrid.getSelectionModel().getSelection();
+                
+                if(calssRecords.length==0&&traineeRecords.length==0){
+                	 self.Warning("请选择一个班级或者一些学员");
+                     return;
+                }
+                
+                if(calssRecords.length!=0&&traineeRecords.length!=0){
+                	Ext.Msg.confirm('提示', '是否解除绑定这些学员?', function (btn, text) {
+                        if (btn == 'yes') {
+                            var ids = new Array();
+                            var classId = "";
+                            Ext.each(traineeRecords, function (rec) {
+                                var uuid = rec.data.uuid;
+                                ids.push(uuid);
+                            });
+                	
+                            var resObj = self.ajax({
+                                url: comm.get("baseUrl")  + "/TrainClasstrainee/cardUnBind",
+                                params: {
+                                    ids: ids.join(","),
+                                    classId: classId
+                                }
+                            });
+                            if (resObj.success) {
+                                baseGrid.getStore().load();
+                                self.msgbox(resObj.obj);
+                            } else {
+                                self.Error(resObj.obj);
+                            }
+                     }
+                })
+              }
+                
+                if(calssRecords.length!=0&&traineeRecords.length==0){
+                	Ext.Msg.confirm('提示', '是否解除绑定班级学员?', function (btn, text) {
+                        if (btn == 'yes') {
+                            var ids = "";
+                            var classId = calssRecords[0].data.uuid;
+                	
+                            var resObj = self.ajax({
+                                url: comm.get("baseUrl")  + "/TrainClasstrainee/cardUnBind",
+                                params: {
+                                    ids: ids,
+                                    classId: classId
+                                }
+                            });
+                            if (resObj.success) {
+                                baseGrid.getStore().load();
+                                self.msgbox(resObj.obj);
+                            } else {
+                                self.Error(resObj.obj);
+                            }
+                     }
+                })
+              }
+                
+            }   
+        },
+        
+        /**
+         * 学员列表操作列事件
+         */
+        "basegrid[xtype=cardcenter.maingrid] actioncolumn": {
+            //操作列绑定
+        	cardBindClick_Tab: function (data) {
+        		var self = this;
+        		var baseGrid=data.view;
+        		var ids = data.record.data.uuid;
+                	Ext.Msg.confirm('提示', '是否绑定此学员?', function (btn, text) {
+                        if (btn == 'yes') {
+                            var classId = "";
+                            var resObj = self.ajax({
+                                url: comm.get("baseUrl")  + "/TrainClasstrainee/cardBind",
+                                params: {
+                                    ids: ids,
+                                    classId: classId
+                                }
+                            });
+                            if (resObj.success) {
+                                baseGrid.getStore().load();
+                                self.msgbox(resObj.obj);
+                            } else {
+                                self.Error(resObj.obj);
+                            }
+                     }
+                })
+            },
+            //操作列解绑
+            cardUnBindClick_Tab: function (data) {
+            	var self = this;
+            	var baseGrid=data.view;
+        		var ids =data.record.data.uuid;
+                	Ext.Msg.confirm('提示', '是否解除绑定此学员?', function (btn, text) {
+                        if (btn == 'yes') {
+                            var classId = "";
+                            var resObj = self.ajax({
+                                url: comm.get("baseUrl")  + "/TrainClasstrainee/cardUnBind",
+                                params: {
+                                    ids: ids,
+                                    classId: classId
+                                }
+                            });
+                            if (resObj.success) {
+                                baseGrid.getStore().load();
+                                self.msgbox(resObj.obj);
+                            } else {
+                                self.Error(resObj.obj);
+                            }
+                     }
+                })
+            },
+            //操作列挂失
+            cardLoseClick: function (data) {
+            	var self = this;
+            	var baseGrid=data.view;
+        		var ids = data.record.data.uuid;
+                	Ext.Msg.confirm('提示', '是否挂失此学员?', function (btn, text) {
+                        if (btn == 'yes') {
+                            var classId = "";
+                            var resObj = self.ajax({
+                                url: comm.get("baseUrl")  + "/TrainClasstrainee/cardLose",
+                                params: {
+                                    ids: ids,
+                                    classId: classId
+                                }
+                            });
+                            if (resObj.success) {
+                                baseGrid.getStore().load();
+                                self.msgbox(resObj.obj);
+                            } else {
+                                self.Error(resObj.obj);
+                            }
+                     }
+                })
+            },
+        }
+        
+    }
 });
