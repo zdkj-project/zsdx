@@ -18,6 +18,7 @@ Ext.define("core.base.view.form.BaseComboBox",{
             disableFormats: true
         }
     ],*/
+	autoScroll : true,
 	queryMode: 'local',
 	displayField: 'itemName',
 	valueField: 'itemCode',
