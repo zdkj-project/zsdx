@@ -53,10 +53,18 @@ Ext.define("core.train.courseeval.controller.MainController", {
                     classId: record.get("uuid")
                 };
                 store.load(); // 给form赋值
-                if (record.get("isEval") === 1 || record.get("isEval") === 2) {
+                if (record.get("isEval") === 1 ) {
                     refreshgrid.down('panel[ref=evalClassInfoPanel] label[ref=label1]').setText(classInfo);
-                } else {
+                    var btnPreview = refreshgrid.down("button[ref=btnPreview]");
+                	btnPreview.setHidden(false);
+                }else if(record.get("isEval") === 2 ){
+                	refreshgrid.down('panel[ref=evalClassInfoPanel] label[ref=label1]').setText("");
+                	var btnPreview = refreshgrid.down("button[ref=btnPreview]");
+                	btnPreview.setHidden(true);
+                }else {
                     refreshgrid.down('panel[ref=evalClassInfoPanel] label[ref=label1]').setText("[" + record.get("className") + "]未开启管理评价");
+                    var btnPreview = refreshgrid.down("button[ref=btnPreview]");
+                	btnPreview.setHidden(true);
                 }
 
                 return false;
