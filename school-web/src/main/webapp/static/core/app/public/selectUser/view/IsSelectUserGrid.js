@@ -13,9 +13,10 @@ Ext.define("ccore.public.selectUser.view.IsSelectUserGrid", {
     viewConfig: {
         stripeRows: true
     },
+    /*
     store: {
         type: "class.isselectedteacherStore"
-    },
+    },*/
     columns: [{
         xtype: "rownumberer",
         flex: 0,

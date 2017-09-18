@@ -204,9 +204,6 @@ Ext.define("core.train.class.view.DetailForm", {
                 xtype: "checkbox",
                 //value: 0,
                 boxLabel: "考勤",
-                emptyText: "请输入是否考勤",
-                maxLength: 2,
-                maxLengthText: "最多2个字符,汉字占2个字符",
                 listeners: {
                     change: function (field, newValue, oldValue) {
                         var currentForm = field.up("baseform[xtype=class.detailform]");

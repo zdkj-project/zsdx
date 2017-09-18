@@ -513,6 +513,7 @@ Ext.define("core.train.class.controller.OtherController", {
                 return false;
             }
         },
+
         //选择班主任，界面加载事件
         "window[funcPanel=class.selectbzr.mainlayout]": {
             afterrender: function (win) {
@@ -559,7 +560,7 @@ Ext.define("core.train.class.controller.OtherController", {
                 }
 
                 formpanel.getForm().findField("bzrId").setValue(idArray.join(","));
-                ;
+                
                 formpanel.getForm().findField("bzrName").setValue(nameArray.join(","));
 
                 //baseGrid.getStore().getProxy().extraParams.filter="[{'type':'string','comparison':'','value':'学生','field':'jobName'}]";

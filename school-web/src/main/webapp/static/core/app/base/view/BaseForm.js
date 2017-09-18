@@ -26,13 +26,13 @@ Ext.define("core.base.view.BaseForm",{
 	buttons: [{
         text: '提交',
         ref: 'submitBtn',
-        iconCls: 'x-fa fa-search',
+        iconCls: 'x-fa fa-check-square',
         formBind: true, //only enabled once the form is valid
         disabled: true
     }, {
         text: '重置',
         ref: 'resetBtn',
-        iconCls: 'x-fa fa-undo',
+        iconCls: 'x-fa fa-reply',
         handler:function() {
             this.up('form').getForm().reset();
         }

@@ -52,14 +52,7 @@ Ext.define("core.train.class.view.MainQueryPanel", {
 			name: "className",
 			fieldLabel: "班级名称",
 			queryType: "textfield",		
-		}/*, {
-			columnWidth: 0.25,
-			xtype: "basequeryfield",
-			name: "classNumb",
-			fieldLabel: "班级编号",
-			queryType: "textfield",
-		},*/
-		,{
+		},{
 			columnWidth: 0.25,
 			xtype: "basequeryfield",
 			name: "contactPerson",
