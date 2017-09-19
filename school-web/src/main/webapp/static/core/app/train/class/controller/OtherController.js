@@ -890,7 +890,7 @@ Ext.define("core.train.class.controller.OtherController", {
                                                 if (rows != undefined) {  //若存在rows数据，则表明请求正常
 
                                                     traineeRoomGrid.getStore().loadData(rows);
-
+                                                    
                                                 } else {
                                                     self.Error(data.obj);
                                                 }

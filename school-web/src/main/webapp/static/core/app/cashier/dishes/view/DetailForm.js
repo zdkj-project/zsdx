@@ -43,7 +43,8 @@ Ext.define("core.cashier.dishes.view.DetailForm", {
                 { boxLabel: '素菜类', name: 'dishesType', inputValue: '2' },
                 { boxLabel: '汤类', name: 'dishesType', inputValue: '3' },
                 { boxLabel: '主食类', name: 'dishesType', inputValue: '4' },
-                { boxLabel: '酒水类', name: 'dishesType', inputValue: '5' }
+                { boxLabel: '酒水类', name: 'dishesType', inputValue: '5' },
+                { boxLabel: '其他', name: 'dishesType', inputValue: '6' }
             ],
 //            listeners: {
 //                change: function(field, record, index) {  
