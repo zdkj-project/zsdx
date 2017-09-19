@@ -50,21 +50,12 @@ Ext.define("core.train.cardinfo.view.MainGrid", {
         text: '序号',
         align: 'center'
     },{
-    	flex:1,
+    	flex:0.5,
         width:100,
         text: "印刷卡号",
         dataIndex: "cardPrintId",
-    },{
-        
-        minWidth: 350,
-        text: "卡流水号",
-        dataIndex: "upCardId"
     }, {
-        minWidth: 350,
-        text: "物理卡号",
-        dataIndex: "factNumb"
-    }, {
-        width: 350,
+    	flex:0.5,
         text: "卡的使用状态",
         dataIndex: "useState",
         columnType: "basecombobox", //列类型

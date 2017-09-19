@@ -224,7 +224,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 
 			writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导入成功！\""));
 		} catch (Exception e) {
-			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导入失败,请联系管理员！\""));
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导入失败,请下载模板或联系管理员！\""));
 		}
 	}
 

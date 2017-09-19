@@ -28,11 +28,11 @@ Ext.define("core.train.class.view.TraineeImportForm", {
         xtype: "textfield",
         readOnly:true
     },{
-        fieldLabel: "是否同步",
+        fieldLabel: "是否添加",
         name: "needSynctrainee",
         xtype: "checkbox",
         //value: '1',
-        boxLabel: "同步到学员库" 
+        boxLabel: "添加到学员库" 
     },{
         beforeLabelTextTpl: comm.get("required"),
         xtype: 'filefield',
