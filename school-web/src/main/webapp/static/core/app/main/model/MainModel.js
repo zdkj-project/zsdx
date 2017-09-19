@@ -173,7 +173,7 @@ Ext.define('core.main.model.MainModel', {
             "menuType": "FUNC",
             "smallIcon": "icon_xuefenjisuan",
             "id": "0f95a6fb-0a2f-4549-99ae-6efb71c6b950",
-            "text": "卡务中心",
+            "text": "学员卡务",
             "iconCls": "",
             "issystem": 1
         }],
