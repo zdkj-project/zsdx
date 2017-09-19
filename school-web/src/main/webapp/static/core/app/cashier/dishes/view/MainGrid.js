@@ -31,7 +31,7 @@ Ext.define("core.cashier.dishes.view.MainGrid", {
             xtype: 'textfield',
             name: 'dishesName',
             funCode: 'girdFastSearchText',
-            emptyText: '请输入菜品'
+            emptyText: '请输入菜品名称'
         }, {
             xtype: 'button',
             funCode: 'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型
