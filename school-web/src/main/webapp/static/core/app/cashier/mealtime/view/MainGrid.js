@@ -48,11 +48,17 @@ Ext.define("core.cashier.mealtime.view.MainGrid", {
         },{
             width: 400,
             text: "开始时间",
-            dataIndex: "beginTime"
+            dataIndex: "beginTime",
+            renderer: function(value, metaData) { 
+            	return value.substring(11);
+            }
         },{
             width: 400,
             text: "结束时间",
-            dataIndex: "endTime"
+            dataIndex: "endTime",
+            renderer: function(value, metaData) { 
+            	return value.substring(11);
+            }
         },{
             xtype: 'actiontextcolumn',
             text: "操作",
