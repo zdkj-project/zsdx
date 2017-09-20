@@ -149,6 +149,10 @@ Ext.define("core.cashier.dishes.controller.MainController", {
                         self.setFormValue(formDeptObj, insertObj);
 
                         var standgrid = tabItem.down("grid[xtype=dishes.standgrid]");
+                        var btngridAddStand = standgrid.down("button[ref=gridAddStand]");
+                        var btngridDelStand = standgrid.down("button[ref=gridDelStand]");
+                        btngridAddStand.setHidden(true);
+                        btngridDelStand.setHidden(true);
                         var proxy = standgrid.getStore().getProxy();
                         proxy.extraParams.filter = filter;
                         standgrid.getStore().loadPage(1);
