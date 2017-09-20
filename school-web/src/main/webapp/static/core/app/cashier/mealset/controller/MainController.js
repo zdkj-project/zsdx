@@ -35,7 +35,7 @@ Ext.define("core.cashier.mealset.controller.MainController", {
                //操作列删除
                deleteClick: function (data) {
                }
-           }
+           },
     },
 
     /**

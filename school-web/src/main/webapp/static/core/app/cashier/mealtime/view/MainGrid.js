@@ -69,7 +69,7 @@ Ext.define("core.cashier.mealtime.view.MainGrid", {
                 text: '编辑',
                 style: 'font-size:12px;',
                 tooltip: '编辑',
-                ref: 'gridEdit',
+                ref: 'gridEdit_Tab',
                 handler: function (view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
                     this.fireEvent('editClick_Tab', {

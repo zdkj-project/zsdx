@@ -30,7 +30,7 @@ Ext.define("core.cashier.mealset.view.MainGrid", {
             funCode: 'girdFuntionBtn',
             disabled: true,
             iconCls: 'x-fa fa-minus-circle'
-        }, '->', {
+        },'->', {
             xtype: 'tbtext',
             html: '快速搜索：'
         }, {

@@ -28,13 +28,13 @@ Ext.define("core.cashier.mealtime.view.DetailForm", {
         name: "beginTime",
         xtype: "textfield",
         format:"H:m:s",
-        emptyText: "请以yyyy-mm-dd hh:mm:ss格式输入开始时间",
+        emptyText: "hh:mm:ss格式输入开始时间",
     },{
         fieldLabel: "结束时间",
         name: "endTime",
         xtype: "textfield",
         format:"H:m:s",
-        emptyText: "请以yyyy-mm-dd hh:mm:ss格式输入结束时间",
+        emptyText: "hh:mm:ss格式输入结束时间",
     }]
 });
                

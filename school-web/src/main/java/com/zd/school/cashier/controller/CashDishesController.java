@@ -3,8 +3,11 @@ package com.zd.school.cashier.controller;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +24,8 @@ import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.ModelUtil;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.StringUtils;
+import com.zd.school.plartform.baseset.model.BaseDicitem;
+import com.zd.school.plartform.baseset.service.BaseDicitemService;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.cashier.model.CashDishes ;
 import com.zd.school.cashier.dao.CashDishesDao ;
@@ -46,6 +51,9 @@ public class CashDishesController extends FrameWorkController<CashDishes> implem
 
     @Resource
     CashDishesService thisService; // service层接口
+    
+    @Resource
+	BaseDicitemService dicitemService;// 字典项service层接口
 
     /**
       * @Title: list
