@@ -22,8 +22,8 @@ Ext.define("core.cashier.mealtime.view.MainGrid", {
     },
     /** 排序字段定义 */
     defSort: [{
-        property: "updateTime", //字段名
-        direction: "DESC" //升降序
+        property: "mealType", //字段名
+        direction: "ASC" //升降序
     }],
     /** 扩展参数 */
     extParams: {
