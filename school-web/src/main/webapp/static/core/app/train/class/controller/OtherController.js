@@ -844,6 +844,7 @@ Ext.define("core.train.class.controller.OtherController", {
                                     //刷新学员订餐、住宿列表
                                     //查询班级的就餐学员信息
                                     var traineeFoodGrid = tabItem.down("grid[ref=traineeFoodGrid]");
+                                    var traineeFoodForm = tabItem.down("baseform[xtype=class.fooddetailform]");
                                     if (traineeFoodGrid) {
                                         self.asyncAjax({
                                             url: comm.get("baseUrl") + "/TrainClasstrainee/getClassFoodTrainees",
@@ -862,6 +863,33 @@ Ext.define("core.train.class.controller.OtherController", {
                                                 if (rows != undefined) { //若存在rows数据，则表明请求正常
 
                                                     traineeFoodGrid.getStore().loadData(rows);
+                                                    
+                                                    var traineeFoodStore = traineeFoodGrid.getStore();
+                                                    var breakfastNum=0,lunchNum=0,dinnerNum=0;
+
+                                                    for (var i = 0; i < traineeFoodStore.getCount(); i++) {
+                                                        var rowData = traineeFoodStore.getAt(i).getData();
+
+                                                        breakfastNum += rowData.breakfast == true ? 1 : 0;
+                                                        lunchNum += rowData.lunch == true ? 1 : 0;
+                                                        dinnerNum += rowData.dinner == true ? 1 : 0;           
+                                                    }
+                                                    
+                                                    var breakfastStand=traineeFoodForm.down("field[name=breakfastStand]").getValue();
+                                                    var lunchStand=traineeFoodForm.down("field[name=lunchStand]").getValue();
+                                                    var dinnerStand=traineeFoodForm.down("field[name=dinnerStand]").getValue();
+                                                    var beginDate=traineeFoodForm.down("field[name=beginDate]").getValue();
+                                                    var endDate=traineeFoodForm.down("field[name=endDate]").getValue();
+                                                    var day=(new Date(endDate).getTime()-new Date(beginDate).getTime())/(1000*60*60*24)+1;
+                                                   
+                                                    traineeFoodForm.down("field[name=breakfastCount3]").setValue(breakfastNum);
+                                                    traineeFoodForm.down("field[name=lunchCount3]").setValue(lunchNum);
+                                                    traineeFoodForm.down("field[name=dinnerCount3]").setValue(dinnerNum);
+                                                    traineeFoodForm.down("field[name=countMoney3]").setValue((breakfastStand*breakfastNum+lunchStand*lunchNum+dinnerStand*dinnerNum)*day);
+                                                    traineeFoodForm.down("field[name=countNumberInDay3]").setValue(breakfastNum+lunchNum+dinnerNum);
+                                                    traineeFoodForm.down("field[name=countNumber3]").setValue((breakfastNum+lunchNum+dinnerNum)*day);
+                                                    
+                                                    
 
                                                 } else {
                                                     self.Error(data.obj);
@@ -872,6 +900,8 @@ Ext.define("core.train.class.controller.OtherController", {
 
                                     //查询班级的住宿学员信息
                                     var traineeRoomGrid = tabItem.down("grid[ref=traineeRoomGrid]");
+                                    var traineeRoomForm = tabItem.down("baseform[xtype=class.roomdetailform]");
+                                    
                                     if (traineeRoomGrid) {
                                         self.asyncAjax({
                                             url: comm.get("baseUrl") + "/TrainClasstrainee/getClassRoomTrainees",
@@ -890,7 +920,39 @@ Ext.define("core.train.class.controller.OtherController", {
                                                 if (rows != undefined) {  //若存在rows数据，则表明请求正常
 
                                                     traineeRoomGrid.getStore().loadData(rows);
+                                                    
+                                                    var traineeRoomStore = traineeRoomGrid.getStore();
+                                                    var siestaManNum=0,siestaWomenNum=0,noSiestaNum=0,sleepManNum=0,sleepWomenNum=0,noSleepNum=0;
 
+                                                    for (var i = 0; i < traineeRoomStore.getCount(); i++) {
+                                                        var rowData = traineeRoomStore.getAt(i).getData();
+
+                                                        if(rowData.siesta == true){
+                                                            if(rowData.xbm==1)
+                                                                siestaManNum+=1;
+                                                            else
+                                                                siestaWomenNum+=1;
+                                                        }else{
+                                                            noSiestaNum+=1;
+                                                        }
+
+                                                        if(rowData.sleep == true){
+                                                            if(rowData.xbm==1)
+                                                                sleepManNum+=1;
+                                                            else
+                                                                sleepWomenNum+=1;
+                                                        }else{
+                                                            noSleepNum+=1;
+                                                        }      
+                                                    }
+                                                   
+                                                    traineeRoomForm.down("field[name=siestaManNum]").setValue(siestaManNum);
+                                                    traineeRoomForm.down("field[name=siestaWomenNum]").setValue(siestaWomenNum);
+                                                    traineeRoomForm.down("field[name=noSiestaNum]").setValue(noSiestaNum);
+                                                    traineeRoomForm.down("field[name=sleepManNum]").setValue(sleepManNum);
+                                                    traineeRoomForm.down("field[name=sleepWomenNum]").setValue(sleepWomenNum);
+                                                    traineeRoomForm.down("field[name=noSleepNum]").setValue(noSleepNum);
+                                                    
                                                 } else {
                                                     self.Error(data.obj);
                                                 }

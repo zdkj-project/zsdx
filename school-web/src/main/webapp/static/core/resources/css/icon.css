@@ -346,3 +346,8 @@
 	 background-image: url(../images/icon/jiucanshijian_icon.png) !important;
     background-size: cover;
 }
+
+.icon_card{
+	 background-image: url(../images/icon/card.png) !important;
+    background-size: cover;
+}

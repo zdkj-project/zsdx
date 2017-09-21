@@ -254,7 +254,7 @@ Ext.define("core.train.class.view.FoodDetailForm", {
             fieldLabel: "早餐餐标",
             columnWidth: 0.333,
             name: "breakfastStand",
-            xtype: "numberfield",  
+            xtype: "numberfield", 
             minValue: 0,
             maxValue:9999, 
             emptyText: "请输入早餐价格",

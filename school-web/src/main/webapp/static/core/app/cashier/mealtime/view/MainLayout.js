@@ -6,7 +6,7 @@ Ext.define("core.cashier.mealtime.view.MainLayout", {
         'core.cashier.mealtime.controller.MainController',
         'core.cashier.mealtime.view.MainGrid',
 //        'core.train.trainee.view.MainQueryPanel',
-//        "core.cashier.mealtime.view.DetailLayout",
+        "core.cashier.mealtime.view.DetailLayout",
     ],    
     /** 关联此视图控制器 */
     controller: 'mealtime.mainController',
@@ -15,7 +15,7 @@ Ext.define("core.cashier.mealtime.view.MainLayout", {
     detCode: "mealtime_detail",
     detLayout: "mealtime.detaillayout",
     /*标注这个视图控制器的别名，以此提供给window处使用*/
-//    otherController:'mealtime.otherController',
+    otherController:'mealtime.otherController',
     layout:'fit',
     border:false,
     funData: {

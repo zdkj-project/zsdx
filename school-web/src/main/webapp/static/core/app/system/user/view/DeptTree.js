@@ -12,7 +12,7 @@ Ext.define("core.system.user.view.DeptTree", {
     extParams: {
         whereSql: " and isDelete='0' ",
         orderSql: " order by parentNode,orderIndex asc",
-        excludes:"checked"
+        excludes:"checked",
     },
 
     columnLines:false,
@@ -60,7 +60,9 @@ Ext.define("core.system.user.view.DeptTree", {
             var proxy = store.getProxy();
             var filterArry = new Array();
             proxy.extraParams = {
-                deptId: record.get("id")
+                deptId: record.get("id"),
+                page: 1,
+                start:0
             };
             store.load();
             // var mainLayout = view.up("panel[xtype=teachercourse.mainlayout]");

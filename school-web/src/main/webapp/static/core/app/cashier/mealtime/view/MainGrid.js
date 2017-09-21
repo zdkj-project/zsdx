@@ -22,8 +22,8 @@ Ext.define("core.cashier.mealtime.view.MainGrid", {
     },
     /** 排序字段定义 */
     defSort: [{
-        property: "updateTime", //字段名
-        direction: "DESC" //升降序
+        property: "mealType", //字段名
+        direction: "ASC" //升降序
     }],
     /** 扩展参数 */
     extParams: {
@@ -48,11 +48,17 @@ Ext.define("core.cashier.mealtime.view.MainGrid", {
         },{
             width: 400,
             text: "开始时间",
-            dataIndex: "beginTime"
+            dataIndex: "beginTime",
+            renderer: function(value, metaData) { 
+            	return value.substring(11);
+            }
         },{
             width: 400,
             text: "结束时间",
-            dataIndex: "endTime"
+            dataIndex: "endTime",
+            renderer: function(value, metaData) { 
+            	return value.substring(11);
+            }
         },{
             xtype: 'actiontextcolumn',
             text: "操作",
@@ -63,7 +69,7 @@ Ext.define("core.cashier.mealtime.view.MainGrid", {
                 text: '编辑',
                 style: 'font-size:12px;',
                 tooltip: '编辑',
-                ref: 'gridEdit',
+                ref: 'gridEdit_Tab',
                 handler: function (view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
                     this.fireEvent('editClick_Tab', {
