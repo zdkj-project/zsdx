@@ -43,7 +43,7 @@ public class ImportExcelUtil {
 
 		list = new ArrayList<List<Object>>();
 		// 遍历Excel中所有的sheet
-		//for (int i = 0; i < work.getNumberOfSheets(); i++) {
+		// for (int i = 0; i < work.getNumberOfSheets(); i++) {
 		for (int i = 0; i < 1; i++) {
 			sheet = work.getSheetAt(i);
 			if (sheet == null) {
@@ -62,20 +62,20 @@ public class ImportExcelUtil {
 
 				// 遍历所有的列
 				List<Object> li = new ArrayList<Object>();
-				for (int y = row.getFirstCellNum(); y <= countCellNum /*
-																		 * row.
-																		 * getLastCellNum
-																		 * ()
-																		 */; y++) {
+				for (int y = row.getFirstCellNum(); y <= countCellNum; y++) {
 					cell = row.getCell(y);
 					li.add(this.getCellValue(cell));
-
 				}
-				/*
-				 * if(li.size()<countCellNum){ int num=countCellNum-li.size();
-				 * for(int z=0;z<num;z++){ li.add(""); } }
-				 */
-				list.add(li);
+
+//				if (li.size() < countCellNum) {
+//					int num = countCellNum - li.size();
+//					for (int z = 0; z < num; z++) {
+//						li.add("");
+//					}
+//				}	
+				if(li.size() >= countCellNum)
+					list.add(li);
+				
 			}
 		}
 		work.close();
@@ -120,7 +120,9 @@ public class ImportExcelUtil {
 		DecimalFormat df = new DecimalFormat("0"); // 格式化number String字符
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // 日期格式化
 		DecimalFormat df2 = new DecimalFormat("0.00"); // 格式化数字
-
+		
+		Short thisDataFormat =cell.getCellStyle().getDataFormat();
+		
 		switch (cell.getCellType()) {
 		case Cell.CELL_TYPE_STRING:
 			value = cell.getRichStringCellValue().getString();
@@ -128,20 +130,20 @@ public class ImportExcelUtil {
 		case Cell.CELL_TYPE_NUMERIC:
 			if (HSSFDateUtil.isCellDateFormatted(cell)) {// 处理日期格式、时间格式
 
-				if (cell.getCellStyle().getDataFormat() == HSSFDataFormat.getBuiltinFormat("h:mm")
-						|| cell.getCellStyle().getDataFormat() == 176) {
+				if (thisDataFormat == HSSFDataFormat.getBuiltinFormat("h:mm")
+						|| thisDataFormat == 176 || thisDataFormat == 177) {
 					sdf = new SimpleDateFormat("HH:mm");
 				}
 				Date date = cell.getDateCellValue();
 				value = sdf.format(date);
 
-			} else if (cell.getCellStyle().getDataFormat() == 58) {
+			} else if ( thisDataFormat == 58) {
 				// 处理自定义日期格式：m月d日(通过判断单元格的格式id解决，id的值是58)
 				SimpleDateFormat sdf2 = new SimpleDateFormat("MM-dd");
 				double cellValue = cell.getNumericCellValue();
 				Date date = org.apache.poi.ss.usermodel.DateUtil.getJavaDate(cellValue);
 				value = sdf2.format(date);
-			} else if (cell.getCellStyle().getDataFormat() == 183 || cell.getCellStyle().getDataFormat() == 177) {
+			} else if ( thisDataFormat == 183 || thisDataFormat == 177 || thisDataFormat == 176) {
 				// 处理自定义日期格式：y年m月d日(通过判断单元格的格式id解决，id的值是183)
 				SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd");
 				Date date = cell.getDateCellValue();
