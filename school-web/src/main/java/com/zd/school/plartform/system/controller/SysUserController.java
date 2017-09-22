@@ -540,7 +540,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			List<SysUserToUP> userInfo = thisService.doQuerySqlObject(sql, SysUserToUP.class);
 
 			// 2.进入事物之前切换数据源
-			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 			int row = 0;
 			if (userInfo.size() != 0) {
 				row = thisService.syncUserInfoToUP(userInfo.get(0), userId);
@@ -599,7 +599,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			List<SysUserToUP> userInfos = thisService.doQuerySqlObject(sql, SysUserToUP.class);
 
 			// 2.进入事物之前切换数据源
-			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 			int row = 0;
 			if (userInfos.size() > 0) {
 				row = thisService.syncUserInfoToAllUP(userInfos, null);
@@ -634,7 +634,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 		try {
 
 			// 1.切换数据源
-			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 
 			// 2.查询UP中所有的发卡信息
 			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"

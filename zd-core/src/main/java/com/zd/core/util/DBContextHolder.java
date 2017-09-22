@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class DBContextHolder{
-	 	public static final String DATA_SOURCE_ONE = "dataSourceOne";  
-	    public static final String DATA_SOURCE_Four = "dataSourceFour"; 
-	    public static final String DATA_SOURCE_Five = "dataSourceFive"; 
+	 	public static final String DATA_SOURCE_Q1 = "dataSourceQ1";  
+	    public static final String DATA_SOURCE_OA = "dataSourceSyncOA"; 
+	    public static final String DATA_SOURCE_UP6 = "dataSourceUP6"; 
 	    
 	    private static final ThreadLocal<String> contextHolder = new ThreadLocal<String>();  
 	      

@@ -381,7 +381,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			String departmentId = "Train" + trainClass.getClassNumb();
 
 			// 1.切换数据源
-			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 
 			// 2.查询UP中的发卡信息(查询班级学员的卡片信息)
 			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
