@@ -149,7 +149,7 @@ Ext.define("core.system.user.view.UserGrid", {
             align:'left'       
         },{
             width:120,
-            text: "印刷卡编号",
+            text: "卡印刷编号",
             dataIndex: "cardPrintId",
             align:'left'       
         },{
