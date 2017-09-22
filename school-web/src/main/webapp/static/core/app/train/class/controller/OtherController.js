@@ -766,12 +766,12 @@ Ext.define("core.train.class.controller.OtherController", {
                         timeout: 1000 * 30 * 60,
                         success: function (form, action) {
                             if (action.result.obj == "-1") {
-                                self.Info("数据部分导入成功！详情见导出的excel文档");
+                            	self.Info("数据部分导入成功，请下载模板或者联系管理员！");
 
-                                var url = comm.get('baseUrl') + "/TrainClassschedule/downNotImportInfo";
-
-                                //window.open(url);
-                                window.location.href = url;
+//                                var url = comm.get('baseUrl') + "/TrainClassschedule/downNotImportInfo";
+//
+//                                //window.open(url);
+//                                window.location.href = url;
                             } else {
                                 self.msgbox("数据全部导入成功！");
 
