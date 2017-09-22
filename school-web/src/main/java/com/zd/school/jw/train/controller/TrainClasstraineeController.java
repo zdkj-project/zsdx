@@ -384,11 +384,11 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 
 			// 2.查询UP中的发卡信息(查询班级学员的卡片信息)
-			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
-					+ " convert(int,a.CardStatusIDXF) as useState,"
-					+ " b.SID as sid,b.EmployeeStatusID as employeeStatusID "
-					+ " from Tc_Employee b join TC_Card a on b.CardID=a.CardID" + " where b.DepartmentID='"
-					+ departmentId + "'" + "	order by a.CardID asc,a.ModifyDate asc";
+//			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
+//					+ " convert(int,a.CardStatusIDXF) as useState,"
+//					+ " b.EmployeeStrID as sid,b.EmployeeStatusID as employeeStatusID "
+//					+ " from Tc_Employee b join TC_Card a on b.CardID=a.CardID" + " where b.DepartmentID='"
+//					+ departmentId + "'" + "	order by a.CardID asc,a.ModifyDate asc";
 
 //			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
 //					+ " convert(int,a.CardStatusIDXF) as useState,"
@@ -398,7 +398,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 //					+ "	order by a.CardID asc,a.ModifyDate asc";
 			
 			//修改了查询的方式，以发卡表中的最新的一条数据为准
-			sql="select a.UserId as userId,a.SID as sid,a.EmployeeStatusID as employeeStatusID,"
+			String sql="select a.UserId as userId,a.EmployeeStrID as sid,a.EmployeeStatusID as employeeStatusID,"
 					+ " convert(varchar,b.CardID) as upCardId,convert(varchar,b.FactoryFixID) as factNumb,"
 					+ " convert(int,b.CardStatusIDXF) as useState from Tc_Employee a join TC_Card b"
 					+ " on b.CardID=("

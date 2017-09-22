@@ -79,6 +79,8 @@ public class SysUserToUP implements Serializable {
 	}
 
 	public String getSid() {
+		if(sid==null)
+			return "";
 		return sid;
 	}
 
@@ -155,12 +157,13 @@ public class SysUserToUP implements Serializable {
 				return false;
 		} else if (!employeeName.equals(other.employeeName))
 			return false;
-		
+		/*
 		if (employeeStrId == null) {
 			if (other.employeeStrId != null)
 				return false;
 		} else if (!employeeStrId.equals(other.employeeStrId))
 			return false;
+		*/
 		if (identifier == null) {
 			if (other.identifier != null)
 				return false;
