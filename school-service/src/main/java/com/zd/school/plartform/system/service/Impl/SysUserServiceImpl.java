@@ -539,8 +539,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		try {
 			// 1.查询web平台的发卡信息
 			String sql = "select CARD_ID as uuid,convert(varchar,FACT_NUMB) as factNumb,USE_STATE as useState,"
-					+ " USER_ID as userId,convert(varchar,UP_CARD_ID) as upCardId "
-					+ " from CARD_T_USEINFO where ISDELETE=0" + " order by upCardId asc";
+					+ " USER_ID as userId,convert(varchar,UP_CARD_ID) as upCardId,CARD_PRINT_ID as sid"
+					+ " from CARD_T_USEINFO where ISDELETE=0 " + " order by upCardId asc";
 
 			List<CardUserInfoToUP> webCardUserInfos = this.doQuerySqlObject(sql, CardUserInfoToUP.class);
 
@@ -601,7 +601,9 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 									updateTime = DateUtil.formatDateTime(new Date());
 
 									sqlStr = "update CARD_T_USEINFO set " + "	FACT_NUMB='" + upCardUser.getFactNumb()
-											+ "',USE_STATE='" + upCardUser.getUseState() + "'," + "	UP_CARD_ID='"
+											+ "',USE_STATE='" + upCardUser.getUseState() + "'," 
+											+ " CARD_PRINT_ID='"+upCardUser.getSid()+"',"
+											+ "	UP_CARD_ID='"
 											+ upCardUser.getUpCardId() + "',UPDATE_TIME=CONVERT(datetime,'" + updateTime
 											+ "')" + " where USER_ID='" + upCardUser.getUserId() + "'";
 
@@ -619,10 +621,10 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 						updateTime = DateUtil.formatDateTime(new Date());
 
 						sqlStr = "insert into CARD_T_USEINFO(CARD_ID,CREATE_TIME,CREATE_USER,"
-								+ "ISDELETE,FACT_NUMB,USE_STATE,USER_ID,UP_CARD_ID)" + " values ('"
+								+ "ISDELETE,FACT_NUMB,USE_STATE,USER_ID,UP_CARD_ID,CARD_PRINT_ID)" + " values ('"
 								+ UUID.randomUUID().toString() + "',CONVERT(datetime,'" + updateTime + "'),'超级管理员',"
 								+ "0,'" + upCardUser.getFactNumb() + "'," + upCardUser.getUseState() + "," + "'"
-								+ upCardUser.getUserId() + "','" + upCardUser.getUpCardId() + "')";
+								+ upCardUser.getUserId() + "','" + upCardUser.getUpCardId() + "','"+upCardUser.getSid()+"')";
 
 						sqlSb.append(sqlStr + "  ");
 
@@ -664,7 +666,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		try {
 			// 1.查询web平台的发卡信息
 			String sql = "select convert(varchar,a.FACT_NUMB) as factNumb,a.USE_STATE as useState,"
-					+ " a.USER_ID as userId,convert(varchar,a.UP_CARD_ID) as upCardId "
+					+ " a.USER_ID as userId,convert(varchar,a.UP_CARD_ID) as upCardId,CARD_PRINT_ID as sid "
 					+ " from CARD_T_USEINFO a join TRAIN_T_CLASSTRAINEE b on a.USER_ID=b.CLASS_TRAINEE_ID"
 					+ " where a.ISDELETE=0 and b.CLASS_ID='" + classId + "'" + " order by a.UP_CARD_ID asc";
 
@@ -730,7 +732,9 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 								} else { // 否则更新数据
 									updateTime = DateUtil.formatDateTime(new Date());
 									sqlStr = "update CARD_T_USEINFO set " + "	FACT_NUMB='" + upCardUser.getFactNumb()
-											+ "',USE_STATE='" + upCardUser.getUseState() + "'," + "	UP_CARD_ID='"
+											+ "',USE_STATE='" + upCardUser.getUseState() + "'," 
+											+ " CARD_PRINT_ID='"+upCardUser.getSid()+"',"
+											+ "	UP_CARD_ID='"
 											+ upCardUser.getUpCardId() + "',UPDATE_TIME=CONVERT(datetime,'" + updateTime
 											+ "')" + " where USER_ID='" + upCardUser.getUserId() + "';";
 
@@ -750,10 +754,10 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 						updateTime = DateUtil.formatDateTime(new Date());
 
 						sqlStr = "insert into CARD_T_USEINFO(CARD_ID,CREATE_TIME,CREATE_USER,"
-								+ "ISDELETE,FACT_NUMB,USE_STATE,USER_ID,UP_CARD_ID)" + " values ('"
+								+ "ISDELETE,FACT_NUMB,USE_STATE,USER_ID,UP_CARD_ID,CARD_PRINT_ID)" + " values ('"
 								+ UUID.randomUUID().toString() + "',CONVERT(datetime,'" + updateTime + "'),'超级管理员',"
 								+ "0,'" + upCardUser.getFactNumb() + "'," + upCardUser.getUseState() + "," + "'"
-								+ upCardUser.getUserId() + "','" + upCardUser.getUpCardId() + "');";
+								+ upCardUser.getUserId() + "','" + upCardUser.getUpCardId() + "','"+upCardUser.getSid()+"');";
 
 						sqlSb.append(sqlStr + "  ");
 

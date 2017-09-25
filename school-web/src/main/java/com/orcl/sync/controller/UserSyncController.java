@@ -384,7 +384,7 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
         List<BaseOrgToUP> deptInfo = orgService.doQuerySqlObject(sql, BaseOrgToUP.class);
 
         //2.进入事物之前切换数据源
-        DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
+        DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
         int row = 0;
         if(deptInfo.size()!=0){
             row = orgService.syncAllDeptInfoToUP(deptInfo);

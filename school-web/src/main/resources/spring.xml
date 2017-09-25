@@ -65,8 +65,8 @@
     <bean id="dataSourceUP6" class="com.alibaba.druid.pool.DruidDataSource"
           destroy-method="close">
         <!-- sql server 数据库连接配置 -->
-        <property name="driverClassName" value="${jdbcUrlUp6}" />
-        <property name="url" value="${driverClassUp6}" />
+        <property name="driverClassName" value="${driverClassUp6}" />
+        <property name="url" value="${jdbcUrlUp6}" />
         <property name="username" value="${usernameUp6}" />
         <property name="password" value="${passwordUp6}" />
 

@@ -218,8 +218,8 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
                 if (listReturn.size() == 0)
                     writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导入成功！\""));
                 else {
-                    String strData = jsonBuilder.buildList(listReturn, "");
-                    request.getSession().setAttribute("TrainClassScheduleImportError", strData);
+//                    String strData = jsonBuilder.buildList(listReturn, "");
+//                    request.getSession().setAttribute("TrainClassScheduleImportError", strData);
                     writeJSON(response, jsonBuilder.returnSuccessJson("-1")); // 返回前端-1，表示存在错误数据
                 }
 

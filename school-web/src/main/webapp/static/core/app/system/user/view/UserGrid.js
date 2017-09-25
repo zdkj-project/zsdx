@@ -3,7 +3,7 @@ Ext.define("core.system.user.view.UserGrid", {
 	alias: "widget.user.usergrid",
 	dataUrl: comm.get('baseUrl') + "/sysuser/list",
 	model: factory.ModelFactory.getModelByName("com.zd.school.plartform.system.model.SysUser", "checked").modelName,
-	al: false,
+	al: true,
 	//排序字段及模式定义
 	defSort: [{
 		property: 'userNumb',
@@ -149,7 +149,7 @@ Ext.define("core.system.user.view.UserGrid", {
             align:'left'       
         },{
             width:120,
-            text: "印刷卡编号",
+            text: "卡印刷编号",
             dataIndex: "cardPrintId",
             align:'left'       
         },{

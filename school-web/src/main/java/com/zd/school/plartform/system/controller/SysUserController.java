@@ -540,7 +540,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			List<SysUserToUP> userInfo = thisService.doQuerySqlObject(sql, SysUserToUP.class);
 
 			// 2.进入事物之前切换数据源
-			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 			int row = 0;
 			if (userInfo.size() != 0) {
 				row = thisService.syncUserInfoToUP(userInfo.get(0), userId);
@@ -599,7 +599,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			List<SysUserToUP> userInfos = thisService.doQuerySqlObject(sql, SysUserToUP.class);
 
 			// 2.进入事物之前切换数据源
-			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 			int row = 0;
 			if (userInfos.size() > 0) {
 				row = thisService.syncUserInfoToAllUP(userInfos, null);
@@ -634,15 +634,23 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 		try {
 
 			// 1.切换数据源
-			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 
 			// 2.查询UP中所有的发卡信息
-			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
-					+ " convert(int,a.CardStatusIDXF) as useState,"
-					+ " b.SID as sid,b.EmployeeStatusID as employeeStatusID "
-					+ " from Tc_Employee b join TC_Card a on b.CardID=a.CardID" + " where b.UserId is not null "
-					+ "	order by a.CardID asc,a.ModifyDate asc";
-
+//			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
+//					+ " convert(int,a.CardStatusIDXF) as useState,"
+//					+ " b.EmployeeStrID as sid,b.EmployeeStatusID as employeeStatusID "
+//					+ " from Tc_Employee b join TC_Card a on b.CardID=a.CardID" + " where b.UserId is not null "
+//					+ "	order by a.CardID asc,a.ModifyDate asc";
+			
+			//修改了查询的方式，以发卡表中的最新的一条数据为准
+			String sql="select a.UserId as userId,a.EmployeeStrID as sid,a.EmployeeStatusID as employeeStatusID,"
+					+ " convert(varchar,b.CardID) as upCardId,convert(varchar,b.FactoryFixID) as factNumb,"
+					+ " convert(int,b.CardStatusIDXF) as useState from Tc_Employee a join TC_Card b"
+					+ " on b.CardID=("
+					+ "		select top 1 CardID from TC_Card where EmployeeID=a.EmployeeID order by ModifyDate desc"
+					+ " ) where a.UserId is not null ";
+			
 			List<CardUserInfoToUP> upCardUserInfos = thisService.doQuerySqlObject(sql, CardUserInfoToUP.class);
 
 			// 3.恢复数据源

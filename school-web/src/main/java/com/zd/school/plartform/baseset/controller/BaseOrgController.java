@@ -223,7 +223,7 @@ public class BaseOrgController extends FrameWorkController<BaseOrg> implements C
 			List<BaseOrgToUP> deptInfo = thisService.doQuerySqlObject(sql, BaseOrgToUP.class);
 			
 			//2.进入事物之前切换数据源		
-			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 			int row = 0;
 			if(deptInfo.size()!=0){			
 				row = thisService.syncDeptInfoToUP(deptInfo.get(0),smallDeptId);
@@ -270,7 +270,7 @@ public class BaseOrgController extends FrameWorkController<BaseOrg> implements C
 			List<BaseOrgToUP> deptInfo = thisService.doQuerySqlObject(sql, BaseOrgToUP.class);
 			
 			//2.进入事物之前切换数据源		
-			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 			int row = 0;
 			if(deptInfo.size()!=0){			
 				row = thisService.syncAllDeptInfoToUP(deptInfo);

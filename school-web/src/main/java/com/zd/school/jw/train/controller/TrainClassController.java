@@ -440,7 +440,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			List<SysUserToUP> userInfos = thisService.doQuerySqlObject(sql, SysUserToUP.class);
 
 			// 5.切换数据源
-			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 
 			// 6.执行同步代码
 			result = thisService.syncTraineeClassInfoToAllUP(departmentId, trainClass, userInfos);
@@ -526,7 +526,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 
 				if (traineeFoods.size() > 0) {
 					// 5.切换数据源
-					DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Five);
+					DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 
 					// 6.执行同步代码
 					result = thisService.syncClassTraineeFoodsToUP(trainClass, traineeFoods);

@@ -5,14 +5,10 @@ import java.io.Serializable;
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.zd.core.annotation.FieldInfo;
 import com.zd.core.model.BaseEntity;
-import com.zd.school.plartform.system.model.SysUser;
 
 /**
  * ClassName:CardUseInfo Function: TODO ADD FUNCTION. Reason: TODO ADD REASON.
