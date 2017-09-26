@@ -83,16 +83,16 @@ public class TrainCourseAppController {
 					// and beginTime Between '" + s + " 06:00:00' And '" +
 					// sdf.format(date2) + "' order by beginTime asc");
 					course = courseService.doQuery("from TrainClassschedule where isDelete=0 and roomId like '%"
-							+ roomTerm.getRoomId() + "%' and beginTime Between '" + sdf.format(date) + "' And '"
-							+ sdf.format(date2) + "' order by beginTime asc");
+							+ roomTerm.getRoomId() + "%' and beginTime Between '" + s + " 06:00:00" + "' And '"
+							+ sdf.format(date2) + "' order by beginTime asc",0,3);
 				} else if (date.getTime() < date3.getTime()) {
 					course = courseService.doQuery("from TrainClassschedule where isDelete=0 and roomId like '%"
-							+ roomTerm.getRoomId() + "%' and beginTime Between '" + sdf.format(date) + "' And '"
-							+ sdf.format(date3) + "' order by beginTime asc");
+							+ roomTerm.getRoomId() + "%' and beginTime Between '" + s + " 12:00:00" + "' And '"
+							+ sdf.format(date3) + "' order by beginTime asc",0,3);
 				} else {
 					course = courseService.doQuery("from TrainClassschedule where isDelete=0 and roomId like '%"
-							+ roomTerm.getRoomId() + "%' and beginTime Between '" + sdf.format(date) + "' And '"
-							+ sdf.format(date4) + "' order by beginTime asc");
+							+ roomTerm.getRoomId() + "%' and beginTime Between '" + s + " 18:00:00" +  "' And '"
+							+ sdf.format(date4) + "' order by beginTime asc",0,3);
 				}
 
 //				if (course.size() > 0) {
