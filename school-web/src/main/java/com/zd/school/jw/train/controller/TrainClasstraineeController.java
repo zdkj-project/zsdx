@@ -651,6 +651,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		
 		//获取班级ID
 		String classId = request.getParameter("ids");
+		String className = request.getParameter("className");
 
 		List<Map<String, Object>> allList = new ArrayList<>();
 		Integer[] columnWidth = new Integer[] { 10,30, 30, 20, 20, 20, 20 };
@@ -700,7 +701,6 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		Map<String,List<Map<String, String>>> traineeCreditMaps = new LinkedHashMap<>();
 		Map<String, String> traineeCreditMap = null;
 		List<Map<String, String>> traineeCreditList = null;
-		String titleName = null;
 		for(int i=0;i<classTraineeIdList.size();i++) {
 			traineeCreditList= new ArrayList<>();
 			String classTraineeId = classTraineeIdList.get(i);
@@ -709,7 +709,6 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 				traineeCreditMap = new LinkedHashMap<>();
 				if(classTraineeId.equals(String.valueOf(list.get("classTraineeId")))) {
 					traineeCreditMap.put("xh", String.valueOf(k++));
-					titleName=String.valueOf(list.get("className"));
 					traineeCreditMap.put("className", String.valueOf(list.get("className")));
 					traineeCreditMap.put("courseName", String.valueOf(list.get("courseName")));
 					traineeCreditMap.put("date", String.valueOf(list.get("courseDate")));
@@ -732,7 +731,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		courseAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
 		allList.add(courseAllMap);
 		
-		boolean result = exportMeetingInfo.exportTraineeCreditExcel(response, titleName+"学分详细信息", titleName+"学员列表", allList);
+		boolean result = exportMeetingInfo.exportTraineeCreditExcel(response, className+"学分详细信息", className+"学员列表", allList);
 		if (result == true) {
 			request.getSession().setAttribute("exportCreditsIsEnd", "1");
 		} else {

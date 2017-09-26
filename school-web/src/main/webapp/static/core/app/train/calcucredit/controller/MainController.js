@@ -89,7 +89,7 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                             width: 0,
                             height: 0,
                             hidden: true,
-                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClasstrainee/exportCredit?ids=' + record.uuid + '"></iframe>',
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClasstrainee/exportCredit?ids=' + record.uuid +'&className='+record.className+ '"></iframe>',
                             renderTo: Ext.getBody()
                         });
 
@@ -194,7 +194,7 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                             width: 0,
                             height: 0,
                             hidden: true,
-                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClasstrainee/getCreditsexportExcel?ids=' + ids +'&classId='+classId+'&classId='+classId+'&classId='+classId+'&classId='+classId+'&classId='+classId+'&classId='+classId+'&classId='+classId+'"></iframe>',
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainClasstrainee/getCreditsexportExcel?ids=' + ids +'&classId='+classId+'"></iframe>',
                             renderTo: Ext.getBody()
                         });
 
