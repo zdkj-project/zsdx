@@ -53,7 +53,7 @@ Ext.define("core.cashier.mealset.view.StandGrid", {
         defaults: {
             titleAlign: "center"
         },
-        items: [{
+        items: [/*{
         	width: 220,
             text: "餐名",
             dataIndex: "mealName",
@@ -67,7 +67,7 @@ Ext.define("core.cashier.mealset.view.StandGrid", {
                 metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return html;
             }
-        },{
+        },*/{
             width: 120,
             text: "餐标",
             dataIndex: "mealPrice",

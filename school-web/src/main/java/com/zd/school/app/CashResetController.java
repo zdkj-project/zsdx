@@ -3,9 +3,11 @@ package com.zd.school.app;
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.util.ModelUtil;
+import com.zd.school.cashier.model.CashDinneritem;
 import com.zd.school.cashier.model.CashDishes;
 import com.zd.school.cashier.model.CashExpensedetail;
 import com.zd.school.cashier.model.CashExpenseserial;
+import com.zd.school.cashier.service.CashDinneritemService;
 import com.zd.school.cashier.service.CashDishesService;
 import com.zd.school.cashier.service.CashExpenseserialService;
 import com.zd.school.plartform.system.model.SysRole;
@@ -40,6 +42,9 @@ public class CashResetController extends FrameWorkController<CashExpenseserial> 
 
     @Resource
     private CashExpenseserialService billService;
+
+    @Resource
+    private  CashDinneritemService cashDinneritemService;
 
     @Resource
     private SysUserService userService;
@@ -89,6 +94,37 @@ public class CashResetController extends FrameWorkController<CashExpenseserial> 
     }
 
     /**
+     * 获取可选择的快餐
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     */
+    @RequestMapping("/getCashMealList")
+    public void getCashMealList(HttpServletRequest request, HttpServletResponse response)
+            throws IOException, IllegalAccessException, InvocationTargetException {
+        String strData = "";
+        Map<String, String> mapOrderBy = new HashMap<String, String>();
+        mapOrderBy.put("mealType", "asc");
+        mapOrderBy.put("mealPrice", "asc");
+        List<CashDinneritem> dishesList = cashDinneritemService.queryByProerties("isDelete", 0, mapOrderBy);
+
+        List<Map<String, Object>> dishesdleList = new ArrayList<Map<String, Object>>();
+        Map<String, Object> dishesMap = null;
+        for (int i = 0; i < dishesList.size(); i++) {
+            dishesMap = new HashMap<>();
+            dishesMap.put("mealType", dishesList.get(i).getMealType());
+            dishesMap.put("mealName", dishesList.get(i).getMealName().toString());
+            dishesMap.put("mealPrice", dishesList.get(i).getMealPrice());
+            dishesdleList.add(dishesMap);
+        }
+        strData = jsonBuilder.returnSuccessJson(jsonBuilder.toJson(dishesdleList));
+
+        writeJSON(response, strData);
+    }
+
+    /**
      * 获取可选择的菜品
      *
      * @param request
@@ -101,7 +137,6 @@ public class CashResetController extends FrameWorkController<CashExpenseserial> 
     public void getDishesList(HttpServletRequest request, HttpServletResponse response)
             throws IOException, IllegalAccessException, InvocationTargetException {
         String strData = "";
-        //String hql = "from  CashDishes WHERE isDelete=0 order by dishesType asc ";
         Map<String, String> mapOrderBy = new HashMap<String, String>();
         mapOrderBy.put("dishesType", "asc");
         List<CashDishes> dishesList = thisService.queryByProerties("isDelete", 0, mapOrderBy);
