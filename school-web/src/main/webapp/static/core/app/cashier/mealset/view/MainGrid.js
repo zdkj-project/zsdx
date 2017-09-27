@@ -54,6 +54,9 @@ Ext.define("core.cashier.mealset.view.MainGrid", {
     defSort: [{
         property: "mealType", //字段名
         direction: "ASC" //升降序
+    },{
+        property: "mealPrice", //字段名
+        direction: "ASC" //升降序
     }],
     /** 扩展参数 */
     extParams: {
@@ -81,7 +84,7 @@ Ext.define("core.cashier.mealset.view.MainGrid", {
         },{
             width: 120,
             text: "餐标",
-            dataIndex: "mealPrice",
+            dataIndex: "mealPrice"
         }, {
         	flex: 1,
             minWidth: 150,

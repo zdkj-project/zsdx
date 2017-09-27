@@ -61,18 +61,18 @@ Ext.define("core.cashier.mealset.controller.OtherController", {
         var emptyStand = 0;
         for (var i = 0; i < iLen; i++) {
             record = recordData.getAt(i);
-            if (record.data.mealName === ""||record.data.mealPrice === "") {
+            if (record.data.mealPrice === "") {
                 emptyStand = 1;
                 break;
             }
         }
         if (emptyStand > 0) {
-            self.Error("有标准项未设置内容，请设置");
+            self.Error("有快餐未设置，请设置");
             return false;
         }
         for (var i = 0; i < iLen; i++) {
             record = recordData.getAt(i);
-            stand.push('{"uuid":"' + record.get("uuid") + '","mealName":"' + record.get("mealName") +'","mealType":"' + sValue + '","mealPrice":"' + record.get("mealPrice")+'","mealExplain":"' + record.get("mealExplain")+'"}');
+            stand.push('{"uuid":"' + record.get("uuid") + '","mealName":"' + record.get("mealPrice") +'元快餐","mealType":"' + sValue + '","mealPrice":"' + record.get("mealPrice")+'","mealExplain":"' + record.get("mealExplain")+'"}');
         }
 
         var mealStand = "[" + stand.join(",") + "]";
