@@ -231,9 +231,9 @@ Ext.define('core.main.model.MainModel', {
             bigIcon:'/static/core/resources/images/icon/xueyuanzhushou_icon.png',
             url:''
         },{ 
-            text:'党校系统',
-            bigIcon:'/static/core/resources/images/icon/dangxiaoxitong_icon.png',
-            url:''
+            text:'协同办公',
+            bigIcon:'/static/core/resources/images/icon/xietongbangong_icon.jpg',
+            url:'http://oa2.zsswdx.gov.cn/'
         }],
 
         menuType:{
