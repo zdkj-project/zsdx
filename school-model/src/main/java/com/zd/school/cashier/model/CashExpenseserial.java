@@ -153,6 +153,29 @@ public class CashExpenseserial extends BaseEntity implements Serializable{
     public void setTestDate(String testDate) {
         this.testDate = testDate;
     }
+
+    @FieldInfo(name = "结算方式")
+    @Column(name = "CLEARING_FORM",nullable = false)
+    public Integer clearingForm;
+
+    public Integer getClearingForm() {
+        return clearingForm;
+    }
+
+    public void setClearingForm(Integer clearingForm) {
+        this.clearingForm = clearingForm;
+    }
+
+    @FieldInfo(name = "快餐类型",explain = "1-早餐 2-午餐 3-晚餐 4-夜宵")
+    @Column(name = "MEAL_TYPE", length = 5, nullable = false)
+    private Short mealType;
+    public void setMealType(Short mealType) {
+        this.mealType = mealType;
+    }
+    public Short getMealType() {
+        return mealType;
+    }
+
     /*    @FieldInfo(name = "交易明细")
     @OneToMany(mappedBy = "expenseserialId", cascade = CascadeType.ALL, fetch = FetchType.LAZY,targetEntity = CashExpensedetail.class)
     private Set<CashExpensedetail> serialDetail = new HashSet<CashExpensedetail>();
