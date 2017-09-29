@@ -444,7 +444,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 								sqlUpdate+=	",identifier='" + currentUser.getIdentifier()+"'";
 									
 							sqlUpdate += ",EmployeeStatusID='24',CardTypeID="+cardTypeId+" "
-									+ " where UserId='" + currentUser.getUserId() + "';";
+									+ " employeeTel='" + currentUser.getEmployeeTel() +"' where UserId='" + currentUser.getUserId() + "';";
 
 							// this.executeSql(sqlUpdate);
 
@@ -467,7 +467,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 							cardTypeId=3;
 					}
 					
-					String sqlInsert = "insert into Tc_Employee(UserId,DepartmentID,EmployeeName,EmployeeStrID,SID,EmployeePWD,SexID,identifier,cardid,CardTypeID,EmployeeStatusID,PositionId) "
+					String sqlInsert = "insert into Tc_Employee(UserId,DepartmentID,EmployeeName,EmployeeStrID,SID,EmployeePWD,SexID,identifier,cardid,CardTypeID,EmployeeStatusID,PositionId,employeeTel) "
 							+ "values('" + currentUser.getUserId() + "','" + currentUser.getDepartmentId() + "','"
 							+ currentUser.getEmployeeName() + "'," + "'" + currentUser.getEmployeeStrId() + "','"
 							+ currentUser.getSid() + "','" + currentUser.getEmployeePwd() + "'";
@@ -483,7 +483,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 					else
 						sqlInsert+=	",'" + currentUser.getIdentifier()+"'";
 							
-					sqlInsert += ",0,"+cardTypeId+",24,19);";
+					sqlInsert += ",0,"+cardTypeId+",24,19,'" +currentUser.getEmployeeTel()+ "');";
 					
 					sqlSb.append(sqlInsert);
 					// this.executeSql(sqlInsert);
