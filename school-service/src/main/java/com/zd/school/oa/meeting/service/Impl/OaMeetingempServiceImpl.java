@@ -140,10 +140,13 @@ public class OaMeetingempServiceImpl extends BaseServiceImpl<OaMeetingemp> imple
         //获取该会议已有的人员Id
         String sql = MessageFormat.format("SELECT dbo.OA_F_GETMEETINGEMPID(''{0}'') AS meetingUserId ", meetingId);
         List meetingEmpIdList = this.doQuerySql(sql);
-        String meetingempIds = meetingEmpIdList.get(0).toString();
-        //可选择人员要排除已有的人员
-        whereSql += " and o.uuid not in ('" + meetingempIds.replace(",", "','") + "') ";
-
+        if(meetingEmpIdList.get(0)!=null){
+        	String meetingempIds = meetingEmpIdList.get(0).toString();
+        
+        	//可选择人员要排除已有的人员
+        	whereSql += " and o.uuid not in ('" + meetingempIds.replace(",", "','") + "') ";
+        }
+        
         String hql = " from SysUser o where o.isDelete=0 and o.state='0' " + whereSql + orderSql;
         QueryResult<SysUser> queryResult = userService.doQueryResult(hql, start, limit);
         if (queryResult.getResultList().size() > 0)

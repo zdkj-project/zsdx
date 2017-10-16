@@ -427,7 +427,7 @@ Ext.define("core.train.arrange.view.FoodDetailForm", {
             readOnly :true  
         },{          
             columnWidth: 0.333,
-            fieldLabel: "每天人数",    
+            fieldLabel: "每天份数",    
             name: "countNumberInDay2",
             xtype: "textfield",
             value:0,
@@ -435,7 +435,7 @@ Ext.define("core.train.arrange.view.FoodDetailForm", {
         
         },{    
             columnWidth: 0.333,
-            fieldLabel: "总人数",    
+            fieldLabel: "总份数",    
             name: "countNumber2",
             xtype: "textfield",        
             value:0,
@@ -485,7 +485,7 @@ Ext.define("core.train.arrange.view.FoodDetailForm", {
             readOnly :true  
         },{          
             columnWidth: 0.333,
-            fieldLabel: "每天人数",    
+            fieldLabel: "每天份数",    
             name: "countNumberInDay3",
             xtype: "textfield",
             value:0,
@@ -493,7 +493,7 @@ Ext.define("core.train.arrange.view.FoodDetailForm", {
         
         },{    
             columnWidth: 0.333,
-            fieldLabel: "总人数",    
+            fieldLabel: "总份数",    
             name: "countNumber3",
             xtype: "textfield",        
             value:0,

@@ -156,7 +156,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
                                         data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                         if (data.success) {
                                             Ext.Msg.hide();
-                                            self.msgbox(data.obj);
+                                            self.Info(data.obj);
                                             component.destroy();
                                             userGrid.getStore().load();
                                             deptGrid.getStore().load();
@@ -221,7 +221,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
 
                                         if (result.success) {
                                             Ext.Msg.hide();
-                                            self.msgbox(result.msg);
+                                            self.Info(result.msg);
                                             baseGrid.getStore().loadPage(1);
 
 
@@ -268,7 +268,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
 
                                         if (result.success) {
                                             Ext.Msg.hide();
-                                            self.msgbox(result.msg);
+                                            self.Info(result.msg);
                                             baseGrid.getStore().loadPage(1);
 
 
@@ -321,7 +321,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
                             }
                         });
                         if (resObj.success) {
-                            self.msgbox("保存成功!");
+                            self.Info("保存成功!");
                             var grid = win.funData.grid; //窗体是否有grid参数
                             if (!Ext.isEmpty(grid)) {
                                 var store = grid.getStore();
@@ -411,7 +411,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
                                 };
                                 userStore.load();
 
-                                self.msgbox(resObj.obj);
+                                self.Info(resObj.obj);
                             } else {
                                 self.Error(resObj.obj);
                             }
@@ -610,7 +610,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
                                         data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                         if (data.success) {
                                             Ext.Msg.hide();
-                                            self.msgbox(data.obj);
+                                            self.Info(data.obj);
                                             component.destroy();
                                         } else {
                                             setTimeout(function () {
@@ -782,7 +782,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
                     };
                     userStore.load();
 
-                    self.msgbox(resObj.obj);
+                    self.Info(resObj.obj);
                 } else {
                     self.Error(resObj.obj);
                 }

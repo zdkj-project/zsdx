@@ -35,7 +35,7 @@ Ext.define("core.system.appupdate.controller.OtherController", {
                         waitMsg: '正在上传文件...',
                         timeout : 300000,
                         success: function(form, action) {
-                            self.msgbox("上传文件成功！");
+                            self.Info("上传文件成功！");
 
                             var win = btn.up('window');
                             var grid = win.grid;

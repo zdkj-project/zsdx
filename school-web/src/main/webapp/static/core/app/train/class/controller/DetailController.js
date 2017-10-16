@@ -20,6 +20,162 @@ Ext.define("core.train.class.controller.DetailController", {
     },
     /** 该视图内的组件事件注册 */
     control: {
+        "basegrid[xtype=class.classcoursegrid]": {
+             afterrender: function (grid, eOpts) {
+                var btnSetRoom = grid.down("button[ref=gridSetRoom]");
+                var btnCancelRoom = grid.down("button[ref=gridCancelRoom]");
+                var basetab = grid.up('baseformtab');
+                if(basetab.insertObj.isarrange==1){
+                    btnSetRoom.setHidden(true);
+                    btnCancelRoom.setHidden(true);   
+                }     
+             },
+         },
+        /*课程选择场地*/
+        "basepanel basegrid[xtype=class.classcoursegrid] button[ref=gridSetRoom]": {
+            beforeclick: function(btn) {
+                
+                var self = this;
+            
+                var baseGrid = btn.up("grid[xtype=class.classcoursegrid]");
+                var records = baseGrid.getSelectionModel().getSelection();
+                if (records.length == 0) {
+                    self.msgbox("请选择需要设置场地的课程！");
+                    return false;
+                }
+
+                var basetab = btn.up('baseformtab');
+                var funCode = basetab.funCode;      //mainLayout的funcode
+                var detCode = basetab.detCode;      //detailLayout的funcode
+
+                var basePanel = basetab.down("basepanel[funCode=" + detCode + "]");            
+                var objForm = basePanel.down("baseform[funCode=" + detCode + "]");
+                var formObj = objForm.getForm();
+                var classId = formObj.findField("uuid").getValue();
+
+                var ids=[];            
+                for(var i in records) {              
+                    if( records[i].get("isDelete")==1){
+                        self.Warning("不能给删除状态的课程设置场地！");
+                        return false;
+                    }    
+                    ids.push(records[i].get("uuid"));
+                };
+
+                            
+                //关键：window的视图控制器
+                var otherController ='class.otherController';
+            
+                var insertObj = {
+                    classId:classId, //上一个窗口，存放的数据
+                    ids:ids
+                };
+
+                var popFunData = Ext.apply(basePanel.funData, {
+                    grid: baseGrid
+                });
+
+                var width = 1200;
+                var height = 600;      
+
+                var iconCls = 'x-fa fa-plus-circle';
+                var operType = "edit";
+                var title = "选择场地";
+                        
+
+
+                var win = Ext.create('core.base.view.BaseFormWin', {
+                    title: title,
+                    iconCls: iconCls,
+                    operType: operType,
+                    width: width,
+                    height: height,
+                    controller: otherController,
+                    funData: popFunData,
+                    funCode: "coursesite_detail",    //修改此funCode，方便用于捕获window的确定按钮
+                    insertObj: insertObj,
+                    items: [{
+                        xtype:'pubselect.selectroomlayout',
+                        items: [{
+                            xtype:'pubselect.selectroomgrid',
+                            //width:600,
+                            flex:1,
+                            region: "center",
+                            margin:'5',
+                            extParams: {
+                                whereSql: "",
+                                //查询的过滤字段
+                                //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
+                                filter: "[{\"type\":\"string\",\"comparison\":\"=\",\"value\":\"3\",\"field\":\"roomType\"}]"
+                            },
+                            columns: {
+                                defaults: {
+                                    titleAlign: "center"
+                                },
+                                items: [{
+                                    xtype: "rownumberer",
+                                    flex: 0,
+                                    width: 50,
+                                    text: '序号',
+                                    align: 'center'
+                                }, {
+                                    width: 100,
+                                    text: "所属楼栋",
+                                    dataIndex: "areaUpName"
+                                }, {
+                                    width: 100,
+                                    text: "所属楼层",
+                                    dataIndex: "areaName"
+                                }, {
+                                    flex: 100,
+                                    text: "场地名称",
+                                    dataIndex: "roomName"
+                                }, {
+                                    width: 100,
+                                    text: "场地类型",
+                                    dataIndex: "roomType",
+                                    columnType: "basecombobox",
+                                    ddCode: "FJLX"
+                                }]
+                            },
+                        }, {
+                            xtype: "pubselect.isselectroomgrid",
+                            region: "east",
+                            width:500,
+                            margin:'5',
+                            columns: {
+                                defaults: {
+                                    titleAlign: "center"
+                                },
+                                items: [{
+                                    xtype: "rownumberer",
+                                    flex: 0,
+                                    width: 50,
+                                    text: '序号',
+                                    align: 'center'
+                                }, {
+                                    width: 100,
+                                    text: "所属楼栋",
+                                    dataIndex: "areaUpName"
+                                }, {
+                                    width: 100,
+                                    text: "所属楼层",
+                                    dataIndex: "areaName"
+                                }, {
+                                    flex: 1,
+                                    text: "场地名称",
+                                    dataIndex: "roomName"
+                                }]
+                            },
+                        }]
+                    }]
+                });
+                win.show();
+                
+
+                return false;
+            }
+        },
         //弹出tab中的班级住宿信息提交事件
         "basepanel[xtype=class.classdetaillayout] baseform[xtype=class.roomdetailform] button[ref=submitBtn]":{
             beforeclick:function(btn){
@@ -70,7 +226,8 @@ Ext.define("core.train.class.controller.DetailController", {
                                 var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
                                 if(data.success){  //若存在rows数据，则表明请求正常 
-                                    self.msgbox("暂存住宿信息成功!");
+                                    loading.hide();
+                                    self.Info("暂存住宿信息成功!");
 
                                     //刷新外部表格的数据
                                     var basetab = btn.up('baseformtab');
@@ -80,10 +237,10 @@ Ext.define("core.train.class.controller.DetailController", {
                                         store.load(); //刷新父窗体的grid
                                     }
 
-                                    loading.hide();
+                                   
                                 }else{
-                                    self.Error(data.obj);
                                     loading.hide();
+                                    self.Error(data.obj);                            
                                 }
                             },
                             failure: function(response) {
@@ -155,8 +312,8 @@ Ext.define("core.train.class.controller.DetailController", {
                                     var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
                                     if(data.success){  //若存在rows数据，则表明请求正常 
-
-                                        self.msgbox("暂存就餐信息成功!");
+                                        loading.hide();
+                                        self.Info("暂存就餐信息成功!");
 
                                         //刷新外部表格的数据
                                         var basetab = btn.up('baseformtab');
@@ -166,10 +323,11 @@ Ext.define("core.train.class.controller.DetailController", {
                                             store.load(); //刷新父窗体的grid
                                         }
 
-                                        loading.hide();
+                                        
                                     }else{
+                                         loading.hide();
                                         self.Error(data.obj);
-                                        loading.hide();
+                                       
                                     }
                                 },
                                 failure: function(response) {
@@ -241,8 +399,8 @@ Ext.define("core.train.class.controller.DetailController", {
                                 success: function(response) {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if (data.success) {
-                                        
-                                        self.msgbox("暂存班级信息成功!");
+                                         loading.hide();
+                                        self.Info("暂存班级信息成功!");
                                        
                                         if(act=="doadd"){
                                             //给表单设置初始化数据
@@ -271,10 +429,11 @@ Ext.define("core.train.class.controller.DetailController", {
                                             store.load(); //刷新父窗体的grid
                                         }
 
-                                        loading.hide();
+                                       
                                     } else {
-                                        self.Error(data.obj);
                                         loading.hide();
+                                        self.Error(data.obj);
+                                        
                                     }
                                 },
                                 failure: function(response) {
@@ -514,7 +673,7 @@ Ext.define("core.train.class.controller.DetailController", {
                         if (resObj.success) {
                             baseGrid.getStore().load();
 
-                            self.msgbox(resObj.obj);
+                            self.Info(resObj.obj);
 
                         } else {
                             self.Error(resObj.obj);
@@ -565,7 +724,7 @@ Ext.define("core.train.class.controller.DetailController", {
 
                             //baseGrid.getStore().remove(record); //不刷新的方式
                             //baseGrid.getView().refresh();
-                            self.msgbox(resObj.obj);
+                            self.Info(resObj.obj);
 
                         } else {
                             self.Error(resObj.obj);
@@ -610,7 +769,7 @@ Ext.define("core.train.class.controller.DetailController", {
                         if (resObj.success) {
                             baseGrid.getStore().load();
 
-                            self.msgbox(resObj.obj);
+                            self.Info(resObj.obj);
 
                         } else {
                             self.Error(resObj.obj);
@@ -655,7 +814,7 @@ Ext.define("core.train.class.controller.DetailController", {
 
                             //baseGrid.getStore().remove(record); //不刷新的方式
                             //baseGrid.getView().refresh();
-                            self.msgbox(resObj.obj);
+                            self.Info(resObj.obj);
 
                         } else {
                             self.Error(resObj.obj);
@@ -798,7 +957,7 @@ Ext.define("core.train.class.controller.DetailController", {
 
                             //baseGrid.getStore().remove(record); //不刷新的方式
                             //baseGrid.getView().refresh();
-                            self.msgbox(resObj.obj);
+                            self.Info(resObj.obj);
 
                             //同时刷新住宿和就餐的人员名单。
                             var basetab = baseGrid.up('baseformtab');
@@ -902,12 +1061,12 @@ Ext.define("core.train.class.controller.DetailController", {
                             }
                         });
                         if (resObj.success) {
-                            debugger
+                            
                             baseGrid.getStore().load();
 
                             //baseGrid.getStore().remove(record); //不刷新的方式
                             //baseGrid.getView().refresh();
-                            self.msgbox(resObj.obj);
+                            self.Info(resObj.obj);
 
                             //同时刷新住宿和就餐的人员名单。
                             var basetab = baseGrid.up('baseformtab');
@@ -1086,7 +1245,7 @@ Ext.define("core.train.class.controller.DetailController", {
                                 var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
                                 if(data.success){  
-                                    self.msgbox(data.obj);
+                                    self.Info(data.obj);
                                 }else{
                                     self.Error(data.obj);
                                 }

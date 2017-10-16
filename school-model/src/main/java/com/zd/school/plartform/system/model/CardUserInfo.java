@@ -84,6 +84,19 @@ public class CardUserInfo extends BaseEntity implements Serializable {
 	public void setCardPrintId(String cardPrintId) {
 		this.cardPrintId = cardPrintId;
 	}
+	
+	//1-职工卡、2-合同工、3-学员卡
+	@FieldInfo(name = "卡的类型")
+    @Column(name = "CARD_TYPE_ID")
+    private Integer cardTypeId;
+
+    public Integer getCardTypeId() {
+        return cardTypeId;
+    }
+
+    public void setCardTypeId(Integer cardTypeId) {
+        this.cardTypeId = cardTypeId;
+    }
     
   
 }

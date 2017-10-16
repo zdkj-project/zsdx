@@ -57,7 +57,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.DetailController", {
                                     store.load();
                                 }
 
-                                self.msgbox(resObj.obj);                                    
+                                self.Info(resObj.obj);                                    
                             } else {
                                 self.Error(resObj.obj);
                             }
@@ -252,7 +252,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.DetailController", {
                 if (resObj.success) {
                     var store = baseGrid.getStore();
                     store.load();
-                    self.msgbox(resObj.obj);
+                    self.Info(resObj.obj);
                 } else {
                     self.Error(resObj.obj);
                 }

@@ -45,6 +45,16 @@ Ext.define("core.train.class.view.ClassCourseGrid", {
             iconCls: 'x-fa fa-pencil-square'
         },{
             xtype: 'button',
+            text: '选择场地',   //只能是未安排的班级才能修改
+            ref: 'gridSetRoom',
+            iconCls: 'x-fa fa-plus-circle'
+        },{
+            xtype: 'button',
+            text: '取消场地',
+            ref: 'gridCancelRoom',
+            iconCls: 'x-fa fa-minus-circle'
+        },{
+            xtype: 'button',
             text: '删除',
             ref: 'gridDelete',
             funCode: 'girdFuntionBtn',

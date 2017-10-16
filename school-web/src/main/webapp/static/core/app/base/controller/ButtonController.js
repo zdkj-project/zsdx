@@ -977,7 +977,7 @@ Ext.define("core.base.controller.ButtonController", {
                                 });
                                 if (resObj.success) {
                                     baseGrid.getStore().load();
-                                    self.msgbox(resObj.obj);
+                                    self.Info(resObj.obj);
                                 } else {
                                     self.Error(resObj.obj);
                                 }
@@ -1182,7 +1182,7 @@ Ext.define("core.base.controller.ButtonController", {
                         });
                         if (resObj.success) {
                             formObj.reset();
-                            self.msgbox("保存成功!");
+                            self.Info("保存成功!");
                             //给窗体赋默认值
                             var insertObj = win.insertObj;
                             insertObj = Ext.apply(insertObj, {
@@ -1250,7 +1250,7 @@ Ext.define("core.base.controller.ButtonController", {
                             //采用返回的数据刷新表单
                             //self.setFormValue(formObj, resObj.obj);
 
-                            self.msgbox("保存成功!");
+                            self.Info("保存成功!");
                             var grid = win.funData.grid; //窗体是否有grid参数
                             if (!Ext.isEmpty(grid)) {
                                 var store = grid.getStore();
@@ -1357,7 +1357,9 @@ Ext.define("core.base.controller.ButtonController", {
 
                                 if (data.success) {
                                     formObj.reset();
-                                    self.msgbox("保存成功!");
+                                     loading.hide();
+
+                                    self.Info("保存成功!");
                                     //给窗体赋默认值
                                     var insertObj = basetab.insertObj;
                                     insertObj = Ext.apply(insertObj, {
@@ -1379,10 +1381,10 @@ Ext.define("core.base.controller.ButtonController", {
                                         store.load(); //刷新父窗体的grid                                     
                                     }*/
 
-                                    loading.hide();
+                                   
                                 } else {
+                                     loading.hide();
                                     self.Error(data.obj);
-                                    loading.hide();
                                 }
                             }
                         });
@@ -1448,8 +1450,8 @@ Ext.define("core.base.controller.ButtonController", {
                                 data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
                                 if (data.success) {
-
-                                    self.msgbox("保存成功!");
+   loading.hide();
+                                    self.Info("保存成功!");
 
                                     /*
                                     var grid = basetab.funData.grid; //此tab是否保存有grid参数
@@ -1465,11 +1467,12 @@ Ext.define("core.base.controller.ButtonController", {
                                         store.load(); //刷新父窗体的grid                                     
                                     }*/
 
-                                    loading.hide();
+                                 
                                     tabPanel.remove(tabItem);
                                 } else {
+                                       loading.hide();
                                     self.Error(data.obj);
-                                    loading.hide();
+                                 
                                 }
                             }
                         });

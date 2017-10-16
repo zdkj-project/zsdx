@@ -126,6 +126,22 @@ Ext.define("core.train.cardcenter.view.MainGrid", {
         text: "卡片编号",
         dataIndex: "cardPrintId"
     },{
+        width:100,
+        text: "发卡状态",
+        dataIndex: "useState",
+        align:'left',
+        renderer: function(value, metaData) {          
+            if(value==0||value==3||value==null)
+                return "<span style='color:red'>未发卡</span>";
+            else if(value==1)
+                return "<span style='color:green'>已发卡</span>";            
+            else if(value==2){
+                return "<span style='color:black'>已挂失</span>";
+            }else {
+                return "<span style='color:#FFAC00'>退卡</span>"; 
+            }
+        }        
+    },{
         xtype: 'actiontextcolumn',
         text: "操作",
         width: 150,

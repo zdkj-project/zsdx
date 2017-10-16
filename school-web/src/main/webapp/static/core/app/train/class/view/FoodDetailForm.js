@@ -432,7 +432,7 @@ Ext.define("core.train.class.view.FoodDetailForm", {
             readOnly :true  
         },{          
             columnWidth: 0.333,
-            fieldLabel: "每天人数",    
+            fieldLabel: "每天份数",    
             name: "countNumberInDay2",
             xtype: "textfield",
             value:0,
@@ -440,7 +440,7 @@ Ext.define("core.train.class.view.FoodDetailForm", {
         
         },{    
             columnWidth: 0.333,
-            fieldLabel: "总人数",    
+            fieldLabel: "总份数",    
             name: "countNumber2",
             xtype: "textfield",        
             value:0,
@@ -490,7 +490,7 @@ Ext.define("core.train.class.view.FoodDetailForm", {
             readOnly :true  
         },{          
             columnWidth: 0.333,
-            fieldLabel: "每天人数",    
+            fieldLabel: "每天份数",    
             name: "countNumberInDay3",
             xtype: "textfield",
             value:0,
@@ -498,7 +498,7 @@ Ext.define("core.train.class.view.FoodDetailForm", {
         
         },{    
             columnWidth: 0.333,
-            fieldLabel: "总人数",    
+            fieldLabel: "总份数",    
             name: "countNumber3",
             xtype: "textfield",        
             value:0,
@@ -546,10 +546,38 @@ Ext.define("core.train.class.view.FoodDetailForm", {
                         headercheckchange:function( me , checked , e , eOpts ) {
                             var currentForm=me.up("baseform[xtype=class.fooddetailform]");
                             currentForm.countFood3();
+
+                            if(checked==true){
+                                //更新单个人员的住宿情况
+                                var basetab = currentForm.up('baseformtab');
+                                var roomGrid=basetab.down("grid[ref=traineeRoomGrid]");
+                                if(roomGrid){
+                                    var roomStore=roomGrid.getStore();
+                                    var len=roomStore.data.length;
+                                    for(var i=0;i<len;i++){
+                                        var rec=roomStore.getAt(i);
+                                        rec.set("sleep",1);
+                                        rec.commit();
+                                    }                            
+                                }
+                            }
                         },
                         checkchange :function ( me , rowIndex , checked , record , e , eOpts ) {
                             var currentForm=me.up("baseform[xtype=class.fooddetailform]");
                             currentForm.countFood3();
+
+                            if(checked==true){
+                                //更新单个人员的住宿情况
+                                var basetab = currentForm.up('baseformtab');
+                                var roomGrid=basetab.down("grid[ref=traineeRoomGrid]");
+                                if(roomGrid){
+                                    var roomStore=roomGrid.getStore();
+                                    var rec=roomStore.findRecord("uuid",record.get("uuid"));
+                                    rec.set("sleep",1);
+                                    rec.commit();
+                                }
+                            }
+                          
                         }
                     }
                 },

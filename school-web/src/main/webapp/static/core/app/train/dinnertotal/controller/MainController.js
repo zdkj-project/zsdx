@@ -251,7 +251,7 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if(data.success){
                                         Ext.Msg.hide();
-                                        self.msgbox(data.obj);
+                                        self.Info(data.obj);
                                         component.destroy();                                
                                     }else{                                    
                                         if(data.obj==0){    //当为此值，则表明导出失败
@@ -318,7 +318,7 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if(data.success){
                                         Ext.Msg.hide();
-                                        self.msgbox(data.obj);
+                                        self.Info(data.obj);
                                         component.destroy();                                
                                     }else{                                    
                                         if(data.obj==0){    //当为此值，则表明导出失败
@@ -385,7 +385,7 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if(data.success){
                                         Ext.Msg.hide();
-                                        self.msgbox(data.obj);
+                                        self.Info(data.obj);
                                         component.destroy();                                
                                     }else{                                    
                                         if(data.obj==0){    //当为此值，则表明导出失败

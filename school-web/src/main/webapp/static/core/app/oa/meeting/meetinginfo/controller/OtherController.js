@@ -31,7 +31,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.OtherController", {
                         waitMsg: '正在上传文件...',
                         timeout : 300,
                         success: function(form, action) {
-                            self.msgbox("上传图片成功！");
+                            self.Info("上传图片成功！");
 
                             var win = btn.up('window');
                             var grid = win.grid;
@@ -124,8 +124,8 @@ Ext.define("core.oa.meeting.meetinginfo.controller.OtherController", {
                             data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
                             if (data.success) {
-
-                                self.msgbox("保存成功!");
+                                 loading.hide();
+                                self.Info("保存成功!");
 
                                 var grid = basetab.funData.grid; //此tab是否保存有grid参数
                                 if (!Ext.isEmpty(grid)) {
@@ -140,11 +140,12 @@ Ext.define("core.oa.meeting.meetinginfo.controller.OtherController", {
                                     store.load(); //刷新父窗体的grid                                  
                                 }
 
-                                loading.hide();
+                               
                                 tabPanel.remove(tabItem);
-                            } else {
-                                self.Error(data.obj);
+                            } else {  
                                 loading.hide();
+                                self.Error(data.obj);
+                              
                             }
                         }
                     });
@@ -175,7 +176,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.OtherController", {
                         url: comm.get('baseUrl') + "/OaMeeting/importData",
                         waitMsg: '正在导入文件...',
                         success: function (form, action) {
-                            self.msgbox("导入成功！");
+                            self.Info("导入成功！");
 
                             var win = btn.up('window');
                             var grid = win.grid;
@@ -251,7 +252,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.OtherController", {
                         if (resObj.success) {
                             var store = baseGrid.getStore();
                             store.load();
-                            self.msgbox(resObj.obj);
+                            self.Info(resObj.obj);
                             win.close();
                         } else {
                             self.Error(resObj.obj);

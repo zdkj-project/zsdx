@@ -54,7 +54,7 @@ Ext.define("core.system.user.controller.OtherController", {
                         }
                     });
                     if (resObj.success) {
-                        self.msgbox("保存成功!");
+                        self.Info("保存成功!");
                         var grid = win.funData.grid; //窗体是否有grid参数
                         if (!Ext.isEmpty(grid)) {
                             var store = grid.getStore();
@@ -275,7 +275,7 @@ Ext.define("core.system.user.controller.OtherController", {
                                 userId: selectUserId
                             };
                             store.load();
-                            self.msgbox(resObj.obj);
+                            self.Info(resObj.obj);
                         } else {
                             self.Error(resObj.obj);
                         }
@@ -403,7 +403,7 @@ Ext.define("core.system.user.controller.OtherController", {
                                     //     ids: setIds
                                     // };
                                     deptJobStore.load();
-                                    self.msgbox(data.obj);
+                                    self.Info(data.obj);
                                 } else
                                     self.Warning(data.obj);
                             }
@@ -457,7 +457,7 @@ Ext.define("core.system.user.controller.OtherController", {
                         success: function (response) {
                             data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                             if (data.success) {
-                                self.msgbox("保存成功!");
+                                self.Info("保存成功!");
                                 var grid = basetab.funData.grid; //此tab是否保存有grid参数
                                 if (!Ext.isEmpty(grid)) {
                                     var store = grid.getStore();                                  
@@ -538,7 +538,7 @@ Ext.define("core.system.user.controller.OtherController", {
                                     //     ids: setIds
                                     // };
                                     deptJobStore.load();
-                                    self.msgbox(data.obj);
+                                    self.Info(data.obj);
                                 } else
                                     self.Warning(data.obj);
                             }
@@ -602,7 +602,7 @@ Ext.define("core.system.user.controller.OtherController", {
                                 //     ids: setIds
                                 // };
                                 deptJobStore.load();
-                                self.msgbox(data.obj);
+                                self.Info(data.obj);
                             } else
                                 self.Warning(data.obj);
                             win.close();

@@ -12,6 +12,7 @@ Ext.define("core.train.class.controller.MainController", {
     init: function () {
     },
     control: {
+        
         /**
          * 导出班级信息（学员、课程、住宿、用餐)
          */
@@ -70,7 +71,7 @@ Ext.define("core.train.class.controller.MainController", {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if (data.success) {
                                         Ext.Msg.hide();
-                                        self.msgbox(data.obj);
+                                        self.Info(data.obj);
                                         component.destroy();
                                     } else {
                                         if (data.obj == 0) {    //当为此值，则表明导出失败
@@ -2074,11 +2075,11 @@ Ext.define("core.train.class.controller.MainController", {
                                     }
                                     else if (obj.classInfo.dinnerType == 2){
                                         classFoodObj.dinnerTypeName = "自助餐";   
-                                        classFoodTitle="（总额 "+countMoney+" 元 ； 每天人数 "+countNumberInDay+" 围 ； 总人数 "+countNumber+" 围）";                                      
+                                        classFoodTitle="（总额 "+countMoney+" 元 ； 每天份数 "+countNumberInDay+" 份 ； 总份数 "+countNumber+" 份）";                                      
                                     }
                                     else{
                                         classFoodObj.dinnerTypeName = "快餐"; 
-                                        classFoodTitle="（总额 "+countMoney+" 元 ； 每天人数 "+countNumberInDay+" 围 ； 总人数 "+countNumber+" 围）";                                    
+                                        classFoodTitle="（总额 "+countMoney+" 元 ； 每天份数 "+countNumberInDay+" 份 ； 总份数 "+countNumber+" 份）";                                    
                                     }
                                    
                                     classFoodObj.classFoodTitle=classFoodTitle;
@@ -2578,9 +2579,15 @@ Ext.define("core.train.class.controller.MainController", {
             recordData = rescords[0].data;
         }
 
+        var sendInfo="";
+        if(recordData.isuse==0){
+            sendInfo="请您安排培训班：【" + recordData.className + "】的场地、住宿或就餐（一卡通系统）";
+        }else{
+            sendInfo="【" + recordData.className + "】有更新，请您更新场地、住宿或就餐安排（一卡通系统）"
+        }
         insertObj = recordData;
         insertObj = Ext.apply(insertObj,{
-            sendInfo:"请安排培训班:[" + recordData.className + "]的场地及住宿"
+            sendInfo:sendInfo
         });
         tabTitle = funData.tabConfig.detailTitle;
         tabItemId = funCode + "_gridDetail" + insertObj.classNumb;    //详细界面可以打开多个

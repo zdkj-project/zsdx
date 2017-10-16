@@ -65,7 +65,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if (data.success) {
                                         Ext.Msg.hide();
-                                        self.msgbox(data.obj);
+                                        self.Info(data.obj);
                                         component.destroy();
 
                                         btn.up("basegrid").getStore().loadPage(1);
@@ -139,7 +139,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if (data.success) {
                                         Ext.Msg.hide();
-                                        self.msgbox(data.obj);
+                                        self.Info(data.obj);
                                         component.destroy();
                                     } else {
                                         if (data.obj == 0) {    //当为此值，则表明导出失败

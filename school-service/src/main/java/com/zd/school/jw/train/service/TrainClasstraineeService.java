@@ -6,6 +6,7 @@ import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.jw.train.model.vo.VoTrainClassCheck;
 import com.zd.school.plartform.system.model.SysUser;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -92,4 +93,12 @@ public interface TrainClasstraineeService extends BaseService<TrainClasstrainee>
     public List<Map<String, Object>> getClassTraineeCreditsList(String classTraineeId);
 
     public QueryResult<VoTrainClassCheck> getCheckList(Integer start, Integer limit, String classId, String classScheduleId, String xm);
+
+	public void doSyncUnBindToUP(String ids, String xm);
+
+	public List<Map<String, Object>> doCardBind(String ids);
+
+	public void doSyncBindToUP(List<Map<String, Object>> cardInfoToUp, String xm);
+
+	public void doRestoreCardBind(List<Map<String, Object>> cardInfoToUp);
 }

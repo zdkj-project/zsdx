@@ -64,7 +64,7 @@ Ext.define("core.cashier.mealtime.controller.OtherController", {
              if (!Ext.isEmpty(grid)) {
                  var store = grid.getStore();
                  store.loadPage(1);
-                 self.msgbox("保存成功!");
+                 self.Info("保存成功!");
              }//刷新父窗体的grid
             tabPanel.remove(tabItem);
         } else {

@@ -18,7 +18,7 @@ Ext.define("core.train.indicator.controller.MainController", {
                 var btnAdd = grid.down("button[ref=gridAdd_Tab]");
                 var btnDelete = grid.down("button[ref=gridDelete]");
                 var roleKey = comm.get("roleKey");
-                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PXPJMANGER") == -1) {
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1) {
                     btnAdd.setHidden(true);
                     btnDelete.setHidden(true);
                 }

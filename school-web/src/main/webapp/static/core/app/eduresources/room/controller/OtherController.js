@@ -87,8 +87,8 @@ Ext.define("core.eduresources.room.controller.OtherController", {
                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
                     if (data.success) {
-
-                        self.msgbox("保存成功!");
+                         loading.hide();
+                        self.Info("保存成功!");
 
                         var grid = basetab.funData.grid; //此tab是否保存有grid参数
                         if (!Ext.isEmpty(grid)) {
@@ -96,11 +96,12 @@ Ext.define("core.eduresources.room.controller.OtherController", {
                             store.load(); //刷新父窗体的grid
                         }
 
-                        loading.hide();
+                       
                         tabPanel.remove(tabItem);
                     } else {
-                        self.Error(data.obj);
                         loading.hide();
+                        self.Error(data.obj);
+                        
                     }
                 },
                 failure: function(response) {
@@ -169,8 +170,8 @@ Ext.define("core.eduresources.room.controller.OtherController", {
                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
                     if (data.success) {
-
-                        self.msgbox("保存成功!");
+                        loading.hide();
+                        self.Info("保存成功!");
 
                         var grid = basetab.funData.grid; //此tab是否保存有grid参数
                         if (!Ext.isEmpty(grid)) {
@@ -178,11 +179,12 @@ Ext.define("core.eduresources.room.controller.OtherController", {
                             store.load(); //刷新父窗体的grid
                         }
 
-                        loading.hide();
+                       
                         tabPanel.remove(tabItem);
                     } else {
-                        self.Error(data.obj);
                         loading.hide();
+                        self.Error(data.obj);
+                       
                     }
                 },
                 failure: function(response) {

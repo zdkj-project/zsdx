@@ -91,7 +91,7 @@ Ext.define("core.oa.roomterminal.controller.OtherController", {
             }
         });
         if (resObj.success) {
-            self.msgbox(resObj.obj);
+            self.Info(resObj.obj);
             var store = grid.getStore();
             var proxy = store.getProxy();
             proxy.extraParams = {
@@ -100,7 +100,7 @@ Ext.define("core.oa.roomterminal.controller.OtherController", {
             store.load();
             win.close();
         } else {
-            if (!Ext.isEmpty(resObj.obj)) self.msgbox(resObj.obj);
+            if (!Ext.isEmpty(resObj.obj)) self.Info(resObj.obj);
         }
     }
 

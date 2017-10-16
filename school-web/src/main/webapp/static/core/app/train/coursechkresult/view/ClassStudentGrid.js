@@ -124,6 +124,13 @@ Ext.define("core.train.coursechkresult.view.ClassStudentGrid", {
                 }
             }
         }, {
+            text: "上课时间",
+            dataIndex: "attendMinute",
+            width: 100,
+            renderer: function (value, metaData) {
+                return value+" 分钟";
+            }
+        }, {
             text: "考勤结果",
             dataIndex: "attendResult",
             width: 80,

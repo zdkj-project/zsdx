@@ -110,7 +110,7 @@ Ext.define("core.oa.meeting.checkrule.controller.MainController", {
                                 if(data.success){ 
                                     baseGrid.getStore().load();
                                     Ext.Msg.hide();
-                                    self.msgbox(data.obj);
+                                    self.Info(data.obj);
                                 }else{
                                     Ext.Msg.hide();
                                     self.Error(data.obj);

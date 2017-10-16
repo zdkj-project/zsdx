@@ -300,7 +300,7 @@ Ext.define("core.system.dept.controller.OtherController", {
 
                 }
                 self.setFormValue(formObj, insertObj);
-                self.msgbox("保存成功!");
+                self.Info("保存成功!");
                 var grid = win.funData.grid; //窗体是否有grid参数
                 if (!Ext.isEmpty(grid)) {
                     var store = grid.getStore();

@@ -69,7 +69,7 @@ Ext.define("core.system.roleright.controller.OtherController", {
                                 roleId: roleId
                             };
                             store.load();
-                            self.msgbox(resObj.obj);
+                            self.Info(resObj.obj);
                             win.close();
                         } else {
                             self.Error(resObj.obj);

@@ -136,7 +136,7 @@ Ext.define("core.train.creditrule.controller.MainController", {
                             });
                             if (resObj.success) {
                                 baseGrid.getStore().load();
-                                self.msgbox(resObj.obj);
+                                self.Info(resObj.obj);
                             } else {
                                 self.Error(resObj.obj);
                             }
@@ -217,7 +217,7 @@ Ext.define("core.train.creditrule.controller.MainController", {
                         if (resObj.success) {
                             baseGrid.getStore().load();                            
 
-                            self.msgbox(resObj.obj);
+                            self.Info(resObj.obj);
 
                         } else {
                             self.Error(resObj.obj);

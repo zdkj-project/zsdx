@@ -38,6 +38,9 @@ Ext.define("core.train.cardinfo.view.MainGrid", {
      
     /** 排序字段定义 */
     defSort: [{
+        property: "cardPrintId", //字段名
+        direction: "DESC" //升降序
+    },{
         property: "createTime", //字段名
         direction: "DESC" //升降序
     }],

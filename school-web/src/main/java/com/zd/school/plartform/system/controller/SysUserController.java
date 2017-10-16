@@ -643,13 +643,23 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 //					+ " from Tc_Employee b join TC_Card a on b.CardID=a.CardID" + " where b.UserId is not null "
 //					+ "	order by a.CardID asc,a.ModifyDate asc";
 			
-			//修改了查询的方式，以发卡表中的最新的一条数据为准
-			String sql="select a.UserId as userId,a.EmployeeStrID as sid,a.EmployeeStatusID as employeeStatusID,"
-					+ " convert(varchar,b.CardID) as upCardId,convert(varchar,b.FactoryFixID) as factNumb,"
-					+ " convert(int,b.CardStatusIDXF) as useState from Tc_Employee a join TC_Card b"
-					+ " on b.CardID=("
-					+ "		select top 1 CardID from TC_Card where EmployeeID=a.EmployeeID order by ModifyDate desc"
-					+ " ) where a.UserId is not null ";
+			//(2017-10-11:作废)修改了查询的方式，以发卡表中的最新的一条数据为准
+//			String sql="select a.UserId as userId,a.EmployeeStrID as sid,a.EmployeeStatusID as employeeStatusID,"
+//					+ " convert(varchar,b.CardID) as upCardId,convert(varchar,b.FactoryFixID) as factNumb,"
+//					+ " convert(int,b.CardStatusIDXF) as useState from Tc_Employee a join TC_Card b"
+//					+ " on b.CardID=("
+//					+ "		select top 1 CardID from TC_Card where EmployeeID=a.EmployeeID order by ModifyDate desc"
+//					+ " ) where a.UserId is not null ";
+			
+			//(2017-10-11:使用人员表和卡片表，双向关联查出最精确的发卡数据)
+			String sql="select B.UserId as userId,replace(B.EmployeeStrID,'NO','') as sid,B.EmployeeStatusID as employeeStatusID,"
+					+ "	convert(varchar,A.CardID) as upCardId,convert(varchar,A.FactoryFixID) as factNumb,"
+					+ "	convert(int,A.CardStatusIDXF) as useState, convert(int,A.CardTypeID) as cardTypeId "
+					+ " from TC_Card A left join Tc_Employee B"
+					+ " on A.CardID=B.CardID and A.EmployeeID=B.EmployeeID "
+					+ " where A.EmployeeID=B.EmployeeID or A.EmployeeID=0"
+					+ " order by A.CardID asc";
+					
 			
 			List<CardUserInfoToUP> upCardUserInfos = thisService.doQuerySqlObject(sql, CardUserInfoToUP.class);
 

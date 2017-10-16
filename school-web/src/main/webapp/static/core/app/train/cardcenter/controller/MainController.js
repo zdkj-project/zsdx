@@ -38,6 +38,11 @@ Ext.define("core.train.cardcenter.controller.MainController", {
                    var mainlayout=baseGrid.up("panel[xtype=cardcenter.mainlayout]");
                    var classGrid=mainlayout.down("panel[xtype=cardcenter.classgrid]");
                    var classRecords = classGrid.getSelectionModel().getSelection();
+                  if(classRecords.length!=1){
+                       self.Warning("请选择一个班级!");
+                       return;
+                   }
+
                    var classId = classRecords[0].data.uuid;
                    var funCode = baseGrid.funCode;
                    var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
@@ -46,7 +51,7 @@ Ext.define("core.train.cardcenter.controller.MainController", {
                    var pkName = funData.pkName;
                    
                    if(classId==null){
-                	   self.Warning("请选择一个班级!");
+                	     self.Warning("请选择一个班级!");
                        return;
                    }
                    var title="学员卡务列表";
@@ -71,7 +76,7 @@ Ext.define("core.train.cardcenter.controller.MainController", {
                                        data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                        if (data.success) {
                                            Ext.Msg.hide();
-                                           self.msgbox(data.obj);
+                                           self.Info(data.obj);
                                            component.destroy();
                                        } else {
                                            setTimeout(function () {
@@ -145,7 +150,7 @@ Ext.define("core.train.cardcenter.controller.MainController", {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if(data.success){
                                         Ext.Msg.hide();
-                                        self.msgbox(data.obj);
+                                        self.Info(data.obj);
                                         component.destroy();                                
                                     }else{                                    
                                         if(data.obj==0){    //当为此值，则表明导出失败
@@ -226,7 +231,7 @@ Ext.define("core.train.cardcenter.controller.MainController", {
                         if(data.success){ 
                             baseGrid.getStore().loadPage(1);
                             Ext.Msg.hide();
-                            self.msgbox(data.msg);   
+                            self.Info(data.msg);   
                         }else{
                             Ext.Msg.hide();
                             self.Error(data.msg);
@@ -282,26 +287,43 @@ Ext.define("core.train.cardcenter.controller.MainController", {
                 if(calssRecords.length!=0&&traineeRecords.length!=0){
                 	Ext.Msg.confirm('提示', '是否绑定这些学员?', function (btn, text) {
                         if (btn == 'yes') {
+
+                            var loading = new Ext.LoadMask(basePanel, {
+                                msg: '正在处理，请稍等...',
+                                removeMask: true// 完成后移除
+                            });
+                            loading.show();
+
                             var ids = new Array();
                             var classId = "";
                             Ext.each(traineeRecords, function (rec) {
                                 var uuid = rec.data.uuid;
                                 ids.push(uuid);
                             });
-                	
-                            var resObj = self.ajax({
+
+                            self.asyncAjax({
                                 url: comm.get("baseUrl")  + "/TrainClasstrainee/cardBind",
                                 params: {
                                     ids: ids.join(","),
                                     classId: classId
+                                },
+                                //回调代码必须写在里面
+                                success: function (response) {
+                                    var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                                    if (data.success) {
+                                        baseGrid.getStore().load();
+                                        self.Info(data.obj);                                    
+                                    } else {
+                                        self.Error(data.obj);                                        
+                                    }
+                                    loading.hide();
+                                },
+                                failure: function(response) {                   
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    loading.hide();
                                 }
                             });
-                            if (resObj.success) {
-                                baseGrid.getStore().load();
-                                self.msgbox(resObj.obj);
-                            } else {
-                                self.Error(resObj.obj);
-                            }
                      }
                 })
               }
@@ -309,22 +331,39 @@ Ext.define("core.train.cardcenter.controller.MainController", {
                 if(calssRecords.length!=0&&traineeRecords.length==0){
                 	Ext.Msg.confirm('提示', '是否绑定班级学员?', function (btn, text) {
                         if (btn == 'yes') {
+
+                            var loading = new Ext.LoadMask(basePanel, {
+                                msg: '正在处理，请稍等...',
+                                removeMask: true// 完成后移除
+                            });
+                            loading.show();
+
                             var ids = "";
                             var classId = calssRecords[0].data.uuid;
-                	
-                            var resObj = self.ajax({
+
+                            self.asyncAjax({
                                 url: comm.get("baseUrl")  + "/TrainClasstrainee/cardBind",
                                 params: {
                                     ids: ids,
                                     classId: classId
+                                },
+                                //回调代码必须写在里面
+                                success: function (response) {
+                                    var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                                    if (data.success) {
+                                        baseGrid.getStore().load();
+                                        self.Info(data.obj);                                    
+                                    } else {
+                                        self.Error(data.obj);                                        
+                                    }
+                                    loading.hide();
+                                },
+                                failure: function(response) {                   
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    loading.hide();
                                 }
-                            });
-                            if (resObj.success) {
-                                baseGrid.getStore().load();
-                                self.msgbox(resObj.obj);
-                            } else {
-                                self.Error(resObj.obj);
-                            }
+                            });                                      
                      }
                 })
               }
@@ -354,49 +393,87 @@ Ext.define("core.train.cardcenter.controller.MainController", {
                 if(calssRecords.length!=0&&traineeRecords.length!=0){
                 	Ext.Msg.confirm('提示', '是否解除绑定这些学员?', function (btn, text) {
                         if (btn == 'yes') {
+
+                            var loading = new Ext.LoadMask(basePanel, {
+                                msg: '正在处理，请稍等...',
+                                removeMask: true// 完成后移除
+                            });
+                            loading.show();
+
                             var ids = new Array();
                             var classId = "";
                             Ext.each(traineeRecords, function (rec) {
                                 var uuid = rec.data.uuid;
                                 ids.push(uuid);
                             });
-                	
-                            var resObj = self.ajax({
+
+                           
+                            self.asyncAjax({
                                 url: comm.get("baseUrl")  + "/TrainClasstrainee/cardUnBind",
                                 params: {
                                     ids: ids.join(","),
                                     classId: classId
+                                },
+                                //回调代码必须写在里面
+                                success: function (response) {
+                                    var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                                    if (data.success) {
+                                        baseGrid.getStore().load();
+                                        self.Info(data.obj);                                    
+                                    } else {
+                                        self.Error(data.obj);                                        
+                                    }
+                                    loading.hide();
+                                },
+                                failure: function(response) {                   
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    loading.hide();
                                 }
                             });
-                            if (resObj.success) {
-                                baseGrid.getStore().load();
-                                self.msgbox(resObj.obj);
-                            } else {
-                                self.Error(resObj.obj);
-                            }
+                
                      }
                 })
               }
                 
-                if(calssRecords.length!=0&&traineeRecords.length==0){
+              if(calssRecords.length!=0&&traineeRecords.length==0){
                 	Ext.Msg.confirm('提示', '是否解除绑定班级学员?', function (btn, text) {
                         if (btn == 'yes') {
+
+                            var loading = new Ext.LoadMask(basePanel, {
+                                msg: '正在处理，请稍等...',
+                                removeMask: true// 完成后移除
+                            });
+                            loading.show();
+
                             var ids = "";
                             var classId = calssRecords[0].data.uuid;
-                	
-                            var resObj = self.ajax({
+                	         
+
+                            self.asyncAjax({
                                 url: comm.get("baseUrl")  + "/TrainClasstrainee/cardUnBind",
                                 params: {
                                     ids: ids,
                                     classId: classId
+                                },
+                                //回调代码必须写在里面
+                                success: function (response) {
+                                    var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                                    if (data.success) {
+                                        baseGrid.getStore().load();
+                                        self.Info(data.obj);                                    
+                                    } else {
+                                        self.Error(data.obj);                                        
+                                    }
+                                    loading.hide();
+                                },
+                                failure: function(response) {                   
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    loading.hide();
                                 }
                             });
-                            if (resObj.success) {
-                                baseGrid.getStore().load();
-                                self.msgbox(resObj.obj);
-                            } else {
-                                self.Error(resObj.obj);
-                            }
+                          
                      }
                 })
               }
@@ -415,20 +492,38 @@ Ext.define("core.train.cardcenter.controller.MainController", {
         		var ids = data.record.data.uuid;
                 	Ext.Msg.confirm('提示', '是否绑定此学员?', function (btn, text) {
                         if (btn == 'yes') {
+
+                            var loading = new Ext.LoadMask(baseGrid, {
+                                msg: '正在处理，请稍等...',
+                                removeMask: true// 完成后移除
+                            });
+                            loading.show();
+
                             var classId = "";
-                            var resObj = self.ajax({
+                            self.asyncAjax({
                                 url: comm.get("baseUrl")  + "/TrainClasstrainee/cardBind",
                                 params: {
                                     ids: ids,
                                     classId: classId
+                                },
+                                //回调代码必须写在里面
+                                success: function (response) {
+                                    var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                                    if (data.success) {
+                                        baseGrid.getStore().load();
+                                        self.Info(data.obj);                                    
+                                    } else {
+                                        self.Error(data.obj);                                        
+                                    }
+                                    loading.hide();
+                                },
+                                failure: function(response) {                   
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    loading.hide();
                                 }
                             });
-                            if (resObj.success) {
-                                baseGrid.getStore().load();
-                                self.msgbox(resObj.obj);
-                            } else {
-                                self.Error(resObj.obj);
-                            }
+                        
                      }
                 })
             },
@@ -436,23 +531,40 @@ Ext.define("core.train.cardcenter.controller.MainController", {
             cardUnBindClick_Tab: function (data) {
             	var self = this;
             	var baseGrid=data.view;
-        		var ids =data.record.data.uuid;
-                	Ext.Msg.confirm('提示', '是否解除绑定此学员?', function (btn, text) {
+        		  var ids =data.record.data.uuid;
+                	Ext.Msg.confirm('提示', '是否解除绑定此学员?<br/>(只能针对已发卡、挂失卡学员操作)', function (btn, text) {
                         if (btn == 'yes') {
+
+                            var loading = new Ext.LoadMask(baseGrid, {
+                                msg: '正在处理，请稍等...',
+                                removeMask: true// 完成后移除
+                            });
+                            loading.show();
+
                             var classId = "";
-                            var resObj = self.ajax({
+                            self.asyncAjax({
                                 url: comm.get("baseUrl")  + "/TrainClasstrainee/cardUnBind",
                                 params: {
                                     ids: ids,
                                     classId: classId
+                                },
+                                //回调代码必须写在里面
+                                success: function (response) {
+                                    var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                                    if (data.success) {
+                                        baseGrid.getStore().load();
+                                        self.Info(data.obj);                                    
+                                    } else {
+                                        self.Error(data.obj);                                        
+                                    }
+                                    loading.hide();
+                                },
+                                failure: function(response) {                   
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    loading.hide();
                                 }
                             });
-                            if (resObj.success) {
-                                baseGrid.getStore().load();
-                                self.msgbox(resObj.obj);
-                            } else {
-                                self.Error(resObj.obj);
-                            }
                      }
                 })
             },
@@ -460,23 +572,41 @@ Ext.define("core.train.cardcenter.controller.MainController", {
             cardLoseClick: function (data) {
             	var self = this;
             	var baseGrid=data.view;
-        		var ids = data.record.data.uuid;
+        		  var ids = data.record.data.uuid;
                 	Ext.Msg.confirm('提示', '是否挂失此学员?', function (btn, text) {
                         if (btn == 'yes') {
+
+                            var loading = new Ext.LoadMask(baseGrid, {
+                                msg: '正在处理，请稍等...',
+                                removeMask: true// 完成后移除
+                            });
+                            loading.show();
+
                             var classId = "";
-                            var resObj = self.ajax({
+                            self.asyncAjax({
                                 url: comm.get("baseUrl")  + "/TrainClasstrainee/cardLose",
                                 params: {
                                     ids: ids,
                                     classId: classId
+                                },
+                                //回调代码必须写在里面
+                                success: function (response) {
+                                    var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                                    if (data.success) {
+                                        baseGrid.getStore().load();
+                                        self.Info(data.obj);                                    
+                                    } else {
+                                        self.Error(data.obj);                                        
+                                    }
+                                    loading.hide();
+                                },
+                                failure: function(response) {                   
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    loading.hide();
                                 }
                             });
-                            if (resObj.success) {
-                                baseGrid.getStore().load();
-                                self.msgbox(resObj.obj);
-                            } else {
-                                self.Error(resObj.obj);
-                            }
+
                      }
                 })
             },

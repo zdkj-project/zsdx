@@ -21,6 +21,7 @@ public class SysUserToUP implements Serializable {
 	private String cardState;
 	
 	private Integer isDelete=0;
+	private String employeeTel;
 	
 	public String getEmployeeId() {
 		return employeeId;
@@ -127,9 +128,17 @@ public class SysUserToUP implements Serializable {
 		this.jobName = jobName;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+    public String getEmployeeTel() {
+        return employeeTel;
+    }
+
+    public void setEmployeeTel(String employeeTel) {
+        this.employeeTel = employeeTel;
+    }
+
+    /* (non-Javadoc)
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -175,7 +184,13 @@ public class SysUserToUP implements Serializable {
 				return false;
 		} else if (!sexId.equals(other.sexId))
 			return false;
-		
+
+		if(employeeTel==null){
+		    if(other.employeeTel!=null)
+		        return  false;
+        } else if (!employeeTel.equals(other.employeeTel)){
+		    return false;
+        }
 		/*尚未明确SID的用处，故注释
 		if (sid == null) {
 			if (other.sid != null)
