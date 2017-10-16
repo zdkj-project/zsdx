@@ -113,7 +113,7 @@ Ext.define('core.main.view.ChangePwd', {
 					buttons: Ext.MessageBox.OK,
 					icon: Ext.MessageBox.OK
 				});
-				window.location.href = comm.get("baseUrl") + "/login/loginout";
+				window.location.href = comm.get("baseUrl") + "/login/webLogout";
 			},
 			failure: function(form, action) {
 				Ext.MessageBox.show({

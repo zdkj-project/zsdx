@@ -77,7 +77,7 @@ public interface TrainClasstraineeService extends BaseService<TrainClasstrainee>
 	 */
 	public TrainClasstrainee doAddEntity(TrainClasstrainee entity, SysUser currentUser);
 
-	public int doUpdateRoomInfo(String roomId, String roomName, String ids, String xbm, SysUser currentUser);
+	public int doUpdateRoomInfo(String classId,String roomId, String roomName, String ids, String xbm, SysUser currentUser);
 
 	public int doCancelRoomInfo(String ids, SysUser currentUser);
 

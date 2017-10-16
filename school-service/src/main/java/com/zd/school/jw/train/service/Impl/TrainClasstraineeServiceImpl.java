@@ -20,6 +20,8 @@ import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.StringUtils;
+import com.zd.school.build.define.model.BuildRoominfo;
+import com.zd.school.build.define.service.BuildRoominfoService;
 import com.zd.school.jw.train.dao.TrainClasstraineeDao;
 import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClasstrainee;
@@ -63,6 +65,9 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 
 	@Resource
 	BaseDicitemService dicitemService;
+	
+	@Resource
+	BuildRoominfoService roominfoService;
 
 	private static Logger logger = Logger.getLogger(TrainClasstraineeServiceImpl.class);
 
@@ -168,7 +173,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 	}
 
 	@Override
-	public int doUpdateRoomInfo(String roomId, String roomName, String ids, String xbm, SysUser currentUser) {
+	public int doUpdateRoomInfo(String classId,String roomId, String roomName, String ids, String xbm, SysUser currentUser) {
 
 		int result = 0;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -176,17 +181,24 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 		try {
 			synchronized (syncObject) {
 				// 判断性别是否一致
-				String hqlSelect1 = "select count(*) from TrainClasstrainee where roomId='" + roomId + "' and xbm!='"
+				String hqlSelect1 = "select count(*) from TrainClasstrainee where classId='"+classId+"' and roomId='" + roomId + "' and xbm!='"
 						+ xbm + "'";
 				if (this.getCount(hqlSelect1) > 0) {
 					return -2; // 性别不一致
 				}
 
 				// 判断人数是否符合要求，若大于最大人数，则不允许设置
-				String hqlSelect2 = "select count(*) from TrainClasstrainee where roomId='" + roomId
+				String hqlSelect2 = "select count(*) from TrainClasstrainee where classId='"+classId+"' and roomId='" + roomId
 						+ "' and uuid not in ('" + ids.replace(",", "','") + "')";
-
-				if (this.getCount(hqlSelect2) + traineeLength <= 3) {
+				
+				//获取此房间的人数
+				BuildRoominfo roomInfo=roominfoService.get(roomId);
+				int roomNum=3;	//默认最大3人
+				if(roomInfo!=null && StringUtils.isNotEmpty(roomInfo.getExtField03())){
+					roomNum=Integer.parseInt(roomInfo.getExtField03());
+				}
+				
+				if (this.getCount(hqlSelect2) + traineeLength <= roomNum) {
 					String hqlUpdate = "update TrainClasstrainee t set t.roomId='" + roomId + "',t.roomName='"
 							+ roomName + "'," + "	t.updateUser='" + currentUser.getXm() + "',t.updateTime='"
 							+ sdf.format(new Date()) + "' " + "where t.isDelete!=1 and t.uuid in ('"

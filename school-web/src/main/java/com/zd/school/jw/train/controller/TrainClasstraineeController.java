@@ -334,7 +334,8 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		String roomName = request.getParameter("roomName");
 		String ids = request.getParameter("ids");
 		String xbm = request.getParameter("xbm");
-		int result = thisService.doUpdateRoomInfo(roomId, roomName, ids, xbm, currentUser);
+		String classId = request.getParameter("classId");
+		int result = thisService.doUpdateRoomInfo(classId,roomId, roomName, ids, xbm, currentUser);
 
 		if (result == 1) {
 			writeJSON(response, jsonBuilder.returnSuccessJson("\"设置宿舍成功！\""));

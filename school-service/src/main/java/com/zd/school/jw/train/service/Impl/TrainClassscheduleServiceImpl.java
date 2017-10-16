@@ -16,6 +16,7 @@ import com.zd.school.plartform.system.model.SysUser;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
@@ -213,18 +214,34 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 	public int doUpdateRoomInfo(String roomIds, String roomNames, String ids, SysUser currentUser) {
 		int result = 0;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
+		
+		//判断房间是否被其他课程使用
+		  
 		try {
-
-			String hqlUpdate = "update TrainClassschedule t set t.roomId='" + roomIds + "',t.scheduleAddress='"
-					+ roomNames + "'," + "	t.updateUser='" + currentUser.getXm() + "',t.updateTime='"
-					+ sdf.format(new Date()) + "' " + "where t.isDelete!=1 and t.uuid in ('" + ids.replace(",", "','")
-					+ "')";
-			this.executeHql(hqlUpdate);
+	        String idArray[]=ids.split(",");
+	        String roomIdArray[]=roomIds.split(",");
+	        String id=null;
+	        String roomId=null;
+	        for(int i=0;i<idArray.length;i++){
+	        	id=idArray[i];
+	        	for(int j=0;j<roomIdArray.length;j++){
+	        		roomId=roomIdArray[j];
+	        		List lists = this.doQuerySql("EXECUTE TRAIN_P_ISUSESITE '"+id+"','"+roomId+"'");
+	        		if("0".equals(lists.get(0).toString())){
+	        			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+	        			return 0;
+	        		}
+	        	}
+	        	String hqlUpdate = "update TrainClassschedule t set t.roomId='" + roomIds + "',t.scheduleAddress='"
+						+ roomNames + "'," + "	t.updateUser='" + currentUser.getXm() + "',t.updateTime='"
+						+ sdf.format(new Date()) + "' " + "where t.isDelete!=1 and t.uuid in ('" + id + "')";
+				this.executeHql(hqlUpdate);
+	        }    	
 			result = 1;
 
 		} catch (Exception e) {
 			// TODO: handle exception
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 			logger.error(e.getMessage());
 			result = -1;
 		}

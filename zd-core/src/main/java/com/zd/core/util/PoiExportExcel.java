@@ -269,7 +269,7 @@ public class PoiExportExcel {
 							if (i > 0 && preMap.get(s) != null && !preMap.get(s).equals("") && preMap.get(s).equals(val)
 									&& columnMergeCondition != null) { // 当前后的值都一致，才能满足最基本的合并条件
 
-								boolean isMerge = true;
+								boolean isMerge = false;
 								String tempStr = "";
 								// 当需要合并的列，满足必要的合并条件后，才允许合并
 								for (int k = 0; k < columnMergeCondition.length; k++) {

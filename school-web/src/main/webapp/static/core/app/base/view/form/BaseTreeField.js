@@ -45,16 +45,21 @@ Ext.define("core.base.view.form.BaseTreeField", {
         var fieldInfo = configInfo.fieldInfo;
         var fieldArray = fieldInfo.split(",");
         var dataField = fieldArray[0].split("~");
-        var bf, rec;//表格和表单，如果是表格的化则更新表格的字段值，如果是表单则更新表单
+        var bf, rec,tb;//表格和表单或工具栏，如果是表格的化则更新表格的字段值，如果是表单则更新表单
         if (self.ownerCt.xtype == 'editor') {
             var grid = self.ownerCt.floatParent;
             rec = grid.getSelectionModel().getSelection()[0];
-        } else {
+        } if (self.ownerCt.xtype == 'toolbar') {
+            tb =self.up('toolbar');
+        }else {
             bf = self.up('form').getForm();
         }
         Ext.each(dataField, function (f, index) {
             if (rec) {
                 rec.set(f, null);
+            } else if(tb){
+                var bff=tb.down("field[name="+f+"]");
+                bff.setValue(null);
             } else {
                 var bff = bf.findField(f);
                 if (bff) {

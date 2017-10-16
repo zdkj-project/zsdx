@@ -99,8 +99,8 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             formPanel: "meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
             funcTitle: "考勤规则选择", //查询窗口的标题
             configInfo: {
-                width: 1200,
-                height: 650,
+                width: 1050,
+                height: 600,
                 fieldInfo: "checkruleId~checkruleName,uuid~ruleName",
                 whereSql: " and isDelete='0' and startUsing=1 ",
                 orderSql: " order by createTime DESC ",
@@ -155,8 +155,8 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             formPanel: "meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
             funcTitle: "主持人选择", //查询窗口的标题
             configInfo: {
-                width: 1200,
-                height: 800,
+                width: 1050,
+                height: 600,
                 fieldInfo: "emceeId~emcee,uuid~xm",
                 whereSql: " and isDelete='0' ",
                 orderSql: " order by createTime DESC ",
@@ -179,11 +179,12 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             formPanel: "meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
             funcTitle: "会议地点选择", //查询窗口的标题
             configInfo: {
-                width: 1200,
-                height: 800,
+                width: 1050,
+                height: 600,
                 fieldInfo: "roomId~roomName,uuid~roomName",
                 whereSql: " and isDelete='0' ",
                 orderSql: " order by areaUpName, areaName,orderIndex asc",
+                filter: "[{\"type\":\"string\",\"comparison\":\"=\",\"value\":\"3\",\"field\":\"roomType\"}]",
                 muiltSelect: false //是否多选
             },
             fieldLabel: "会议地点",
@@ -218,8 +219,8 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             formPanel: "meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
             funcTitle: "参会人员", //查询窗口的标题
             configInfo: {
-                width: 1200,
-                height: 800,
+                width: 1050,
+                height: 600,
                 fieldInfo: "mettingEmpid~mettingEmpname,uuid~xm",
                 whereSql: " and isDelete='0' ",
                 orderSql: " order by deptName,jobName,xm DESC ",

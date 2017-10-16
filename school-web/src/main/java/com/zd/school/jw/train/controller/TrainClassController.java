@@ -1444,7 +1444,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 																									// 名字相同的，设定为合并
 		courseAllMap.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
 		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 1, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
-		courseAllMap.put("mergeCondition", new String[] { "date", "timeInterval" }); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+		courseAllMap.put("mergeCondition", new String[] { "date", "timeInterval","time","teacher","address" }); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
 		allList.add(courseAllMap);
 
 		// --------4.处理就餐信息，并组装表格数据（特殊：一行分作两行显示）--------------------

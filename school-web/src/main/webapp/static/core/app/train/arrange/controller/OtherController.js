@@ -17,6 +17,105 @@ Ext.define("core.train.arrange.controller.OtherController", {
     init: function() {},
     /** 该视图内的组件事件注册 */
     control: {
+        //弹出tab中的短信通知人提交事件
+        "baseformtab[detCode=arrange_sendUserDetail] button[ref=formSave]": {
+            beforeclick: function (btn) {
+                var self = this;
+                //得到组件
+                var basetab = btn.up('baseformtab');
+                var tabPanel = btn.up("tabpanel[xtype=app-main]");
+
+                var tabItemId = basetab.tabItemId;
+                var tabItem = tabPanel.getComponent(tabItemId);
+
+                var detPanel = basetab.down("basepanel[xtype=arrange.detaillayout]");
+                var baseform = detPanel.down("baseform[xtype=class.sendinfoform]");
+                var funData = detPanel.funData;
+                var formObj = baseform.getForm();
+                var classId = formObj.findField("uuid").getValue();
+
+                var params = self.getFormValue(formObj);
+                if (formObj.isValid()) {
+                    var loading = new Ext.LoadMask(basetab, {
+                        msg: '正在提交，请稍等...',
+                        removeMask: true// 完成后移除
+                    });
+                    loading.show();
+
+                    self.asyncAjax({
+                        url: funData.action + "/addSendUser",
+                        params: params,
+                         //回调代码必须写在里面
+                        success: function (response) {
+                            data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                            if (data.success) {
+                            
+                                self.asyncAjax({
+                                    url: funData.action + "/doClassArrange",
+                                    params: {
+                                        classId:classId
+                                    },
+                                    timeout:1000*60*60, //1个小时
+                                    //回调代码必须写在里面
+                                    success: function(response) {
+                                        var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+                                        loading.hide();
+                                        if(data.success){                                                                                  
+                                            self.Info(data.obj);
+                                            
+                                            var grid = basetab.funData.grid; //此tab是否保存有grid参数
+                                            if (!Ext.isEmpty(grid)) {
+                                                var store = grid.getStore();
+                                                store.loadPage(1); //刷新父窗体的grid
+                                            }           
+                                            tabPanel.remove(tabItem);
+                                        }else{
+                                            self.Error(data.obj);
+                                        }
+                                       
+                                    },
+                                    failure: function(response) {
+                                        loading.hide();
+                                        Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
+                                    }
+                                });
+                                /*                                self.msgbox(data.obj);
+                                                                var grid = basetab.funData.grid; //此tab是否保存有grid参数
+                                                                if (!Ext.isEmpty(grid)) {
+                                                                    var store = grid.getStore();
+                                //                                    store.loadPage(1); //刷新父窗体的grid
+                                                                }
+
+                                                                loading.hide();
+                                                                tabPanel.remove(tabItem);*/
+                            } else {
+                                loading.hide();
+                                self.Error(data.obj);                            
+                            }
+                        },
+                        failure: function (response) {
+                            loading.hide();
+                            alert('数据请求出错了！！！！\n错误信息：\n' + response.responseText);
+                        }
+                    });
+
+                } else {
+                    var errors = ["前台验证失败，错误信息："];
+                    formObj.getFields().each(function (f) {
+                        if (!f.isValid()) {
+                            errors.push("<font color=red>" + f.fieldLabel + "</font>：" + f.getErrors().join(","));
+                        }
+                    });
+                    self.msgbox(errors.join("<br/>"));
+                }
+
+                if (btn.callback) {
+                    btn.callback();
+                }
+                return false;
+            }
+        },
+
         "baseformtab[detCode=arrange_roomDetail] button[ref=formClose]": {
             beforeclick: function (btn) {
                 //得到组件
@@ -248,6 +347,7 @@ Ext.define("core.train.arrange.controller.OtherController", {
                            
                 var classTraineIds=win.insertObj.ids;
                 var xbm=win.insertObj.xbm;
+                var classId=win.insertObj.classId;
         
                 //提交设置班级学员的房间信息
                 self.asyncAjax({
@@ -256,7 +356,8 @@ Ext.define("core.train.arrange.controller.OtherController", {
                         roomId: roomId,
                         roomName: roomName,
                         ids:classTraineIds.join(","),
-                        xbm:xbm
+                        xbm:xbm,
+                        classId:classId
                     },
                     //回调代码必须写在里面
                     success: function(response) {

@@ -132,31 +132,30 @@ Ext.define("core.train.class.controller.MainController", {
         "basegrid[xtype=class.maingrid] button[ref=gridUse]": {
             beforeclick: function (btn) {
                 var self = this;
-                this.doSendUserDetail_Tab(btn, "add");
+                var baseGrid = btn.up("basegrid");
+                var funCode = baseGrid.funCode;
+                var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");            
+
+                var records = baseGrid.getSelectionModel().getSelection();
+                if (records.length != 1) {
+                    self.Warning("请选择数据!");
+                    return;
+                }
+                var classId = records[0].get("uuid");
+                var className = records[0].get("className");
+
+                if (!classId) {
+                    self.Warning("信息有误，请选择班级！");
+                    return false;
+                }
+                if(records[0].get("isuse")==1||records[0].get("isuse")==3){
+                    self.Warning("此班级已是提交状态，不必重复提交！");
+                    return false;
+                }
+
+                this.doSendUserDetail_Tab(btn, "edit");
                 //得到组件
-                /*                var baseGrid = btn.up("basegrid");
-                                var funCode = baseGrid.funCode;
-                                var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
-                                var funData = basePanel.funData;
-                                var detCode = basePanel.detCode;
-                                var detLayout = basePanel.detLayout;
-
-                                var records = baseGrid.getSelectionModel().getSelection();
-                                if (records.length != 1) {
-                                    self.Warning("请选择数据!");
-                                    return;
-                                }
-                                var classId = records[0].get("uuid");
-                                var className = records[0].get("className");
-
-                                if (!classId) {
-                                    self.Warning("信息有误，请选择班级！");
-                                    return false;
-                                }
-                                if(records[0].get("isuse")==1||records[0].get("isuse")==3){
-                                    self.Warning("此班级已是提交状态，不必重复提交！");
-                                    return false;
-                                }
+                                /*
                                 var popFunData = Ext.apply(funData, {
                                     grid: baseGrid,
                                     classId: classId,
@@ -2562,11 +2561,7 @@ Ext.define("core.train.class.controller.MainController", {
             grid: baseGrid
         });
 
-        //根据cmd操作类型，来设置不同的值
-        var tabTitle = "短信通知设置";
-        //设置tab页的itemId
-        var tabItemId = funCode + "_gridSendUser";     //命名规则：funCode+'_ref名称',确保不重复
-        var pkValue = null;
+      
         var items = [{
             xtype: detLayout
         }];
@@ -2589,8 +2584,6 @@ Ext.define("core.train.class.controller.MainController", {
         insertObj = Ext.apply(insertObj,{
             sendInfo:sendInfo
         });
-        tabTitle = funData.tabConfig.detailTitle;
-        tabItemId = funCode + "_gridDetail" + insertObj.classNumb;    //详细界面可以打开多个
         operType = "edit";
         items = [{
             xtype: detLayout,
@@ -2599,6 +2592,11 @@ Ext.define("core.train.class.controller.MainController", {
                 xtype: 'class.sendinfoform'
             }]
         }];
+        //根据cmd操作类型，来设置不同的值
+        var tabTitle = insertObj.className+"-班级提交";
+        //设置tab页的itemId
+        var tabItemId = funCode + "_gridSendUser";     //命名规则：funCode+'_ref名称',确保不重复
+        var pkValue = insertObj.uuid;
 
         //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
         var tabItem = tabPanel.getComponent(tabItemId);
@@ -2635,7 +2633,7 @@ Ext.define("core.train.class.controller.MainController", {
             }, 30);
 
         } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue) {     //判断是否点击的是同一条数据
-            self.Warning("您当前已经打开了一个编辑窗口了！");
+            self.Warning("您当前已经打开了一个班级提交窗口！");
             return;
         }
 

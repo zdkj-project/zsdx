@@ -493,7 +493,7 @@ Ext.define('Ext.ux.DateTimePicker', {
         me.hour = Ext.create('Ext.form.field.Number', {
             scope: me,
             ownerCt: me,
-            editable : true,
+            editable : false,   //由于不能直接选择文本框，而聚焦，所以禁用了编辑，只能点击右边的按钮
             ownerLayout: me.getComponentLayout(),
             minValue: 0,
             maxValue: 23,
@@ -517,7 +517,7 @@ Ext.define('Ext.ux.DateTimePicker', {
             ownerLayout: me.getComponentLayout(),
             minValue: 0,
             maxValue: 59,
-            editable : true,
+            editable : false,
             width: 70,
             enableKeyEvents: true,
             listeners: {
@@ -533,7 +533,7 @@ Ext.define('Ext.ux.DateTimePicker', {
         me.second = Ext.create('Ext.form.field.Number', {
             scope: me,
             ownerCt: me,
-            editable : true,
+            editable : false,
             style : {float:"left"},
             ownerLayout: me.getComponentLayout(),
             minValue: 0,

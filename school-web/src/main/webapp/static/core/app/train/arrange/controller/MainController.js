@@ -112,6 +112,9 @@ Ext.define("core.train.arrange.controller.MainController", {
                     return false;
                 }
 
+                this.doSendUserDetail_Tab(btn, "edit");
+
+                /*
                 Ext.MessageBox.confirm('温馨提示', '<p>执行此操作后将会自动同步相关数据！</p><p style="color:red;font-size:14px;font-weight: 400;">你确定要执行安排操作吗？</p>', function(btn, text) {
                     if (btn == 'yes') {
                         Ext.Msg.wait('正在执行中,请稍后...', '温馨提示');
@@ -141,7 +144,7 @@ Ext.define("core.train.arrange.controller.MainController", {
                         });  
                     }
                 });
-
+                */
         
                 return false;
             }
@@ -1251,6 +1254,119 @@ Ext.define("core.train.arrange.controller.MainController", {
             self.Warning("你已经打开一个编辑窗口了");
             return;
         }
+        tabPanel.setActiveTab(tabItem);
+    },
+
+    doSendUserDetail_Tab: function (btn, cmd, grid, record) {
+        var self = this;
+        var baseGrid;
+        var recordData;
+
+        if (btn) {
+            baseGrid = btn.up("basegrid");
+        } else {
+            baseGrid = grid;
+            recordData = record.data;
+        }
+
+        //得到组件
+        var funCode = baseGrid.funCode;
+        var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+        var tabPanel = baseGrid.up("tabpanel[xtype=app-main]");
+
+        //得到配置信息
+        var funData = basePanel.funData;
+        var detCode = "arrange_sendUserDetail";   //修改此funCode，方便用于捕获window的确定按钮
+        var detLayout = basePanel.detLayout;
+        var defaultObj = funData.defaultObj;
+
+        //关键：window的视图控制器
+        var otherController = basePanel.otherController;
+        if (!otherController)
+            otherController = '';
+
+        //处理特殊默认值
+        var insertObj = self.getDefaultValue(defaultObj);
+        var popFunData = Ext.apply(funData, {
+            grid: baseGrid
+        });
+
+      
+        var items = [{
+            xtype: detLayout
+        }];
+        if (btn) {
+            var rescords = baseGrid.getSelectionModel().getSelection();
+            if (rescords.length != 1) {
+                self.msgbox("请选择1条数据！");
+                return;
+            }
+            recordData = rescords[0].data;
+        }
+
+        var sendInfo="";
+        if(recordData.isarrange==0){
+            sendInfo="【" + recordData.className + "】培训班已安排完毕，请查看安排的情况并做好相应准备！（一卡通系统）";
+        }else{
+            sendInfo="【" + recordData.className + "】培训班有安排更新，请查看安排的情况并做好相应准备！（一卡通系统）"
+        }
+        insertObj = recordData;
+        insertObj = Ext.apply(insertObj,{
+            sendInfo:sendInfo
+        });
+        operType = "edit";
+        items = [{
+            xtype: detLayout,
+            defaults: null,
+            items: [{
+                xtype: 'class.sendinfoform'
+            }]
+        }];
+        //根据cmd操作类型，来设置不同的值
+        var tabTitle = insertObj.className+"-班级安排";
+        //设置tab页的itemId
+        var tabItemId = funCode + "_gridSendUser";     //命名规则：funCode+'_ref名称',确保不重复
+        var pkValue = insertObj.uuid;
+
+        //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
+        var tabItem = tabPanel.getComponent(tabItemId);
+        if (!tabItem) {
+            tabItem = Ext.create({
+                xtype: 'container',
+                title: tabTitle,
+                //iconCls: 'x-fa fa-clipboard',
+                scrollable: true,
+                itemId: tabItemId,
+                itemPKV: pkValue,      //保存主键值
+                layout: 'fit'
+            });
+            tabPanel.add(tabItem);
+
+            //延迟放入到tab中
+            setTimeout(function () {
+                //创建组件
+                var item = Ext.widget("baseformtab", {
+                    operType: operType,
+                    controller: otherController,         //指定重写事件的控制器
+                    funCode: detCode,                    //指定mainLayout的funcode
+                    detCode: detCode,                    //指定detailLayout的funcode
+                    tabItemId: tabItemId,                //指定tab页的itemId
+                    insertObj: insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                    funData: popFunData,                //保存funData数据，提供给提交事件中使用
+                    items: items
+                });
+                tabItem.add(item);
+                var objDetForm = item.down("baseform[xtype=class.sendinfoform]");
+                var formDeptObj = objDetForm.getForm();
+
+                self.setFormValue(formDeptObj, insertObj);
+            }, 30);
+
+        } else if (tabItem.itemPKV && tabItem.itemPKV != pkValue) {     //判断是否点击的是同一条数据
+            self.Warning("您当前已经打开了一个班级安排窗口！");
+            return;
+        }
+
         tabPanel.setActiveTab(tabItem);
     }
 });
