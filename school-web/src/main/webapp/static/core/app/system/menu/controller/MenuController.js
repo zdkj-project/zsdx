@@ -237,7 +237,7 @@ Ext.define("core.system.menu.controller.MenuController", {
 		});
 		if (resObj.success) {
 			tree.getStore().load();
-			self.msgbox(resObj.obj);
+			self.Info(resObj.obj);
 		} else {
 			alert(resObj.obj);
 		}

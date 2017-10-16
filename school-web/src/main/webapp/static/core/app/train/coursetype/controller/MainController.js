@@ -79,7 +79,7 @@ Ext.define("core.train.coursetype.controller.MainController", {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if(data.success){
                                         Ext.Msg.hide();
-                                        self.msgbox(data.obj);
+                                        self.Info(data.obj);
                                         component.destroy();                                
                                     }else{                                    
                                         if(data.obj==0){    //当为此值，则表明导出失败
@@ -596,7 +596,7 @@ Ext.define("core.train.coursetype.controller.MainController", {
                 });
                 if (resObj.success) {
                     baseGrid.getStore().load();
-                    self.msgbox(resObj.obj);
+                    self.Info(resObj.obj);
                 } else {
                     self.Error(resObj.obj);
                 }

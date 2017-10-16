@@ -127,4 +127,18 @@ public class VoTrainClassCheck implements Serializable {
     public void setAttendResult(String attendResult) {
         this.attendResult = attendResult;
     }
+    
+    @FieldInfo(name = "上课时间")
+    private Integer attendMinute;
+
+	public Integer getAttendMinute() {
+		return attendMinute;
+	}
+
+	public void setAttendMinute(Integer attendMinute) {
+		this.attendMinute = attendMinute;
+	}
+
+    
+    
 }

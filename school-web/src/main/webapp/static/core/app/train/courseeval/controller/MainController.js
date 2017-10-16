@@ -16,7 +16,7 @@ Ext.define("core.train.courseeval.controller.MainController", {
             afterrender: function (grid, eOpts) {
                 var btngridSumEval = grid.down("button[ref=gridSumEval_Tab]");
                 var roleKey = comm.get("roleKey");
-                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PXPJMANGER") == -1) {
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1) {
                 	btngridSumEval.setHidden(true);
                 }
             }
@@ -26,7 +26,7 @@ Ext.define("core.train.courseeval.controller.MainController", {
         	afterrender: function (grid, eOpts) {
                 var btnAdd = grid.down("button[ref=gridAdd_Tab]");
                 var roleKey = comm.get("roleKey");
-                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PXPJMANGER") == -1) {
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1) {
                     btnAdd.setHidden(true);
                 }
             },
@@ -265,7 +265,7 @@ Ext.define("core.train.courseeval.controller.MainController", {
                             data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                             if (data.success) {
                                 Ext.Msg.hide();
-                                self.msgbox(data.obj);
+                                self.Info(data.obj);
                                 component.destroy();
                                 //刷新班级列表
                                 baseGrid.getStore().load();
@@ -379,7 +379,7 @@ Ext.define("core.train.courseeval.controller.MainController", {
                             data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                             if (data.success) {
                                 Ext.Msg.hide();
-                                self.msgbox(data.obj);
+                                self.Info(data.obj);
                                 component.destroy();
 
                                 baseGrid.getStore().load();

@@ -17,6 +17,83 @@ Ext.define("core.train.arrange.controller.OtherController", {
     init: function() {},
     /** 该视图内的组件事件注册 */
     control: {
+        "baseformtab[detCode=arrange_roomDetail] button[ref=formClose]": {
+            beforeclick: function (btn) {
+                //得到组件
+                var basetab = btn.up('baseformtab');
+                var tabPanel = btn.up("tabpanel[xtype=app-main]");
+
+                var grid = basetab.down("grid[ref=arrangeRoomGrid]");
+
+                var roomStore=grid.getStore();
+                var len=roomStore.data.length;
+                var size=0;
+                for(var i=0;i<len;i++){
+                    var rec=roomStore.getAt(i);
+                    if(rec.get("roomId")==null || rec.get("roomId")=="" )
+                        size++;
+                }    
+
+                var str="<span style='color:red'>所有学员都已安排宿舍！</span><br/><br/>点击【是】完成操作，点击【否】继续安排！";
+
+                if(size>0)
+                    str="<span style='color:red'>存在 "+size+" 个学员未安排住宿！</span><br/><br/>点击【是】完成操作，点击【否】继续安排！";
+
+                Ext.Msg.confirm('温馨提示', str, function(btn, text) {
+                    if (btn == 'yes') {   
+                        var tabItemId = basetab.tabItemId;
+                        var tabItem = tabPanel.getComponent(tabItemId);
+
+                        // var grid = win.funData.grid; //窗体是否有grid参数
+                        // if (!Ext.isEmpty(grid)) {
+                        //     grid.getStore().load(); //刷新父窗体的grid
+                        // }
+                        //关闭tab
+                        tabPanel.remove(tabItem);   
+                    }
+                });
+                return false;
+            }
+        },
+        "baseformtab[detCode=arrange_siteDetail] button[ref=formClose]": {
+            beforeclick: function (btn) {
+                //得到组件
+                var basetab = btn.up('baseformtab');
+                var tabPanel = btn.up("tabpanel[xtype=app-main]");
+
+                var grid = basetab.down("grid[ref=arrangeSiteGrid]");
+
+                var roomStore=grid.getStore();
+                var len=roomStore.data.length;
+                var size=0;
+                for(var i=0;i<len;i++){
+                    var rec=roomStore.getAt(i);
+                    if(rec.get("roomId")==null || rec.get("roomId")=="" )
+                        size++;
+                }    
+
+                var str="<span style='color:red'>所有课程都已安排场地！</span><br/><br/>点击【是】完成操作，点击【否】继续安排！";
+
+                if(size>0)
+                    str="<span style='color:red'>存在 "+size+" 门课程未安排场地！</span><br/><br/>点击【是】完成操作，点击【否】继续安排！";
+
+                Ext.Msg.confirm('温馨提示', str, function(btn, text) {
+                    if (btn == 'yes') {   
+                        var tabItemId = basetab.tabItemId;
+                        var tabItem = tabPanel.getComponent(tabItemId);
+
+                        // var grid = win.funData.grid; //窗体是否有grid参数
+                        // if (!Ext.isEmpty(grid)) {
+                        //     grid.getStore().load(); //刷新父窗体的grid
+                        // }
+                        //关闭tab
+                        tabPanel.remove(tabItem);   
+                    }
+                });
+
+                return false;
+            }
+        },
         "panel[xtype=arrange.imagesdeailform] button[ref=formSave]": {
             beforeclick: function(btn) {
                 var self=this;
@@ -31,7 +108,7 @@ Ext.define("core.train.arrange.controller.OtherController", {
                         waitMsg: '正在上传文件...',
                         timeout : 300,
                         success: function(form, action) {
-                            self.msgbox("上传图片成功！");
+                            self.Info("上传图片成功！");
 
                             var win = btn.up('window');
                             var grid = win.grid;
@@ -101,7 +178,7 @@ Ext.define("core.train.arrange.controller.OtherController", {
                                 var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
                                 if(data.success){
-                                    self.msgbox(data.obj);
+                                    self.Info(data.obj);
                                     //baseGrid.getStore().getProxy().extraParams.filter="[]";
                                     //查询班级的学员信息
                                     self.asyncAjax({
@@ -186,7 +263,7 @@ Ext.define("core.train.arrange.controller.OtherController", {
                         var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
                         if(data.success){
-                            self.msgbox(data.obj);
+                            self.Info(data.obj);
                             //baseGrid.getStore().getProxy().extraParams.filter="[]";
                             //查询班级的学员信息
                             self.asyncAjax({
@@ -257,7 +334,7 @@ Ext.define("core.train.arrange.controller.OtherController", {
                                 var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
                                 if(data.success){
-                                    self.msgbox(data.obj);
+                                    self.Info(data.obj);
                                     //baseGrid.getStore().getProxy().extraParams.filter="[]";
                               
                                     baseGrid.getStore().load();
@@ -352,11 +429,65 @@ Ext.define("core.train.arrange.controller.OtherController", {
                                 //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
                                 filter: "[{\"type\":\"string\",\"comparison\":\"=\",\"value\":\"3\",\"field\":\"roomType\"}]"
                             },
+                            columns: {
+                                defaults: {
+                                    titleAlign: "center"
+                                },
+                                items: [{
+                                    xtype: "rownumberer",
+                                    flex: 0,
+                                    width: 50,
+                                    text: '序号',
+                                    align: 'center'
+                                }, {
+                                    width: 100,
+                                    text: "所属楼栋",
+                                    dataIndex: "areaUpName"
+                                }, {
+                                    width: 100,
+                                    text: "所属楼层",
+                                    dataIndex: "areaName"
+                                }, {
+                                    flex: 100,
+                                    text: "场地名称",
+                                    dataIndex: "roomName"
+                                }, {
+                                    width: 100,
+                                    text: "场地类型",
+                                    dataIndex: "roomType",
+                                    columnType: "basecombobox",
+                                    ddCode: "FJLX"
+                                }]
+                            },
                         }, {
                             xtype: "pubselect.isselectroomgrid",
                             region: "east",
                             width:500,
-                            margin:'5'
+                            margin:'5',
+                            columns: {
+                                defaults: {
+                                    titleAlign: "center"
+                                },
+                                items: [{
+                                    xtype: "rownumberer",
+                                    flex: 0,
+                                    width: 50,
+                                    text: '序号',
+                                    align: 'center'
+                                }, {
+                                    width: 100,
+                                    text: "所属楼栋",
+                                    dataIndex: "areaUpName"
+                                }, {
+                                    width: 100,
+                                    text: "所属楼层",
+                                    dataIndex: "areaName"
+                                }, {
+                                    flex: 1,
+                                    text: "场地名称",
+                                    dataIndex: "roomName"
+                                }]
+                            },
                         }]
                     }]
                 });
@@ -404,12 +535,12 @@ Ext.define("core.train.arrange.controller.OtherController", {
                         var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
                         if(data.success){
-                            self.msgbox(data.obj);
+                           
                             //baseGrid.getStore().getProxy().extraParams.filter="[]";
                                                     
                             win.funData.grid.getStore().load();  
                             win.close();
-                                                          
+                            self.Info(data.obj);                              
                         }else{
                             self.Error(data.obj);
                         }

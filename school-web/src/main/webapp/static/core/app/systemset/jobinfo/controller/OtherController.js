@@ -98,8 +98,8 @@ Ext.define("core.systemset.jobinfo.controller.OtherController", {
                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
 
                     if (data.success) {
-
-                        self.msgbox("保存成功!");
+ loading.hide();
+                        self.Info("保存成功!");
 
                         var grid = basetab.funData.grid; //此tab是否保存有grid参数
                         if (!Ext.isEmpty(grid)) {
@@ -107,11 +107,12 @@ Ext.define("core.systemset.jobinfo.controller.OtherController", {
                             store.load(); //刷新父窗体的grid
                         }
 
-                        loading.hide();
+                       
                         tabPanel.remove(tabItem);
                     } else {
+                         loading.hide();
                         self.Error(data.obj);
-                        loading.hide();
+                       
                     }
                 },
                 failure: function(response) {
@@ -161,7 +162,7 @@ Ext.define("core.systemset.jobinfo.controller.OtherController", {
                 //采用返回的数据刷新表单
                 //self.setFormValue(formObj, resObj.obj);
 
-                self.msgbox("保存成功!");
+                self.Info("保存成功!");
 
                 if(cmd=="saveContinue"){
                     formObj.reset();

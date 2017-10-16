@@ -179,7 +179,7 @@ Ext.define("core.oa.terminal.controller.MainController", {
                             });
                             if (resObj.success) {
                                 baseGrid.getStore().load();                            
-                                self.msgbox(resObj.obj);
+                                self.Info(resObj.obj);
                             } else {
                                 self.Error(resObj.obj);
                             }

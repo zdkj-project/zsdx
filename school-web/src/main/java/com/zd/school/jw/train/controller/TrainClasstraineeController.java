@@ -30,7 +30,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -384,27 +386,32 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 
 			// 2.查询UP中的发卡信息(查询班级学员的卡片信息)
-//			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
-//					+ " convert(int,a.CardStatusIDXF) as useState,"
-//					+ " b.EmployeeStrID as sid,b.EmployeeStatusID as employeeStatusID "
-//					+ " from Tc_Employee b join TC_Card a on b.CardID=a.CardID" + " where b.DepartmentID='"
-//					+ departmentId + "'" + "	order by a.CardID asc,a.ModifyDate asc";
+			// String sql = "select convert(varchar,a.CardID) as
+			// upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as
+			// userId,"
+			// + " convert(int,a.CardStatusIDXF) as useState,"
+			// + " b.EmployeeStrID as sid,b.EmployeeStatusID as employeeStatusID
+			// "
+			// + " from Tc_Employee b join TC_Card a on b.CardID=a.CardID" + "
+			// where b.DepartmentID='"
+			// + departmentId + "'" + " order by a.CardID asc,a.ModifyDate asc";
 
-//			String sql = "select convert(varchar,a.CardID) as upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as userId,"
-//					+ " convert(int,a.CardStatusIDXF) as useState,"
-//					+ " b.SID as sid,b.EmployeeStatusID as employeeStatusID "
-//					+ " from Tc_Employee b join TC_Card a on b.CardID=a.CardID"
-//					+ " where b.DepartmentID='"+departmentId+"'"
-//					+ "	order by a.CardID asc,a.ModifyDate asc";
-			
-			//修改了查询的方式，以发卡表中的最新的一条数据为准
-			String sql="select a.UserId as userId,a.EmployeeStrID as sid,a.EmployeeStatusID as employeeStatusID,"
+			// String sql = "select convert(varchar,a.CardID) as
+			// upCardId,convert(varchar,a.FactoryFixID) as factNumb,b.UserId as
+			// userId,"
+			// + " convert(int,a.CardStatusIDXF) as useState,"
+			// + " b.SID as sid,b.EmployeeStatusID as employeeStatusID "
+			// + " from Tc_Employee b join TC_Card a on b.CardID=a.CardID"
+			// + " where b.DepartmentID='"+departmentId+"'"
+			// + " order by a.CardID asc,a.ModifyDate asc";
+
+			// 修改了查询的方式，以发卡表中的最新的一条数据为准
+			String sql = "select a.UserId as userId,a.EmployeeStrID as sid,a.EmployeeStatusID as employeeStatusID,"
 					+ " convert(varchar,b.CardID) as upCardId,convert(varchar,b.FactoryFixID) as factNumb,"
-					+ " convert(int,b.CardStatusIDXF) as useState from Tc_Employee a join TC_Card b"
-					+ " on b.CardID=("
+					+ " convert(int,b.CardStatusIDXF) as useState from Tc_Employee a join TC_Card b" + " on b.CardID=("
 					+ "		select top 1 CardID from TC_Card where EmployeeID=a.EmployeeID order by ModifyDate desc"
-					+ " ) where a.DepartmentID='"+departmentId+"' and a.UserId is not null ";
-			
+					+ " ) where a.DepartmentID='" + departmentId + "' and a.UserId is not null ";
+
 			List<CardUserInfoToUP> upCardUserInfos = thisService.doQuerySqlObject(sql, CardUserInfoToUP.class);
 
 			// 3.恢复数据源
@@ -626,8 +633,8 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		String classId = request.getParameter("classId");
 		String classScheduleId = request.getParameter("classScheduleId");
 		/*
-		 * if(StringUtils.isEmpty(classId) && StringUtils.isEmpty(classScheduleId)){
-		 * //writeJSON(response,
+		 * if(StringUtils.isEmpty(classId) &&
+		 * StringUtils.isEmpty(classScheduleId)){ //writeJSON(response,
 		 * jsonBuilder.returnFailureJson("\"没有传入查询考勤的参数：班级或课程\"")); strData =
 		 * jsonBuilder.buildObjListToJson((long)0, new ArrayList<>(), true);
 		 * writeJSON(response, strData);// 返回数据 return; }
@@ -648,16 +655,16 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 	public void doexportCredit(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		request.getSession().setAttribute("exportCreditsIsEnd", "0");
 		request.getSession().removeAttribute("exportCreditsIsState");
-		
-		//获取班级ID
+
+		// 获取班级ID
 		String classId = request.getParameter("ids");
 		String className = request.getParameter("className");
 
 		List<Map<String, Object>> allList = new ArrayList<>();
-		Integer[] columnWidth = new Integer[] { 10,30, 30, 20, 20, 20, 20 };
-		Integer[] headColumnWidth = new Integer[] { 10,15, 15,15, 25, 25, 25, 30 };
-		
-		//数据字典项
+		Integer[] columnWidth = new Integer[] { 10, 30, 30, 20, 20, 20, 20 };
+		Integer[] headColumnWidth = new Integer[] { 10, 15, 15, 15, 25, 25, 25, 30 };
+
+		// 数据字典项
 		String mapKey = null;
 		String[] propValue = { "XBM", "HEADSHIPLEVEL" };
 		Map<String, String> mapDicItem = new HashMap<>();
@@ -666,48 +673,52 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			mapKey = baseDicitem.getItemCode() + baseDicitem.getDicCode();
 			mapDicItem.put(mapKey, baseDicitem.getItemName());
 		}
-		
-		//获取班级所有学员信息
+
+		// 获取班级所有学员信息
 		List<Map<String, Object>> classTraineetList = new ArrayList<>();
-		String sql="select CLASS_TRAINEE_ID,XM,XBM,REAL＿CREDIT,MOBILE_PHONE,WORK_UNIT,POSITION,HEADSHIP_LEVEL from TRAIN_T_CLASSTRAINEE where ISDELETE=0 AND CLASS_ID='" + classId +"' order by xm asc";
+		String sql = "select CLASS_TRAINEE_ID,XM,XBM,REAL＿CREDIT,MOBILE_PHONE,WORK_UNIT,POSITION,HEADSHIP_LEVEL from TRAIN_T_CLASSTRAINEE where ISDELETE=0 AND CLASS_ID='"
+				+ classId + "' order by xm asc";
 		classTraineetList = thisService.getForValuesToSql(sql);
-		
-		//处理班级所有学员数据
+
+		// 处理班级所有学员数据
 		List<Map<String, String>> traineeList = new ArrayList<>();
 		List<String> classTraineeIdList = new ArrayList<>();
 		Map<String, String> traineeMap = null;
-		int j =0;
+		int j = 0;
 		for (Map<String, Object> list : classTraineetList) {
 			traineeMap = new LinkedHashMap<>();
 			classTraineeIdList.add(String.valueOf(list.get("CLASS_TRAINEE_ID")));
 			traineeMap.put("xh", String.valueOf(j++));
 			traineeMap.put("xm", String.valueOf(list.get("XM")));
 			traineeMap.put("xb", mapDicItem.get(String.valueOf(list.get("XBM")) + "XBM"));
-			traineeMap.put("xf", (String.valueOf(list.get("REAL＿CREDIT"))).equals("null")?"":String.valueOf(list.get("REAL＿CREDIT")));
+			traineeMap.put("xf", (String.valueOf(list.get("REAL＿CREDIT"))).equals("null") ? ""
+					: String.valueOf(list.get("REAL＿CREDIT")));
 			traineeMap.put("phone", String.valueOf(list.get("MOBILE_PHONE")));
 			traineeMap.put("position", String.valueOf(list.get("POSITION")));
-			traineeMap.put("headShipLevel", mapDicItem.get(String.valueOf(list.get("HEADSHIP_LEVEL")) + "HEADSHIPLEVEL"));
+			traineeMap.put("headShipLevel",
+					mapDicItem.get(String.valueOf(list.get("HEADSHIP_LEVEL")) + "HEADSHIPLEVEL"));
 			traineeMap.put("workUnit", String.valueOf(list.get("WORK_UNIT")));
 			traineeMap.put("classTraineeId", String.valueOf(list.get("CLASS_TRAINEE_ID")));
 			traineeList.add(traineeMap);
 		}
-		
-		//获取该班级下所有学员的学分成绩
+
+		// 获取该班级下所有学员的学分成绩
 		List<Map<String, Object>> classTrainCreditList = new ArrayList<>();
-		sql="SELECT classTraineeId,className,courseName,courseDate,courseTime,courseCredits,changeCredits,realCredits FROM dbo.TRAIN_V_CLASSTRAINEECREDITS WHERE classId='" + classId +"' order by xm asc";
+		sql = "SELECT classTraineeId,className,courseName,courseDate,courseTime,courseCredits,changeCredits,realCredits FROM dbo.TRAIN_V_CLASSTRAINEECREDITS WHERE classId='"
+				+ classId + "' order by xm asc";
 		classTrainCreditList = thisService.getForValuesToSql(sql);
-		
-		//处理学分数据，按照classTaineeId进行分组
-		Map<String,List<Map<String, String>>> traineeCreditMaps = new LinkedHashMap<>();
+
+		// 处理学分数据，按照classTaineeId进行分组
+		Map<String, List<Map<String, String>>> traineeCreditMaps = new LinkedHashMap<>();
 		Map<String, String> traineeCreditMap = null;
 		List<Map<String, String>> traineeCreditList = null;
-		for(int i=0;i<classTraineeIdList.size();i++) {
-			traineeCreditList= new ArrayList<>();
+		for (int i = 0; i < classTraineeIdList.size(); i++) {
+			traineeCreditList = new ArrayList<>();
 			String classTraineeId = classTraineeIdList.get(i);
-			int k=0;
+			int k = 0;
 			for (Map<String, Object> list : classTrainCreditList) {
 				traineeCreditMap = new LinkedHashMap<>();
-				if(classTraineeId.equals(String.valueOf(list.get("classTraineeId")))) {
+				if (classTraineeId.equals(String.valueOf(list.get("classTraineeId")))) {
 					traineeCreditMap.put("xh", String.valueOf(k++));
 					traineeCreditMap.put("className", String.valueOf(list.get("className")));
 					traineeCreditMap.put("courseName", String.valueOf(list.get("courseName")));
@@ -730,8 +741,9 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
 		courseAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
 		allList.add(courseAllMap);
-		
-		boolean result = exportMeetingInfo.exportTraineeCreditExcel(response, className+"学分详细信息", className+"学员列表", allList);
+
+		boolean result = exportMeetingInfo.exportTraineeCreditExcel(response, className + "学分详细信息", className + "学员列表",
+				allList);
 		if (result == true) {
 			request.getSession().setAttribute("exportCreditsIsEnd", "1");
 		} else {
@@ -777,20 +789,29 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		request.getSession().removeAttribute("exportTrainClassTraineeCardIIsState");
 
 		List<Map<String, Object>> allList = new ArrayList<>();
-		Integer[] columnWidth = new Integer[] { 15, 15, 20, 20, 20, 20 };
+		Integer[] columnWidth = new Integer[] { 6, 10, 6, 15, 10, 10,10,15,10};
 
 		// 1.班级信息
 		String classId = request.getParameter("classId"); // 程序中限定每次只能导出一个班级
+		TrainClass trainClass = trainClassService.get(classId);
+		String dinnerType="";
+		if(trainClass.getDinnerType()==1){
+			dinnerType="围餐";
+		}else if( trainClass.getDinnerType()==2){
+			dinnerType="自助餐";
+		}else{
+			dinnerType="快餐";
+		}
 		
-		//数据字典项
+		// 数据字典项
 		String mapKey = null;
 		String[] propValue = { "XBM", "CARDSTATE" };
 		Map<String, String> mapDicItem = new HashMap<>();
 		List<BaseDicitem> listDicItem = dicitemService.queryByProerties("dicCode", propValue);
 		for (BaseDicitem baseDicitem : listDicItem) {
-				mapKey = baseDicitem.getItemCode() + baseDicitem.getDicCode();
-				mapDicItem.put(mapKey, baseDicitem.getItemName());
-			}
+			mapKey = baseDicitem.getItemCode() + baseDicitem.getDicCode();
+			mapDicItem.put(mapKey, baseDicitem.getItemName());
+		}
 
 		// 2.班级学员信息
 		List<TrainClasstrainee> trainClasstraineeList = null;
@@ -804,17 +825,23 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		// 处理班级基本数据
 		List<Map<String, String>> traineeList = new ArrayList<>();
 		Map<String, String> traineeMap = null;
-		String ClassName="";
-		int i=1;
+		String ClassName = "";
+		int i = 1;
 		for (TrainClasstrainee classTrainee : trainClasstraineeList) {
 			traineeMap = new LinkedHashMap<>();
 			ClassName = classTrainee.getClassName();
-			traineeMap.put("xh",i+"");
+			traineeMap.put("xh", i + "");
 			traineeMap.put("name", classTrainee.getXm());
-			traineeMap.put("xb",  mapDicItem.get(classTrainee.getXbm()+"XBM"));
+			traineeMap.put("xb", mapDicItem.get(classTrainee.getXbm() + "XBM"));
 			traineeMap.put("phone", classTrainee.getMobilePhone());
-			traineeMap.put("stustatus", (classTrainee.getIsDelete()==0)?"正常":((classTrainee.getIsDelete()==1)?"取消":"新增"));
+			traineeMap.put("stustatus",
+					(classTrainee.getIsDelete() == 0) ? "正常" : ((classTrainee.getIsDelete() == 1) ? "取消" : "新增"));
 			traineeMap.put("cardPrintNo", classTrainee.getCardPrintId());
+			
+			traineeMap.put("dinnerType", dinnerType);
+			traineeMap.put("roomName",classTrainee.getRoomName());
+			traineeMap.put("isGet", "");
+			
 			i++;
 			traineeList.add(traineeMap);
 		}
@@ -822,14 +849,14 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		Map<String, Object> courseAllMap = new LinkedHashMap<>();
 		courseAllMap.put("data", traineeList);
 		courseAllMap.put("title", null);
-		courseAllMap.put("head", new String[] { "序号","姓名", "性别", "电话", "学员状态","印刷卡号" }); // 规定名字相同的，设定为合并
+		courseAllMap.put("head", new String[] { "序号", "姓名", "性别", "电话", "学员状态", "印刷卡号","就餐类型","房间名称","是否领用" }); // 规定名字相同的，设定为合并
 		courseAllMap.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
-		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0}); // 0代表居中，1代表居左，2代表居右
+		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0,0,0,0 }); // 0代表居中，1代表居左，2代表居右
 		courseAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
 		allList.add(courseAllMap);
 
 		// 在导出方法中进行解析
-		boolean result = PoiExportExcel.exportExcel(response, ClassName+"班学员卡详细", ClassName+"班学员卡信息", allList);
+		boolean result = PoiExportExcel.exportExcel(response, ClassName + "-学员卡详请", ClassName + "-学员卡信息", allList);
 		if (result == true) {
 			request.getSession().setAttribute("exportTrainClassTraineeCardIIsEnd", "1");
 		} else {
@@ -837,7 +864,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			request.getSession().setAttribute("exportTrainClassTraineeCardIIsState", "0");
 		}
 	}
-	
+
 	/**
 	 * 判断导出时，是否导出完毕
 	 * 
@@ -862,57 +889,19 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
 		}
 	}
-	
+
 	/**
 	 * 绑定卡
 	 */
 	@RequestMapping("/cardBind")
 	public void cardBind(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		//获取班级ID
-		String classId = request.getParameter("classId"); 
-		
-		//获取学员ID
+		// 获取班级ID
+		String classId = request.getParameter("classId");
+
+		// 获取学员ID
 		String ids = request.getParameter("ids");
-		String[] idsArray = ids.split(",");
-		int  idsCount  = idsArray.length;
-		 
-		if(ids.equals("")==false) {
-			//判断原先是否已经有学员已经绑定
-			for(int i=0;i<idsCount;i++) {
-				List<Map<String, Object>> cardBindTraineeList = new ArrayList<>();
-				String sql="select * from CARD_T_USEINFO where USER_ID ='"+idsArray[i]+"'";
-				cardBindTraineeList = thisService.getForValuesToSql(sql);
-				int cardUnBindListCount = cardBindTraineeList.size();
-				if(cardUnBindListCount!=0) {
-					writeJSON(response, jsonBuilder.returnFailureJson("\"所选学员已经有部分绑定！\""));
-					return;
-				}
-			}
-			for(int i=0;i<idsCount;i++) {
-				//获取未绑定卡的数量
-				List<Map<String, Object>> cardUnBindList = new ArrayList<>();
-				String sql="select * from CARD_T_USEINFO where USER_ID IS NULL AND USE_STATE !='2'";
-				cardUnBindList = thisService.getForValuesToSql(sql);
-				int cardUnBindListCount = cardUnBindList.size();
-				
-				//判断空闲卡数量
-				if(cardUnBindListCount<(idsCount-i)) {
-					writeJSON(response, jsonBuilder.returnFailureJson("\"空闲卡数量不足！\""));
-					return;
-				}else {
-					//获取第一个空闲卡信息
-					sql = "select top 1 CARD_ID from CARD_T_USEINFO where USER_ID IS NULL AND USE_STATE !='2' order by UP_CARD_ID asc";
-					cardUnBindList = thisService.getForValuesToSql(sql);
-					String cardId = String.valueOf(cardUnBindList.get(0).get("CARD_ID"));
-					
-					//通过卡ID绑定学员更新卡状态
-					sql = "update CARD_T_USEINFO SET USE_STATE='1' ,USER_ID='"+idsArray[i]+"' WHERE CARD_ID='"+cardId+"'";
-					thisService.executeSql(sql);
-				}
-			}
-			writeJSON(response, jsonBuilder.returnSuccessJson("\"绑定成功！\""));
-		}else {
-			//获取班级学员
+		if (ids.equals("") == true) {
+			// 获取班级学员
 			List<TrainClasstrainee> trainClasstraineeList = null;
 			String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2) ";
 			if (StringUtils.isNotEmpty(classId)) {
@@ -921,67 +910,83 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			hql += " order by createTime desc";
 			trainClasstraineeList = thisService.doQuery(hql);
 			int trainClasstraineeListCount = trainClasstraineeList.size();
-			
-			//判断班级当中是否已经有人绑定过
-			for(int i=0;i<trainClasstraineeListCount;i++) {
-				List<Map<String, Object>> cardBindTraineeList = new ArrayList<>();
-				String sql="select * from CARD_T_USEINFO where USER_ID ='"+trainClasstraineeList.get(i).getUuid()+"'";
-				cardBindTraineeList = thisService.getForValuesToSql(sql);
-				int cardUnBindListCount = cardBindTraineeList.size();
-				if(cardUnBindListCount!=0) {
-					writeJSON(response, jsonBuilder.returnFailureJson("\"所选班级已经有部分学员绑定！\""));
-					return;
-				}
+
+			for (int i = 0; i < trainClasstraineeListCount; i++) {
+				ids += trainClasstraineeList.get(i).getUuid() + ",";		
 			}
 			
-			//绑定卡操作
-			for(int i=0;i<trainClasstraineeListCount;i++) {
-				//获取未绑定卡的数量
-				List<Map<String, Object>> cardUnBindList = new ArrayList<>();
-				String sql="select * from CARD_T_USEINFO where USER_ID IS NULL AND USE_STATE !='2'";
-				cardUnBindList = thisService.getForValuesToSql(sql);
-				int cardUnBindListCount = cardUnBindList.size();
-				
-				//判断空闲卡数目
-				if(cardUnBindListCount<(trainClasstraineeListCount-i)) {
-					writeJSON(response, jsonBuilder.returnFailureJson("\"空闲卡数量不足！\""));
-					return;
-				}else {
-					//获取第一个
-					sql = "select top 1 CARD_ID from CARD_T_USEINFO where USER_ID IS NULL AND USE_STATE !='2' order by UP_CARD_ID asc";
-					cardUnBindList = thisService.getForValuesToSql(sql);
-					
-					String cardId = String.valueOf(cardUnBindList.get(0).get("CARD_ID"));
-					
-					sql = "update CARD_T_USEINFO SET USE_STATE='1' ,USER_ID='"+trainClasstraineeList.get(i).getUuid()+"' WHERE CARD_ID='"+cardId+"'";
-					thisService.executeSql(sql);
-				}
-			}
-			writeJSON(response, jsonBuilder.returnSuccessJson("\"绑定成功！\""));
+			ids = ids.substring(0, ids.length() - 1);
 		}
+		
+		
+		// 判断原先是否已经有学员已经绑定
+		String sql = "select Count(CARD_ID) from CARD_T_USEINFO where USER_ID in ('"+ids.replace(",", "','")+"')";
+		int count = thisService.getForValueToSql(sql);		
+		if (count != 0) {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"所选学员已经有部分绑定！\""));
+			return;
+		}
+		
+		String[] idsArray = ids.split(",");
+		int idsCount = idsArray.length;
+		// 获取未绑定卡的数量
+		sql = "select Count(CARD_ID) from CARD_T_USEINFO where CARD_TYPE_ID=3 AND USER_ID IS NULL AND USE_STATE !=2 and USE_STATE !=3 ";
+		count = thisService.getForValueToSql(sql);
+		// 判断空闲卡数量
+		if (count < idsCount) {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"绑定失败，没有足够的空闲卡!<br/><br/>剩余可用卡 "+count+" 张！\""));
+			return;
+		}
+		List<Map<String, Object>> cardInfoToUp=thisService.doCardBind(ids);
+		
+		if(cardInfoToUp==null){
+			writeJSON(response, jsonBuilder.returnFailureJson("\"绑定失败，服务器错误！\""));
+			return;
+		}else if(cardInfoToUp.size()==0){
+			writeJSON(response, jsonBuilder.returnFailureJson("\"绑定失败，没有足够的空闲卡！\""));
+			return;
+		}
+		
+		SysUser sysuser = getCurrentSysUser();
+		try {
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
+
+			thisService.doSyncBindToUP(cardInfoToUp, sysuser.getXm());
+
+		} catch (Exception e) {
+			// 恢复web数据
+			DBContextHolder.clearDBType();
+			thisService.doRestoreCardBind(cardInfoToUp);
+
+			writeJSON(response, jsonBuilder.returnFailureJson("\"绑定失败，服务器错误！\""));
+			return;
+		} finally {
+			DBContextHolder.clearDBType();
+		}	
+		
+		
+		writeJSON(response, jsonBuilder.returnSuccessJson("\"绑定成功！\""));
+
+		
 	}
-	
+
 	/**
-	 * 解除绑定卡
+	 * 解除绑定卡（将 状态为1 和 2 的卡片数据与用户解绑）
 	 */
 	@RequestMapping("/cardUnBind")
 	public void cardUnBind(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		//获取班级ID
-		String classId = request.getParameter("classId"); 
-		
-		//获取学员ID
+		// 获取班级ID
+		String classId = request.getParameter("classId");
+		// 获取学员ID
 		String ids = request.getParameter("ids");
-		String[] idsArray = ids.split(",");
-		int  idsCount  = idsArray.length;
-		 
-		if(ids.equals("")==false) {
-			for(int i=0;i<idsCount;i++) {
-				String sql = "update CARD_T_USEINFO SET USE_STATE='0' ,USER_ID=NULL WHERE USER_ID='"+idsArray[i]+"'";
-				thisService.executeSql(sql);
-			}
-			writeJSON(response, jsonBuilder.returnSuccessJson("\"解除绑定成功！\""));
-		}else {
-			//获取班级学员
+
+		SysUser sysuser = getCurrentSysUser();
+
+		// String[] idsArray = ids.split(",");
+		// int idsCount = idsArray.length;
+
+		if (ids.equals("") == true) {
+			// 获取班级学员
 			List<TrainClasstrainee> trainClasstraineeList = null;
 			String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2) ";
 			if (StringUtils.isNotEmpty(classId)) {
@@ -990,39 +995,108 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			hql += " order by createTime desc";
 			trainClasstraineeList = thisService.doQuery(hql);
 			int trainClasstraineeListCount = trainClasstraineeList.size();
-			
-			for(int i=0;i<trainClasstraineeListCount;i++) {
-				String sql = "update CARD_T_USEINFO SET USE_STATE='0' ,USER_ID=NULL WHERE USER_ID='"+trainClasstraineeList.get(i).getUuid()+"'";
-				thisService.executeSql(sql);
+
+			for (int i = 0; i < trainClasstraineeListCount; i++) {				
+				ids += trainClasstraineeList.get(i).getUuid() + ",";
 			}
-			writeJSON(response, jsonBuilder.returnSuccessJson("\"解除绑定成功！\""));
+			ids = ids.substring(0, ids.length() - 1);
 		}
+
+		// 使用两个异常处理器来防止数据错乱。
+		String sql = "";
+		try {
+			//正常发卡的解绑，把状态置为4，挂失类的卡片信息，不用更改状态
+			sql = "update CARD_T_USEINFO SET USE_STATE=4  WHERE USE_STATE=1 and USER_ID in ('"
+					+ ids.replace(",", "','") + "');";
+			
+			thisService.executeSql(sql);
+		} catch (Exception e) {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"解除绑定失败！\""));
+			return;
+		}
+
+		try {
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
+
+			thisService.doSyncUnBindToUP(ids, sysuser.getXm());
+
+		} catch (Exception e) {
+			// 恢复web数据
+			DBContextHolder.clearDBType();
+			sql = "update CARD_T_USEINFO SET USE_STATE=1 WHERE USE_STATE=4 and USER_ID in ('"
+					+ ids.replace(",", "','") + "')";
+			thisService.executeSql(sql);
+
+			writeJSON(response, jsonBuilder.returnFailureJson("\"解除绑定失败！\""));
+			return;
+		} finally {
+			DBContextHolder.clearDBType();
+		}
+		
+		// 当没有报错的时候，再把用户id清空(分别把正常解绑 和 挂失解绑 的数据处理)
+		sql = "update CARD_T_USEINFO SET USER_ID=NULL  WHERE USE_STATE=4 and USER_ID in ('" + ids.replace(",", "','") + "');";
+		sql += "update CARD_T_USEINFO SET USER_ID=NULL  WHERE USE_STATE=2 and USER_ID in ('" + ids.replace(",", "','") + "')";
+		thisService.executeSql(sql);
+					
+		writeJSON(response, jsonBuilder.returnSuccessJson("\"解除绑定成功！\""));
 	}
-	
+
 	/**
-	 * 解除绑定卡
+	 * 挂失卡
 	 */
 	@RequestMapping("/cardLose")
 	public void cardLose(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		//获取班级ID
-		String classId = request.getParameter("classId"); 
-		
-		//获取学员ID
+		// 获取班级ID
+		String classId = request.getParameter("classId");
+
+		// 获取学员ID
 		String ids = request.getParameter("ids");
 		String[] idsArray = ids.split(",");
-		int  idsCount  = idsArray.length;
-		 
-				List<Map<String, Object>> cardUnBindList = new ArrayList<>();
-				String sql="select * from CARD_T_USEINFO where USER_ID='"+ids+"'";
-				cardUnBindList = thisService.getForValuesToSql(sql);
-				int cardUnBindListCount = cardUnBindList.size();
-				if(cardUnBindListCount==0) {
-					writeJSON(response, jsonBuilder.returnFailureJson("\"此学员未绑定卡！\""));
-					return;
-				}else {
-					sql = "update CARD_T_USEINFO SET USE_STATE='2' ,USER_ID=NULL WHERE USER_ID='"+ids+"'";
-					thisService.executeSql(sql);
-				}
-			writeJSON(response, jsonBuilder.returnSuccessJson("\"挂失成功！\""));
+		int idsCount = idsArray.length;
+
+		List<Map<String, Object>> cardUnBindList = new ArrayList<>();
+		String sql = "select * from CARD_T_USEINFO where USER_ID='" + ids + "'";
+		cardUnBindList = thisService.getForValuesToSql(sql);
+		int cardUnBindListCount = cardUnBindList.size();
+		if (cardUnBindListCount == 0) {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"此学员未绑定卡！\""));
+			return;
+		} else {
+			// 保存原始数据
+			String oldUseState = String.valueOf(cardUnBindList.get(0).get("USE_STATE"));
+			String cardId = String.valueOf(cardUnBindList.get(0).get("UP_CARD_ID"));
+
+			// 使用两个异常处理器来防止数据错乱。
+			try {
+				// sql = "update CARD_T_USEINFO SET USE_STATE='2' ,USER_ID=NULL
+				// WHERE USER_ID='" + ids + "'";
+				sql = "update CARD_T_USEINFO SET USE_STATE='2' WHERE USER_ID='" + ids + "'";
+				thisService.executeSql(sql);
+			} catch (Exception e) {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"挂失失败！\""));
+				return;
+			}
+
+			try {
+				DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
+				sql = "UPDATE tc_card SET CardStatusIDXF=2,CardStatusIDJS=2 WHERE CARDID =" + cardId;
+				thisService.executeSql(sql);
+
+			} catch (Exception e) {
+				// 恢复web数据
+				DBContextHolder.clearDBType();
+				sql = "update CARD_T_USEINFO SET USE_STATE='" + oldUseState + "' WHERE USER_ID='" + ids + "'";
+				thisService.executeSql(sql);
+
+				writeJSON(response, jsonBuilder.returnFailureJson("\"挂失失败！\""));
+				return;
+			} finally {
+				DBContextHolder.clearDBType();
+			}
+
+		}
+		writeJSON(response, jsonBuilder.returnSuccessJson("\"挂失成功！\""));
 	}
+	
+	
 }

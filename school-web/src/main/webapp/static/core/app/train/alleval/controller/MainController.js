@@ -21,7 +21,7 @@ Ext.define("core.train.alleval.controller.MainController", {
                 var btngridExport = grid.down("button[ref=gridExport]");
                 console.log(btngridExport);
                 var roleKey = comm.get("roleKey");
-                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PXPJMANGER") == -1) {
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1) {
                	 btngridExport.setHidden(true);
                 }
             },
@@ -66,7 +66,7 @@ Ext.define("core.train.alleval.controller.MainController", {
         	afterrender: function (grid, eOpts) {
                 var btngridExport = grid.down("button[ref=gridExport]");
                 var roleKey = comm.get("roleKey");
-                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PXPJMANGER") == -1) {
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1) {
                	 btngridExport.setHidden(true);
                 }
             }
@@ -116,7 +116,7 @@ Ext.define("core.train.alleval.controller.MainController", {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if (data.success) {
                                         Ext.Msg.hide();
-                                        self.msgbox(data.obj);
+                                        self.Info(data.obj);
                                         component.destroy();
                                     } else {
                                         if (data.obj == 0) {    //当为此值，则表明导出失败
@@ -234,7 +234,7 @@ Ext.define("core.train.alleval.controller.MainController", {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if (data.success) {
                                         Ext.Msg.hide();
-                                        self.msgbox(data.obj);
+                                        self.Info(data.obj);
                                         component.destroy();
                                     } else {
                                         if (data.obj == 0) {    //当为此值，则表明导出失败
@@ -291,7 +291,7 @@ Ext.define("core.train.alleval.controller.MainController", {
                         if (resObj.success) {
                             var store = data.view.getStore();
                             store.load();
-                            self.msgbox(resObj.obj);
+                            self.Info(resObj.obj);
                         } else {
                             self.Error(resObj.obj);
                         }
@@ -609,7 +609,7 @@ Ext.define("core.train.alleval.controller.MainController", {
                             data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                             if (data.success) {
                                 Ext.Msg.hide();
-                                self.msgbox(data.obj);
+                                self.Info(data.obj);
                                 component.destroy();
 
                                 baseGrid.getStore().load();
@@ -708,7 +708,7 @@ Ext.define("core.train.alleval.controller.MainController", {
                             data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                             if (data.success) {
                                 Ext.Msg.hide();
-                                self.msgbox(data.obj);
+                                self.Info(data.obj);
                                 component.destroy();
 
                                 //baseGrid.getStore().load();

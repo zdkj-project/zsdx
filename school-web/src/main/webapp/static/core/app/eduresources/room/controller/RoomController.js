@@ -105,7 +105,7 @@ Ext.define("core.eduresources.room.controller.RoomController", {
                             });
                             if (resObj.success) {
                                 baseGrid.getStore().load(0);
-                                self.msgbox(resObj.obj);
+                                self.Info(resObj.obj);
                             } else {
                                 self.Error(resObj.obj);
                             }

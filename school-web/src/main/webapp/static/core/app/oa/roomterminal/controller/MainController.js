@@ -128,7 +128,7 @@ Ext.define("core.oa.roomterminal.controller.MainController", {
                                         data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                         if (data.success) {
                                             Ext.Msg.hide();
-                                            self.msgbox(data.obj);
+                                            self.Info(data.obj);
                                             component.destroy();
                                         } else {
                                             setTimeout(function () {
@@ -219,7 +219,7 @@ Ext.define("core.oa.roomterminal.controller.MainController", {
                 if (resObj.success) {
                     insertObj = resObj.obj;
                 } else {
-                    if (!Ext.isEmpty(resObj.obj)) self.msgbox(resObj.obj);
+                    if (!Ext.isEmpty(resObj.obj)) self.Info(resObj.obj);
                     return;
                 }
 
@@ -352,7 +352,7 @@ Ext.define("core.oa.roomterminal.controller.MainController", {
             }
         });
         if (resObj.success) {
-            self.msgbox(resObj.obj);
+            self.Info(resObj.obj);
             var store = grid.getStore();
             var proxy = store.getProxy();
             proxy.extraParams = {
@@ -361,7 +361,7 @@ Ext.define("core.oa.roomterminal.controller.MainController", {
             store.load();
             win.close();
         } else {
-            if (!Ext.isEmpty(resObj.obj)) self.msgbox(resObj.obj);
+            if (!Ext.isEmpty(resObj.obj)) self.Info(resObj.obj);
         }
     },
 
@@ -412,7 +412,7 @@ Ext.define("core.oa.roomterminal.controller.MainController", {
                         filter: filter
                     }
                     store.load();
-                    self.msgbox(resObj.obj);
+                    self.Info(resObj.obj);
                 } else {
                     self.Error(resObj.obj);
                 }

@@ -187,7 +187,7 @@ Ext.define("core.train.arrange.controller.DetailController", {
                                     store.load();
                                 }
 
-                                self.msgbox(resObj.obj);                                    
+                                self.Info(resObj.obj);                                    
                             } else {
                                 self.Error(resObj.obj);
                             }

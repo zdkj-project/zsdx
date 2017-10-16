@@ -205,7 +205,7 @@ Ext.define("core.train.arrange.controller.MainController", {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if(data.success){
                                         Ext.Msg.hide();
-                                        self.msgbox(data.obj);
+                                        self.Info(data.obj);
                                         component.destroy();                                
                                     }else{                                    
                                         if(data.obj==0){    //当为此值，则表明导出失败
@@ -293,7 +293,7 @@ Ext.define("core.train.arrange.controller.MainController", {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if(data.success){
                                         Ext.Msg.hide();
-                                        self.msgbox(data.obj);
+                                        self.Info(data.obj);
                                         component.destroy();                                
                                     }else{                                    
                                         if(data.obj==0){    //当为此值，则表明导出失败
@@ -499,7 +499,7 @@ Ext.define("core.train.arrange.controller.MainController", {
             setTimeout(function(){
                 //创建组件
                 var item=Ext.widget("baseformtab",{
-                    operType:operType,                            
+                    operType:'noButton',                            
                     controller:otherController,         //指定重写事件的控制器
                     funCode:funCode,                    //指定mainLayout的funcode
                     detCode:detCode,                    //指定detailLayout的funcode
@@ -512,6 +512,20 @@ Ext.define("core.train.arrange.controller.MainController", {
                         items: [{
                             xtype: "arrange.roomdetailform",
                             funCode: detCode                  
+                        }]
+                    }],
+                    dockedItems : [{
+                        xtype: 'toolbar',
+                        dock: 'bottom',
+                        ui: 'footer',
+                        layout: {
+                            pack: 'center'
+                        },
+                        items: [{
+                            xtype: "button",
+                            text: "完成",
+                            ref: "formClose",
+                            iconCls: "x-fa fa-reply"
                         }]
                     }]
                 }); 
@@ -662,7 +676,7 @@ Ext.define("core.train.arrange.controller.MainController", {
             setTimeout(function(){
                 //创建组件
                 var item=Ext.widget("baseformtab",{
-                    operType:operType,                            
+                    operType:'noButton',                            
                     controller:otherController,         //指定重写事件的控制器
                     funCode:funCode,                    //指定mainLayout的funcode
                     detCode:detCode,                    //指定detailLayout的funcode
@@ -674,6 +688,20 @@ Ext.define("core.train.arrange.controller.MainController", {
                         funCode: detCode, 
                         items: [{
                             xtype: "arrange.sitedetailform"
+                        }]
+                    }],
+                    dockedItems : [{
+                        xtype: 'toolbar',
+                        dock: 'bottom',
+                        ui: 'footer',
+                        layout: {
+                            pack: 'center'
+                        },
+                        items: [{
+                            xtype: "button",
+                            text: "完成",
+                            ref: "formClose",
+                            iconCls: "x-fa fa-reply"
                         }]
                     }]
                 }); 
@@ -843,11 +871,11 @@ Ext.define("core.train.arrange.controller.MainController", {
                             }
                             else if (obj.classInfo.dinnerType == 2){
                                 classFoodObj.dinnerTypeName = "自助餐";   
-                                classFoodTitle="（总额 "+countMoney+" 元 ； 每天人数 "+countNumberInDay+" 围 ； 总人数 "+countNumber+" 围）";                                      
+                                classFoodTitle="（总额 "+countMoney+" 元 ； 每天份数 "+countNumberInDay+" 份 ； 总份数 "+countNumber+" 份）";                                      
                             }
                             else{
                                 classFoodObj.dinnerTypeName = "快餐"; 
-                                classFoodTitle="（总额 "+countMoney+" 元 ； 每天人数 "+countNumberInDay+" 围 ； 总人数 "+countNumber+" 围）";                                    
+                                classFoodTitle="（总额 "+countMoney+" 元 ； 每天份数 "+countNumberInDay+" 份 ； 总份数 "+countNumber+" 份）";                                    
                             }
                            
                             classFoodObj.classFoodTitle=classFoodTitle;

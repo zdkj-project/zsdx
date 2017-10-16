@@ -42,13 +42,14 @@ Ext.define("core.train.alleval.controller.OtherController", {
                         url: comm.get('baseUrl') + "/Trainalleval/importData",
                         waitMsg: '正在导入文件...',
                         success: function (form, action) {
-                            self.msgbox("导入成功！");
+                           
 
                             var win = btn.up('window');
                             var grid = win.grid;
                             //刷新列表
                             grid.getStore().load();
                             win.close();
+                            self.Info("导入成功！");
                         },
                         failure: function (form, action) {
                             if (action.result == undefined) {
@@ -110,7 +111,7 @@ Ext.define("core.train.alleval.controller.OtherController", {
                 waitMsg: '正在提交，请等待...',
                 success: function (fp, action) {
                     formObj.reset();
-                    self.msgbox("保存成功!");
+                   
 
                     // var grid = basetab.funData.grid; //此tab是否保存有grid参数
                     // if (!Ext.isEmpty(grid)) {
@@ -119,6 +120,7 @@ Ext.define("core.train.alleval.controller.OtherController", {
                         
                     // }
                     tabPanel.remove(tabItem);
+                     self.Info("保存成功!");
 
                 },
                 failure: function (form, action) {

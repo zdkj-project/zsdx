@@ -57,7 +57,7 @@ Ext.define("core.train.coursetype.controller.OtherController", {
                                     });
                                     if (resObj.success) {
                                         mainGrid.getStore().load();
-                                        self.msgbox(resObj.obj);
+                                        self.Info(resObj.obj);
                                         tabPanel.remove(tabItem);
                                     } else {
                                         self.Error(resObj.obj);

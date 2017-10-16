@@ -82,7 +82,7 @@ doSave:function(btn,cmd){
             //采用返回的数据刷新表单
             //self.setFormValue(formObj, resObj.obj);
 
-            self.msgbox("保存成功!");
+            self.Info("保存成功!");
 
             if(cmd=="saveContinue"){
                 formObj.reset();

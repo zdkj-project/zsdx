@@ -335,7 +335,7 @@ Ext.define("core.base.controller.GridController", {
 
                                 baseGrid.getStore().remove(record); //不刷新的方式
 
-                                self.msgbox(resObj.obj);
+                                self.Info(resObj.obj);
 
                             } else {
                                 self.Error(resObj.obj);

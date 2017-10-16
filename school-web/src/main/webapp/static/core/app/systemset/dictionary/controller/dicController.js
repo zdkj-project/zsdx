@@ -100,7 +100,7 @@ Ext.define("core.systemset.dictionary.controller.dicController", {
 							});
 							if (resObj.success) {
 								baseGrid.getStore().load(0);
-								self.msgbox(resObj.obj);
+								self.Info(resObj.obj);
 							} else {
 								self.Error(resObj.obj);
 							}
@@ -195,7 +195,7 @@ Ext.define("core.systemset.dictionary.controller.dicController", {
 									filter: "[{'type':'string','comparison':'=','value':'" + dicId + "','field':'dicId'}]"
 								};
 								store.load();
-								self.msgbox(resObj.obj);
+								self.Info(resObj.obj);
 							} else {
 								self.Error(resObj.obj);
 							}

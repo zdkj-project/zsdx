@@ -142,7 +142,7 @@ Ext.define("core.systemset.jobinfo.controller.jobinfoController", {
                         });
                         if (resObj.success) {
                             baseGrid.getStore().load();                            
-                            self.msgbox(resObj.obj);
+                            self.Info(resObj.obj);
                         } else {
                             self.Error(resObj.obj);
                         }

@@ -159,7 +159,7 @@ Ext.define("core.system.roleright.controller.RoleRightController", {
 									roleId: roleId
 								};
 								store.load();
-								self.msgbox(resObj.obj);
+								self.Info(resObj.obj);
 							} else {
 								self.Error(resObj.obj);
 							}

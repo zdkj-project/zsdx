@@ -119,7 +119,7 @@ Ext.define("core.train.class.view.DetailForm", {
                 xtype: "textfield",
                 emptyText: "请输入主办单位名称",
                 maxLength: 64,
-                maxLengthText: "最多64个字符,汉字占2个字符"
+                maxLengthText: "最多64个字符,汉字占2个字符",
             },{ 
                 fieldLabel: "承办单位",
                 columnWidth: 0.25,
@@ -127,7 +127,8 @@ Ext.define("core.train.class.view.DetailForm", {
                 xtype: "textfield",
                 emptyText: "请输入承办单位名称",
                 maxLength: 64,
-                maxLengthText: "最多64个字符,汉字占2个字符"
+                maxLengthText: "最多64个字符,汉字占2个字符",        
+                value:'中共中山市委党校'
             }]
         }, {
             xtype: "container",

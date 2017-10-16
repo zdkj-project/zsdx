@@ -42,7 +42,7 @@ Ext.define("core.train.indicator.controller.OtherController", {
                         url: comm.get('baseUrl') + "/Trainindicator/importData",
                         waitMsg: '正在导入文件...',
                         success: function (form, action) {
-                            self.msgbox("导入成功！");
+                            self.Info("导入成功！");
 
                             var win = btn.up('window');
                             var grid = win.grid;
@@ -147,7 +147,7 @@ Ext.define("core.train.indicator.controller.OtherController", {
             }
         });
         if (resObj.success) {
-            self.msgbox(resObj.obj);
+            self.Info(resObj.obj);
             // var grid = basetab.funData.grid; //此tab是否保存有grid参数
             // if (!Ext.isEmpty(grid)) {
             //     var store = grid.getStore();

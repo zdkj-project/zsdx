@@ -47,7 +47,7 @@ Ext.define("core.system.role.controller.OtherController", {
                         if (resObj.success) {
                             var store = baseGrid.getStore();
                             store.load();
-                            self.msgbox(resObj.obj);
+                            self.Info(resObj.obj);
                             win.close();
                         } else {
                             self.Error(resObj.obj);

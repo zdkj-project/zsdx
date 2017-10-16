@@ -244,9 +244,9 @@ Ext.define("core.train.arrange.view.MainGrid", {
                     });
                 }
             }, {
-                text: '就餐详情',
+                text: '就餐需求',
                 style: 'font-size:12px;',
-                tooltip: '就餐详情',
+                tooltip: '就餐需求',
                 ref: 'gridFoodDetail',        
                 handler: function (view, rowIndex,colIndex, item) {
                     var rec = view.getStore().getAt(

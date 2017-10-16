@@ -99,7 +99,7 @@ Ext.define("core.train.creditrule.controller.OtherController", {
 
                     if (data.success) {
 
-                        self.msgbox("保存成功!");
+                        self.Info("保存成功!");
 
                         var grid = basetab.funData.grid; //此tab是否保存有grid参数
                         if (!Ext.isEmpty(grid)) {
@@ -161,7 +161,7 @@ Ext.define("core.train.creditrule.controller.OtherController", {
                 //采用返回的数据刷新表单
                 //self.setFormValue(formObj, resObj.obj);
 
-                self.msgbox("保存成功!");
+                self.Info("保存成功!");
 
                 if(cmd=="saveContinue"){
                     formObj.reset();

@@ -87,7 +87,7 @@ Ext.define("core.cashier.mealset.controller.OtherController", {
             }
         });
         if (resObj.success) {
-            self.msgbox(resObj.obj);
+            self.Info(resObj.obj);
           var grid = basetab.funData.grid; //此tab是否保存有grid参数
              if (!Ext.isEmpty(grid)) {
                  var store = grid.getStore();

@@ -243,13 +243,13 @@
             "path": "app/util/CustomValidate.js"
         },{
             "path": "resources/examples/shared/examples.js"
-        },{
+        }/*,{
             "path": "../../ueditor/ueditor.config.js"
         },{
             "path": "../../ueditor/ueditor.all.min.js"
         },{
             "path": "../../ueditor/ueditor.parse.min.js"
-        }
+        }*/
     ],
 
     

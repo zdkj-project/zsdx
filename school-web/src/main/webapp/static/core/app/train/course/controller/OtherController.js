@@ -29,13 +29,14 @@ Ext.define("core.train.course.controller.OtherController", {
                         url: comm.get('baseUrl') + "/TrainCourseinfo/importData",
                         waitMsg: '正在导入文件...',
                         success: function (form, action) {
-                            self.msgbox("导入成功！");
+                            
 
                             var win = btn.up('window');
                             var grid = win.grid;
                             //刷新列表
                             grid.getStore().load();
                             win.close();
+                            self.Info("导入成功！");
                         },
                         failure: function (form, action) {
                             if (action.result == undefined) {
@@ -201,7 +202,7 @@ Ext.define("core.train.course.controller.OtherController", {
                         success: function (response) {
                             data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                             if (data.success) {
-                                self.msgbox("保存成功!");
+                                
                                 var grid = basetab.funData.grid; //此tab是否保存有grid参数
                                 if (!Ext.isEmpty(grid)) {
                                     var store = grid.getStore();
@@ -209,7 +210,9 @@ Ext.define("core.train.course.controller.OtherController", {
                                 }
 
                                 loading.hide();
+                                self.Info("保存成功!");
                                 tabPanel.remove(tabItem);
+                                
                             } else {
                                 self.Error(data.obj);
                                 loading.hide();

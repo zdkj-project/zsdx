@@ -9,10 +9,10 @@ public class CardUserInfoToUP implements Serializable {
 	private String upCardId;
 	private String userId;
 	private String factNumb;
-	private Integer useState;	//1为正常使用，其他貌似是无用状态
+	private Integer useState;	//1为正常使用，其他貌似是无用状态（1正常、2挂失、3无卡、4退卡）
 	private String sid;		//用来记录卡片的文字卡号
 	private Integer employeeStatusID;	//up人员库的人员状态，值为24代表可用（由于人员数据以WEB平台为准，所以不从UP中同步后影响WEB的人员信息）
-	
+	private Integer cardTypeId;	//1职工、2合同工、3学员
 	
 	public String getUuid() {
 		return uuid;
@@ -57,6 +57,12 @@ public class CardUserInfoToUP implements Serializable {
 		this.employeeStatusID = employeeStatusID;
 	}
 	
+	public Integer getCardTypeId() {
+		return cardTypeId;
+	}
+	public void setCardTypeId(Integer cardTypeId) {
+		this.cardTypeId = cardTypeId;
+	}
 	public CardUserInfoToUP() {
 		super();
 	}

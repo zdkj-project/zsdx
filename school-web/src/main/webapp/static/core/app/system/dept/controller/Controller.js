@@ -91,7 +91,7 @@ Ext.define("core.system.dept.controller.Controller", {
                             });
                             if (resObj.success) {
                                 baseGrid.getStore().load(0);
-                                self.msgbox(resObj.obj);
+                                self.Info(resObj.obj);
                             } else {
                                 self.Error(resObj.obj);
                             }
@@ -130,10 +130,10 @@ Ext.define("core.system.dept.controller.Controller", {
                          url: "/usersync" + "/dept"
                      });
                      if (resObj.success) {
-                    	 self.msgbox("同步成功!");
+                    	 self.Info("同步成功!");
                     	 btn.up("basegrid").getStore().load();
                      }else{
-                    	 self.msgbox(resObj.obj);
+                    	 self.Info(resObj.obj);
                      }
                      return false;
                 }
@@ -472,7 +472,7 @@ Ext.define("core.system.dept.controller.Controller", {
 
                 }
                 self.setFormValue(formObj, insertObj);
-                self.msgbox("保存成功!");
+                self.Info("保存成功!");
                 var grid = win.funData.grid; //窗体是否有grid参数
                 if (!Ext.isEmpty(grid)) {
                     var store = grid.getStore();

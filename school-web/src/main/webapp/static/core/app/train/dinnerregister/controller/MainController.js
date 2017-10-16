@@ -83,7 +83,7 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                         var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));                
                         if(data.success){
                             //Ext.Msg.hide();
-                            self.msgbox("登记成功！");
+                            self.Info("登记成功！");
                         }else{
                             //Ext.Msg.hide();
                             self.Error(data.obj);
@@ -155,7 +155,7 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if(data.success){
                                         Ext.Msg.hide();
-                                        self.msgbox(data.obj);
+                                        self.Info(data.obj);
                                         component.destroy();                                
                                     }else{                                    
                                         if(data.obj==0){    //当为此值，则表明导出失败

@@ -573,7 +573,9 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 								+ "';";
 						sqlSb.append(sqlStr + "  ");
 						continue;
-					}else if(upCardUser.getUseState()!=1){	//若卡片状态不为1，则直接设置为卡片无效
+					}
+					/*（2017-10-10：不再处理这种卡片信息 ）
+					else if(upCardUser.getUseState()!=1){	//若卡片状态不为1，则直接设置为卡片无效
 						
 						updateTime = DateUtil.formatDateTime(new Date());
 						sqlStr = "update CARD_T_USEINFO set " + "	FACT_NUMB='" + 0
@@ -584,11 +586,11 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 						sqlSb.append(sqlStr + "  ");
 						continue;
 					}
-					
+					*/
 					for (int j = 0; j < webCardUserInfos.size(); j++) {
 						webCardUser = webCardUserInfos.get(j);
 						// 若web库中存在此发卡信息
-						if (upCardUser.getUserId().equals(webCardUser.getUserId())) {
+						if (upCardUser.getUserId()!=null && upCardUser.getUserId().equals(webCardUser.getUserId())) {
 							// 执行代码
 							isExist = true;
 							if (!upCardUser.equals(webCardUser)) { // 对比数据（一部分需要判断的数据）是否一致
@@ -602,15 +604,47 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 									sqlStr = "update CARD_T_USEINFO set " + "	FACT_NUMB='" + upCardUser.getFactNumb()
 											+ "',USE_STATE='" + upCardUser.getUseState() + "'," 
-											+ " CARD_PRINT_ID='"+upCardUser.getSid()+"',"
-											+ "	UP_CARD_ID='"
-											+ upCardUser.getUpCardId() + "',UPDATE_TIME=CONVERT(datetime,'" + updateTime
+											+ "	UP_CARD_ID='"+ upCardUser.getUpCardId() + "',"
+											+ "	CARD_TYPE_ID='"+ upCardUser.getCardTypeId() + "',";
+									
+									//当up同步过来的印刷卡号不为null的时候，才更新这个印刷卡号
+									if(StringUtils.isNotEmpty(upCardUser.getSid()))	
+										sqlStr += " CARD_PRINT_ID='"+ upCardUser.getSid()+"',";
+									
+									sqlStr += " UPDATE_TIME=CONVERT(datetime,'" + updateTime
 											+ "')" + " where USER_ID='" + upCardUser.getUserId() + "'";
 
 									sqlSb.append(sqlStr + "  ");
 								}
 							}
 
+							webCardUserInfos.remove(j);
+							break; // 跳出
+							
+						}else if (upCardUser.getUpCardId().equals(webCardUser.getUpCardId())) {	//如果卡片id相同，也处理
+							isExist = true;
+							updateTime = DateUtil.formatDateTime(new Date());
+							if (!upCardUser.equals(webCardUser)) {
+								sqlStr = "update CARD_T_USEINFO set " + "	FACT_NUMB='" + upCardUser.getFactNumb()
+										+ "',USE_STATE='" + upCardUser.getUseState() + "'," 								
+										+ "	CARD_TYPE_ID='"+ upCardUser.getCardTypeId() + "',";
+								
+								//当up同步过来的印刷卡号不为null的时候，才更新这个印刷卡号
+								if(StringUtils.isNotEmpty(upCardUser.getSid()))
+									sqlStr += " CARD_PRINT_ID='"+ upCardUser.getSid()+"',";
+								
+								if(upCardUser.getUserId()==null)
+									sqlStr += " USER_ID=NULL,";
+								else
+									sqlStr += " USER_ID='"+ upCardUser.getUserId()+"',";
+								
+							
+								sqlStr += " UPDATE_TIME=CONVERT(datetime,'" + updateTime
+										+ "')" + " where UP_CARD_ID='" + upCardUser.getUpCardId() + "'";
+	
+								sqlSb.append(sqlStr + "  ");
+							}
+							
 							webCardUserInfos.remove(j);
 							break; // 跳出
 						}
@@ -621,13 +655,23 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 						updateTime = DateUtil.formatDateTime(new Date());
 
 						sqlStr = "insert into CARD_T_USEINFO(CARD_ID,CREATE_TIME,CREATE_USER,"
-								+ "ISDELETE,FACT_NUMB,USE_STATE,USER_ID,UP_CARD_ID,CARD_PRINT_ID)" + " values ('"
+								+ "ISDELETE,FACT_NUMB,USE_STATE,UP_CARD_ID,CARD_TYPE_ID,USER_ID,CARD_PRINT_ID)" + " values ('"
 								+ UUID.randomUUID().toString() + "',CONVERT(datetime,'" + updateTime + "'),'超级管理员',"
-								+ "0,'" + upCardUser.getFactNumb() + "'," + upCardUser.getUseState() + "," + "'"
-								+ upCardUser.getUserId() + "','" + upCardUser.getUpCardId() + "','"+upCardUser.getSid()+"')";
-
+								+ "0,'" + upCardUser.getFactNumb() + "'," + upCardUser.getUseState() + ","
+								+ "'"+ upCardUser.getUpCardId() + "','"+upCardUser.getCardTypeId() + "',";
+						
+						if(upCardUser.getUserId()==null)
+							sqlStr += "NULL,";
+						else
+							sqlStr += "'" + upCardUser.getUserId() +"',";
+						
+						if(upCardUser.getSid()==null)
+							sqlStr += "NULL)";
+						else
+							sqlStr += "'"+ upCardUser.getSid()+"')";
+						
+						
 						sqlSb.append(sqlStr + "  ");
-
 					}
 					
 				}
@@ -636,12 +680,13 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				if (sqlSb.length() > 0)
 					row += this.executeSql(sqlSb.toString());
 
-				// 如果还有没执行到的发卡数据，则进行循环删除
+				// 如果还有没执行到的发卡数据，则进行循环删除(2017-10-10不再删除未绑定的卡,置为空卡)
 				if (webCardUserInfos.size() > 0) {
 					sqlSb.setLength(0); // 清空
 					for (int k = 0; k < webCardUserInfos.size(); k++) {
 						webCardUser = webCardUserInfos.get(k);
 						sqlStr = "delete from CARD_T_USEINFO where CARD_ID='" + webCardUser.getUuid() + "';";
+						//sqlStr = "UPDATE  CARD_T_USEINFO SET user_id=null,use_state=0 where CARD_ID='" + webCardUser.getUuid() + "';";
 						sqlSb.append(sqlStr + "  ");
 					}
 					this.executeSql(sqlSb.toString());
@@ -659,7 +704,9 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		return row;
 	}
 
+	
 	// 同步某个班级的发卡信息
+	@Deprecated
 	@Override
 	public int syncClassCardInfoFromUp(List<CardUserInfoToUP> upCardUserInfos, String classId) {
 		int row = 0;

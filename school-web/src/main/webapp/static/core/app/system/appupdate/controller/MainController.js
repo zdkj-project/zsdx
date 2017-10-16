@@ -38,7 +38,7 @@ Ext.define("core.system.appupdate.controller.MainController", {
                                 if (resObj.success) {
                                     //刷新数据集
                                     grid.getStore().load();                                
-                                    self.msgbox(resObj.obj);                                   
+                                    self.Info(resObj.obj);                                   
                                 } else {
                                     self.Error(resObj.obj);
                                 }
@@ -77,7 +77,7 @@ Ext.define("core.system.appupdate.controller.MainController", {
                                 if (resObj.success) {
                                     grid.getStore().load();     
 
-                                    self.msgbox(resObj.obj);                                    
+                                    self.Info(resObj.obj);                                    
                                 } else {
                                     self.Error(resObj.obj);
                                 }
