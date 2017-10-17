@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
+import com.zd.core.model.ImportNotInfo;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
@@ -240,9 +241,14 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 	}
 
 	@Override
-	public void doImportTrainee(List<List<Object>> listObject, String classId, String needSync, SysUser currentUser) {
+	public List<ImportNotInfo> doImportTrainee(List<List<Object>> listObject, String classId, String needSync, SysUser currentUser) {
 		// TODO Auto-generated method stub
-
+		
+		List<ImportNotInfo> listNotExit = new ArrayList<>();
+		SimpleDateFormat dateTimeSdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		ImportNotInfo notExits = null;
+		Integer notCount = 1;
+		
 		// XBM;HEADSHIPLEVEL 必填项
 		// TRAINEECATEGORY;XWM;XLM;ZZMMM;MZM 同步时需要的项
 		Map<String, String> mapHeadshipLevel = new HashMap<>();
@@ -298,7 +304,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			trainClass.setIsuse(2);
 			trainClass.setUpdateTime(new Date()); // 设置修改时间
 			trainClass.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-			trainClassService.update(trainClass);
+			//trainClassService.update(trainClass);
 		}
 
 		/**
@@ -306,78 +312,113 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 		 * 党校培训证书号 行院培训证书号 照片
 		 * 
 		 */
+		String doResult = "";
+		String title = "";
+		String errorLevel = "";
+		boolean isError = false;
 		TrainTrainee trainTrainee = null;
 		for (int i = 0; i < listObject.size(); i++) {
-			List<Object> lo = listObject.get(i);
-
-			// 导入的表格会错误的读取空行的内容，所以，当判断第一列为空，就跳过此行。
-			if (!StringUtils.isNotEmpty((String) lo.get(0))) {
-				continue;
-			}
-
-			// 查询学员库是否存在此学生
-			trainTrainee = trainTraineeServie.getByProerties("sfzjh", lo.get(3));
-
-			// 查询此班级，是否已经存在此学员,则取出来进行数据更新操作 //只要存在即可，isdelete为1的会被转为2
-			TrainClasstrainee trainee = this.getByProerties(new String[] { "sfzjh", "classId" },
-					new Object[] { lo.get(3), classId });
-			if (trainee == null)
-				trainee = new TrainClasstrainee();
-
-			trainee.setClassId(classId);
-			trainee.setXm(String.valueOf(lo.get(0)));
-			trainee.setXbm(mapXbm.get(lo.get(1)));
-			trainee.setMobilePhone(String.valueOf(lo.get(2)));
-			trainee.setSfzjh(String.valueOf(lo.get(3)));
-			trainee.setWorkUnit(String.valueOf(lo.get(4)));
-			trainee.setPosition(String.valueOf(lo.get(5)));
-			trainee.setHeadshipLevel(mapHeadshipLevel.get(lo.get(6)));
-			trainee.setClassGroup(mapClassGroup.get(lo.get(8)));
-			trainee.setIsDelete(isDelete); // 设置isdelte值
-
-			if (needSync.equals("1")) { // 同步到学员库
-				if (trainTrainee == null) {
-					trainTrainee = new TrainTrainee();
-
-					// 当学员库没有此学员的时候，暂时加入这些数据（已存在的学员暂时不处理）
-					trainTrainee.setTraineeCategory(mapTraineeCategory.get(lo.get(7)));
-					trainTrainee.setMzm(mapMzm.get(lo.get(9)));
-					trainTrainee.setZzmmm(mapZzmm.get(lo.get(10)));
-					trainTrainee.setXlm(mapXlm.get(lo.get(11)));
-					trainTrainee.setXwm(mapXwm.get(lo.get(12)));
-
-					trainTrainee.setZym(String.valueOf(lo.get(13)));
-					trainTrainee.setGraduateSchool(String.valueOf(lo.get(14)));
-					trainTrainee.setDzxx(String.valueOf(lo.get(15)));
-					trainTrainee.setAddress(String.valueOf(lo.get(16)));
-					trainTrainee.setPartySchoolNumb(String.valueOf(lo.get(17)));
-					trainTrainee.setNationalSchoolNumb(String.valueOf(lo.get(18)));
-
-					// trainTrainee.setZp(String.valueOf(lo.get(19)));
-					// 照片使用身份证号码.jpg
-					trainTrainee.setZp("/static/upload/traineePhoto/" + trainee.getSfzjh() + ".jpg");
-
+			try {
+				
+				List<Object> lo = listObject.get(i);
+	
+				// 导入的表格会错误的读取空行的内容，所以，当判断第一列为空，就跳过此行。
+				if (!StringUtils.isNotEmpty((String) lo.get(0))) {
+					continue;
 				}
+				
+				title = String.valueOf(lo.get(0));
+				doResult = "导入成功"; // 默认是成功
+				//isError = false;
+				
+				// 查询学员库是否存在此学生
+				trainTrainee = trainTraineeServie.getByProerties("sfzjh", lo.get(3));
+	
+				// 查询此班级，是否已经存在此学员,则取出来进行数据更新操作 //只要存在即可，isdelete为1的会被转为2
+				TrainClasstrainee trainee = this.getByProerties(new String[] { "sfzjh", "classId" },
+						new Object[] { lo.get(3), classId });
+				if (trainee == null)
+					trainee = new TrainClasstrainee();
+	
+				trainee.setClassId(classId);
+				trainee.setXm(String.valueOf(lo.get(0)));
+				trainee.setXbm(mapXbm.get(lo.get(1)));
+				trainee.setMobilePhone(String.valueOf(lo.get(2)));
+				trainee.setSfzjh(String.valueOf(lo.get(3)));
+				trainee.setWorkUnit(String.valueOf(lo.get(4)));
+				trainee.setPosition(String.valueOf(lo.get(5)));
+				trainee.setHeadshipLevel(mapHeadshipLevel.get(lo.get(6)));
+				trainee.setClassGroup(mapClassGroup.get(lo.get(8)));
+				trainee.setIsDelete(isDelete); // 设置isdelte值
+				
+				if (needSync.equals("1")) { // 同步到学员库
+					if (trainTrainee == null) {
+						trainTrainee = new TrainTrainee();
+	
+						// 当学员库没有此学员的时候，暂时加入这些数据（已存在的学员暂时不处理）
+						trainTrainee.setTraineeCategory(mapTraineeCategory.get(lo.get(7)));
+						trainTrainee.setMzm(mapMzm.get(lo.get(9)));
+						trainTrainee.setZzmmm(mapZzmm.get(lo.get(10)));
+						trainTrainee.setXlm(mapXlm.get(lo.get(11)));
+						trainTrainee.setXwm(mapXwm.get(lo.get(12)));
+	
+						trainTrainee.setZym(String.valueOf(lo.get(13)));
+						trainTrainee.setGraduateSchool(String.valueOf(lo.get(14)));
+						trainTrainee.setDzxx(String.valueOf(lo.get(15)));
+						trainTrainee.setAddress(String.valueOf(lo.get(16)));
+						trainTrainee.setPartySchoolNumb(String.valueOf(lo.get(17)));
+						trainTrainee.setNationalSchoolNumb(String.valueOf(lo.get(18)));
+	
+						// trainTrainee.setZp(String.valueOf(lo.get(19)));
+						// 照片使用身份证号码.jpg
+						trainTrainee.setZp("/static/upload/traineePhoto/" + trainee.getSfzjh() + ".jpg");
+	
+					}
+	
+					trainTrainee.setXm(trainee.getXm());
+					trainTrainee.setXbm(trainee.getXbm());
+					trainTrainee.setMobilePhone(trainee.getMobilePhone());
+					trainTrainee.setSfzjh(trainee.getSfzjh());
+					trainTrainee.setWorkUnit(trainee.getWorkUnit());
+					trainTrainee.setPosition(trainee.getPosition());
+					trainTrainee.setHeadshipLevel(trainee.getHeadshipLevel());
+	
+					trainTrainee.setUpdateTime(new Date()); // 设置修改时间
+					trainTrainee.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
+	
+					trainTraineeServie.merge(trainTrainee);
+				}
+	
+				if (trainTrainee != null) {
+					trainee.setTraineeId(trainTrainee.getUuid());
+				}
+				this.merge(trainee);
 
-				trainTrainee.setXm(trainee.getXm());
-				trainTrainee.setXbm(trainee.getXbm());
-				trainTrainee.setMobilePhone(trainee.getMobilePhone());
-				trainTrainee.setSfzjh(trainee.getSfzjh());
-				trainTrainee.setWorkUnit(trainee.getWorkUnit());
-				trainTrainee.setPosition(trainee.getPosition());
-				trainTrainee.setHeadshipLevel(trainee.getHeadshipLevel());
-
-				trainTrainee.setUpdateTime(new Date()); // 设置修改时间
-				trainTrainee.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-
-				trainTraineeServie.merge(trainTrainee);
+			} catch (Exception e) {
+				// return null;
+				errorLevel = "错误";
+				doResult = "导入失败；异常信息：" + e.getMessage();
 			}
 
-			if (trainTrainee != null) {
-				trainee.setTraineeId(trainTrainee.getUuid());
+			if (!"导入成功".equals(doResult)) {
+				// List<Map<String, Object>>
+				notExits = new ImportNotInfo();
+				notExits.setOrderIndex(notCount);
+				notExits.setTitle(title);
+				notExits.setErrorLevel(errorLevel);
+				notExits.setErrorInfo(doResult);
+
+				listNotExit.add(notExits);
+				notCount++;
 			}
-			this.merge(trainee);
 		}
+		
+		// 如果两个容器的大小一样，表明没有导入数据,否则导入了
+		if (listObject.size() != listNotExit.size()) {
+			trainClassService.update(trainClass);
+		}
+
+		return listNotExit;
 
 	}
 

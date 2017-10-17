@@ -872,12 +872,11 @@ Ext.define("core.train.class.controller.OtherController", {
                         timeout: 1000 * 30 * 60,
                         success: function (form, action) {
                             if (action.result.obj == "-1") {
-                            	self.Info("数据部分导入成功，请下载模板或者联系管理员！");
+                            	self.Info("数据部分导入成功，请查看错误信息或联系管理员！");
 
-//                                var url = comm.get('baseUrl') + "/TrainClassschedule/downNotImportInfo";
-//
-//                                //window.open(url);
-//                                window.location.href = url;
+                                var url = comm.get('baseUrl') + "/TrainClassschedule/downNotImportInfo";
+                                //window.open(url);
+                                window.location.href = url;
                             } else {
                                 self.Info("数据全部导入成功！");
 
@@ -945,7 +944,17 @@ Ext.define("core.train.class.controller.OtherController", {
                                 },
                                 waitMsg: '正在导入文件...',
                                 success: function (form, action) {
-                                    self.Info("导入成功！");
+                                    if (action.result.obj == "-1") {
+                                        self.Info("数据部分导入成功，请查看错误信息或联系管理员！");
+
+                                        var url = comm.get('baseUrl') + "/TrainClasstrainee/downNotImportInfo";
+                                        //window.open(url);
+                                        window.location.href = url;
+                                    } else {
+                                        self.Info("数据全部导入成功！");
+
+                                    }                                
+                                    //self.Info("导入成功！");
 
                                     //刷新学员订餐、住宿列表
                                     //查询班级的就餐学员信息

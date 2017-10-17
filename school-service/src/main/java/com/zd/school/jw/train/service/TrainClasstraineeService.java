@@ -1,5 +1,6 @@
 package com.zd.school.jw.train.service;
 
+import com.zd.core.model.ImportNotInfo;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseService;
 import com.zd.school.jw.train.model.TrainClasstrainee;
@@ -81,7 +82,7 @@ public interface TrainClasstraineeService extends BaseService<TrainClasstrainee>
 
 	public int doCancelRoomInfo(String ids, SysUser currentUser);
 
-	public void doImportTrainee(List<List<Object>> listObject, String classId, String needSync, SysUser currentUser);
+	public List<ImportNotInfo> doImportTrainee(List<List<Object>> listObject, String classId, String needSync, SysUser currentUser);
 
 	public void doSyncClassTrainee(String classId, SysUser currentUser);
 

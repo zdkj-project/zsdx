@@ -42,6 +42,9 @@ Ext.define("core.train.class.view.TraineeImportForm", {
         blankText: '请上传Excel文件',
         emptyText:'请上传Excel文件',
         buttonText:"选择文件",
+    },{
+        xtype: 'label',
+        html: "<span style='padding:5px;color: #de3a2e;font-weight: 400;'>* 温馨提示：若在导入的数据中，存在与此班级学员相同身份证号码的学员时，将会自动替换此班级中现有的学员数据； 当勾选了【添加到学员库】选择框时，会将班级学员自动同步到学员库中，若学员库中已存在某个身份证的学员时，则会自动替换成新的学员数据！<span>",
     }],
     buttonAlign: 'center',
     buttons: [ {

@@ -9,6 +9,13 @@ Ext.define('core.train.calcucredit.view.TraineesGrid', {
     style: {
         border: '1px solid #ddd'
     },
+    selModel: {
+        type: "checkboxmodel",   
+        headerWidth:50,    //设置这个值为50。 但columns中的defaults中设置宽度，会影响他
+        mode:'single',  //multi,simple,single；默认为多选multi
+        //checkOnly:false,    //如果值为true，则只用点击checkbox列才能选中此条记录
+        //allowDeselect:true, //如果值true，并且mode值为单选（single）时，可以通过点击checkbox取消对其的选择
+    },
     /**
      * 高级查询面板
      */

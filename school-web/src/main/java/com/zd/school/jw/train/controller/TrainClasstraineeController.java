@@ -3,6 +3,7 @@ package com.zd.school.jw.train.controller;
 
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
+import com.zd.core.model.ImportNotInfo;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.*;
 import com.zd.school.jw.train.model.TrainClass;
@@ -213,23 +214,59 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 
 			InputStream in = null;
 			List<List<Object>> listObject = null;
+			List<ImportNotInfo> listReturn;
+
+			
 			if (!file.isEmpty()) {
 				in = file.getInputStream();
 				listObject = new ImportExcelUtil().getBankListByExcel(in, file.getOriginalFilename());
 				in.close();
+				
+				listReturn = thisService.doImportTrainee(listObject, classId, needSync, currentUser);
 
-				thisService.doImportTrainee(listObject, classId, needSync, currentUser);
+                if (listReturn.size() == 0)
+                    writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导入成功！\""));
+                else {
+                    String strData = jsonBuilder.buildList(listReturn, "");
+                    request.getSession().setAttribute("TrainClassTraineeImportError", strData);
+                    writeJSON(response, jsonBuilder.returnSuccessJson("-1")); // 返回前端-1，表示存在错误数据
+                }
+                
+				
 
 			} else {
 				writeJSON(response, jsonBuilder.returnFailureJson("\"文件不存在！\""));
 			}
-
-			writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导入成功！\""));
 		} catch (Exception e) {
 			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导入失败,请下载模板或联系管理员！\""));
 		}
 	}
 
+	@RequestMapping(value = {"/downNotImportInfo"})
+    public void downNotImportInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        Object obj = request.getSession().getAttribute("TrainClassTraineeImportError");
+        if (obj != null) {
+
+            request.getSession().removeAttribute("TrainClassTraineeImportError");// 移除此session
+
+            String downData = (String) obj;
+
+            List<ImportNotInfo> list = (List<ImportNotInfo>) jsonBuilder.fromJsonArray(downData, ImportNotInfo.class);
+            ExportExcel excel = new ExportExcel();
+
+            String[] Title = {"序号", "学生姓名", "异常级别", "异常原因"};
+            Integer[] coulumnWidth = {8, 20, 20, 100};
+            Integer[] coulumnDirection = {1, 1, 1, 1};
+
+            List<String> excludeList = new ArrayList<>();
+            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日");
+            String fileNAME = "（" + sdf2.format(new Date()) + "导出）导入班级学员的异常信息名单";
+
+            excel.exportExcel(response, fileNAME, Title, list, excludeList, coulumnWidth, coulumnDirection);
+        }
+    }
+
+	
 	/**
 	 * 描述：同步班级学员信息到学员库
 	 * 

@@ -36,6 +36,9 @@ Ext.define("core.train.class.view.CourseImportForm", {
         blankText: '请上传Excel文件',
         emptyText:'请上传Excel文件',
         buttonText:"选择文件",
+    },{
+        xtype: 'label',
+        html: "<span style='padding:5px;color: #de3a2e;font-weight: 400;'>* 温馨提示：若在导入的数据中，存在与此班级课程相同课程名、教师的课程时，将会自动替换此班级中现有的数据； 当课程库中不存在此课程时，则会自动将此课程同步录入到课程库！<span>",
     }],
     buttonAlign: 'center',
     buttons: [ {

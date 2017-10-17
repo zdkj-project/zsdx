@@ -309,6 +309,9 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
         //所课程的所有评价指标标准
         List<Map<String, Object>> listClassCourseStand = this.getForValuesToSql(sql);
         int standCount = listClassCourseStand.size();
+        if(standCount==0)
+        	return null;
+        
         String perIndicatorId = listClassCourseStand.get(0).get("INDICATOR_ID").toString();
 
         Map<String, Object> addStand = new HashMap<>();  //标准对象
@@ -359,10 +362,13 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
 
         Map<String,Object> mapOneCourse = new HashMap<>();
         Map<String, List<Map<String, Object>>> courseStands = this.getCourseEvalResult(courseId);
+        
         //前台显示数据需要，将指标数据转成list
         List<List<Map<String,Object>>> list = new ArrayList<>();
-        for (Map.Entry<String, List<Map<String, Object>>> entry : courseStands.entrySet()) {
-            list.add(entry.getValue());
+        if(courseStands!=null){	     
+	        for (Map.Entry<String, List<Map<String, Object>>> entry : courseStands.entrySet()) {
+	            list.add(entry.getValue());
+	        }
         }
         mapOneCourse.put("className", classschedule.getClassName());
         mapOneCourse.put("courseName",classschedule.getCourseName());

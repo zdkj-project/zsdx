@@ -76,7 +76,7 @@ Ext.define("core.train.calcucredit.controller.MainController", {
                 var baseGrid = btn.up("basegrid");
                 var records = baseGrid.getSelectionModel().getSelection();
                 if (records.length != 1) {
-                    self.Warning("按班级导出，请选择班级");
+                    self.Warning("按班级导出，请选择一个班级");
                     return false;
                 }
                 var record = records[0].data;
