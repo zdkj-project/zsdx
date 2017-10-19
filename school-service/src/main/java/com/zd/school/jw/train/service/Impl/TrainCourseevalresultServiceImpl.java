@@ -188,6 +188,10 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
         //班级下所课程的所有评价指标标准
         List<Map<String, Object>> listClassCourseStand = this.getForValuesToSql(sql);
         int standCount = listClassCourseStand.size();
+        if(standCount==0){
+        	return new HashMap<>();
+        }
+        
         String perIndicatorId = listClassCourseStand.get(0).get("INDICATOR_ID").toString();
         String perClassCourseid = listClassCourseStand.get(0).get("CLASS_SCHEDULE_ID").toString();
 
@@ -243,6 +247,9 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
         //班级的所有评价标准
         List<Map<String, Object>> listClassStand = this.getForValuesToSql(sql);
         int standCount = listClassStand.size();  //所有的标准个数
+        if(standCount==0){
+        	return new HashMap<>();
+        }
         String perIndicatorId = listClassStand.get(0).get("INDICATOR_ID").toString(); //第一条标准对应的指标id
         String indicatorId = ""; //最校报一条标准的Id
         Map<String, Object> addStand = new HashMap<>();  //一条标准

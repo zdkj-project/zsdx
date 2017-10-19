@@ -308,7 +308,7 @@ public class exportMeetingInfo {
 					Row row = null;
 					Cell cell = null;
 					Sheet sheet = workbook.createSheet(sheetName);
-					for (int j = 0; j < 8; j++) {
+					for (int j = 0; j < 10; j++) {
 						row = sheet.createRow(j);
 						row.setHeight((short) 0x200);
 						for (int k = 0; k < columnCount; k++) {
@@ -319,39 +319,39 @@ public class exportMeetingInfo {
 					// 标题
 					sheet.getRow(0).getCell(0).setCellStyle(titleStyle);
 					sheet.getRow(0).getCell(0).setCellValue(className+"班考勤详细");
-					sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 7));
+					sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 9));
 					
 					// 第1行
 					sheet.getRow(3).getCell(0).setCellValue("班级名称");
 					sheet.getRow(3).getCell(1).setCellValue(className);
-					sheet.addMergedRegion(new CellRangeAddress(3, 3, 1, 7));
+					sheet.addMergedRegion(new CellRangeAddress(3, 3, 1, 9));
 
 					// 第2行
 					sheet.getRow(4).getCell(0).setCellValue("班级类型");
 					sheet.getRow(4).getCell(1).setCellValue(classCategory);
-					sheet.addMergedRegion(new CellRangeAddress(4, 4, 1, 3));
+					sheet.addMergedRegion(new CellRangeAddress(4, 4, 1, 4));
 
-					sheet.getRow(4).getCell(4).setCellValue("人数");
-					sheet.getRow(4).getCell(5).setCellValue(traineeNum);
-					sheet.addMergedRegion(new CellRangeAddress(4, 4, 5, 7));
+					sheet.getRow(4).getCell(5).setCellValue("人数");
+					sheet.getRow(4).getCell(6).setCellValue(traineeNum);
+					sheet.addMergedRegion(new CellRangeAddress(4, 4, 6, 9));
 
 					// 第3行
 					sheet.getRow(5).getCell(0).setCellValue("开始时间");
                     sheet.getRow(5).getCell(1).setCellValue(beginDate);
-                    sheet.addMergedRegion(new CellRangeAddress(5, 5, 1,3));
+                    sheet.addMergedRegion(new CellRangeAddress(5, 5, 1,4));
 
-                    sheet.getRow(5).getCell(4).setCellValue("结束时间");
-                    sheet.getRow(5).getCell(5).setCellValue(endDate);
-                    sheet.addMergedRegion(new CellRangeAddress(5, 5, 5,7));
+                    sheet.getRow(5).getCell(5).setCellValue("结束时间");
+                    sheet.getRow(5).getCell(6).setCellValue(endDate);
+                    sheet.addMergedRegion(new CellRangeAddress(5, 5, 6,9));
 
                     //第4行
                     sheet.getRow(6).getCell(0).setCellValue("是否需要考勤");
                     sheet.getRow(6).getCell(1).setCellValue(needChecking);
-                    sheet.addMergedRegion(new CellRangeAddress(6, 6, 1,7));
+                    sheet.addMergedRegion(new CellRangeAddress(6, 6, 1,9));
 
 					
 					sheet.getRow(7).getCell(0).setCellValue("人员考勤详细");
-                    sheet.addMergedRegion(new CellRangeAddress(7, 7, 0,7));
+                    sheet.addMergedRegion(new CellRangeAddress(7, 7, 0,9));
 					
 					// 课程数据
 					List<Map<String,Object>> trainClassscheduleList =(List<Map<String, Object>>) dataList.get("checkCourse");
@@ -359,7 +359,7 @@ public class exportMeetingInfo {
 					for (int k = 0; k< 3; k++) {
 						row = sheet.createRow(8+k);
 						row.setHeight((short) 0x250);
-						for (int j = 0; j < trainClassscheduleCount*3+2; j++) {
+						for (int j = 0; j < trainClassscheduleCount*4+2; j++) {
 							cell = row.createCell(j);
 							cell.setCellStyle(headStyle);
 						}
@@ -370,34 +370,36 @@ public class exportMeetingInfo {
 						for (String s : trainClassschedule.keySet()) {
 							Object val = trainClassschedule.get(s);
 							if(s.equals("COURSE_NAME")){
-								sheet.getRow(8).getCell(2+j*3).setCellValue(String.valueOf(val));
-			                    sheet.addMergedRegion(new CellRangeAddress(8, 8, 2+j*3,4+j*3));
+								sheet.getRow(8).getCell(2+j*4).setCellValue(String.valueOf(val));
+			                    sheet.addMergedRegion(new CellRangeAddress(8, 8, 2+j*4,5+j*4));
 							}
 							if(s.equals("BEGIN_TIME")){
-								sheet.getRow(9).getCell(2+j*3).setCellValue("开始时间");
-			                    sheet.getRow(9).getCell(3+j*3).setCellValue(String.valueOf(val).substring(0, String.valueOf(val).lastIndexOf(".")));
-			                    sheet.addMergedRegion(new CellRangeAddress(9, 9, 3+j*3,4+j*3));
+								sheet.getRow(9).getCell(2+j*4).setCellValue("开始时间");
+			                    sheet.getRow(9).getCell(3+j*4).setCellValue(String.valueOf(val).substring(0, String.valueOf(val).lastIndexOf(".")));
+			                    sheet.addMergedRegion(new CellRangeAddress(9, 9, 3+j*4,5+j*4));
 							}
 							if(s.equals("END_TIME")){
-								sheet.getRow(10).getCell(2+j*3).setCellValue("结束时间");
-			                    sheet.getRow(10).getCell(3+j*3).setCellValue(String.valueOf(val).substring(0, String.valueOf(val).lastIndexOf(".")));
-			                    sheet.addMergedRegion(new CellRangeAddress(10, 10, 3+j*3,4+j*3));
+								sheet.getRow(10).getCell(2+j*4).setCellValue("结束时间");
+			                    sheet.getRow(10).getCell(3+j*4).setCellValue(String.valueOf(val).substring(0, String.valueOf(val).lastIndexOf(".")));
+			                    sheet.addMergedRegion(new CellRangeAddress(10, 10, 3+j*4,5+j*4));
 							}
 						}
 					}
 					row = sheet.createRow(11);
 					row.setHeight((short) 0x200);
-					 for (int j = 0; j < (((trainClassscheduleCount*3+2)<8)?8:trainClassscheduleCount*3+2); j++) {
+					for (int j = 0; j < (((trainClassscheduleCount*4+2)<10)?10:trainClassscheduleCount*4+2); j++) {
 	                        cell = row.createCell(j);
 	                        cell.setCellStyle(headStyle);
 	                        if(j==0)
 	                        	cell.setCellValue("序号");
 	                        else if(j==1)
 	                        	cell.setCellValue("姓名");
-	                        else if(j%3==2){
+	                        else if(j%4==2){
 	                        	cell.setCellValue("签到日期");
-	                        }else if(j%3==0){
+	                        }else if(j%4==3){
 	                        	cell.setCellValue("签退日期");
+	                        }else if(j%4==0){
+	                        	cell.setCellValue("上课时长");
 	                        }else{
 	                        	cell.setCellValue("考情结果");
 	                        }
@@ -414,11 +416,13 @@ public class exportMeetingInfo {
 						 List<String> val = traineeResult.get(keylist.get(k));
 						 row = sheet.createRow(12+k);
 						 row.setHeight((short) 0x200);
-						 for (int j = 0; j < trainClassscheduleCount*3+2; j++) {
+						 for (int j = 0; j < trainClassscheduleCount*4+2; j++) {
 								cell = row.createCell(j);
 								cell.setCellStyle(headStyle);
 								if(j==0){
 									cell.setCellValue(val.get(j));
+								}else if(j%4==0){
+									cell.setCellValue(val.get(j)+" 分钟");
 								}else if(val.get(j).equals("null")){
 									cell.setCellValue(" ");
 								}else if(val.get(j).equals("1")){

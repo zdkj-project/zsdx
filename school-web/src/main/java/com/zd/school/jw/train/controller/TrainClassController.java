@@ -1137,7 +1137,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				// 4.班级学员信息
 				List<Map<String,Object>> voTrainClassCheckList = null;
 				List<String> classScheduleIdList = new ArrayList<>();
-				sql="SELECT xm,classTraineeId,incardTime,outcardTime,attendResult FROM TRAIN_V_CHECKRESULT WHERE classId='" + ids +"'"+" order by classScheduleId asc";
+				sql="SELECT xm,classTraineeId,incardTime,outcardTime,attendResult,attendMinute FROM TRAIN_V_CHECKRESULT WHERE classId='" + ids +"'"+" order by classScheduleId asc";
 				voTrainClassCheckList = trainClasstraineeService.getForValuesToSql(sql);
 				int voTrainClassCheckListCount = voTrainClassCheckList.size();
 				
@@ -1162,11 +1162,12 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 					}
 					lists.add(incardTime);
 					lists.add(outcardTime);
+					lists.add(String.valueOf(tcc.get("attendMinute")));
 					lists.add(String.valueOf(tcc.get("attendResult")));
 					
 					traineeResult.put(String.valueOf(tcc.get("classTraineeId")), lists);
 				}
-				System.out.println(traineeResult);
+				//System.out.println(traineeResult);
 				
 				// ----------------------组装导出数据----------------------------------
 				List<Map<String, Object>> allList = new ArrayList<>();
@@ -1188,7 +1189,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				classAllMap1.put("data", classList1);
 				classAllMap1.put("title", "班级基本信息表");
 				classAllMap1.put("columnWidth", 15);
-				classAllMap1.put("headColumnCount", 8);
+				classAllMap1.put("headColumnCount", 10);
 				allList.add(classAllMap1);
 				
 		// 在导出方法中进行解析

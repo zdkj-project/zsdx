@@ -1928,6 +1928,13 @@ Ext.define("core.train.class.controller.MainController", {
                 if (cmd == "edit" || cmd == "detail") {
                     if (cmd == "edit") {
                         //初始化一些数据
+                        if(insertObj.isarrange==1){
+                            var classForm = tabItem.down("baseform[xtype=class.detailform]");
+                            classForm.down("button[ref=submitBtn]").setHidden(true);                     
+                            classForm.getForm().setItemsReadOnly(true);
+                            classForm.setHeight(classForm.getHeight()-35);
+                        }
+
                         var classCourseGrid = tabItem.down("basegrid[xtype=class.classcoursegrid]");
                         classCourseGrid.getStore().getProxy().extraParams.filter = '[{"type":"string","comparison":"=","value":"' + insertObj.uuid + '","field":"classId"}]';
 
@@ -2576,9 +2583,9 @@ Ext.define("core.train.class.controller.MainController", {
 
         var sendInfo="";
         if(recordData.isuse==0){
-            sendInfo="请您安排培训班：【" + recordData.className + "】的场地、住宿或就餐（一卡通系统）";
+            sendInfo="请您安排培训班：【" + recordData.className + "】的课程场地、学员住宿、学员发卡或就餐信息（一卡通系统）";
         }else{
-            sendInfo="【" + recordData.className + "】有更新，请您更新场地、住宿或就餐安排（一卡通系统）"
+            sendInfo="【" + recordData.className + "】有更新，请您更新场地、住宿、学员发卡或就餐信息的安排（一卡通系统）"
         }
         insertObj = recordData;
         insertObj = Ext.apply(insertObj,{

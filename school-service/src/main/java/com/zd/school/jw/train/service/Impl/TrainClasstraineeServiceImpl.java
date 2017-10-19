@@ -382,7 +382,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 					trainTrainee.setWorkUnit(trainee.getWorkUnit());
 					trainTrainee.setPosition(trainee.getPosition());
 					trainTrainee.setHeadshipLevel(trainee.getHeadshipLevel());
-	
+					trainTrainee.setIsDelete(0);
 					trainTrainee.setUpdateTime(new Date()); // 设置修改时间
 					trainTrainee.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 	
