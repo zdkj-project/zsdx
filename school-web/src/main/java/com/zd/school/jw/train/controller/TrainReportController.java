@@ -356,4 +356,196 @@ public class TrainReportController extends FrameWorkController<BaseEntity> imple
 		}
 	}
 	
+	
+	
+	/**
+	 * 教师消费汇总数据
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	@RequestMapping(value = { "/getTeacherConsumeTotalList" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
+			org.springframework.web.bind.annotation.RequestMethod.POST })
+	public void getTeacherConsumeTotalList( HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ParseException {
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");   
+	     
+		String strData = ""; // 返回给js的数据
+		String startDate=request.getParameter("beginDate");
+		startDate=startDate==null?"1900-1-1":sdf.format(sdf.parse(startDate));
+		
+		String endDate=request.getParameter("endDate");
+		endDate=endDate==null?"2999-12-12":sdf.format(sdf.parse(endDate));
+		
+		String employeeName = request.getParameter("EmployeeName");
+		employeeName=employeeName==null?"":employeeName;
+		String employeeStrID = request.getParameter("EmployeeStrID");
+		employeeStrID=employeeStrID==null?"":employeeStrID;
+		String termName = request.getParameter("TermName");
+		termName=termName==null?"":termName;
+		String accountName = request.getParameter("AccountName");
+		accountName=accountName==null?"":accountName;
+		String mealTypeID = request.getParameter("MealTypeID");
+		mealTypeID=mealTypeID==null?"":mealTypeID;
+		String groupType = request.getParameter("GROUP_TYPE");
+		groupType=groupType==null?"":groupType;
+		
+		Integer pageIndex=Integer.parseInt(request.getParameter("page"));;	//page
+		Integer pageSize=Integer.parseInt(request.getParameter("limit"));;	//limit
+		
+		StringBuffer sql = new StringBuffer("EXEC [dbo].[Usp_RPT_TeacherConsumeReportSearch] ");
+		sql.append("'" + startDate + "',");
+		sql.append("'" + endDate + "',");
+		sql.append("'"+employeeName+"',");
+		sql.append("'"+employeeStrID+"',");
+		sql.append("'"+termName+"',");
+		sql.append("'"+accountName+"',");
+		sql.append("'"+mealTypeID+"',");
+		sql.append("'"+groupType+"',");
+		String page=pageIndex + "," + pageSize;
+
+		List<Map<String, Object>> lists=baseService.getForValuesToSql(sql.toString()+page);
+			
+
+		int count=Integer.parseInt(lists.get(0).get("rownum").toString());
+		request.getSession().setAttribute("TeacherConsumeTotalDatas", lists.get(0));	//将统计信息存放到session中
+		
+		lists.remove(0);
+		
+		strData = jsonBuilder.buildObjListToJson(Long.valueOf(count), lists, true);// 处理数据
+		
+		writeJSON(response, strData);// 返回数据
+	}
+	
+	@RequestMapping(value = { "/getTeacherConsumeTotalDatas" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
+			org.springframework.web.bind.annotation.RequestMethod.POST })
+	public void getTeacherConsumeTotalDatas( HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ParseException {
+		Object obj = request.getSession().getAttribute("TeacherConsumeTotalDatas");
+		String strData = JsonBuilder.getInstance().toJson(obj);// 处理数据
+		writeJSON(response, jsonBuilder.returnSuccessJson(strData));// 返回数据	
+	}
+	
+	/**
+	 * 导出教师消费汇总信息
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/exportTeacherConsumeTotalExcel")
+	public void exportTeacherConsumeTotalExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getSession().setAttribute("exportTeacherConsumeTotalIsEnd", "0");
+		request.getSession().removeAttribute("exportTeacherConsumeTotalIsState");
+		
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");   
+		//SimpleDateFormat fmtDateWeek = new SimpleDateFormat("yyyy年M月d日 （E）");
+		//SimpleDateFormat fmtTime = new SimpleDateFormat("h:mm");
+		
+		List<Map<String, Object>> allList = new ArrayList<>();
+			
+		try{
+			String startDate=request.getParameter("beginDate");
+			startDate=startDate==null?"1900-1-1":sdf.format(sdf.parse(startDate));
+			
+			String endDate=request.getParameter("endDate");
+			endDate=endDate==null?"2999-12-12":sdf.format(sdf.parse(endDate));
+			
+			String employeeName = request.getParameter("EmployeeName");
+			employeeName=employeeName==null?"":employeeName;
+			String employeeStrID = request.getParameter("EmployeeStrID");
+			employeeStrID=employeeStrID==null?"":employeeStrID;
+			String termName = request.getParameter("TermName");
+			termName=termName==null?"":termName;
+			String accountName = request.getParameter("AccountName");
+			accountName=accountName==null?"":accountName;
+			String mealTypeID = request.getParameter("MealTypeID");
+			mealTypeID=mealTypeID==null?"":mealTypeID;
+			String groupType = request.getParameter("GROUP_TYPE");
+			groupType=groupType==null?"":groupType;
+			
+			Integer pageIndex=0;
+			Integer pageSize=Integer.MAX_VALUE;
+			
+			StringBuffer sql = new StringBuffer("EXEC [dbo].[Usp_RPT_TeacherConsumeReportSearch] ");
+			sql.append("'" + startDate + "',");
+			sql.append("'" + endDate + "',");
+			sql.append("'"+employeeName+"',");
+			sql.append("'"+employeeStrID+"',");
+			sql.append("'"+termName+"',");
+			sql.append("'"+accountName+"',");
+			sql.append("'"+mealTypeID+"',");
+			sql.append("'"+groupType+"',");
+			String page=pageIndex + "," + pageSize;
+
+			List<Map<String, Object>> lists=baseService.getForValuesToSql(sql.toString()+page);			
+			lists.remove(0);
+					
+			// 处理基本数据		
+			List<Map<String, String>> exportList = new ArrayList<>();
+			Map<String, String> tempMap = null;
+			for (Map<String, Object> cashMap : lists) {
+			
+				tempMap=new LinkedHashMap<>();
+				tempMap.put("rownum", String.valueOf(cashMap.get("rownum")));
+				tempMap.put("ConsumeDate", String.valueOf(cashMap.get("ConsumeDate")));
+				tempMap.put("EmployeeName", String.valueOf(cashMap.get("EmployeeName")));
+				tempMap.put("EmployeeStrID", String.valueOf(cashMap.get("EmployeeStrID")));
+				tempMap.put("TermName", String.valueOf(cashMap.get("TermName")));
+				tempMap.put("MealTypeName", String.valueOf(cashMap.get("MealTypeName")));
+				tempMap.put("AccountName", String.valueOf(cashMap.get("AccountName")));				
+				tempMap.put("ConsumeValue", String.valueOf(cashMap.get("ConsumeValue")));
+				tempMap.put("ConsumeNumber", String.valueOf(cashMap.get("ConsumeNumber")));		
+				exportList.add(tempMap);
+			}
+			// --------2.组装表格数据
+			Map<String, Object> cashAllMap = new LinkedHashMap<>();
+			cashAllMap.put("data", exportList);
+			cashAllMap.put("title", "教职工消费汇总表");
+			cashAllMap.put("head", new String[] { "序号","日期", "人员姓名", "人员编号", "消费设备", "就餐类型", "结算账户名","消费金额","消费笔数" }); // 规定名字相同的，设定为合并
+			cashAllMap.put("columnWidth", new Integer[] { 10, 22, 15, 15, 15, 15,15,20,10 }); // 30代表30个字节，15个字符
+			cashAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0,0,0,0,0 }); // 0代表居中，1代表居左，2代表居右
+			cashAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+			allList.add(cashAllMap);
+	
+			// 在导出方法中进行解析		
+			boolean result = PoiExportExcel.exportExcel(response, "教职工消费汇总表", "教职工消费汇总表", allList);
+			if (result == true) {
+				request.getSession().setAttribute("exportTeacherConsumeTotalIsEnd", "1");
+			} else {
+				request.getSession().setAttribute("exportTeacherConsumeTotalIsEnd", "0");
+				request.getSession().setAttribute("exportTeacherConsumeTotalIsState", "0");
+			}
+		}catch(Exception e){
+			request.getSession().setAttribute("exportTeacherConsumeTotalIsEnd", "0");
+			request.getSession().setAttribute("exportTeacherConsumeTotalIsState", "0");
+		}
+	}
+	
+	/**
+	 * 判断是否导出完毕
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/checkExportTeacherConsumeTotalEnd")
+	public void checkExportTeacherConsumeTotalEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Object isEnd = request.getSession().getAttribute("exportTeacherConsumeTotalIsEnd");
+		Object state = request.getSession().getAttribute("exportTeacherConsumeTotalIsState");
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+		}
+	}
+	
+	
 }

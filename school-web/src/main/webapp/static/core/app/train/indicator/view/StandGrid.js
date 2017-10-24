@@ -8,6 +8,7 @@ Ext.define("core.train.indicator.view.StandGrid", {
     style: {
         border: '1px solid #ddd'
     },
+    remoteSort:false,
     //margin: '0 0 0 10',
     /**
      * 高级查询面板
