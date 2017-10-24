@@ -17,7 +17,7 @@ Ext.define("core.base.view.BaseQueryPanel", {
         msgTarget: 'qtip',
         labelSeparator: '：', // 分隔符
         labelWidth:100, 
-        columnWidth : .5
+        //columnWidth : .5
 	},
 	buttonAlign: "center",
 	buttons: [{

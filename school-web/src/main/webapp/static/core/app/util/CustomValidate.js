@@ -161,3 +161,21 @@ Ext.apply(Ext.form.VTypes, {
 
 	endDateText: '结束时间不能小于开始时间'
 });
+
+// 文字不能相等验证
+Ext.apply(Ext.form.VTypes, {
+	notEqual: function(val, field) {
+		if (field.initialTextField) {
+			var text = field.findParentByType('form').getForm().findField(field.initialTextField);
+			if (val != text.getValue()) {
+				text.clearInvalid();
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return true;
+	},
+
+	notEqualText: '内容不许相同，请重新输入'
+});

@@ -154,7 +154,7 @@ public class CashExpenseserial extends BaseEntity implements Serializable{
         this.testDate = testDate;
     }
 
-    @FieldInfo(name = "结算方式")
+    @FieldInfo(name = "结算方式",explain = "1-现金 2-刷卡 3-签单")
     @Column(name = "CLEARING_FORM",nullable = false)
     public Integer clearingForm;
 

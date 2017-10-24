@@ -65,7 +65,7 @@ Ext.define("core.eduresources.room.controller.OtherController", {
         if (formObj.findField("orderIndex")) {
             orderIndex = formObj.findField("orderIndex").getValue() + 1;
         }
-
+        console.log(params);
         //把checkbox的值转换为数字 ；    暂时测试时设置，
         params.roomType=params.roomType+"";
 

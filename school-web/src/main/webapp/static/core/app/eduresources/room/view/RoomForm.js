@@ -54,23 +54,33 @@ Ext.define("core.eduresources.room.view.RoomForm", {
         name: "extField01",
         allowBlank: false,
         emptyText: '门牌号1',
-        blankText: "门牌号1不能为空"
+        blankText: "门牌号1不能为空",
+        vtype:'notEqual',
+        initialTextField:'extField02'
     }, {
         xtype: "textfield",
         fieldLabel: "门牌号2",
-        name: "extField02"
+        name: "extField02",
+        vtype:'notEqual',
+        initialTextField:'extField01',
     }, {
         xtype: "textfield",
         fieldLabel: "门牌号3",
-        name: "extField03"
+        name: "extField03",
+        vtype:'notEqual',
+        initialTextField:'extField02'
     }, {
         xtype: "textfield",
         fieldLabel: "门牌号4",
-        name: "extField04"
+        name: "extField04",
+        vtype:'notEqual',
+        initialTextField:'extField03'
     }, {
         xtype: "textfield",
         fieldLabel: "门牌号5",
-        name: "extField05"
+        name: "extField04",
+        vtype:'notEqual',
+        initialTextField:'extField04'
     }, {
         xtype: "textarea",
         fieldLabel: "房间描述",

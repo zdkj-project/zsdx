@@ -3,8 +3,6 @@ package com.zd.school.cashier.controller;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
-import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -15,16 +13,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.zd.core.constant.Constant;
-import com.zd.core.constant.StatuVeriable;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.ModelUtil;
-import com.zd.core.util.BeanUtils;
 import com.zd.core.util.StringUtils;
-import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.cashier.model.CashExpensedetail ;
-import com.zd.school.cashier.dao.CashExpensedetailDao ;
 import com.zd.school.cashier.service.CashExpensedetailService ;
+import com.zd.school.plartform.system.model.SysUser;
 
 /**
  * 

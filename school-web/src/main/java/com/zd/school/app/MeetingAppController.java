@@ -74,15 +74,15 @@ public class MeetingAppController {
 	        		//meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomId='" + roomTerm.getRoomId() + "' and Convert(varchar,beginTime,120) like'" + time + "%' order by beginTime asc");
 	        		//注：我们正式使用时需要将可能作为会议室的房间名称发给OA，所以要将房间查询方式换为id
 	        		meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomName='"
-							+ roomTerm.getRoomName() + "' and beginTime Between '" + sdf.format(date) + "' And '"
+							+ roomTerm.getRoomName() + "' and beginTime Between '" + s + " 06:00:00" + "' And '"
 							+ sdf.format(date2) + "' order by beginTime asc");
 				} else if (date.getTime() < date3.getTime()) {
 					meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomName='"
-							+ roomTerm.getRoomName() + "' and beginTime Between '" + sdf.format(date) + "' And '"
+							+ roomTerm.getRoomName() + "' and beginTime Between '" + s + " 12:00:00" + "' And '"
 							+ sdf.format(date3) + "' order by beginTime asc");
 				} else {
 					meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomName='"
-							+ roomTerm.getRoomName() + "' and beginTime Between '" + sdf.format(date) + "' And '"
+							+ roomTerm.getRoomName() + "' and beginTime Between '" + s + " 18:00:00" +  "' And '"
 							+ sdf.format(date4) + "' order by beginTime asc");
 				}
 	        	
