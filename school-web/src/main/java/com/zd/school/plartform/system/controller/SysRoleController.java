@@ -8,6 +8,7 @@ import com.zd.core.model.extjs.ExtDataFilter;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.ModelUtil;
+import com.zd.core.util.SortListUtil;
 import com.zd.core.util.StringUtils;
 import com.zd.school.plartform.system.model.SysRole;
 import com.zd.school.plartform.system.model.SysUser;
@@ -288,8 +289,18 @@ public class SysRoleController extends FrameWorkController<SysRole> implements C
         Integer start = super.start(request);
         Integer limit = super.limit(request);
         String roleId = request.getParameter("ids");
-        QueryResult<SysUser> qResult = thisService.getRoleUser(roleId, start, limit);
-        strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
+        String xm = request.getParameter("xm");
+        xm=xm==null?"":xm;
+        //QueryResult<SysUser> qResult = thisService.getRoleUser(roleId, start, limit);
+        
+		String hql = "from SysUser as u inner join fetch u.sysRoles as r where r.uuid='" + roleId
+				+ "' and r.isDelete=0 and u.isDelete=0 and u.xm like '%"+xm+"%'";		
+		List<SysUser> list = userSerive.doQuery(hql);
+
+		SortListUtil<SysUser> sortJob = new SortListUtil<SysUser>();
+		sortJob.Sort(list, "jobCode", "String");
+		
+        strData = jsonBuilder.buildObjListToJson((long) list.size(), list, true);// 处理数据
         writeJSON(response, strData);// 返回数据
     }
 

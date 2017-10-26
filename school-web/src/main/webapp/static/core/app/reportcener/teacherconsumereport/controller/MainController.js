@@ -94,7 +94,7 @@ Ext.define("core.reportcenter.teacherconsumereport.controller.MainController", {
                 return false;
             }
         },     
-        "basequeryform[xtype=dinnertotal.mainquerypanel] field":{
+        "basequeryform[xtype=teacherconsumereport.mainquerypanel] field":{
             specialkey: function (field, e) {
                 if (e.getKey() == e.ENTER) {
                     //得到组件                 
@@ -110,6 +110,32 @@ Ext.define("core.reportcenter.teacherconsumereport.controller.MainController", {
                         if(value)
                             obj[fieldName]=value;
                     });
+
+                    //处理分组类别
+                    var GROUP_TYPES='';
+                    var groupTypes=queryPanel.down("checkboxgroup").getValue().GROUP_TYPE;
+                    if(Array.isArray(groupTypes)){
+                        GROUP_TYPES=groupTypes.join(',');
+                    }else{
+                        GROUP_TYPES=groupTypes;
+                    }
+                    if(GROUP_TYPES!=undefined&&GROUP_TYPES!=""){
+                        if(GROUP_TYPES.indexOf("DAY(ConsumeDate)")!=-1){
+                            if(GROUP_TYPES.indexOf("MONTH(ConsumeDate)")==-1){
+                                GROUP_TYPES="YEAR(ConsumeDate),MONTH(ConsumeDate),"+GROUP_TYPES;
+                            }
+                            if(GROUP_TYPES.indexOf("YEAR(ConsumeDate)")==-1){
+                                GROUP_TYPES="YEAR(ConsumeDate),"+GROUP_TYPES;
+                            }
+                        }
+                        
+                        if(GROUP_TYPES.indexOf("MONTH(ConsumeDate)")!=-1){
+                            if(GROUP_TYPES.indexOf("YEAR(ConsumeDate)")==-1){
+                                GROUP_TYPES="YEAR(ConsumeDate),"+GROUP_TYPES;
+                            }
+                        }
+                    }
+                    obj.GROUP_TYPE=GROUP_TYPES;
 
                     var funCode = queryPanel.funCode;
                     var basePanel = queryPanel.up("basepanel[funCode=" + funCode + "]");                        
@@ -224,7 +250,7 @@ Ext.define("core.reportcenter.teacherconsumereport.controller.MainController", {
                     params+="&"+i+"="+extraParams[i];
                 }
                
-                var title = "确定要导出收银汇总信息吗？";
+                var title = "确定要导出教职工消费汇总信息吗？";
             
                 Ext.Msg.confirm('提示', title, function (btn, text) {
                     if (btn == "yes") {
@@ -456,10 +482,9 @@ Ext.define("core.reportcenter.teacherconsumereport.controller.MainController", {
 
                     }, 30);
 
-                } else if (tabItem.itemPKV != pkValue) {     //判断是否点击的是同一条数据，不同则替换数据
-
-                    var objDetForm = tabItem.down("baseform[funCode=" + detCode + "]");
-                    var formDeptObj = objDetForm.getForm();                
+                }  else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据
+                    self.Warning("您当前已经打开了一个编辑窗口了！");
+                    return;
                 }
 
                 tabPanel.setActiveTab(tabItem);

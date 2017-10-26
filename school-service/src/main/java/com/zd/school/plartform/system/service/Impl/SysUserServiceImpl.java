@@ -442,10 +442,15 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 								sqlUpdate+=",identifier=NULL";
 							else
 								sqlUpdate+=	",identifier='" + currentUser.getIdentifier()+"'";
-									
+								
+							if(currentUser.getEmployeeTel()==null)
+								sqlUpdate+=",employeeTel=NULL";
+							else
+								sqlUpdate+=	",employeeTel='" + currentUser.getEmployeeTel()+"'";
+							
 							sqlUpdate += ",EmployeeStatusID='24',CardTypeID="+cardTypeId+" "
-									+ " employeeTel='" + currentUser.getEmployeeTel() +"' where UserId='" + currentUser.getUserId() + "';";
-
+									+ " where UserId='" + currentUser.getUserId() + "';";
+							
 							// this.executeSql(sqlUpdate);
 
 							sqlSb.append(sqlUpdate);
@@ -467,7 +472,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 							cardTypeId=3;
 					}
 					
-					String sqlInsert = "insert into Tc_Employee(UserId,DepartmentID,EmployeeName,EmployeeStrID,SID,EmployeePWD,SexID,identifier,cardid,CardTypeID,EmployeeStatusID,PositionId,employeeTel) "
+					String sqlInsert = "insert into Tc_Employee(UserId,DepartmentID,EmployeeName,EmployeeStrID,SID,EmployeePWD,SexID,identifier,employeeTel,cardid,CardTypeID,EmployeeStatusID,PositionId) "
 							+ "values('" + currentUser.getUserId() + "','" + currentUser.getDepartmentId() + "','"
 							+ currentUser.getEmployeeName() + "'," + "'" + currentUser.getEmployeeStrId() + "','"
 							+ currentUser.getSid() + "','" + currentUser.getEmployeePwd() + "'";
@@ -482,8 +487,13 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 						sqlInsert+=",NULL";
 					else
 						sqlInsert+=	",'" + currentUser.getIdentifier()+"'";
-							
-					sqlInsert += ",0,"+cardTypeId+",24,19,'" +currentUser.getEmployeeTel()+ "');";
+					
+					if(currentUser.getEmployeeTel()==null)
+						sqlInsert+=",NULL";
+					else
+						sqlInsert+=	",'" + currentUser.getEmployeeTel()+"'";
+					
+					sqlInsert += ",0,"+cardTypeId+",24,19);";
 					
 					sqlSb.append(sqlInsert);
 					// this.executeSql(sqlInsert);

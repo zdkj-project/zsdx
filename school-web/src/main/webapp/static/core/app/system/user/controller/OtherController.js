@@ -457,6 +457,7 @@ Ext.define("core.system.user.controller.OtherController", {
                         success: function (response) {
                             data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                             if (data.success) {
+                                 loading.hide();
                                 self.Info("保存成功!");
                                 var grid = basetab.funData.grid; //此tab是否保存有grid参数
                                 if (!Ext.isEmpty(grid)) {
@@ -464,7 +465,7 @@ Ext.define("core.system.user.controller.OtherController", {
                                     store.loadPage(1); //刷新父窗体的grid                                     
                                 }
 
-                                loading.hide();
+                               
                                 tabPanel.remove(tabItem);
                             } else {
                                 self.Error(data.obj);

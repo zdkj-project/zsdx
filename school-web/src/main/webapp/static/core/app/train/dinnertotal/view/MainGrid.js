@@ -4,6 +4,7 @@ Ext.define("core.train.dinnertotal.view.MainGrid", {
     al:false,
     frame: false,
     columnLines: false,
+    remoteSort:false,
     dataUrl: comm.get("baseUrl") + "/TrainClassrealdinner/getDinnerTotalList", //数据获取地址
     model: "com.zd.school.jw.train.model.TrainClassrealdinner", //对应的数据模型
     /**

@@ -250,9 +250,9 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                                 success: function(response) {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if(data.success){
-                                        Ext.Msg.hide();
-                                        self.Info(data.obj);
-                                        component.destroy();                                
+                                        Ext.Msg.hide();                                    
+                                        component.destroy();   
+                                        self.Info(data.obj);                             
                                     }else{                                    
                                         if(data.obj==0){    //当为此值，则表明导出失败
                                             Ext.Msg.hide();
@@ -317,9 +317,9 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                                 success: function(response) {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if(data.success){
-                                        Ext.Msg.hide();
-                                        self.Info(data.obj);
-                                        component.destroy();                                
+                                        Ext.Msg.hide();                                    
+                                        component.destroy(); 
+                                        self.Info(data.obj);                               
                                     }else{                                    
                                         if(data.obj==0){    //当为此值，则表明导出失败
                                             Ext.Msg.hide();
@@ -384,9 +384,9 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                                 success: function(response) {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if(data.success){
-                                        Ext.Msg.hide();
-                                        self.Info(data.obj);
-                                        component.destroy();                                
+                                        Ext.Msg.hide();                                    
+                                        component.destroy();   
+                                        self.Info(data.obj);                             
                                     }else{                                    
                                         if(data.obj==0){    //当为此值，则表明导出失败
                                             Ext.Msg.hide();

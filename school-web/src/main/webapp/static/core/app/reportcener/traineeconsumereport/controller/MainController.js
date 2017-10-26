@@ -1,6 +1,6 @@
-Ext.define("core.reportcenter.cashreport.controller.MainController", {
+Ext.define("core.reportcenter.traineeconsumereport.controller.MainController", {
     extend: "Ext.app.ViewController",
-    alias: 'controller.cashreport.mainController',
+    alias: 'controller.traineeconsumereport.mainController',
     mixins: {
         suppleUtil: "core.util.SuppleUtil",
         messageUtil: "core.util.MessageUtil",
@@ -19,7 +19,7 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
     control: { 
 
         //手动加载数据，并给编写store的加载事件
-        "basepanel basegrid[xtype=cashreport.maingrid]":{
+        "basepanel basegrid[xtype=traineeconsumereport.maingrid]":{
             afterrender :function( me , eOpts ) {
                 var self=this;
                 var store=me.getStore();
@@ -122,7 +122,7 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
                 return false;
             }
         },     
-        "basequeryform[xtype=cashreport.mainquerypanel] field":{
+        "basequeryform[xtype=traineeconsumereport.mainquerypanel] field":{
             specialkey: function (field, e) {
                 if (e.getKey() == e.ENTER) {
                     //得到组件                 
@@ -139,33 +139,6 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
                             obj[fieldName]=value;
                     });
 
-                    //处理分组类别
-                    var GROUP_TYPES='';
-                    var groupTypes=queryPanel.down("checkboxgroup").getValue().GROUP_TYPE;
-                    if(Array.isArray(groupTypes)){
-                        GROUP_TYPES=groupTypes.join(',');
-                    }else{
-                        GROUP_TYPES=groupTypes;
-                    }
-                    if(GROUP_TYPES!=undefined&&GROUP_TYPES!=""){
-                        if(GROUP_TYPES.indexOf("DAY(CONSUME_DATE)")!=-1){
-                            if(GROUP_TYPES.indexOf("MONTH(CONSUME_DATE)")==-1){
-                                GROUP_TYPES="YEAR(CONSUME_DATE),MONTH(CONSUME_DATE),"+GROUP_TYPES;
-                            }
-                            if(GROUP_TYPES.indexOf("YEAR(CONSUME_DATE)")==-1){
-                                GROUP_TYPES="YEAR(CONSUME_DATE),"+GROUP_TYPES;
-                            }
-                        }
-                        
-                        if(GROUP_TYPES.indexOf("MONTH(CONSUME_DATE)")!=-1){
-                            if(GROUP_TYPES.indexOf("YEAR(CONSUME_DATE)")==-1){
-                                GROUP_TYPES="YEAR(CONSUME_DATE),"+GROUP_TYPES;
-                            }
-                        }
-                    }
-                    obj.GROUP_TYPE=GROUP_TYPES;
-                    
-
                     var funCode = queryPanel.funCode;
                     var basePanel = queryPanel.up("basepanel[funCode=" + funCode + "]");                        
                     var baseGrid = basePanel.down("basegrid[funCode=" + funCode + "]");            
@@ -180,7 +153,7 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
                 return false;
             }
         },
-        "basequeryform[xtype=cashreport.mainquerypanel] button[ref=gridSearchFormOk]":{
+        "basequeryform[xtype=traineeconsumereport.mainquerypanel] button[ref=gridSearchFormOk]":{
             beforeclick:function(btn){        
                 //self.Info("暂时无法搜索！");                    
                 var queryPanel = btn.up("basequeryform");
@@ -194,32 +167,6 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
                     if(value)
                         obj[fieldName]=value;
                 });
-
-                //处理分组类别
-                var GROUP_TYPES='';
-                var groupTypes=queryPanel.down("checkboxgroup").getValue().GROUP_TYPE;
-                if(Array.isArray(groupTypes)){
-                    GROUP_TYPES=groupTypes.join(',');
-                }else{
-                    GROUP_TYPES=groupTypes;
-                }
-                if(GROUP_TYPES!=undefined&&GROUP_TYPES!=""){
-                    if(GROUP_TYPES.indexOf("DAY(CONSUME_DATE)")!=-1){
-                        if(GROUP_TYPES.indexOf("MONTH(CONSUME_DATE)")==-1){
-                            GROUP_TYPES="YEAR(CONSUME_DATE),MONTH(CONSUME_DATE),"+GROUP_TYPES;
-                        }
-                        if(GROUP_TYPES.indexOf("YEAR(CONSUME_DATE)")==-1){
-                            GROUP_TYPES="YEAR(CONSUME_DATE),"+GROUP_TYPES;
-                        }
-                    }
-                    
-                    if(GROUP_TYPES.indexOf("MONTH(CONSUME_DATE)")!=-1){
-                        if(GROUP_TYPES.indexOf("YEAR(CONSUME_DATE)")==-1){
-                            GROUP_TYPES="YEAR(CONSUME_DATE),"+GROUP_TYPES;
-                        }
-                    }
-                }
-                obj.GROUP_TYPE=GROUP_TYPES;
 
                 var funCode = queryPanel.funCode;
                 var basePanel = queryPanel.up("basepanel[funCode=" + funCode + "]");                        
@@ -235,14 +182,14 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
                 return false;
             }
         },
-        "basequeryform[xtype=cashreport.mainquerypanel] button[ref=gridSearchFormReset]":{
+        "basequeryform[xtype=traineeconsumereport.mainquerypanel] button[ref=gridSearchFormReset]":{
             beforeclick:function(btn){      
                 var self=this;
                           
                 var queryPanel=btn.up("basequeryform");
                 self.resetQueryPanel(queryPanel);
 
-                queryPanel.down("checkboxgroup").reset();
+              
 
                 //触发点击提交事件
                 var submitBtn=queryPanel.down("button[ref=gridSearchFormOk]");            
@@ -279,7 +226,7 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
                     params+="&"+i+"="+extraParams[i];
                 }
                
-                var title = "确定要导出收银汇总信息吗？";
+                var title = "确定要导出班级就餐汇总信息吗？";
             
                 Ext.Msg.confirm('提示', title, function (btn, text) {
                     if (btn == "yes") {
@@ -290,27 +237,27 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
                             width: 0,
                             height:0,
                             hidden:true,
-                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainReport/exportCashTotalExcel' + params + '"></iframe>',
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainReport/exportTraineeConsumeTotalExcel' + params + '"></iframe>',
                             renderTo: Ext.getBody()
                         });
                         
                        
                         var time=function(){
                             self.syncAjax({
-                                url: comm.get('baseUrl') + '/TrainReport/checkExportCashTotalEnd',
+                                url: comm.get('baseUrl') + '/TrainClassrealdinner/checkExportDinnerDetailEnd',
                                 timeout: 1000*60*30,        //半个小时         
                                 //回调代码必须写在里面
                                 success: function(response) {
                                     data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
                                     if(data.success){
-                                        Ext.Msg.hide();
-                                        self.Info(data.obj);
-                                        component.destroy();                                
+                                        Ext.Msg.hide();                                    
+                                        component.destroy(); 
+                                        self.Info(data.obj);                               
                                     }else{                                    
                                         if(data.obj==0){    //当为此值，则表明导出失败
-                                            Ext.Msg.hide();
-                                            self.Error("导出失败，请重试或联系管理员！");
-                                            component.destroy();                                        
+                                            Ext.Msg.hide();                                        
+                                            component.destroy();  
+                                            self.Error("导出失败，请重试或联系管理员！");                                      
                                         }else{
                                             setTimeout(function(){time()},1000);
                                         }
@@ -431,7 +378,7 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
             }
         },
 
-         "basegrid[xtype=cashreport.maingrid]  actioncolumn": {
+         "basegrid[xtype=traineeconsumereport.maingrid]  actioncolumn": {
             detailClick_Tab: function (data) {
                 var baseGrid = data.view;
                 var record = data.record;
@@ -448,7 +395,7 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
                 var funData = basePanel.funData;
 
                 //获取主键值              
-                var pkValue = record.get("EXPENSESERIAL_ID");
+                var pkValue = record.get("CLASS_ID");
 
                 //设置tab页的itemId
                 var tabItemId = funCode + "_gridDetail"+pkValue;     //命名规则：funCode+'_ref名称',确保不重复
@@ -475,7 +422,11 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
                     });
 
 
-                    var tabTitle = record.get("CONSUME_SERIAL")+"-收银明细";
+                    var tabTitle = record.get("CLASS_NAME")+"-就餐明细";
+                    var tabGridItems="traineeconsumereport.classdetailgrid";
+                    if(record.get("DINNER_TYPE")==3){
+                         tabGridItems="traineeconsumereport.traineedetailgrid";
+                    }
 
                     tabItem = Ext.create({
                         xtype: 'container',
@@ -500,22 +451,58 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
                             insertObj: insertObj,                //保存一些需要默认值，提供给提交事件中使用
                             funData: popFunData,                //保存funData数据，提供给提交事件中使用
                             items: [{
-                                xtype: detLayout                            
+                                xtype: detLayout,
+                                items: [{
+                                    xtype: tabGridItems
+                                }],                           
                             }]
                         });
                         tabItem.add(item);
 
-                        var cashDetailGrid = tabItem.down("basegrid[xtype=cashreport.cashdetailgrid]");
-                        cashDetailGrid.getStore().getProxy().extraParams.filter = '[{"type":"string","comparison":"=","value":"' + pkValue + '","field":"expenseserialId"}]';
-                        cashDetailGrid.getStore().load();
+                        if(record.get("DINNER_TYPE")!=3){
+                            var classDetailGrid = tabItem.down("basegrid[xtype=traineeconsumereport.classdetailgrid]");
+                            classDetailGrid.getStore().getProxy().extraParams.filter = '[{"type":"string","comparison":"=","value":"' + pkValue + '","field":"classId"}]';
+                            classDetailGrid.getStore().load();
+                        }else{
+                            var traineeDetailGrid = tabItem.down("basegrid[xtype=traineeconsumereport.traineedetailgrid]");
+                            traineeDetailGrid.getStore().getProxy().extraParams.CLASS_ID = pkValue ;
+                            //traineeDetailGrid.getStore().load();
+                            traineeDetailGrid.getStore().loadPage(1,{
+                                scope: this,
+                                callback: function(records, operation, success) {
+                                    
+                                    self.syncAjax({
+                                        url:comm.get('baseUrl') + "/TrainReport/getTeacherConsumeDetailDatas",
+                                        timeout: 1000*60*30,        //半个小时         
+                                        //回调代码必须写在里面
+                                        success: function(response) {
+                                            var result = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                                            if(result.success){
+                                                var data=result.obj;
+                                                var html="交易笔数："+data.ConsumeNumber+" 笔&nbsp;&nbsp;&nbsp;消费总额："+data.ConsumeValue+" 元";
+                                            
+                                                traineeDetailGrid.down('panel[ref=traineeDetailInfo]').setHtml(html);                              
+                                            }else{                                    
+                                                traineeDetailGrid.down('panel[ref=traineeDetailInfo]').setHtml("请求失败！");   
+                                            }               
+
+                                        },
+                                        failure: function(response) {                                
+                                            self.Error("请求失败！");
+                                        }
+                                    });
+                                
+                                }
+                            });
+                        }
 
                     }, 30);
 
                 }  else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据
                     self.Warning("您当前已经打开了一个编辑窗口了！");
-                    return;
+                    return false;
                 }
-
                 tabPanel.setActiveTab(tabItem);
 
                 return false;
@@ -530,21 +517,23 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
             callback: function(records, operation, success) {
                 
                 self.syncAjax({
-                    url:comm.get('baseUrl') + "/TrainReport/getCashTotalDatas",
+                    url:comm.get('baseUrl') + "/TrainReport/getTraineeConsumeTotalDatas",
                     timeout: 1000*60*30,        //半个小时         
                     //回调代码必须写在里面
                     success: function(response) {
                         var result = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
                         if(result.success){
                             var data=result.obj;
-                            var html="交易笔数："+data.CASH_NUMBER+" 笔&nbsp;&nbsp;&nbsp;消费总额："+data.CONSUME_TOTAL+" 元&nbsp;&nbsp;&nbsp;"+
-                            "实付金额："+data.REAL_PAY+" 元&nbsp;&nbsp;&nbsp;"+
-                            "找零金额："+data.CHANGE_PAY+" 元&nbsp;&nbsp;&nbsp;";
+                            var html="计划总额："+data.COUNT_MONEY_PLAN+" 元&nbsp;&nbsp;&nbsp;实际总额："+data.COUNT_MONEY_REAL+" 元&nbsp;&nbsp;&nbsp;"+
+                            "计划总围/人数："+(data.BREAKFAST_COUNT*1+data.LUNCH_COUNT*1+data.DINNER_COUNT*1)+"&nbsp;&nbsp;&nbsp;"+
+                            "实际总围/人数："+(data.BREAKFAST_REAL*1+data.LUNCH_REAL*1+data.DINNER_REAL*1);
                         
                             baseGrid.down('panel[ref=dinnerTotalInfo]').setHtml(html);                              
                         }else{                                    
                             baseGrid.down('panel[ref=dinnerTotalInfo]').setHtml("请求失败！");   
                         }               
+
                     },
                     failure: function(response) {                                
                         self.Error("请求失败！");

@@ -80,6 +80,30 @@ Ext.define("core.system.role.controller.OtherController", {
                 self.doFastSearch(btn);
                 return false;
             }
+        },
+
+         /**
+         * 角色用户列表 快速搜索文本框回车事件
+         */
+        "basepanel basegrid[xtype=role.roleusergrid] field[funCode=girdFastSearchText]": {
+            specialkey: function (field, e) {
+                var self = this;
+                if (e.getKey() == e.ENTER) {
+                    self.doRoleUserFastSearch(field);
+                    //console.log(field);
+                    return false;
+                }
+            }
+        },
+        /**
+         * 角色用户列表 快速搜索按钮事件
+         */
+        "basepanel basegrid[xtype=role.roleusergrid] button[ref=gridFastSearchBtn]": {
+            beforeclick: function (btn) {
+                var self = this;
+                self.doRoleUserFastSearch(btn);
+                return false;
+            }
         }
     },
     /**
@@ -116,6 +140,33 @@ Ext.define("core.system.role.controller.OtherController", {
             roleId: roleId,
             filter: filter
         };
+        selectStore.loadPage(1);
+    },
+
+    /**
+     * 执行快速搜索
+     * @param component
+     * @returns {boolean}
+     */
+    doRoleUserFastSearch: function (component) {
+        //得到组件
+        var baseGrid = component.up("basegrid");
+        if (!baseGrid)
+            return false;
+
+        var toolBar = component.up("toolbar");
+        if (!toolBar)
+            return false;
+
+        var xm="";
+        var girdSearchTexts = toolBar.query("field[funCode=girdFastSearchText]");
+        if (girdSearchTexts[0].getValue() != "")
+            xm=girdSearchTexts[0].getValue() ;
+        
+
+        var selectStore = baseGrid.getStore();
+        var selectProxy = selectStore.getProxy();
+        selectProxy.extraParams.xm = xm;
         selectStore.loadPage(1);
     }
 });

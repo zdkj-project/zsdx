@@ -19,7 +19,45 @@ Ext.define("core.reportcenter.cashreport.controller.DetailController", {
         //console.log("初始化 detail controler");
     },
     /** 该视图内的组件事件注册 */
-    control: {    
+    control: {   
+        //快速搜索文本框回车事件
+        "basepanel basegrid[xtype=cashreport.cashdetailgrid] field[funCode=girdFastSearchText]": {
+            specialkey: function (field, e) {
+                if (e.getKey() == e.ENTER) {
+                    //得到组件                 
+                    var baseGrid = field.up("basegrid");
+                    if (!baseGrid)
+                        return false;
+
+                    var toolBar = field.up("toolbar");
+                    if (!toolBar)
+                        return false;
+                    
+                    var newFilter=[];
+                    var girdSearchTexts = toolBar.query("field[funCode=girdFastSearchText]");
+                    for (var i in girdSearchTexts) {
+                        var name = girdSearchTexts[i].getName();
+                        var value = girdSearchTexts[i].getValue();
+                        newFilter.push({"type":"string","comparison":"","value":value,"field":name});
+                    }
+                  
+                    var store = baseGrid.getStore();
+                    var proxy = store.getProxy();
+
+                    var filter=JSON.parse(proxy.extraParams.filter);               
+                    for(var i=0;i<filter.length;i++){
+                        if(filter[i].field=="expenseserialId"){
+                            newFilter.push({"type":"string","comparison":"=","value":filter[i].value,"field":"expenseserialId"});
+                            break;
+                        }
+                    }
+
+                    proxy.extraParams.filter =JSON.stringify(newFilter);
+                    store.loadPage(1);
+                }
+                return false;
+            }
+        },  
         //快速搜索按按钮
         "basepanel basegrid[xtype=cashreport.cashdetailgrid] button[ref=gridFastSearchBtn]": {
             beforeclick: function (btn) {

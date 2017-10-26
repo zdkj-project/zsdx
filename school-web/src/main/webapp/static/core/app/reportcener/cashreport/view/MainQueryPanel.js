@@ -77,6 +77,8 @@ Ext.define("core.reportcenter.cashreport.view.MainQueryPanel", {
 	                {"name":"快餐", "value":"快餐"},  
 	                {"name":"普通快餐", "value":"普通快餐"},  
 	                {"name":"招待快餐", "value":"招待快餐"},  
+	                {"name":"无卡快餐", "value":"无卡快餐"}, 
+	                {"name":"加班快餐", "value":"加班快餐"}
 	            ]
 	        }),
 	        queryMode: 'local',

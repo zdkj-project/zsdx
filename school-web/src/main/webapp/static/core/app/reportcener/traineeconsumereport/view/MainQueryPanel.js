@@ -1,6 +1,6 @@
-Ext.define("core.train.dinnertotal.view.MainQueryPanel", {
+Ext.define("core.reportcenter.traineeconsumereport.view.MainQueryPanel", {
 	extend: "core.base.view.BaseQueryForm",
-	alias: "widget.dinnertotal.mainquerypanel",
+	alias: "widget.traineeconsumereport.mainquerypanel",
 	layout: "form",
 	frame: false,
 	height: 100,
@@ -23,7 +23,7 @@ Ext.define("core.train.dinnertotal.view.MainQueryPanel", {
 			dataType:'date',		//指定查询设置filter时的进行判断的类型，date或者datetime
 			operationType:">=",	
 			name: "beginDate",
-			fieldLabel: "登记开始日期",
+			fieldLabel: "班级开始日期",
 			format:"Y年m月d日"
 		},{
 			columnWidth:0.2,
@@ -33,20 +33,40 @@ Ext.define("core.train.dinnertotal.view.MainQueryPanel", {
 			dataType:'date',
 			operationType:"<=",		//运算符
 			name: "endDate",
-			fieldLabel: "登记结束日期",
+			fieldLabel: "班级结束日期",	
 			format:"Y年m月d日"
 		}, {
 			columnWidth: 0.2,
 			xtype: "basequeryfield",
-			name: "classNumb",
-			fieldLabel: "班级编号",
+			name: "CLASS_NAME",
+			fieldLabel: "班级名称",
+			queryType: "textfield",
+		}, {
+			columnWidth: 0.2,
+			xtype: "basequeryfield",
+			name: "CLASS_NUMB",
+			fieldLabel: "班级编号称",
 			queryType: "textfield",
 		},{
 			columnWidth: 0.2,
 			xtype: "basequeryfield",
-			name: "className",
-			fieldLabel: "班级名称",
-			queryType: "textfield",		
+			name: "DINNER_TYPE",
+			fieldLabel: "就餐类型",
+			queryType: "combobox",		
+			store: Ext.create('Ext.data.Store', {
+            	fields: ['name', 'value'],
+	            data : [
+	                {"name":"全部", "value":""},
+	                {"name":"围餐", "value":"1"},	              
+	                {"name":"自助餐", "value":"2"},           
+	                {"name":"快餐", "value":"3"},  
+	            ]
+	        }),
+	        queryMode: 'local',
+	        displayField: 'name',
+	        valueField: 'value',
+	        value:"",
+	        editable:false	
 		}]
 	}],
 	buttonAlign: "center",

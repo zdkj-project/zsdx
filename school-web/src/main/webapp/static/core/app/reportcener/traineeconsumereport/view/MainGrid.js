@@ -1,16 +1,16 @@
-Ext.define("core.reportcenter.cashreport.view.MainGrid", {
+Ext.define("core.reportcenter.traineeconsumereport.view.MainGrid", {
     extend: "core.base.view.BaseGrid",
-    alias: "widget.cashreport.maingrid",
+    alias: "widget.traineeconsumereport.maingrid",
     al:false,
     frame: false,
     columnLines: false,
-    dataUrl: comm.get("baseUrl") + "/TrainReport/getCashTotalList", //数据获取地址
-    model: "com.zd.school.cashier.model.CashExpenseserial", //对应的数据模型
+    dataUrl: comm.get("baseUrl") + "/TrainReport/getTraineeConsumeTotalList", //数据获取地址
+    //model: "com.zd.school.cashier.model.CashExpenseserial", //对应的数据模型
     /**
      * 高级查询面板
      */
     panelButtomBar: {
-        xtype: 'cashreport.mainquerypanel',
+        xtype: 'traineeconsumereport.mainquerypanel',
     },
     selModel: null,
     sortableColumns:false,
@@ -31,9 +31,9 @@ Ext.define("core.reportcenter.cashreport.view.MainGrid", {
                 html: '快速搜索：'
             }, {
                 xtype: 'textfield',
-                name: 'CONSUME_SERIAL',
+                name: 'CLASS_NAME',
                 funCode: 'girdFastSearchText',
-                emptyText: '请输入流水号'
+                emptyText: '请输入班级名称'
             }, {
                 xtype: 'button',
                 funCode: 'girdSearchBtn', //指定此类按钮为girdSearchBtn类型
@@ -69,100 +69,89 @@ Ext.define("core.reportcenter.cashreport.view.MainGrid", {
             text: '序号',
             align: 'center'
         },{
-            text: "收银ID",
-            dataIndex: "EXPENSESERIAL_ID",
+            text: "班级ID",
+            dataIndex: "CLASS_ID",
             hidden:true
         },{
-            width:140,
-            text: "收银日期",
-            dataIndex: "CONSUME_DATE",
+            flex:1,
+            minWidth:120,
+            text: "班级名称",
+            dataIndex: "CLASS_NAME"
+        }, {
+            width:100,
+            text: "班级编号",
+            dataIndex: "CLASS_NUMB"
+        },{
+            width:100,
+            text: "班级开始日期",
+            dataIndex: "BEGIN_DATE",
             renderer: function(value) {  
                 //if(typeof(value)!="undefined"&&v.trim()!=""){
                 var reg = new RegExp("^[0-9]*$");    
                 if(reg.test(value)){
-                    return Ext.Date.format(new Date(value), 'Y-m-d H:i:s');
+                    return Ext.Date.format(new Date(value), 'Y-m-d');
                 }  
                 return value;                           
             }
         },{
-            
-            width:170,
-            text: "流水号",
-            dataIndex: "CONSUME_SERIAL"
-        }, {
             width:100,
-            text: "消费人",
-            dataIndex: "CONSUME_USER"
-        },{
-            flex:1,
-            minWidth:80,
-            text: "接待部门",
-            dataIndex: "RECEPTION_DEPT"
-        },{
-            flex:1,
-            minWidth:80,
-            text: "来访单位",
-            dataIndex: "VISITOR_UNIT"
-        },/*{
-            width:100,
-            text: "操作者",
-            dataIndex: "OPERTIONER"
-        },*/{
-            width:100,
-            text: "消费类型",
-            dataIndex: "CONSUME_TYPE"
+            text: "班级结束日期",
+            dataIndex: "END_DATE",
+            renderer: function(value) {  
+                //if(typeof(value)!="undefined"&&v.trim()!=""){
+                var reg = new RegExp("^[0-9]*$");    
+                if(reg.test(value)){
+                    return Ext.Date.format(new Date(value), 'Y-m-d');
+                }  
+                return value;                           
+            }
         },{
             width:80,
-            text: "交易状态",
-            dataIndex: "CONSUME_STATE"
-        },{
-            width:80,
-            text: "结算方式",
-            dataIndex: "CLEARING_FORM",
+            text: "就餐类型",
+            dataIndex: "DINNER_TYPE",
             renderer: function(value, metaData) {                
                 if(value==1){
-                    return "现金";
+                    return "围餐";
                 }else if(value==2){
-                    return "刷卡";
+                    return "自助餐";
                 }else if(value==3){
-                    return "签单";
+                    return "快餐";
                 }else{
                     return value;
                 }
             }
         },{
-            width:80,
-            text: "快餐类型",
-            dataIndex: "MEAL_TYPE",
-            renderer: function(value, metaData) {                
-                if(value==1){
-                    return "早餐";
-                }else if(value==2){
-                    return "午餐";
-                }else if(value==3){
-                    return "晚餐";
-                }else if(value==4){
-                    return "夜宵";
-                }else{
-                    return value;
-                }
-            }
+            width:120,
+            text: "计划早餐围/人数",
+            dataIndex: "BREAKFAST_COUNT"
         }, {
-            width:80,
-            text: "交易笔数",
-            dataIndex: "CASH_NUMBER"
+            width:120,
+            text: "计划午餐围/人数",
+            dataIndex: "LUNCH_COUNT"
         }, {
-            width:100,
-            text: "消费总额",
-            dataIndex: "CONSUME_TOTAL"
+            width:120,
+            text: "计划晚餐围/人数",
+            dataIndex: "DINNER_COUNT"
         }, {
-            width:100,
-            text: "实付金额",
-            dataIndex: "REAL_PAY"
+            width:120,
+            text: "实际早餐围/人数",
+            dataIndex: "BREAKFAST_REAL"
+        }, {
+            width:120,
+            text: "实际午餐围/人数",
+            dataIndex: "LUNCH_REAL"
+        }, {
+            width:120,
+            text: "实际晚餐围/人数",
+            dataIndex: "DINNER_REAL"
         }, {
             width:100,
-            text: "找零金额",
-            dataIndex: "CHANGE_PAY"
+            text: "计划总额",
+            dataIndex: "COUNT_MONEY_PLAN"
+        }, {
+            width:100,
+            text: "实际总额",
+            dataIndex: "COUNT_MONEY_REAL"
         },{
             xtype: 'actiontextcolumn',
             text: "操作",
@@ -170,16 +159,10 @@ Ext.define("core.reportcenter.cashreport.view.MainGrid", {
             width: 80,
             fixed: true,
             items: [ {
-                text:'收银明细',  
+                text:'就餐详情',  
                 style:'font-size:12px;',  
-                tooltip: '收银明细',
+                tooltip: '就餐详情',
                 ref: 'gridDetail',
-                getClass: function (v, metadata, record) {
-                    if (record.get("EXPENSESERIAL_ID")==null){
-                        return 'x-hidden-display';
-                    } else
-                        return null;
-                },
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
                     this.fireEvent('detailClick_Tab', {

@@ -28,7 +28,7 @@ Ext.define("core.system.role.view.RoleUserGrid", {
             html:'快速搜索：'
         },{
             xtype:'textfield',
-            name:'courseName',
+            name:'xm',
             funCode:'girdFastSearchText',
             isNotForm:true,   //由于文本框重写了baseform下面的funcode值，所以使用这个属性，防止重写这里设定的fundcode值。
             emptyText: '请输入姓名'
