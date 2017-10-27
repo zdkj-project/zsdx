@@ -841,4 +841,23 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 		return row;
 	}
+
+	@Override
+	public List<SysRole> getSysRoleList(SysUser sysUser) {
+		// TODO Auto-generated method stub
+		
+		String sql = "select r.ROLE_ID as uuid,r.ROLE_CODE as	roleCode,r.ROLE_NAME as roleName from"
+				+ " SYS_T_ROLE r inner join"
+				+ " SYS_T_ROLEUSER ru on r.ROLE_ID=ru.ROLE_ID inner join "
+				+ " SYS_T_USER u on ru.USER_ID=u.USER_ID  "
+				+ " where"
+				+ " u.USER_ID='"+sysUser.getUuid()+"'  "
+				+ " and u.ISDELETE=0 "
+				+ " and r.ISDELETE=0 ";
+		
+		 
+		List<SysRole> list = roleService.doQuerySqlObject(sql, SysRole.class);
+		 
+		return list;
+	}
 }

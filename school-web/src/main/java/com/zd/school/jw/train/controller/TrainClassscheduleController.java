@@ -45,8 +45,8 @@ import java.util.List;
 @RequestMapping("/TrainClassschedule")
 public class TrainClassscheduleController extends FrameWorkController<TrainClassschedule> implements Constant {
 
-    @Resource
-    TrainClassscheduleService thisService; // service层接口
+	@Resource
+	TrainClassscheduleService thisService; // service层接口
 
 	/**
 	 * @param entity
@@ -85,45 +85,47 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 	public void doAdd(TrainClassschedule entity, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, IllegalAccessException, InvocationTargetException {
 
-        // 此处为放在入库前的一些检查的代码，如唯一校验等
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		// 此处为放在入库前的一些检查的代码，如唯一校验等
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-        // 获取当前操作用户
-        SysUser currentUser = getCurrentSysUser();
-        try {
-        	
-            String teachType = request.getParameter("teachType");
-            String courseDate = request.getParameter("courseDate");
-            String courseBeginTime = request.getParameter("courseBeginTime");
-            String courseEndTime = request.getParameter("courseEndTime");
-            
-            entity.setBeginTime(sdf.parse(courseDate + " " + courseBeginTime));
-            entity.setEndTime(sdf.parse(courseDate + " " + courseEndTime));
-            	
-            //判断房间是否被其他课程使用
-//          if(StringUtils.isNotEmpty(entity.getRoomId())){
-//	            String roomIdArray[]=entity.getRoomId().split(",");
-//	            String id="";
-//	            String roomId=null;	        
-//            	for(int j=0;j<roomIdArray.length;j++){
-//            		roomId=roomIdArray[j];
-//            		List lists = thisService.doQuerySql("EXECUTE TRAIN_P_ISUSESITE '"+id+"','"+roomId+"'");
-//            		if("0".equals(lists.get(0).toString())){
-//            			writeJSON(response, jsonBuilder.returnSuccessJson("\"该教室在此时间段内，已被其他课程使用！\""));
-//            			return;
-//            		}
-//            	}
-//            }
-            
-            entity = thisService.doAddEntity(entity, teachType, currentUser);// 执行增加方法
-            if (ModelUtil.isNotNull(entity))
-                writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
-            else
-                writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
-        } catch (Exception e) {
-            writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
-        }
-    }
+		// 获取当前操作用户
+		SysUser currentUser = getCurrentSysUser();
+		try {
+
+			String teachType = request.getParameter("teachType");
+			String courseDate = request.getParameter("courseDate");
+			String courseBeginTime = request.getParameter("courseBeginTime");
+			String courseEndTime = request.getParameter("courseEndTime");
+
+			entity.setBeginTime(sdf.parse(courseDate + " " + courseBeginTime));
+			entity.setEndTime(sdf.parse(courseDate + " " + courseEndTime));
+
+			// 判断房间是否被其他课程使用
+			// if(StringUtils.isNotEmpty(entity.getRoomId())){
+			// String roomIdArray[]=entity.getRoomId().split(",");
+			// String id="";
+			// String roomId=null;
+			// for(int j=0;j<roomIdArray.length;j++){
+			// roomId=roomIdArray[j];
+			// List lists = thisService.doQuerySql("EXECUTE TRAIN_P_ISUSESITE
+			// '"+id+"','"+roomId+"'");
+			// if("0".equals(lists.get(0).toString())){
+			// writeJSON(response,
+			// jsonBuilder.returnSuccessJson("\"该教室在此时间段内，已被其他课程使用！\""));
+			// return;
+			// }
+			// }
+			// }
+
+			entity = thisService.doAddEntity(entity, teachType, currentUser);// 执行增加方法
+			if (ModelUtil.isNotNull(entity))
+				writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
+			else
+				writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
+		} catch (Exception e) {
+			writeJSON(response, jsonBuilder.returnFailureJson("'数据增加失败,详情见错误日志'"));
+		}
+	}
 
 	/**
 	 * @param request
@@ -144,7 +146,7 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 		} else {
 			SysUser currentUser = getCurrentSysUser();
 			try {
-				boolean flag = thisService.doLogicDeleteByIds(classId,delIds, currentUser);
+				boolean flag = thisService.doLogicDeleteByIds(classId, delIds, currentUser);
 				if (flag) {
 					writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
 				} else {
@@ -156,254 +158,266 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 		}
 	}
 
-    /**
-     * @param entity
-     * @param request
-     * @param response
-     * @throws IOException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     */
-    @RequestMapping("/doupdate")
-    public void doUpdates(TrainClassschedule entity, HttpServletRequest request, HttpServletResponse response)
-            throws IOException, IllegalAccessException, InvocationTargetException {
+	/**
+	 * @param entity
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	@RequestMapping("/doupdate")
+	public void doUpdates(TrainClassschedule entity, HttpServletRequest request, HttpServletResponse response)
+			throws IOException, IllegalAccessException, InvocationTargetException {
 
-        // 入库前检查代码
+		// 入库前检查代码
+		// 此处为放在入库前的一些检查的代码，如唯一校验等
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-        // 获取当前的操作用户
-        SysUser currentUser = getCurrentSysUser();
-        try {
-            String courseId = entity.getCourseId();
+		// 获取当前操作用户
+		SysUser currentUser = getCurrentSysUser();
+		try {
 
-            String hql1 = " o.isDelete='0' and o.classId='" + entity.getClassId() + "'";
-            if (thisService.IsFieldExist("courseId", courseId, entity.getUuid(), hql1)) {
-                writeJSON(response, jsonBuilder.returnFailureJson("\"班级课程不能重复！\""));
-                return;
-            }
+			String courseId = entity.getCourseId();
 
-            entity = thisService.doUpdateEntity(entity, currentUser);// 执行修改方法
-            if (ModelUtil.isNotNull(entity))
-                writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
-            else
-                writeJSON(response, jsonBuilder.returnFailureJson("'数据修改失败,详情见错误日志'"));
-        } catch (Exception e) {
-            writeJSON(response, jsonBuilder.returnFailureJson("'数据修改失败,详情见错误日志'"));
-        }
-    }
+			String hql1 = " o.isDelete!=1 and o.classId='" + entity.getClassId() + "'";
+			if (thisService.IsFieldExist("courseId", courseId, entity.getUuid(), hql1)) {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"班级课程不能重复！\""));
+				return;
+			}
 
-    /**
-     * 描述：通过传统方式form表单提交方式导入excel文件
-     *
-     * @param request
-     * @throws Exception
-     */
-    @RequestMapping(value = "/importData", method = {RequestMethod.GET, RequestMethod.POST})
-    public void uploadExcel(@RequestParam("file") MultipartFile file, HttpServletRequest request,
-                            HttpServletResponse response) throws Exception {
-        try {
-            SysUser currentUser = getCurrentSysUser();
-            String classId = request.getParameter("classId");
+			String teachType = request.getParameter("teachType");
+			String courseDate = request.getParameter("courseDate");
+			String courseBeginTime = request.getParameter("courseBeginTime");
+			String courseEndTime = request.getParameter("courseEndTime");
 
-            InputStream in = null;
-            List<List<Object>> listObject = null;
-            List<ImportNotInfo> listReturn;
+			entity.setBeginTime(sdf.parse(courseDate + " " + courseBeginTime));
+			entity.setEndTime(sdf.parse(courseDate + " " + courseEndTime));
 
-            if (!file.isEmpty()) {
-                in = file.getInputStream();
-                listObject = new ImportExcelUtil().getBankListByExcel(in, file.getOriginalFilename());
-                in.close();
+			entity = thisService.doUpdateEntity(entity, teachType,currentUser);// 执行修改方法
+			if (ModelUtil.isNotNull(entity))
+				writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
+			else
+				writeJSON(response, jsonBuilder.returnFailureJson("'数据修改失败,详情见错误日志'"));
+		} catch (Exception e) {
+			writeJSON(response, jsonBuilder.returnFailureJson("'数据修改失败,详情见错误日志'"));
+		}
+	}
 
-                listReturn = thisService.doImportData(listObject, classId, currentUser);
+	/**
+	 * 描述：通过传统方式form表单提交方式导入excel文件
+	 *
+	 * @param request
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/importData", method = { RequestMethod.GET, RequestMethod.POST })
+	public void uploadExcel(@RequestParam("file") MultipartFile file, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		try {
+			SysUser currentUser = getCurrentSysUser();
+			String classId = request.getParameter("classId");
 
-                if (listReturn.size() == 0)
-                    writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导入成功！\""));
-                else {
-                    String strData = jsonBuilder.buildList(listReturn, "");
-                    request.getSession().setAttribute("TrainClassScheduleImportError", strData);
-                    writeJSON(response, jsonBuilder.returnSuccessJson("-1")); // 返回前端-1，表示存在错误数据
-                }
+			InputStream in = null;
+			List<List<Object>> listObject = null;
+			List<ImportNotInfo> listReturn;
 
-            } else {
-                writeJSON(response, jsonBuilder.returnFailureJson("\"文件不存在！\""));
-            }
+			if (!file.isEmpty()) {
+				in = file.getInputStream();
+				listObject = new ImportExcelUtil().getBankListByExcel(in, file.getOriginalFilename());
+				in.close();
 
-        } catch (Exception e) {
-            writeJSON(response, jsonBuilder.returnFailureJson("\"文件导入失败,请联系管理员！\""));
-        }
-    }
+				listReturn = thisService.doImportData(listObject, classId, currentUser);
 
-    @RequestMapping(value = {"/downNotImportInfo"})
-    public void downNotImportInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Object obj = request.getSession().getAttribute("TrainClassScheduleImportError");
-        if (obj != null) {
+				if (listReturn.size() == 0)
+					writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导入成功！\""));
+				else {
+					String strData = jsonBuilder.buildList(listReturn, "");
+					request.getSession().setAttribute("TrainClassScheduleImportError", strData);
+					writeJSON(response, jsonBuilder.returnSuccessJson("-1")); // 返回前端-1，表示存在错误数据
+				}
 
-            request.getSession().removeAttribute("TrainClassScheduleImportError");// 移除此session
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件不存在！\""));
+			}
 
-            String downData = (String) obj;
+		} catch (Exception e) {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导入失败,请联系管理员！\""));
+		}
+	}
 
-            List<ImportNotInfo> list = (List<ImportNotInfo>) jsonBuilder.fromJsonArray(downData, ImportNotInfo.class);
-            ExportExcel excel = new ExportExcel();
+	@RequestMapping(value = { "/downNotImportInfo" })
+	public void downNotImportInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		Object obj = request.getSession().getAttribute("TrainClassScheduleImportError");
+		if (obj != null) {
 
-            String[] Title = {"序号", "课程名", "异常级别", "异常原因"};
-            Integer[] coulumnWidth = {8, 20, 20, 100};
-            Integer[] coulumnDirection = {1, 1, 1, 1};
+			request.getSession().removeAttribute("TrainClassScheduleImportError");// 移除此session
 
-            List<String> excludeList = new ArrayList<>();
-            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日");
-            String fileNAME = "（" + sdf2.format(new Date()) + "导出）导入班级课程的异常信息名单";
+			String downData = (String) obj;
 
-            excel.exportExcel(response, fileNAME, Title, list, excludeList, coulumnWidth, coulumnDirection);
-        }
-    }
+			List<ImportNotInfo> list = (List<ImportNotInfo>) jsonBuilder.fromJsonArray(downData, ImportNotInfo.class);
+			ExportExcel excel = new ExportExcel();
 
-    /**
-     * 更新课程的场地信息
-     *
-     * @throws InterruptedException
-     */
-    @RequestMapping("/updateRoomInfo")
-    public void updateRoomInfo(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, IllegalAccessException, InvocationTargetException, InterruptedException {
+			String[] Title = { "序号", "课程名", "异常级别", "异常原因" };
+			Integer[] coulumnWidth = { 8, 20, 20, 100 };
+			Integer[] coulumnDirection = { 1, 1, 1, 1 };
 
-        // 获取当前操作用户
-        SysUser currentUser = getCurrentSysUser();
+			List<String> excludeList = new ArrayList<>();
+			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日");
+			String fileNAME = "（" + sdf2.format(new Date()) + "导出）导入班级课程的异常信息名单";
 
-        String roomIds = request.getParameter("roomIds");
-        String roomNames = request.getParameter("roomNames");
-        String ids = request.getParameter("ids");
-        
-        
-        int result = thisService.doUpdateRoomInfo(roomIds, roomNames, ids, currentUser);
+			excel.exportExcel(response, fileNAME, Title, list, excludeList, coulumnWidth, coulumnDirection);
+		}
+	}
 
-        if (result == 1) {
-            writeJSON(response, jsonBuilder.returnSuccessJson("\"设置场地成功！\""));
-        }else if(result==0){
-        	writeJSON(response, jsonBuilder.returnFailureJson("\"该教室在此时间段内，已被其他课程使用！\""));
-        } else {
-            writeJSON(response, jsonBuilder.returnFailureJson("\"请求失败，请联系管理员\""));
-        }
-    }
+	/**
+	 * 更新课程的场地信息
+	 *
+	 * @throws InterruptedException
+	 */
+	@RequestMapping("/updateRoomInfo")
+	public void updateRoomInfo(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, IllegalAccessException, InvocationTargetException, InterruptedException {
 
-    /**
-     * 取消课程的场地信息
-     *
-     * @throws InterruptedException
-     */
-    @RequestMapping("/cancelRoomInfo")
-    public void cancelRoomInfo(HttpServletRequest request, HttpServletResponse response)
-            throws IOException, IllegalAccessException, InvocationTargetException, InterruptedException {
+		// 获取当前操作用户
+		SysUser currentUser = getCurrentSysUser();
 
-        // 获取当前操作用户
-        SysUser currentUser = getCurrentSysUser();
+		String roomIds = request.getParameter("roomIds");
+		String roomNames = request.getParameter("roomNames");
+		String ids = request.getParameter("ids");
 
-        String ids = request.getParameter("ids");
+		int result = thisService.doUpdateRoomInfo(roomIds, roomNames, ids, currentUser);
 
-        int result = thisService.doCancelRoomInfo(ids, currentUser);
+		if (result == 1) {
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"设置场地成功！\""));
+		} else if (result == 0) {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"该教室在此时间段内，已被其他课程使用！\""));
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"请求失败，请联系管理员\""));
+		}
+	}
 
-        if (result == 1) {
-            writeJSON(response, jsonBuilder.returnSuccessJson("\"取消场地成功！\""));
-        } else {
-            writeJSON(response, jsonBuilder.returnFailureJson("\"请求失败，请联系管理员\""));
-        }
-    }
+	/**
+	 * 取消课程的场地信息
+	 *
+	 * @throws InterruptedException
+	 */
+	@RequestMapping("/cancelRoomInfo")
+	public void cancelRoomInfo(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, IllegalAccessException, InvocationTargetException, InterruptedException {
 
-    /**
-     * @param request
-     * @param response
-     * @return void 返回类型
-     * @throws IOException 抛出异常
-     * @Title: doDelete
-     * @Description: 更新是否评价
-     */
-    @RequestMapping("/doUpdateEval")
-    public void updateEval(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		// 获取当前操作用户
+		SysUser currentUser = getCurrentSysUser();
 
-        try {
+		String ids = request.getParameter("ids");
 
-            String id = request.getParameter("id");
-            String val = request.getParameter("val");
+		int result = thisService.doCancelRoomInfo(ids, currentUser);
 
-            SysUser currentUser = getCurrentSysUser();
+		if (result == 1) {
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"取消场地成功！\""));
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"请求失败，请联系管理员\""));
+		}
+	}
 
-            TrainClassschedule trainClassschedule = thisService.get(id);
-            trainClassschedule.setIsEval(Integer.parseInt(val));
-            trainClassschedule.setUpdateTime(new Date());
-            trainClassschedule.setUpdateUser(currentUser.getXm());
+	/**
+	 * @param request
+	 * @param response
+	 * @return void 返回类型
+	 * @throws IOException
+	 *             抛出异常
+	 * @Title: doDelete
+	 * @Description: 更新是否评价
+	 */
+	@RequestMapping("/doUpdateEval")
+	public void updateEval(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-            thisService.merge(trainClassschedule);
+		try {
 
-            writeJSON(response, jsonBuilder.returnSuccessJson("\"设置成功！\""));
+			String id = request.getParameter("id");
+			String val = request.getParameter("val");
 
-        } catch (Exception e) {
-            writeJSON(response, jsonBuilder.returnFailureJson("\"请求失败,请重试或联系管理员！\""));
-        }
-    }
+			SysUser currentUser = getCurrentSysUser();
 
-    @RequestMapping("/listCourseEval")
-    public void listCourseEval(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String strData = "";
-        String whereSql = "";
-        String propName = request.getParameter("propName");
-        String propValue = request.getParameter("propValue");
-        String joinMethod = request.getParameter("joinMethod");
-        Integer start = super.start(request);
-        Integer limit = super.limit(request);
+			TrainClassschedule trainClassschedule = thisService.get(id);
+			trainClassschedule.setIsEval(Integer.parseInt(val));
+			trainClassschedule.setUpdateTime(new Date());
+			trainClassschedule.setUpdateUser(currentUser.getXm());
 
-        String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
-                + ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId,evalState " +
-                ",teachTypeName FROM TRAIN_V_CLASSCOURSEEVAL ";
-        if (StringUtils.isNotEmpty(propName)) {
-            String[] name = propName.split(",");
-            String[] value = propValue.split(",");
-            StringBuilder sb = new StringBuilder(" where ");
-            if ("or".equals(joinMethod)) {
-                for (int i = 0; i < name.length; i++) {
-                    sb.append(name[i]);
-                    sb.append(" like '%");
-                    sb.append(value[i]);
-                    sb.append("%' or ");
-                }
-                sb = sb.delete(sb.length() - 3, sb.length());
-            } else {
-                for (int i = 0; i < name.length; i++) {
-                    sb.append(name[i]);
-                    sb.append(" = '");
-                    sb.append(value[i]);
-                    sb.append("' and ");
-                }
-                sb = sb.delete(sb.length() - 4, sb.length());
-            }
+			thisService.merge(trainClassschedule);
 
-            whereSql = sb.toString();
-        }
-        if (whereSql.length() > 0) {
-            sql += whereSql;
-        }
-        QueryResult<TrainClassCourseEval> list = thisService.doQueryResultSqlObject(sql, start, limit,
-                TrainClassCourseEval.class);
-        strData = jsonBuilder.buildObjListToJson(list.getTotalCount(), list.getResultList(), true);
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"设置成功！\""));
 
-        writeJSON(response, strData);// 返回数据
-    }
+		} catch (Exception e) {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"请求失败,请重试或联系管理员！\""));
+		}
+	}
 
-    @RequestMapping("/listClassEvalCourse")
-    public void listClassEvalCourse(String classId, HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String strData = "";
-        Integer start = super.start(request);
-        Integer limit = super.limit(request);
-        String orderSql = super.orderSql(request);
+	@RequestMapping("/listCourseEval")
+	public void listCourseEval(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String strData = "";
+		String whereSql = "";
+		String propName = request.getParameter("propName");
+		String propValue = request.getParameter("propValue");
+		String joinMethod = request.getParameter("joinMethod");
+		Integer start = super.start(request);
+		Integer limit = super.limit(request);
 
-        String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
-                + ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId,evalState " +
-                ",teachTypeName FROM TRAIN_V_CLASSCOURSEEVAL where classId=''{0}'' ";
-        sql = MessageFormat.format(sql, classId);
-        if (StringUtils.isNotEmpty(orderSql)) {
-            sql += orderSql;
-        }
-        QueryResult<TrainClassCourseEval> list = thisService.doQueryResultSqlObject(sql, start, limit,
-                TrainClassCourseEval.class);
-        strData = jsonBuilder.buildObjListToJson(list.getTotalCount(), list.getResultList(), true);
+		String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
+				+ ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId,evalState "
+				+ ",teachTypeName FROM TRAIN_V_CLASSCOURSEEVAL ";
+		if (StringUtils.isNotEmpty(propName)) {
+			String[] name = propName.split(",");
+			String[] value = propValue.split(",");
+			StringBuilder sb = new StringBuilder(" where ");
+			if ("or".equals(joinMethod)) {
+				for (int i = 0; i < name.length; i++) {
+					sb.append(name[i]);
+					sb.append(" like '%");
+					sb.append(value[i]);
+					sb.append("%' or ");
+				}
+				sb = sb.delete(sb.length() - 3, sb.length());
+			} else {
+				for (int i = 0; i < name.length; i++) {
+					sb.append(name[i]);
+					sb.append(" = '");
+					sb.append(value[i]);
+					sb.append("' and ");
+				}
+				sb = sb.delete(sb.length() - 4, sb.length());
+			}
 
-        writeJSON(response, strData);// 返回数据
-    }
+			whereSql = sb.toString();
+		}
+		if (whereSql.length() > 0) {
+			sql += whereSql;
+		}
+		QueryResult<TrainClassCourseEval> list = thisService.doQueryResultSqlObject(sql, start, limit,
+				TrainClassCourseEval.class);
+		strData = jsonBuilder.buildObjListToJson(list.getTotalCount(), list.getResultList(), true);
+
+		writeJSON(response, strData);// 返回数据
+	}
+
+	@RequestMapping("/listClassEvalCourse")
+	public void listClassEvalCourse(String classId, HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+		String strData = "";
+		Integer start = super.start(request);
+		Integer limit = super.limit(request);
+		String orderSql = super.orderSql(request);
+
+		String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
+				+ ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId,evalState "
+				+ ",teachTypeName FROM TRAIN_V_CLASSCOURSEEVAL where classId=''{0}'' ";
+		sql = MessageFormat.format(sql, classId);
+		if (StringUtils.isNotEmpty(orderSql)) {
+			sql += orderSql;
+		}
+		QueryResult<TrainClassCourseEval> list = thisService.doQueryResultSqlObject(sql, start, limit,
+				TrainClassCourseEval.class);
+		strData = jsonBuilder.buildObjListToJson(list.getTotalCount(), list.getResultList(), true);
+
+		writeJSON(response, strData);// 返回数据
+	}
 }

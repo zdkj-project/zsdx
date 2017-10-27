@@ -863,6 +863,10 @@ public class BaseDaoImpl<E> implements BaseDao<E> {
                 Object[] setValue = value.toString().split(",");
                 res = (ICriterion) Restrictions.in(field, setValue);
                 break;
+            case "not in": // 不包含
+                Object[] setValue2 = value.toString().split(",");
+                res = (ICriterion) Restrictions.not(Restrictions.in(field, setValue2));
+                break;              
             default: // 默认为等于
                 res = (ICriterion) Restrictions.eq(field, value);
                 // (ICriterion) Restrictions.in

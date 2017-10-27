@@ -198,10 +198,13 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenu> implements SysM
             SysUser user = sysUserService.get(author);
             if (user != null) {
                 // 得到角色
-                Set<SysRole> roles = user.getSysRoles();
+                //Set<SysRole> roles = user.getSysRoles();
+            	List<SysRole> roles = sysUserService.getSysRoleList(user);
                 for (SysRole role : roles) {
                     // 得到指定角色的权限
-                    Set<SysPermission> perms = role.getSysPermissions();
+                    //Set<SysPermission> perms = role.getSysPermissions();
+                	List<SysPermission> perms = sysRoleService.getSysPermissionList(role);
+       
                     for (SysPermission perm : perms) {
                         maps.put(perm.getPerCode(), perm);
                     }

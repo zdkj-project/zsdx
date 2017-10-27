@@ -2,10 +2,12 @@ package com.zd.school.plartform.system.service;
 
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseService;
+import com.zd.school.plartform.system.model.SysPermission;
 import com.zd.school.plartform.system.model.SysRole;
 import com.zd.school.plartform.system.model.SysUser;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 /**
  * 
@@ -61,5 +63,7 @@ public interface SysRoleService extends BaseService<SysRole> {
      * @return
      */
     public Boolean doAddRoleUser(String ids, String userId);
+
+	public List<SysPermission> getSysPermissionList(SysRole role);
 
 }

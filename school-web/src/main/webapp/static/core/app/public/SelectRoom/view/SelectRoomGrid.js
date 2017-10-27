@@ -99,19 +99,24 @@ Ext.define("core.public.SelectRoom.view.SelectRoomGrid", {
             text: '序号',
             align: 'center'
         }, {
-            width: 100,
+            width: 80,
             text: "所属楼栋",
             dataIndex: "areaUpName"
         }, {
-            width: 100,
+            width: 80,
             text: "所属楼层",
             dataIndex: "areaName"
         }, {
-            flex: 100,
+            flex: 1,
+            minWidth: 80,
             text: "房间名称",
             dataIndex: "roomName"
         }, {
-            width: 100,
+            width: 80,
+            text: "备注",
+            dataIndex: "extField02",
+        }, {
+            width: 80,
             text: "房间类型",
             dataIndex: "roomType",
             columnType: "basecombobox",

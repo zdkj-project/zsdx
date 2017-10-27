@@ -34,6 +34,14 @@ Ext.define("core.train.arrange.controller.MainController", {
                 	 btngridExportSite.setHidden(true);
                 	 btngridArrange.setHidden(true);
                  }
+
+                 if(roleKey.indexOf("DORMMANAGER")!= -1){
+                    btngridArrangeRoom.setHidden(false);
+                     btngridArrange.setHidden(false);
+                 }
+                 if(roleKey.indexOf("SITEMANAGER")!= -1){
+                    btngridArrangeSite.setHidden(false);
+                 }
              }
             },
 //    

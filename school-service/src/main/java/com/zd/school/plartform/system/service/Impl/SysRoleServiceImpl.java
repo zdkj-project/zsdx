@@ -1,22 +1,26 @@
 package com.zd.school.plartform.system.service.Impl;
 
-import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.service.BaseServiceImpl;
-import com.zd.core.util.BeanUtils;
-import com.zd.school.plartform.system.dao.SysRoleDao;
-import com.zd.school.plartform.system.model.SysRole;
-import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.plartform.system.service.SysRoleService;
-import com.zd.school.plartform.system.service.SysUserService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.zd.core.model.extjs.QueryResult;
+import com.zd.core.service.BaseServiceImpl;
+import com.zd.core.util.BeanUtils;
+import com.zd.school.plartform.system.dao.SysRoleDao;
+import com.zd.school.plartform.system.model.SysPermission;
+import com.zd.school.plartform.system.model.SysRole;
+import com.zd.school.plartform.system.model.SysUser;
+import com.zd.school.plartform.system.service.SysPerimissonService;
+import com.zd.school.plartform.system.service.SysRoleService;
+import com.zd.school.plartform.system.service.SysUserService;
 
 /**
  * 
@@ -38,6 +42,9 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRole> implements SysR
 
     @Resource
     private SysUserService userService;
+    
+    @Resource
+    private SysPerimissonService perimissonSevice;
 
     @Override
     public SysRole doAddEntity(SysRole entity, SysUser currentUser) throws InvocationTargetException, IllegalAccessException {
@@ -60,7 +67,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRole> implements SysR
         List<String> excludedProp = new ArrayList<>();
         excludedProp.add("uuid");
         excludedProp.add("sysPermissions");
-        BeanUtils.copyProperties(saveEntity, entity, excludedProp);
+        BeanUtils.copyPropertiesExceptNull(saveEntity, entity, excludedProp);
         saveEntity.setUpdateUser(currentUser.getUuid());
         saveEntity.setUpdateTime(new Date());
         entity = this.merge(saveEntity);
@@ -112,4 +119,20 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRole> implements SysR
             return  false;
         }
     }
+
+	@Override
+	public List<SysPermission> getSysPermissionList(SysRole role) {
+		String sql = "select p.PER_ID as uuid,p.PER_TYPE as perType,p.PER_CODE as perCode,p.PER_PATH as perPath,"
+				+ " (SELECT a.NODE_TEXT FROM SYS_T_MENU a WHERE a.MENU_ID=p.PER_CODE) as perText  from SYS_T_PERIMISSON p"
+				+ " inner join SYS_T_ROLEPERM rp on p.PER_ID=rp.PER_ID "
+				+ " inner join SYS_T_ROLE r on rp.ROLE_ID=r.ROLE_ID where "
+				+ " r.ROLE_ID='"+role.getUuid()+"' "
+				+ " and r.ISDELETE=0 "
+				+ " and p.ISDELETE=0 ";
+		
+		 
+		List<SysPermission> list = perimissonSevice.doQuerySqlObject(sql, SysPermission.class);
+		 
+		return list;
+	}
 }

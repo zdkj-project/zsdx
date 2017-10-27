@@ -7,13 +7,7 @@ Ext.define('core.train.cardcenter.view.ClassGrid', {
     model: "com.zd.school.jw.train.model.TrainClass", //对应的数据模型
     al: true,
     
-    selModel: {
-        type: "checkboxmodel",   
-        headerWidth:50,    //设置这个值为50。 但columns中的defaults中设置宽度，会影响他
-        mode:'single',  //multi,simple,single；默认为多选multi
-        //checkOnly:false,    //如果值为true，则只用点击checkbox列才能选中此条记录
-        //allowDeselect:true, //如果值true，并且mode值为单选（single）时，可以通过点击checkbox取消对其的选择
-    },
+    selModel:null,
 
     /**
      * 高级查询面板
@@ -77,7 +71,8 @@ Ext.define('core.train.cardcenter.view.ClassGrid', {
         //查询的过滤字段
         //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
         //zzk:2017-6-19 若写在这，必须按标准格式编写json字符串（即属性和值使用双引号扩囊）
-        filter: '[{"type":"numeric","comparison":"!=","value":0,"field":"isuse"}]' 
+        //只显示安排完毕的班级
+        filter: '[{"type":"numeric","comparison":"=","value":1,"field":"isuse"},{"type":"numeric","comparison":"=","value":1,"field":"isarrange"}]' 
     },
     columns: {
         defaults: {
@@ -93,7 +88,12 @@ Ext.define('core.train.cardcenter.view.ClassGrid', {
         }, {
             flex:1,
             text: "班级名称",
-            dataIndex: "className"
+            dataIndex: "className",
+            renderer: function(value, metaData) {                
+                var title = "班级名称";
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + value + '"';
+                return value;
+            }
         },{
             width:100,
             text: "开始日期",
@@ -112,6 +112,24 @@ Ext.define('core.train.cardcenter.view.ClassGrid', {
                 var ss = Ext.Date.format(new Date(date), 'Y-m-d');
                 return ss;
             }
-        }]
+        },{
+            width: 80,
+            text: "安排状态",
+            dataIndex: "isarrange",
+            align:'center',
+            renderer: function(value, metaData,record ) {
+                var isuse = record.get('isuse');
+                if(value==1){
+                    if(isuse==1)
+                        return "<span style='color:green'>安排完毕</span>";
+                    else if(isuse==2)
+                        return "<span style='color:#2476FF'>等待提交</span>";
+                    else if(isuse==3)
+                        return "<span style='color:#FFAC00'>可更新安排</span>";
+                }
+                else
+                    return "<span style='color:red'>未安排</span>";
+            }
+        },]
     }
 });

@@ -244,14 +244,17 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 		String userId = request.getParameter("userId"); // 获得传过来的roleId
 		SysUser sysUser = thisService.get(userId);
 		Integer count = 0;
-		Set<SysRole> userRole = new HashSet<SysRole>();
+		List<SysRole> userRole = new ArrayList<SysRole>();
 		if (ModelUtil.isNotNull(sysUser)) {
-			userRole = sysUser.getSysRoles();
+			//userRole = sysUser.getSysRoles();
+			userRole=thisService.getSysRoleList(sysUser);
 			count = userRole.size();
 		}
 		String strData = jsonBuilder.buildObjListToJson(new Long(count), userRole, true);
 		writeJSON(response, strData);
 	}
+	
+	
 
 	/**
 	 * 

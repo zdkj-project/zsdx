@@ -10,6 +10,7 @@ import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.StringUtils;
 import com.zd.school.build.define.model.BuildRoominfo;
 import com.zd.school.build.define.service.BuildRoominfoService;
+import com.zd.school.jw.train.service.TrainClassService;
 import com.zd.school.plartform.comm.model.CommTree;
 import com.zd.school.plartform.comm.service.CommTreeService;
 import com.zd.school.plartform.system.model.SysUser;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -45,7 +47,11 @@ public class BuildRoominfoController extends FrameWorkController<BuildRoominfo> 
 	private  BuildRoominfoService thisService; // service层接口
 	@Resource
 	private  CommTreeService treeService; // 生成树
+	
 
+	@Resource
+	private TrainClassService classService; // service层接口
+	
 	/**
 	 * list查询 @Title: list @Description: TODO @param @param entity
 	 * 实体类 @param @param request @param @param response @param @throws
@@ -56,7 +62,36 @@ public class BuildRoominfoController extends FrameWorkController<BuildRoominfo> 
 	public void list(@ModelAttribute BuildRoominfo entity, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		String filter = request.getParameter("filter");
+		String classId = request.getParameter("classId");
+		
+		if(classId!=null){
+			//查询出这个班级中已经安排宿舍的宿舍ID
+			String sql="select a.Room_ID from TRAIN_T_CLASSTRAINEE a"
+					+ " join BUILD_T_ROOMINFO b on a.Room_ID=B.ROOM_ID"
+					+ " where  a.isdelete=0 and b.isdelete=0 and "
+					+ " a.class_ID='"+classId+"' "
+					+ " group by  a.Room_ID,b.ext_field03 "
+					+ " having count(a.Room_ID)=b.ext_field03";
+			List<Map<String,Object>> roomList=thisService.getForValuesToSql(sql);
+			
+			
+			StringBuffer ids=new StringBuffer();
+			for(int i=0;i<roomList.size();i++){
+				ids.append(roomList.get(i).get("Room_ID")+",");
+			}
+			if(ids.length()>0){
+				if(filter.length()>0){
+					filter=filter.substring(0, filter.length()-1);
+					filter+=",{\"type\":\"string\",\"comparison\":\"not in\",\"value\":\""+ids.substring(0, ids.length()-1)+"\",\"field\":\"uuid\"}]";
+				}else{
+					filter="[{\"type\":\"string\",\"comparison\":\"not in\",\"value\":\""+ids.substring(0, ids.length()-1)+"\",\"field\":\"uuid\"}]";
+				}
+			}
+		}
+		
+		
 		String strData = ""; // 返回给js的数据
+		
 		QueryResult<BuildRoominfo> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
 				super.sort(request), filter, true);
 

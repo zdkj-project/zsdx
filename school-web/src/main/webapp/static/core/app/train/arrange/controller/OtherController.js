@@ -651,6 +651,226 @@ Ext.define("core.train.arrange.controller.OtherController", {
                 return false;
             }
         },
+
+        "grid[ref=arrangeSiteGrid]  button[ref=gridEidtCourse]": {
+            beforeclick: function(btn) {
+                
+                var self = this;
+            
+                var baseGrid = btn.up("grid[ref=arrangeSiteGrid]");
+                var records = baseGrid.getSelectionModel().getSelection();
+                if (records.length != 1) {
+                    self.msgbox("请选择一条需要调整的课程！");
+                    return false;
+                }
+
+                //得到组件
+                // var funCode = baseGrid.funCode;
+                // var basePanel = baseGrid.up("basepanel[funCode=" + funCode +"]");
+                 var tabPanel = baseGrid.up("tabpanel[xtype=app-main]");
+
+                var basetab = btn.up('baseformtab');
+                var funCode = "editCourse";      //mainLayout的funcode
+                var detCode = basetab.detCode;      //detailLayout的funcode
+
+                var basePanel = basetab.down("basepanel[funCode=" + detCode + "]");            
+                var objForm = basePanel.down("baseform[funCode=" + detCode + "]");
+                var formObj = objForm.getForm();
+                var classId = formObj.findField("uuid").getValue();
+
+                var ids=[];            
+                for(var i in records) {              
+                    if( records[i].get("isDelete")==1){
+                        self.Warning("不能调整已被删除的课程！");
+                        return false;
+                    }    
+                    ids.push(records[i].get("uuid"));
+                };
+
+                            
+                //关键：window的视图控制器
+                var otherController ='arrange.otherController';
+
+                var popFunData = Ext.apply(basePanel.funData, {
+                    grid: baseGrid
+                });
+
+                var width = 1200;
+                var height = 600;      
+
+                var iconCls = 'x-fa fa-plus-circle';
+                var operType = "edit";
+                var tabTitle = "调整课程信息";
+
+                //设置tab页的itemId
+                var tabItemId=funCode+"_gridClassCourseEdit";     //命名规则：funCode+'_ref名称',确保不重复
+                var pkValue= null;
+
+                insertObj = records[0].getData();
+                //获取主键值
+                pkValue= insertObj.uuid;
+
+                  
+                //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
+                var tabItem=tabPanel.getComponent(tabItemId);
+                if(!tabItem){
+            
+                    tabItem=Ext.create({
+                        xtype:'container',
+                        title: tabTitle,
+                        //iconCls: 'x-fa fa-clipboard',
+                        scrollable :true, 
+                        itemId:tabItemId,
+                        itemPKV:pkValue,      //保存主键值
+                        layout:'fit', 
+                    });
+                    tabPanel.add(tabItem); 
+
+                    //延迟放入到tab中
+                    setTimeout(function(){
+                        //创建组件
+                        var item=Ext.widget("baseformtab",{
+                            operType:operType,                            
+                            controller:otherController,         //指定重写事件的控制器
+                            funCode:funCode,                 
+                            tabItemId:tabItemId,                //指定tab页的itemId
+                            insertObj:insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                            funData: popFunData,                //保存funData数据，提供给提交事件中使用
+                            items:[{
+                                xtype:'arrange.detaillayout',
+                                funCode: funCode, 
+                                funData: {
+                                    action: comm.get("baseUrl") + "/TrainClassschedule", //请求Action
+                                    whereSql: "", //表格查询条件
+                                    orderSql: "", //表格排序条件
+                                    pkName: "uuid",
+                                    defaultObj: {}
+                                },
+                                items: [{
+                                    xtype: "arrange.coursedetailform",
+                                    //funCode:detCode,    //这里将funcode修改为刚刚的detcode值
+                                }]
+                            }]
+                        }); 
+                        tabItem.add(item);  
+
+                        var objDetForm = item.down("baseform[funCode=" + funCode + "]");
+                        var formDeptObj = objDetForm.getForm();
+                        self.setFormValue(formDeptObj, insertObj);
+                        
+                        if(insertObj.beginTime){
+                            var beginTimeDate=new Date(insertObj.beginTime);
+                            var startDate=Ext.Date.dateFormat(beginTimeDate, 'Y-m-d H:i');
+                            startDate=startDate.split(" ");
+                            formDeptObj.findField("courseDate").setValue(beginTimeDate);
+                            formDeptObj.findField("courseBeginTime").setValue(startDate[1]);
+                        }
+                        if(insertObj.endTime){
+                            var endTimeDate=new Date(insertObj.endTime);
+                            var endDate=Ext.Date.dateFormat(endTimeDate, 'Y-m-d H:i');
+                            endDate=endDate.split(" ");
+                            formDeptObj.findField("courseDate").setValue(endTimeDate);
+                            formDeptObj.findField("courseEndTime").setValue(endDate[1]);
+                        }
+                       
+                      
+                    
+                    },30);
+                                   
+                }else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据
+                    self.Warning("您当前已经打开了一个调整课程窗口了！");
+                    return;
+                }
+
+                tabPanel.setActiveTab( tabItem);
+
+                
+
+                return false;
+            }
+        },
+
+        "baseformtab[funCode=editCourse] button[ref=formSave]": {
+            beforeclick: function (btn) {
+                var self=this;
+                debugger
+                //得到组件
+                var basetab = btn.up('baseformtab');
+                var tabPanel = btn.up("tabpanel[xtype=app-main]");
+                var tabItemId = basetab.tabItemId;
+                var tabItem = tabPanel.getComponent(tabItemId);   //当前tab页
+
+
+                var funCode = basetab.funCode;      //mainLayout的funcode
+                var detCode = basetab.detCode;      //detailLayout的funcode
+
+                var detPanel = basetab.down("basepanel[funCode=" + funCode + "]");
+                var objForm = detPanel.down("baseform[funCode=" + funCode + "]");
+
+                var formObj = objForm.getForm();
+                var funData = detPanel.funData;
+                var pkName = funData.pkName;
+                var pkField = formObj.findField(pkName);
+                var params = self.getFormValue(formObj);
+                //params.courseDate=formObj.findField("courseDate").value;
+
+                var orderIndex = 1;
+                if (formObj.findField("orderIndex")) {
+                    orderIndex = formObj.findField("orderIndex").getValue() + 1;
+                }
+
+                //判断当前是保存还是修改操作
+                var act = Ext.isEmpty(pkField.getValue()) ? "doadd" : "doupdate";
+                if (formObj.isValid()) {
+
+                    var loading = new Ext.LoadMask(basetab, {
+                        msg: '正在提交，请稍等...',
+                        removeMask: true// 完成后移除
+                    });
+                    loading.show();
+
+                    self.asyncAjax({
+                        url: comm.get("baseUrl") + "/TrainClassschedule/" + act,
+                        params: params,
+                        //回调代码必须写在里面
+                        success: function (response) {
+                            data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                            if (data.success) {
+                                    loading.hide();
+                                self.Info("保存成功!");
+
+                              
+                                var grid = basetab.funData.grid; //此tab是否保存有grid参数
+                                if (!Ext.isEmpty(grid)) {
+                                    var store = grid.getStore();                                  
+                                    store.loadPage(1); //刷新父窗体的grid                                     
+                                }
+
+                            
+                                tabPanel.remove(tabItem);
+                            } else {
+                                  loading.hide();
+                                self.Error(data.obj);
+                              
+                            }
+                        }
+                    });
+
+                } else {
+                    var errors = ["前台验证失败，错误信息："];
+                    formObj.getFields().each(function (f) {
+                        if (!f.isValid()) {
+                            errors.push("<font color=red>" + f.fieldLabel + "</font>：" + f.getErrors().join(","));
+                        }
+                    });
+                    self.msgbox(errors.join("<br/>"));
+                }
+                return false;
+            },
+        },
+        
+
     },
 
     

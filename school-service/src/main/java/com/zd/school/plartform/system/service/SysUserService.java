@@ -6,6 +6,7 @@ import java.util.List;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseService;
 import com.zd.school.plartform.system.model.CardUserInfoToUP;
+import com.zd.school.plartform.system.model.SysRole;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.model.SysUserToUP;
 
@@ -139,4 +140,6 @@ public interface SysUserService extends BaseService<SysUser> {
     public int syncAllCardInfoFromUp(List<CardUserInfoToUP> cardUserInfos);
 
     public int syncClassCardInfoFromUp(List<CardUserInfoToUP> upCardUserInfos, String classId);
+
+	public List<SysRole> getSysRoleList(SysUser sysUser);
 }

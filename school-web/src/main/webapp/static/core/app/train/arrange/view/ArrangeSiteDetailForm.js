@@ -108,6 +108,11 @@ Ext.define("core.train.arrange.view.ArrangeSiteDetailForm", {
                 ref: 'gridCancelRoom',
                 iconCls: 'x-fa fa-minus-circle'
             },{
+                xtype: 'button',
+                text: '调整课程',
+                ref: 'gridEidtCourse',
+                iconCls: 'x-fa fa-pencil-square'
+            },{
                 xtype: 'tbtext',
                 html: '（一个教室，在同一个时间段，只能安排一个班级上课，不要冲突）',
                 style: {

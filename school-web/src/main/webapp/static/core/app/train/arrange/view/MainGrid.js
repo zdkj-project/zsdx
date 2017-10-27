@@ -209,7 +209,9 @@ Ext.define("core.train.arrange.view.MainGrid", {
                 ref: 'gridArrangeSite',
                 getClass :function(v,metadata,record){
                 	var roleKey = comm.get("roleKey");
-                    if(record.get("isarrange")==1&&record.get("isuse")==2||(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("ZONGWUROLE") == -1))
+                    if(record.get("isarrange")==1&&record.get("isuse")==2
+                        ||(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 
+                            && roleKey.indexOf("ZONGWUROLE") == -1 && roleKey.indexOf("DORMMANAGER") == -1))
                         return 'x-hidden-display';
                     else
                         return null;
@@ -229,7 +231,9 @@ Ext.define("core.train.arrange.view.MainGrid", {
                 ref: 'gridArrangeRoom',
                 getClass :function(v,metadata,record){
                 	var roleKey = comm.get("roleKey");
-                    if(record.get("isarrange")==1&&record.get("isuse")==2||(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("ZONGWUROLE") == -1))
+                    if(record.get("isarrange")==1&&record.get("isuse")==2
+                        ||(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 
+                            && roleKey.indexOf("ZONGWUROLE") == -1 && roleKey.indexOf("SITEMANAGER") == -1))
                         return 'x-hidden-display';
                     else
                         return null;
@@ -285,7 +289,9 @@ Ext.define("core.train.arrange.view.MainGrid", {
                 },
                 getClass :function(v,metadata,record){
                 	var roleKey = comm.get("roleKey");
-                    if(record.get("isarrange")==1&&record.get("isuse")==2||(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("ZONGWUROLE") == -1))
+                    if(record.get("isarrange")==1&&record.get("isuse")==2
+                        ||(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 
+                            && roleKey.indexOf("ZONGWUROLE") == -1 && roleKey.indexOf("SITEMANAGER") == -1))
                         return 'x-hidden-display';
                     else
                         return null;

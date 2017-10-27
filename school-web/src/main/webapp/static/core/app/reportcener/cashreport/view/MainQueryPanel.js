@@ -145,7 +145,7 @@ Ext.define("core.reportcenter.cashreport.view.MainQueryPanel", {
 			columnWidth: 0.2,
 			xtype: "basequeryfield",
 			name: "MEAL_TYPE",
-			fieldLabel: "就餐类型",
+			fieldLabel: "用餐类型",
 			queryType: "combobox",		
 			store: Ext.create('Ext.data.Store', {
             	fields: ['name', 'value'],

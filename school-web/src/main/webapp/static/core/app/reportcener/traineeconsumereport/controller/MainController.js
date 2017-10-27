@@ -244,7 +244,7 @@ Ext.define("core.reportcenter.traineeconsumereport.controller.MainController", {
                        
                         var time=function(){
                             self.syncAjax({
-                                url: comm.get('baseUrl') + '/TrainClassrealdinner/checkExportDinnerDetailEnd',
+                                url: comm.get('baseUrl') + '/TrainReport/checkExportTraineeConsumeTotalEnd',
                                 timeout: 1000*60*30,        //半个小时         
                                 //回调代码必须写在里面
                                 success: function(response) {

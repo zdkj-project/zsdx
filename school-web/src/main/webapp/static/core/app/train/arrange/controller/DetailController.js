@@ -104,7 +104,8 @@ Ext.define("core.train.arrange.controller.DetailController", {
                                 whereSql: "",
                                 //查询的过滤字段
                                 //type:字段类型 comparison:过滤的比较符 value:过滤字段值 field:过滤字段名
-                                filter: "[{\"type\":\"string\",\"comparison\":\"=\",\"value\":\"1\",\"field\":\"roomType\"}]"
+                                filter: "[{\"type\":\"string\",\"comparison\":\"=\",\"value\":\"1\",\"field\":\"roomType\"}]",
+                                classId:classId
                             },
                             selModel: {
                                 type: "checkboxmodel",   
@@ -113,35 +114,43 @@ Ext.define("core.train.arrange.controller.DetailController", {
                                 //checkOnly:false,    //如果值为true，则只用点击checkbox列才能选中此条记录
                                 //allowDeselect:true, //如果值true，并且mode值为单选（single）时，可以通过点击checkbox取消对其的选择
                             },
+                            columns: {
+                            defaults: {
+                                titleAlign: "center"
+                            },
+                            items: [{
+                                xtype: "rownumberer",
+                                flex: 0,
+                                width: 50,
+                                text: '序号',
+                                align: 'center'
+                            }, {
+                                flex: 1,
+                                minWidth: 100,
+                                text: "房间名称",
+                                dataIndex: "roomName"
+                            }, {
+                                width: 100,
+                                text: "所属楼栋",
+                                dataIndex: "areaUpName"
+                            }, {
+                                width: 100,
+                                text: "所属楼层",
+                                dataIndex: "areaName"
+                            },{
+                                width: 100,
+                                text: "备注",
+                                dataIndex: "extField02",
+                            }, {
+                                width: 100,
+                                text: "房间类型",
+                                dataIndex: "roomType",
+                                columnType: "basecombobox",
+                                ddCode: "FJLX"
+                            }]
+                        },
                         }]
                     }]
-                    // items: [{
-                    //     xtype:'room.mainlayout',
-                    //     bodyPadding:5,
-                    //     items: [{
-                    //         collapsible: true,
-                    //         split: true,
-                    //         xtype: "room.areagrid",                      
-                    //         tbar:null,
-                    //         region: "west",
-                    //         style:{
-                    //             border: '1px solid #ddd'
-                    //         },
-                    //         width:450
-                    //     }, {
-                    //         xtype: "room.RoomGrid",                          
-                    //         tbar:null,
-                    //         style:{
-                    //             border: '1px solid #ddd'
-                    //         },
-                    //         selModel: {
-                    //             type: "checkboxmodel",   
-                    //             headerWidth:50,    //设置这个值为50。 但columns中的defaults中设置宽度，会影响他
-                    //             mode:'single', 
-                    //         },
-                    //         region: "center"
-                    //     }]
-                    // }]
                 });
                 win.show();                
                 return false;

@@ -132,7 +132,7 @@ Ext.define("core.reportcenter.cashreport.view.MainGrid", {
             }
         },{
             width:80,
-            text: "快餐类型",
+            text: "用餐类型",
             dataIndex: "MEAL_TYPE",
             renderer: function(value, metaData) {                
                 if(value==1){

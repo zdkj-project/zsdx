@@ -60,11 +60,12 @@ public interface TrainClassscheduleService extends BaseService<TrainClassschedul
 	 * 
 	 * @param entity
 	 *            传入的要更新的实体对象
+	 * @param teachType 
 	 * @param currentUser
 	 *            当前操作用户
 	 * @return
 	 */
-	public TrainClassschedule doUpdateEntity(TrainClassschedule entity, SysUser currentUser);
+	public TrainClassschedule doUpdateEntity(TrainClassschedule entity, String teachType, SysUser currentUser);
 
 	/**
 	 * 将传入的实体对象持久化到数据

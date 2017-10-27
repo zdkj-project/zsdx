@@ -116,11 +116,41 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 	 * @return
 	 */
 	@Override
-	public TrainClassschedule doUpdateEntity(TrainClassschedule entity, SysUser currentUser) {
+	public TrainClassschedule doUpdateEntity(TrainClassschedule entity, String teachType, SysUser currentUser) {
 		// 先拿到已持久化的实体
 		TrainClassschedule saveEntity = this.get(entity.getUuid());
 		try {
-			BeanUtils.copyProperties(saveEntity, entity);
+			//
+			
+			// 查询课程表中是否存在 课程名、教师名一致的课程
+			TrainCourseinfo trainCourseInfo = trainCourseinfoService.getByProerties(
+					new String[] { "courseName", "mainTeacherId", "isDelete" },
+					new Object[] { entity.getCourseName(), entity.getMainTeacherId(), 0 });
+
+			// 如果存在，把课程id和教师id直接存放到当前班级课程中
+			// 否则，创建新的课程，并查找教师id
+			if (trainCourseInfo == null) {
+				// 查询未分类的id
+				String hql = "select uuid from TrainCoursecategory a where a.isDelete=? and a.nodeText=?";
+				String categoryId = coursecategoryService.getForValue(hql, 0, "未分类");
+
+				// 否则存入到课程库
+				trainCourseInfo = new TrainCourseinfo();
+				trainCourseInfo.setCategoryId(categoryId);			
+				trainCourseInfo.setCourseName(entity.getCourseName());
+				trainCourseInfo.setMainTeacherId(entity.getMainTeacherId());
+				trainCourseInfo.setMainTeacherName(entity.getMainTeacherName());
+			}
+			trainCourseInfo.setCredits(entity.getCredits());
+			trainCourseInfo.setTeachType(teachType); // 当课程不存在，并创建的时候，才会设置教学形式
+			
+			trainCourseinfoService.merge(trainCourseInfo);
+			
+			entity.setCourseId(trainCourseInfo.getUuid());
+
+			List<String> exclued=new ArrayList<>();
+			exclued.add("courseMode");
+			BeanUtils.copyPropertiesExceptNull(saveEntity, entity,exclued);
 			saveEntity.setUpdateTime(new Date()); // 设置修改时间
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 			entity = this.merge(saveEntity);// 执行修改方法

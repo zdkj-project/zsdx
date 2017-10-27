@@ -45,7 +45,9 @@ Ext.define("core.train.cardinfo.view.MainGrid", {
         direction: "DESC" //升降序
     }],
     /** 扩展参数 */
-    extParams: {},
+    extParams: {
+        filter:'[{"type":"numeric","value":3,"field":"cardTypeId","comparison":"="}]'
+    },
     columns: [{
         xtype: "rownumberer",
         flex: 0,

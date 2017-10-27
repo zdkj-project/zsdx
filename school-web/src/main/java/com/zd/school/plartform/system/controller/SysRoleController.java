@@ -288,19 +288,27 @@ public class SysRoleController extends FrameWorkController<SysRole> implements C
         String strData = "";
         Integer start = super.start(request);
         Integer limit = super.limit(request);
+        String sort = StringUtils.convertSortToSql(super.sort(request));
+        
         String roleId = request.getParameter("ids");
         String xm = request.getParameter("xm");
         xm=xm==null?"":xm;
         //QueryResult<SysUser> qResult = thisService.getRoleUser(roleId, start, limit);
         
-		String hql = "from SysUser as u inner join fetch u.sysRoles as r where r.uuid='" + roleId
-				+ "' and r.isDelete=0 and u.isDelete=0 and u.xm like '%"+xm+"%'";		
-		List<SysUser> list = userSerive.doQuery(hql);
-
-		SortListUtil<SysUser> sortJob = new SortListUtil<SysUser>();
-		sortJob.Sort(list, "jobCode", "String");
+		String hql = "from SysUser as o inner join fetch o.sysRoles as r where r.uuid='" + roleId
+				+ "' and r.isDelete=0 and o.isDelete=0 and o.xm like '%"+xm+"%'";	
 		
-        strData = jsonBuilder.buildObjListToJson((long) list.size(), list, true);// 处理数据
+		 if(StringUtils.isNotEmpty(sort)){
+            hql += " order by ";
+            hql+= sort;
+        }
+		 
+		//List<SysUser> list = userSerive.doQuery(hql);
+
+		QueryResult<SysUser> qr = userSerive.doQueryResult(hql, start, limit);
+		  
+		
+        strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
         writeJSON(response, strData);// 返回数据
     }
 

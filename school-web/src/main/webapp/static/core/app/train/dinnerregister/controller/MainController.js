@@ -22,7 +22,8 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                 var form=cpt.down("baseform[xtype=dinnerregister.mainform]");
                 var btngridExport = form.down("button[ref=gridExport]");
                 var roleKey = comm.get("roleKey");
-                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("ZONGWUROLE") == -1) {
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1
+                 && roleKey.indexOf("ZONGWUROLE") == -1 && roleKey.indexOf("FOODMANAGER") == -1) {
                 	btngridExport.setHidden(true);
                 }
                 var params={
@@ -39,7 +40,8 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
            afterrender: function (fieldset, eOpts) {
                var btnsubmitRegister = fieldset.down("button[ref=submitRegister]");
                var roleKey = comm.get("roleKey");
-               if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("ZONGWUROLE") == -1) {
+               if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 
+                    && roleKey.indexOf("ZONGWUROLE") == -1 && roleKey.indexOf("FOODMANAGER") == -1) {
             	   btnsubmitRegister.setHidden(true);
                }
            }

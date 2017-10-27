@@ -43,7 +43,7 @@ Ext.define("core.train.cardcenter.view.MainLayout", {
             xtype: "cardcenter.classgrid",
             //title:'班级列表',
             region: "west",
-            width: 455,
+            width: 470,
             //height:300,
             split: true,
             // style: {

@@ -1,6 +1,6 @@
-Ext.define("core.train.class.view.CourseDetailForm", {
+Ext.define("core.train.arrange.view.CourseDetailForm", {
     extend: "core.base.view.BaseForm",
-    alias: "widget.class.coursedetailform",
+    alias: "widget.arrange.coursedetailform",
   
     layout: "form", //从上往下布局
     autoHeight: true,
@@ -254,7 +254,7 @@ Ext.define("core.train.class.view.CourseDetailForm", {
             xtype: "basefuncfield",
             refController: "class.otherController", //该功能主控制器，这里重新指定为当前视图的控制器了
             funcPanel: "class.selectteacher.mainlayout", //该功能显示的主视图
-            formPanel:"class.coursedetailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
+            formPanel:"arrange.coursedetailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
             funcTitle: "主讲老师选择", //查询窗口的标题
             configInfo: {
                 //width:comm.get("clientWidth")*0.8,
