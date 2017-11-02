@@ -235,3 +235,12 @@
 .x-form-readonly input{
     background: #f8f8f8;
 }
+
+
+.x-btn.x-btn-menu-active.x-btn-plain-toolbar-small, 
+.x-btn.x-btn-pressed.x-btn-plain-toolbar-small,
+.x-btn.x-btn-over.x-btn-plain-toolbar-small {
+    border-color: #d2d2d2;
+    background-image: none;
+    background-color: #f5f5f5;
+}

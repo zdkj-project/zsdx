@@ -25,6 +25,7 @@ Ext.define("core.train.dinnerregister.view.MainForm", {
         ref: 'girdFastSearchText',
         value:new Date(),
         emptyText: '请输入就餐日期',
+        format: "Y年m月d日",   //显示的格式
         triggers: {
             picker: {
                 handler: 'onTriggerClick',

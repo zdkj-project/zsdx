@@ -60,15 +60,21 @@ Ext.define("core.public.SelectRoom.view.SelectRoomGrid", {
             drop: function (node, data, dropRec, dropPosition) {
             },
             beforeitemdblclick: function (grid, record, item, index, e, eOpts) {
-                selectStore = grid.getStore();
-                selectStore.removeAt(index);
-
+              
                 var basePanel = grid.up("panel[xtype=pubselect.selectroomlayout]");
                 var isSelectGrid;
                 if (basePanel) {
                     isSelectGrid = basePanel.down("panel[xtype=pubselect.isselectroomgrid]");
-                    var isSelectStore = isSelectGrid.getStore();
-                    isSelectStore.insert(0, [record]);
+
+                    if(isSelectGrid.isVisible()==true){
+
+                        var isSelectStore = isSelectGrid.getStore();
+                        isSelectStore.insert(0, [record]);
+
+                        selectStore = grid.getStore();
+                        selectStore.removeAt(index);
+
+                    }
                 }
 
                 return false;

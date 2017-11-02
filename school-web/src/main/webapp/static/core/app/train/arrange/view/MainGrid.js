@@ -42,6 +42,12 @@ Ext.define("core.train.arrange.view.MainGrid", {
             ref: 'gridExportSite',
             funCode: 'girdFuntionBtn',
             iconCls: 'x-fa fa-clipboard'
+        }, {
+            xtype: 'button',
+            text: '导出就餐需求',
+            ref: 'gridExportDinner',
+            funCode: 'girdFuntionBtn',
+            iconCls: 'x-fa fa-clipboard'
         },  {
             xtype: 'button',
             text: '正式安排',

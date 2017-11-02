@@ -78,7 +78,8 @@ Ext.define('Ext.ux.DateTimeField', {
      * The default date format string which can be overriden for localization support. The format must be valid
      * according to {@link Ext.Date#parse}.
      */
-    format:'Y-m-d H:i:s',
+    //format:'Y-m-d H:i:s',
+    format:false,
     submitFormat:'Y-m-d H:i:s',
     //</locale>
     //<locale>
@@ -255,14 +256,13 @@ Ext.define('Ext.ux.DateTimeField', {
             me.submitFormat  = 'Y-m-d';
             if(!me.format)
                 me.format="Y年m月d日";
-        }
-        /*else{
+        }else{
             if(!me.format)
                 me.format='Y-m-d H:i:s';
 
             if(!me.submitFormat)
                 me.submitFormat  = 'Y-m-d H:i:s';
-        }*/
+        }
         me.callParent();
     },
 

@@ -59,6 +59,10 @@ public class CashDishesTimeController extends FrameWorkController<CashDinneritem
 		List<CashDinnertime> mealTimeList = new ArrayList<CashDinnertime>();
     	String hql = "from  CashDinnertime WHERE isDelete=0 and beginTime<='"+mealtime+"' and endTime>='"+mealtime+"'";
     	mealTimeList =cashDinnertimeService.doQuery(hql);
+    	
+    	if(mealTimeList.size()==0){
+    		writeJSON(response, "{}");
+    	}
     	short mealtype = mealTimeList.get(0).getMealType();
     	
     	String mapKey = null;

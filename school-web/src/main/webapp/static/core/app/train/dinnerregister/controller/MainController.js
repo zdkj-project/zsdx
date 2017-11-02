@@ -188,6 +188,13 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
 
     loadInfo:function(form,params){
         var self=this;
+
+        // var loading = new Ext.LoadMask(form, {
+        //     msg: '正在获取数据，请稍等...',
+        //     removeMask: true// 完成后移除
+        // });
+        // loading.show();
+
         //Ext.Msg.wait('正在查询中,请稍后...', '温馨提示');
 
         //var form=cpt.down("baseform[xtype=dinnerregister.mainform]");
@@ -530,11 +537,12 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                 }else{
                     form.setHtml("");
                 }
+                //loading.hide();
                 
                                                              
             },
             failure: function(response) {
-                Ext.Msg.hide();
+                //loading.hide();
                 Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);                            
             }
         }); 

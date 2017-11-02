@@ -1,0 +1,622 @@
+package com.zd.school.jw.train.controller;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.zd.core.constant.Constant;
+import com.zd.core.controller.core.FrameWorkController;
+import com.zd.core.util.BeanUtils;
+import com.zd.core.util.PoiExportExcel;
+import com.zd.school.cashier.model.CashExpensedetail;
+import com.zd.school.jw.train.model.TrainTeacherOrder;
+import com.zd.school.jw.train.service.TrainTeacherOrderDescService;
+import com.zd.school.jw.train.service.TrainTeacherOrderService;
+import com.zd.school.plartform.system.model.SysUser;
+
+@Controller
+@RequestMapping("/TrainTeacherOrder")
+public class TrainTeacherOrderController extends FrameWorkController<TrainTeacherOrder> implements Constant {
+
+	private static Logger logger = Logger.getLogger(TrainTeacherOrderController.class);
+
+	@Resource
+	TrainTeacherOrderService thisService; // service层接口
+
+	@Resource
+	TrainTeacherOrderDescService descService; // service层接口
+
+
+	@RequestMapping("/getOrderList")
+	public void getOrderDesc(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, IllegalAccessException, InvocationTargetException {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = new Date();
+		// 创建 Calendar 对象
+		Calendar calendar1 = Calendar.getInstance();
+		calendar1.setTime(date);
+		calendar1.set(Calendar.HOUR_OF_DAY, 0);
+		calendar1.set(Calendar.MINUTE, 0);
+		calendar1.set(Calendar.SECOND, 0);
+		calendar1.set(Calendar.MILLISECOND, 0);
+		
+		Calendar calendar2 = Calendar.getInstance();
+		calendar2.setTime(calendar1.getTime());
+		calendar2.add(Calendar.DAY_OF_MONTH, 10);
+		
+		SysUser currentUser = getCurrentSysUser();
+
+		// beginTime Between '" + s + " 06:00:00" + "' And '"+ sdf.format(date2)
+		// + "'
+		// 当前节点
+		String hql = "from TrainTeacherOrder where userId=? and dinnerDate>=? and dinnerDate<? order by dinnerDate asc";
+		List<TrainTeacherOrder> list = thisService.getForValues(hql, currentUser.getUuid(), calendar1.getTime(), calendar2.getTime());
+		int len = list.size();
+		
+		List<TrainTeacherOrder> returnlist=new ArrayList<>();
+		returnlist.addAll(list);
+		if (len != 10) {
+			TrainTeacherOrder temp = null;
+		
+			boolean isExist = false;
+			int day = 0;
+			int day2 = 0;
+			for (int i = 0; i < 10; i++) {
+				isExist = false;
+				day = calendar1.get(Calendar.DAY_OF_YEAR);
+				for (int j = 0; j < len; j++) {
+					calendar2.setTime(list.get(j).getDinnerDate());
+					day2 = calendar2.get(Calendar.DAY_OF_YEAR);
+					if (day == day2) {
+						isExist = true;
+						break;
+					}
+				}
+				if (isExist == false) {
+					temp = new TrainTeacherOrder();
+					temp.setDinnerDate(calendar1.getTime());
+					temp.setDinnerGroup((short) 0);
+					temp.setUserId(currentUser.getUuid());
+					temp.setUuid(null);
+					returnlist.add(i, temp);
+				}
+				calendar1.set(Calendar.DAY_OF_MONTH, calendar1.get(Calendar.DAY_OF_MONTH) + 1);
+			}
+		}
+		String strData = jsonBuilder.buildObjListToJson((long) returnlist.size(), returnlist, true);
+		writeJSON(response, strData);
+
+		// if(result.getTotalCount()>0)
+		// writeJSON(response,
+		// jsonBuilder.returnSuccessJson(jsonBuilder.toJson(result.getResultList().get(0))));
+		// else
+		// writeJSON(response, jsonBuilder.returnFailureJson("\"暂无数据\""));
+
+	}
+	
+	
+	@RequestMapping("/getOrderTotal")
+	public void getOrderTotal(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, IllegalAccessException, InvocationTargetException {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = new Date();
+		// 创建 Calendar 对象
+		Calendar calendar1 = Calendar.getInstance();
+		calendar1.setTime(date);
+		calendar1.set(Calendar.HOUR_OF_DAY, 0);
+		calendar1.set(Calendar.MINUTE, 0);
+		calendar1.set(Calendar.SECOND, 0);
+		calendar1.set(Calendar.MILLISECOND, 0);
+		
+		Calendar calendar2 = Calendar.getInstance();
+		calendar2.setTime(calendar1.getTime());
+		calendar2.add(Calendar.DAY_OF_MONTH, 10);
+	
+
+		// beginTime Between '" + s + " 06:00:00" + "' And '"+ sdf.format(date2)
+		// + "'
+		// 当前节点
+		String hql = "from TrainTeacherOrder where dinnerDate>=? and dinnerDate<? order by dinnerDate asc";
+		List<TrainTeacherOrder> list = thisService.getForValues(hql, calendar1.getTime(), calendar2.getTime());
+		int len = list.size();
+
+		List<Map<String,Object>> mapList=new ArrayList<>();
+		Map<String,Object> map=null;
+		
+		int day = 0;
+		int day2 = 0;
+		int count=0,countA=0,countB=0;
+		for (int i = 0; i < 10; i++) {
+			map=new HashMap<String,Object>();
+			map.put("dinnerDate", calendar1.getTime());
+			day = calendar1.get(Calendar.DAY_OF_YEAR);
+			count=0;
+			countA=0;
+			countB=0;
+			for (int j = 0; j < len; j++) {
+				calendar2.setTime(list.get(j).getDinnerDate());
+				day2 = calendar2.get(Calendar.DAY_OF_YEAR);
+				
+				if (day == day2) {	
+					if(1==list.get(j).getDinnerGroup()){
+						countA++;
+						count++;
+					}else if(2==list.get(j).getDinnerGroup()){
+						countB++;
+						count++;
+					}
+				}
+			}
+			map.put("count", count);
+			map.put("countA", countA);
+			map.put("countB", countB);
+			mapList.add(map);
+			calendar1.set(Calendar.DAY_OF_MONTH, calendar1.get(Calendar.DAY_OF_MONTH) + 1);
+		}
+		
+		String strData = jsonBuilder.buildObjListToJson((long) mapList.size(), mapList, true);
+		writeJSON(response, strData);
+
+		// if(result.getTotalCount()>0)
+		// writeJSON(response,
+		// jsonBuilder.returnSuccessJson(jsonBuilder.toJson(result.getResultList().get(0))));
+		// else
+		// writeJSON(response, jsonBuilder.returnFailureJson("\"暂无数据\""));
+
+	}
+	
+	@RequestMapping("/getOrderUserList")
+	public void getOrderUserList(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, IllegalAccessException, InvocationTargetException, ParseException {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String dinnerDate=request.getParameter("dinnerDate");
+		
+		Date date=sdf.parse(dinnerDate);
+		
+		// 创建 Calendar 对象
+		Calendar calendar1 = Calendar.getInstance();
+		calendar1.setTime(date);
+		calendar1.set(Calendar.HOUR_OF_DAY, 0);
+		calendar1.set(Calendar.MINUTE, 0);
+		calendar1.set(Calendar.SECOND, 0);
+		calendar1.set(Calendar.MILLISECOND, 0);
+		
+		Calendar calendar2 = Calendar.getInstance();
+		calendar2.setTime(calendar1.getTime());
+		calendar2.add(Calendar.DAY_OF_MONTH, 1);
+		
+		// beginTime Between '" + s + " 06:00:00" + "' And '"+ sdf.format(date2)
+		// + "'
+		// 当前节点
+		String hql = "from TrainTeacherOrder where dinnerDate>=? and dinnerDate<? order by createTime asc";
+		List<TrainTeacherOrder> list = thisService.getForValues(hql, calendar1.getTime(), calendar2.getTime());
+
+		String strData = jsonBuilder.buildObjListToJson((long) list.size(), list, true);
+		writeJSON(response, strData);
+
+		// if(result.getTotalCount()>0)
+		// writeJSON(response,
+		// jsonBuilder.returnSuccessJson(jsonBuilder.toJson(result.getResultList().get(0))));
+		// else
+		// writeJSON(response, jsonBuilder.returnFailureJson("\"暂无数据\""));
+
+	}
+	
+	/**
+	 * 
+	 * doAdd @Title: doAdd @Description: TODO @param @param BizTJob
+	 * 实体类 @param @param request @param @param response @param @throws
+	 * IOException 设定参数 @return void 返回类型 @throws
+	 * 
+	 * @throws InvocationTargetException
+	 * @throws IllegalAccessException
+	 */
+	@RequestMapping("/doAdd")
+	public void doAdd(TrainTeacherOrder entity, HttpServletRequest request, HttpServletResponse response)
+			throws IOException, IllegalAccessException, InvocationTargetException {
+
+		// 获取当前操作用户
+		String userCh = "超级管理员";
+		SysUser currentUser = getCurrentSysUser();
+		if (currentUser != null)
+			userCh = currentUser.getXm();
+		try {
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");   
+			Date date = new Date();
+			// 创建 Calendar 对象
+			Calendar calendar1 = Calendar.getInstance();
+			calendar1.setTime(date);	
+			Calendar calendar2 = Calendar.getInstance();
+			calendar2.setTime(entity.getDinnerDate());
+			if(calendar1.compareTo(calendar2)==1){
+				writeJSON(response, jsonBuilder.returnFailureJson("\"当前时间不允许再修改订餐！\""));
+				return;
+			}else{
+				calendar2.set(Calendar.DAY_OF_MONTH, calendar2.get(Calendar.DAY_OF_MONTH)-1);
+				if(calendar2.compareTo(calendar1)!=1){
+					calendar2.set(Calendar.HOUR_OF_DAY, 17);
+					calendar2.set(Calendar.MINUTE, 0);
+					calendar2.set(Calendar.SECOND, 0);
+					calendar2.set(Calendar.MILLISECOND, 0);
+					if(calendar2.compareTo(calendar1)!=1){
+						writeJSON(response, jsonBuilder.returnFailureJson("\"超过17点钟，就不可再预定明天的就餐！\""));
+						return;
+					}
+				}
+			}
+				
+			// 当前节点
+			TrainTeacherOrder saveEntity = new TrainTeacherOrder();
+			List<String> excludeList = new ArrayList<>();
+			excludeList.add("uuid");
+			BeanUtils.copyPropertiesExceptNull(saveEntity, entity, excludeList);
+			saveEntity.setUserId(currentUser.getUuid());
+
+			// 增加时要设置创建人
+			entity.setCreateUser(userCh); // 创建人
+			// 持久化到数据库
+			saveEntity = thisService.merge(saveEntity);
+
+			// 返回实体到前端界面
+			writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(saveEntity)));
+		} catch (Exception e) {
+			// 返回实体到前端界面
+			writeJSON(response, jsonBuilder.returnFailureJson("\"订餐失败，请联系管理员！\""));
+		}
+
+	}
+
+	/**
+	 * doUpdate编辑记录 @Title: doUpdate @Description: TODO @param @param
+	 * BizTJob @param @param request @param @param response @param @throws
+	 * IOException 设定参数 @return void 返回类型 @throws
+	 */
+	@RequestMapping("/doUpdate")
+	public void doUpdate(TrainTeacherOrder entity, HttpServletRequest request, HttpServletResponse response)
+			throws IOException, IllegalAccessException, InvocationTargetException {
+
+		// 入库前检查代码
+
+		// 获取当前的操作用户
+		String userCh = "超级管理员";
+		SysUser currentUser = getCurrentSysUser();
+		if (currentUser != null)
+			userCh = currentUser.getXm();
+		try {
+			// 先拿到已持久化的实体
+			TrainTeacherOrder perEntity = thisService.get(entity.getUuid());
+						
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");   
+			Date date = new Date();
+			// 创建 Calendar 对象
+			Calendar calendar1 = Calendar.getInstance();
+			calendar1.setTime(date);
+			Calendar calendar2 = Calendar.getInstance();
+			calendar2.setTime(perEntity.getDinnerDate());
+			if(calendar1.compareTo(calendar2)==1){
+				writeJSON(response, jsonBuilder.returnFailureJson("\"当前时间不允许再修改订餐！\""));
+				return;
+			}else{
+				calendar2.set(Calendar.DAY_OF_MONTH, calendar2.get(Calendar.DAY_OF_MONTH)-1);
+				if(calendar2.compareTo(calendar1)!=1){
+					calendar2.set(Calendar.HOUR_OF_DAY, 17);
+					calendar2.set(Calendar.MINUTE, 0);
+					calendar2.set(Calendar.SECOND, 0);
+					calendar2.set(Calendar.MILLISECOND, 0);
+					if(calendar2.compareTo(calendar1)!=1){
+						writeJSON(response, jsonBuilder.returnFailureJson("\"超过17点钟，就不可再修改明天的就餐！\""));
+						return;
+					}
+				}
+			}
+
+			// 将entity中不为空的字段动态加入到perEntity中去。
+			BeanUtils.copyPropertiesExceptNull(perEntity, entity);
+
+			perEntity.setUpdateTime(new Date()); // 设置修改时间
+			perEntity.setUpdateUser(userCh); // 设置修改人的中文名
+			entity = thisService.merge(perEntity);// 执行修改方法
+
+			writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
+		} catch (Exception e) {
+			// 返回实体到前端界面
+			writeJSON(response, jsonBuilder.returnFailureJson("\"请求失败，请联系管理员！\""));
+		}
+	}
+
+	@RequestMapping("/doCancel")
+	public void doCancel(TrainTeacherOrder entity, HttpServletRequest request, HttpServletResponse response)
+			throws IOException, IllegalAccessException, InvocationTargetException {
+
+		try {
+			// 先拿到已持久化的实体
+			TrainTeacherOrder perEntity = thisService.get(entity.getUuid());
+						
+			SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");   
+			Date date = new Date();
+			// 创建 Calendar 对象
+			Calendar calendar1 = Calendar.getInstance();
+			calendar1.setTime(date);	
+			Calendar calendar2 = Calendar.getInstance();
+			calendar2.setTime(perEntity.getDinnerDate());
+			if(calendar1.compareTo(calendar2)==1){
+				writeJSON(response, jsonBuilder.returnFailureJson("\"当前时间不允许再取消订餐！\""));
+				return;
+			}else{
+				calendar2.set(Calendar.DAY_OF_MONTH, calendar2.get(Calendar.DAY_OF_MONTH)-1);
+				if(calendar2.compareTo(calendar1)!=1){
+					calendar2.set(Calendar.HOUR_OF_DAY, 17);
+					calendar2.set(Calendar.MINUTE, 0);
+					calendar2.set(Calendar.SECOND, 0);
+					calendar2.set(Calendar.MILLISECOND, 0);
+					if(calendar2.compareTo(calendar1)!=1){
+						writeJSON(response, jsonBuilder.returnFailureJson("\"超过17点钟，就不可再取消明天的就餐信息！\""));
+						return;
+					}
+				}
+			}
+		
+
+			thisService.delete(perEntity);
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"处理成功！\""));
+		} catch (Exception e) {
+			// 返回实体到前端界面
+			writeJSON(response, jsonBuilder.returnFailureJson("\"请求失败，请联系管理员！\""));
+		}
+	}
+	
+	
+	/**
+	 * 导出订餐汇总信息
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/exportOrderTotalExcel")
+	public void exportOrderTotalExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getSession().setAttribute("exportOrderTotalIsEnd", "0");
+		request.getSession().removeAttribute("exportOrderTotalIsState");
+		
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");   
+		//SimpleDateFormat fmtDateWeek = new SimpleDateFormat("yyyy年M月d日 （E）");
+		//SimpleDateFormat fmtTime = new SimpleDateFormat("h:mm");
+		
+		List<Map<String, Object>> allList = new ArrayList<>();
+			
+		try{
+			Date date = new Date();
+			// 创建 Calendar 对象
+			Calendar calendar1 = Calendar.getInstance();
+			calendar1.setTime(date);
+			calendar1.set(Calendar.HOUR_OF_DAY, 0);
+			calendar1.set(Calendar.MINUTE, 0);
+			calendar1.set(Calendar.SECOND, 0);
+			calendar1.set(Calendar.MILLISECOND, 0);
+			
+			Calendar calendar2 = Calendar.getInstance();
+			calendar2.setTime(calendar1.getTime());
+			calendar2.add(Calendar.DAY_OF_MONTH, 10);
+		
+
+			// beginTime Between '" + s + " 06:00:00" + "' And '"+ sdf.format(date2)
+			// + "'
+			// 当前节点
+			String hql = "from TrainTeacherOrder where dinnerDate>=? and dinnerDate<? order by dinnerDate asc";
+			List<TrainTeacherOrder> list = thisService.getForValues(hql, calendar1.getTime(), calendar2.getTime());
+			int len = list.size();
+
+			List<Map<String,String>> mapList=new ArrayList<>();
+			Map<String,String> map=null;
+			
+			int day = 0;
+			int day2 = 0;
+			int count=0,countA=0,countB=0;
+			for (int i = 0; i < 10; i++) {
+				map=new LinkedHashMap<String,String>();
+				map.put("rownum", String.valueOf(i+1));
+				map.put("dinnerDate", sdf.format(calendar1.getTime()));
+				day = calendar1.get(Calendar.DAY_OF_YEAR);
+				count=0;
+				countA=0;
+				countB=0;
+				for (int j = 0; j < len; j++) {
+					calendar2.setTime(list.get(j).getDinnerDate());
+					day2 = calendar2.get(Calendar.DAY_OF_YEAR);
+					
+					if (day == day2) {	
+						if(1==list.get(j).getDinnerGroup()){
+							countA++;
+							count++;
+						}else if(2==list.get(j).getDinnerGroup()){
+							countB++;
+							count++;
+						}
+					}
+				}
+				map.put("count", String.valueOf(count));
+				map.put("countA", String.valueOf(countA));
+				map.put("countB", String.valueOf(countB));
+				mapList.add(map);
+				calendar1.set(Calendar.DAY_OF_MONTH, calendar1.get(Calendar.DAY_OF_MONTH) + 1);
+			}	
+		
+			// --------2.组装表格数据
+			Map<String, Object> orderAllMap = new LinkedHashMap<>();
+			orderAllMap.put("data", mapList);
+			orderAllMap.put("title", "订餐汇总表");
+			orderAllMap.put("head", new String[] { "序号","订餐日期", "总数", "A套餐数", "B套餐数" }); // 规定名字相同的，设定为合并
+			orderAllMap.put("columnWidth", new Integer[] { 10, 22, 20, 20, 20 }); // 30代表30个字节，15个字符
+			orderAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0}); // 0代表居中，1代表居左，2代表居右
+			orderAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+			allList.add(orderAllMap);
+	
+			// 在导出方法中进行解析		
+			boolean result = PoiExportExcel.exportExcel(response, "订餐汇总信息", "订餐汇总信息", allList);
+			if (result == true) {
+				request.getSession().setAttribute("exportOrderTotalIsEnd", "1");
+			} else {
+				request.getSession().setAttribute("exportOrderTotalIsEnd", "0");
+				request.getSession().setAttribute("exportOrderTotalIsState", "0");
+			}
+		}catch(Exception e){
+			request.getSession().setAttribute("exportOrderTotalIsEnd", "0");
+			request.getSession().setAttribute("exportOrderTotalIsState", "0");
+		}
+	}
+	
+	/**
+	 * 判断是否导出完毕
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/checkExportOrderTotalEnd")
+	public void checkExportOrderTotalEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Object isEnd = request.getSession().getAttribute("exportOrderTotalIsEnd");
+		Object state = request.getSession().getAttribute("exportOrderTotalIsState");
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+		}
+	}
+
+	/**
+	 * 导出订餐人员信息
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/exportOrderUsersExcel")
+	public void exportOrderUsersExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getSession().setAttribute("exportOrderUsersIsEnd", "0");
+		request.getSession().removeAttribute("exportOrderUsersIsState");
+		
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");   
+		//SimpleDateFormat fmtDateWeek = new SimpleDateFormat("yyyy年M月d日 （E）");
+		//SimpleDateFormat fmtTime = new SimpleDateFormat("h:mm");
+		
+		List<Map<String, Object>> allList = new ArrayList<>();
+			
+		try{
+			String dinnerDate=request.getParameter("dinnerDate");			
+			Date date=sdf.parse(dinnerDate);
+			
+			// 创建 Calendar 对象
+			Calendar calendar1 = Calendar.getInstance();
+			calendar1.setTime(date);
+			calendar1.set(Calendar.HOUR_OF_DAY, 0);
+			calendar1.set(Calendar.MINUTE, 0);
+			calendar1.set(Calendar.SECOND, 0);
+			calendar1.set(Calendar.MILLISECOND, 0);
+			
+			Calendar calendar2 = Calendar.getInstance();
+			calendar2.setTime(calendar1.getTime());
+			calendar2.add(Calendar.DAY_OF_MONTH, 1);
+			
+			// beginTime Between '" + s + " 06:00:00" + "' And '"+ sdf.format(date2)
+			// + "'
+			// 当前节点
+			String hql = "from TrainTeacherOrder where dinnerDate>=? and dinnerDate<? order by createTime asc";
+			List<TrainTeacherOrder> lists = thisService.getForValues(hql, calendar1.getTime(), calendar2.getTime());
+
+			
+			// 处理基本数据		
+			List<Map<String, String>> exportList = new ArrayList<>();
+			Map<String, String> tempMap = null;		
+			TrainTeacherOrder trainTeacherOrder=null;
+			String dinnerGroup="";
+			for (int i=0;i<lists.size();i++) {
+				trainTeacherOrder=lists.get(i);
+				
+				if(1==trainTeacherOrder.getDinnerGroup())
+					dinnerGroup="A套餐";
+				else if(2==trainTeacherOrder.getDinnerGroup())
+					dinnerGroup="B套餐";
+				else
+					dinnerGroup="其他";
+				tempMap=new LinkedHashMap<>();
+				tempMap.put("rownum",String.valueOf(i+1));
+				tempMap.put("xm", String.valueOf(trainTeacherOrder.getXm()));
+				tempMap.put("dinnerGroup", String.valueOf(dinnerGroup));
+				tempMap.put("createTime", String.valueOf(trainTeacherOrder.getCreateTime()));
+				tempMap.put("remark", String.valueOf(trainTeacherOrder.getRemark()==null?"":trainTeacherOrder.getRemark()));	
+				exportList.add(tempMap);
+			}
+		
+			// --------2.组装表格数据
+			Map<String, Object> orderAllMap = new LinkedHashMap<>();
+			orderAllMap.put("data", exportList);
+			orderAllMap.put("title", dinnerDate+"订餐人员信息表");
+			orderAllMap.put("head", new String[] { "序号","姓名","预定套餐","预定时间","备注" }); // 规定名字相同的，设定为合并
+			orderAllMap.put("columnWidth", new Integer[] { 10, 15, 15, 20, 30 }); // 30代表30个字节，15个字符
+			orderAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0,0}); // 0代表居中，1代表居左，2代表居右
+			orderAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+			allList.add(orderAllMap);
+	
+			// 在导出方法中进行解析		
+			boolean result = PoiExportExcel.exportExcel(response, dinnerDate+"订餐人员信息", "订餐人员信息", allList);
+			if (result == true) {
+				request.getSession().setAttribute("exportOrderUsersIsEnd", "1");
+			} else {
+				request.getSession().setAttribute("exportOrderUsersIsEnd", "0");
+				request.getSession().setAttribute("exportOrderUsersIsState", "0");
+			}
+		}catch(Exception e){
+			request.getSession().setAttribute("exportOrderUsersIsEnd", "0");
+			request.getSession().setAttribute("exportOrderUsersIsState", "0");
+		}
+	}
+	
+	/**
+	 * 判断是否导出完毕
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/checkExportOrderUsersEnd")
+	public void checkExportOrderUsersEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Object isEnd = request.getSession().getAttribute("exportOrderUsersIsEnd");
+		Object state = request.getSession().getAttribute("exportOrderUsersIsState");
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+		}
+	}
+}

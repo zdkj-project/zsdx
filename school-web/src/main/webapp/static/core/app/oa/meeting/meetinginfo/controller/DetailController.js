@@ -164,8 +164,8 @@ Ext.define("core.oa.meeting.meetinginfo.controller.DetailController", {
                         minWidth: null	//去掉mainLayout中的最小宽度
                     },
                     buttons: buttons,
-                    width: 1200,
-                    height: 800,
+                    width: 1100,
+                    height: 600,
                     funcPanel: funcPanel,
                     controller: "meetinginfo.otherController",
                     funData: tabFunData,

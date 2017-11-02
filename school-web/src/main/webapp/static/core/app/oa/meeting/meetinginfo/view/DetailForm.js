@@ -151,7 +151,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             xtype: "basefuncfield",
             refController: "pubselect.selectusercontroller",
             funcPanel: "pubselect.selectuserlayout", //该功能显示的主视图
-            funcGrid: "pubselect.isselectusergrid", //该功能显示的主视图
+            funcGrid: "pubselect.isselectusergrid", //获取数据的界面，muiltSelect=false时，隐藏此界面视图
             formPanel: "meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
             funcTitle: "主持人选择", //查询窗口的标题
             configInfo: {
@@ -175,7 +175,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             // refController: "meetinginfo.otherController", //该功能主控制器，这里重新指定为当前视图的控制器了
             refController: "pubselect.selectroomcontroller",
             funcPanel: "pubselect.selectroomlayout", //该功能显示的主视图
-            funcGrid: "pubselect.isselectroomgrid", //该功能显示的主视图
+            funcGrid: "pubselect.isselectroomgrid", //获取数据的界面，muiltSelect=false时，隐藏此界面视图
             formPanel: "meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
             funcTitle: "会议地点选择", //查询窗口的标题
             configInfo: {

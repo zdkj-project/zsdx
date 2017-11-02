@@ -1520,7 +1520,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 
 			// 查询班级学员就餐信息
 			List<TrainClasstrainee> foodClasstraineeList = null;
-			hql = " from TrainClasstrainee where isDelete=0 ";
+			hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2)";
 			if (StringUtils.isNotEmpty(ids)) {
 				hql += " and classId in ('" + ids.replace(",", "','") + "')";
 			}
@@ -1855,6 +1855,311 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 			writeJSON(response, jsonBuilder.returnFailureJson("\"消息发送失败！\""));
+		}
+	}
+	
+	
+	/**
+	 * 导出班级就餐信息
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/exportDinnerExcel")
+	public void exportDinnerExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getSession().setAttribute("exportTrainClassDinnerIsState", "0");
+		request.getSession().removeAttribute("exportTrainClassDinnerIsState");
+
+		SimpleDateFormat fmtDate = new SimpleDateFormat("yyyy年MM月dd日");
+		SimpleDateFormat fmtDateWeek = new SimpleDateFormat("yyyy年M月d日 （E）");
+		SimpleDateFormat fmtTime = new SimpleDateFormat("h:mm");
+
+		// 由于多个不同的表格放在一个sheet里，所以列宽只能是只有一份。
+		Integer[] columnWidth = new Integer[] { 15, 15, 15, 20, 15, 15, 15 };
+
+		Map<String, String> mapHeadshipLevel = new HashMap<>();
+		Map<String, String> mapXbm = new HashMap<>();
+		Map<String, String> mapClassCategory = new HashMap<>();
+		Map<String, String> mapMzmCategory = new HashMap<>();
+		Map<String, String> mapTraineeCategory = new HashMap<>();
+		String hql1 = " from BaseDicitem where dicCode in ('HEADSHIPLEVEL','XBM','ZXXBJLX','TRAINEECATEGORY','MZM')";
+		List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
+		for (BaseDicitem baseDicitem : listBaseDicItems1) {
+			if (baseDicitem.getDicCode().equals("XBM"))
+				mapXbm.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
+			else if (baseDicitem.getDicCode().equals("HEADSHIPLEVEL"))
+				mapHeadshipLevel.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
+			else if (baseDicitem.getDicCode().equals("MZM"))
+				mapMzmCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
+			else if (baseDicitem.getDicCode().equals("TRAINEECATEGORY"))
+				mapTraineeCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
+			else
+				mapClassCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
+		}
+
+		// ----------------------查询出各类数据，并作数据处理----------------------------------
+		// 1.班级信息
+		String ids = request.getParameter("ids"); // 程序中限定每次只能导出一个班级
+		TrainClass trainClass = thisService.get(ids);
+		
+		
+		// 处理学员基本数据
+		List<TrainClasstrainee> foodClasstraineeList = null;
+		int traineeNum =0; // 学员人数
+		int foodBreakfastNum = 0; // 早餐人数
+		int foodLunchNum = 0; // 午餐人数
+		int foodDinnerNum = 0; // 晚餐人数
+		int roomSiestaNum = 0; // 午休人数
+		int roomSleepNum = 0; // 晚宿人数
+		if (trainClass.getDinnerType() != null && trainClass.getDinnerType() != 3) {
+			// 若就餐类型不为快餐，则就餐人数为学员总数		
+			// foodBreakfastNum = foodLunchNum = foodDinnerNum = traineeNum; //		
+			foodBreakfastNum=trainClass.getBreakfastCount() == null ? 0 : trainClass.getBreakfastCount();
+			foodLunchNum=trainClass.getLunchCount() == null ? 0 : trainClass.getLunchCount();
+			foodDinnerNum=trainClass.getDinnerCount() == null ? 0 : trainClass.getDinnerCount();
+		}
+		
+		// 统计学员数据
+		String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2)";
+		if (StringUtils.isNotEmpty(ids)) {
+			hql += " and classId in ('" + ids.replace(",", "','") + "')";
+		}
+		hql += " order by breakfast desc,lunch desc,dinner desc";
+		foodClasstraineeList = classTraineeService.doQuery(hql);
+		
+		for (TrainClasstrainee classTrainee : foodClasstraineeList) {
+			
+			//只统计不为1的数据
+			if(classTrainee.getIsDelete()!=1){
+				// 若就餐类型为快餐，则统计
+				if (trainClass.getDinnerType() != null && trainClass.getDinnerType() == 3) {
+					if (classTrainee.getBreakfast() != null && classTrainee.getBreakfast() == 1)
+						foodBreakfastNum++;
+					if (classTrainee.getLunch() != null && classTrainee.getLunch() == 1)
+						foodLunchNum++;
+					if (classTrainee.getDinner() != null && classTrainee.getDinner() == 1)
+						foodDinnerNum++;
+				}
+	
+				if (classTrainee.getSiesta() != null && classTrainee.getSiesta() == 1)
+					roomSiestaNum++;
+				if (classTrainee.getSleep() != null && classTrainee.getSleep() == 1)
+					roomSleepNum++;
+				
+				traineeNum++;
+			}
+		}
+		
+
+		
+
+		
+
+		// ----------------------组装导出数据----------------------------------
+		// 1：设定一个大的List，分别用来存放 班级信息、学员信息、课程信息、就餐信息、住宿信息
+		// 2:循环将各个信息分别装入Map中
+		// 3：若多个相邻的表头和数据一致，则合并行单元格
+		// 4：若同列的数据一致，并且根据设定的列合并条件成立，则合并列单元格
+		List<Map<String, Object>> allList = new ArrayList<>();
+
+		// --------1.处理班级基本数据，并组装表格数据（特殊：一行分作两行显示）
+		List<Map<String, String>> classList1 = new ArrayList<>(); // 虽然内容只有一行，但是由于接口的设定，所以依旧使用list存入数据
+		List<Map<String, String>> classList2 = new ArrayList<>(); // 由于特殊要求，所以分为两列去显示表头和数据
+		Map<String, String> classMap1 = new LinkedHashMap<>();
+		Map<String, String> classMap2 = new LinkedHashMap<>();
+		classMap1.put("classCategory", mapClassCategory.get(trainClass.getClassCategory()));
+		classMap1.put("beginDate", fmtDate.format(trainClass.getBeginDate()));
+		classMap1.put("endDate", fmtDate.format(trainClass.getEndDate()));
+		classMap1.put("className", trainClass.getClassName());
+		classMap1.put("bzr", trainClass.getBzrName());
+		classMap1.put("contactPerson", trainClass.getContactPerson());
+		classMap1.put("contactPhone", trainClass.getContactPhone());
+		classMap2.put("traineeNum", String.valueOf(traineeNum));
+		classMap2.put("foodBreakfastNum", String.valueOf(foodBreakfastNum));
+		classMap2.put("foodLunchNum", String.valueOf(foodLunchNum));
+		classMap2.put("foodDinnerNum", String.valueOf(foodDinnerNum));
+		classMap2.put("roomSiestaNum", String.valueOf(roomSiestaNum));
+		classMap2.put("roomSleepNum", String.valueOf(roomSleepNum));
+
+		String isUse = "";
+		if (trainClass.getIsuse() == null || trainClass.getIsuse() == 0)
+			isUse = "未提交";
+		else if (trainClass.getIsuse() == 1)
+			isUse = "已提交";
+		else if (trainClass.getIsuse() == 2)
+			isUse = "修改未提交";
+		else if (trainClass.getIsuse() == 3)
+			isUse = "修改已提交";
+		classMap2.put("isUse", isUse);
+
+		classList1.add(classMap1);
+		classList2.add(classMap2);
+		// 第一行数据
+		Map<String, Object> classAllMap1 = new LinkedHashMap<>();
+		classAllMap1.put("data", classList1);
+		classAllMap1.put("title", "班级基本信息表");
+		classAllMap1.put("head", new String[] { "班级类型", "开始日期", "结束日期", "班级名称", "班主任", "联系人", "联系电话" }); // 规定
+																											// 名字相同的，设定为合并
+		classAllMap1.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
+		classAllMap1.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
+		classAllMap1.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+		allList.add(classAllMap1);
+		// 第二行数据
+		Map<String, Object> classAllMap2 = new LinkedHashMap<>();
+		classAllMap2.put("data", classList2);
+		classAllMap2.put("title", null); // 这一行不需要标题了
+		classAllMap2.put("head", new String[] { "学员人数", "早餐人数", "午餐人数", "晚餐人数", "午休人数", "晚宿人数", "提交状态" }); // 规定
+																											// 名字相同的，设定为合并
+		classAllMap2.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
+		classAllMap2.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
+		classAllMap2.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+		allList.add(classAllMap2);
+
+		// --------4.处理就餐信息，并组装表格数据（特殊：一行分作两行显示）--------------------
+		// 组装班级就餐数据，由于组装的数据格式固定，所以这里也是用一个list存入data
+		List<Map<String, String>> foodList1 = new ArrayList<>();
+		List<Map<String, String>> foodList2 = new ArrayList<>();
+		Map<String, String> foodMap1 = new LinkedHashMap<>();
+		Map<String, String> foodMap2 = new LinkedHashMap<>();
+		String[] foodHead1 = null;
+		String[] foodHead2 = null;
+		Integer[] foodColumnAlignment1 = null;
+		Integer[] foodColumnAlignment2 = null;
+		Integer dinnerType = trainClass.getDinnerType();
+		if (dinnerType == null)
+			dinnerType = 3;
+		if (dinnerType == 1) {
+			foodMap1.put("foodType", "围餐");
+			foodMap1.put("breakfastStand", String.valueOf(trainClass.getBreakfastStand()));
+			foodMap1.put("breakfastStand2", String.valueOf(trainClass.getBreakfastStand()));
+			foodMap1.put("lunchStand", String.valueOf(trainClass.getLunchStand()));
+			foodMap1.put("lunchStand2", String.valueOf(trainClass.getLunchStand()));
+			foodMap1.put("dinnerStand", String.valueOf(trainClass.getDinnerStand()));
+			foodMap1.put("dinnerStand2", String.valueOf(trainClass.getDinnerStand()));
+			foodHead1 = new String[] { "就餐类型", "早餐餐标", "早餐餐标", "午餐餐标", "午餐餐标", "晚餐餐标", "晚餐餐标" };
+			foodColumnAlignment1 = new Integer[] { 0, 0, 0, 0, 0, 0, 0 };
+
+			foodMap2.put("avgNumber", String.valueOf(trainClass.getAvgNumber()));
+			foodMap2.put("breakfastCount", String.valueOf(trainClass.getBreakfastCount()));
+			foodMap2.put("breakfastCount2", String.valueOf(trainClass.getBreakfastCount()));
+			foodMap2.put("lunchCount", String.valueOf(trainClass.getLunchCount()));
+			foodMap2.put("lunchCount2", String.valueOf(trainClass.getLunchCount()));
+			foodMap2.put("dinnerCount", String.valueOf(trainClass.getDinnerCount()));
+			foodMap2.put("dinnerCount2", String.valueOf(trainClass.getDinnerCount()));
+			foodHead2 = new String[] { "每围人数", "早餐围数", "早餐围数", "午餐围数", "午餐围数", "晚餐围数", "晚餐围数" };
+			foodColumnAlignment2 = new Integer[] { 0, 0, 0, 0, 0, 0, 0 };
+
+			foodList1.add(foodMap1);
+			foodList2.add(foodMap2);
+		} else if (dinnerType == 2) {
+			foodMap1.put("foodType", "自助餐");
+			foodMap1.put("breakfastStand", String.valueOf(trainClass.getBreakfastStand()));
+			foodMap1.put("breakfastStand2", String.valueOf(trainClass.getBreakfastStand()));
+			foodMap1.put("lunchStand", String.valueOf(trainClass.getLunchStand()));
+			foodMap1.put("lunchStand2", String.valueOf(trainClass.getLunchStand()));
+			foodMap1.put("dinnerStand", String.valueOf(trainClass.getDinnerStand()));
+			foodMap1.put("dinnerStand2", String.valueOf(trainClass.getDinnerStand()));
+			foodHead1 = new String[] { "就餐类型", "早餐餐标", "早餐餐标", "午餐餐标", "午餐餐标", "晚餐餐标", "晚餐餐标" };
+			foodColumnAlignment1 = new Integer[] { 0, 0, 0, 0, 0, 0, 0 };
+
+			foodMap2.put("avgNumber", "");
+			foodMap2.put("breakfastCount", String.valueOf(trainClass.getBreakfastCount()));
+			foodMap2.put("breakfastCount2", String.valueOf(trainClass.getBreakfastCount()));
+			foodMap2.put("lunchCount", String.valueOf(trainClass.getLunchCount()));
+			foodMap2.put("lunchCount2", String.valueOf(trainClass.getLunchCount()));
+			foodMap2.put("dinnerCount", String.valueOf(trainClass.getDinnerCount()));
+			foodMap2.put("dinnerCount2", String.valueOf(trainClass.getDinnerCount()));
+			foodHead2 = new String[] { "每围人数", "早餐人数", "早餐人数", "午餐人数", "午餐人数", "晚餐人数", "晚餐人数" };
+			foodColumnAlignment2 = new Integer[] { 0, 0, 0, 0, 0, 0, 0 };
+
+			foodList1.add(foodMap1);
+			foodList2.add(foodMap2);
+		} else if (dinnerType == 3) {
+			foodMap1.put("foodType", "快餐");
+			foodMap1.put("foodType2", "快餐");
+			foodMap1.put("breakfastStand", String.valueOf(trainClass.getBreakfastStand()));
+			foodMap1.put("lunchStand", String.valueOf(trainClass.getLunchStand()));
+			foodMap1.put("dinnerStand", String.valueOf(trainClass.getDinnerStand()));
+			
+			foodHead1 = new String[] { "就餐类型", "就餐类型", "早餐餐标", "午餐餐标", "晚餐餐标" };
+			foodColumnAlignment1 = new Integer[] { 0, 0, 0, 0, 0 };
+			foodList1.add(foodMap1);
+
+			
+			// 处理学员基本数据
+			for (TrainClasstrainee classTrainee : foodClasstraineeList) {
+				foodMap2 = new LinkedHashMap<>();
+				Integer breakFast = classTrainee.getBreakfast();
+				Integer lunch = classTrainee.getLunch();
+				Integer dinner = classTrainee.getDinner();
+
+				foodMap2.put("xm", classTrainee.getXm());
+				foodMap2.put("xbm", mapXbm.get(classTrainee.getXbm()));
+				foodMap2.put("breakfast", breakFast == null ? "否" : breakFast == 1 ? "是" : "否");
+				foodMap2.put("lunch", lunch == null ? "否" : lunch == 1 ? "是" : "否");
+				foodMap2.put("dinner", dinner == null ? "否" : dinner == 1 ? "是" : "否");
+
+				foodList2.add(foodMap2);
+			}
+			foodHead2 = new String[] { "姓名", "性别", "是否早餐", "是否午餐", "是否晚餐" };
+			foodColumnAlignment2 = new Integer[] { 0, 0, 0, 0, 0 };
+		}
+		
+		// 第一行数据
+		Map<String, Object> foodAllMap1 = new LinkedHashMap<>();
+		foodAllMap1.put("data", foodList1);
+		foodAllMap1.put("title", "班级就餐信息表");
+		foodAllMap1.put("head", foodHead1); // 规定 名字相同的，设定为合并
+		foodAllMap1.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
+		foodAllMap1.put("columnAlignment", foodColumnAlignment1); // 0代表居中，1代表居左，2代表居右
+		foodAllMap1.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+		allList.add(foodAllMap1);
+		// 第二行数据
+		if (foodList2.size() > 0) {
+			Map<String, Object> foodAllMap2 = new LinkedHashMap<>();
+			foodAllMap2.put("data", foodList2);
+			foodAllMap2.put("title", null);
+			foodAllMap2.put("head", foodHead2); // 规定 名字相同的，设定为合并
+			foodAllMap2.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
+			foodAllMap2.put("columnAlignment", foodColumnAlignment2); // 0代表居中，1代表居左，2代表居右
+			foodAllMap2.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+			allList.add(foodAllMap2);
+		}
+
+		// 在导出方法中进行解析
+		boolean result = PoiExportExcel.exportExcel(response, "班级就餐信息", trainClass.getClassName(), allList);
+		if (result == true) {
+			request.getSession().setAttribute("exportTrainClassDinnerIsEnd", "1");
+		} else {
+			request.getSession().setAttribute("exportTrainClassDinnerIsEnd", "0");
+			request.getSession().setAttribute("exportTrainClassDinnerIsState", "0");
+		}
+
+	}
+
+	/**
+	 * 判断是否导出完毕
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/checkExportDinnerEnd")
+	public void checkExportDinnerEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Object isEnd = request.getSession().getAttribute("exportTrainClassDinnerIsEnd");
+		Object state = request.getSession().getAttribute("exportTrainClassDinnerIsState");
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
 		}
 	}
 	

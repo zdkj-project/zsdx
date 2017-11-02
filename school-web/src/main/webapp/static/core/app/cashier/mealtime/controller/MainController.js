@@ -15,7 +15,8 @@ Ext.define("core.cashier.mealtime.controller.MainController", {
             afterrender: function (grid, eOpts) {
                 var btngridEdit_Tab = grid.down("button[ref=gridEdit_Tab]");
                 var roleKey = comm.get("roleKey");
-                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("ZONGWUROLE") == -1) {
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1
+                   && roleKey.indexOf("ZONGWUROLE") == -1 && roleKey.indexOf("FOODMANAGER") == -1) {
                 	btngridEdit_Tab.setHidden(true);
                 }
             }

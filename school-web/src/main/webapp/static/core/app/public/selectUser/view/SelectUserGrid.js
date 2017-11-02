@@ -60,15 +60,20 @@ Ext.define("core.public.selectUser.view.SelectUserGrid", {
             drop: function(node, data, dropRec, dropPosition) {
             },
             beforeitemdblclick: function(grid, record, item, index, e, eOpts) {
-                selectStore = grid.getStore();
-                selectStore.removeAt(index);
+              
 
                 var basePanel = grid.up("panel[xtype=pubselect.selectuserlayout]");
                 var isSelectGrid;
                 if(basePanel){
                     isSelectGrid = basePanel.down("panel[xtype=pubselect.isselectusergrid]");
-                    var isSelectStore = isSelectGrid.getStore();
-                    isSelectStore.insert(0, [record]);
+                    if(isSelectGrid.isVisible()==true){
+                        var isSelectStore = isSelectGrid.getStore();
+                        isSelectStore.insert(0, [record]);
+
+                        selectStore = grid.getStore();
+                        selectStore.removeAt(index);
+                    }
+                  
                 }
                 
                 return false;

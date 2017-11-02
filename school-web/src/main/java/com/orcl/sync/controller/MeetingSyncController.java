@@ -103,15 +103,23 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
 	            m = meetingService.get(o[0].toString());
 	            if (m == null) {
 	                m = new OaMeeting(o[0].toString());
+	                //考勤规则，现在放在第一次同步时来设定，因为后面可能会修改规则，所以之后不再同步
+	                m.setNeedChecking((short) 1);
+		            m.setCheckruleId(checkRule.getUuid());
+		            m.setCheckruleName(checkRule.getRuleName());
 	            }
 	            m.setMeetingTitle(o[1].toString());
 	            m.setMeetingName(o[1].toString());
 	            m.setMeetingContent(o[2].toString());
 	            //会议类型数据字典转换
-	            if (o[3] != null)
-	                m.setMeetingCategory(mapDicItem.get(o[3].toString() + "MEETINGCATEGORY"));
-	            //m.setMeetingCategory(o[3].toString());
-	
+	            if (o[3] != null){
+	            	String categoryItem=mapDicItem.get(o[3].toString() + "MEETINGCATEGORY");
+	            	if(categoryItem==null)
+	            		categoryItem="7";	//若没有找到类型，则指定为其他
+	                m.setMeetingCategory(categoryItem);
+	            }else{
+	            	m.setMeetingCategory(mapDicItem.get("其他MEETINGCATEGORY"));	//若没有类型，则指定为其他
+	            }
 	            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
 	            m.setBeginTime(sdf.parse(o[4].toString()));
 	            m.setEndTime(sdf.parse(o[5].toString()));
@@ -119,9 +127,7 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
 	            m.setRoomName(o[6].toString());
 	            if (mapRoomInfo.get(o[6]) != null)
 	                m.setRoomId(mapRoomInfo.get(o[6]));
-	            m.setNeedChecking((short) 1);
-	            m.setCheckruleId(checkRule.getUuid());
-	            m.setCheckruleName(checkRule.getRuleName());
+	          
 	            meetingService.merge(m);
 	        }
 	        employee();
