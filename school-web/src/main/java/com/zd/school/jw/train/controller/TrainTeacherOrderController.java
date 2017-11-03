@@ -59,7 +59,7 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 		
 		Calendar calendar2 = Calendar.getInstance();
 		calendar2.setTime(calendar1.getTime());
-		calendar2.add(Calendar.DAY_OF_MONTH, 10);
+		calendar2.add(Calendar.DAY_OF_MONTH, 14);
 		
 		SysUser currentUser = getCurrentSysUser();
 
@@ -72,13 +72,13 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 		
 		List<TrainTeacherOrder> returnlist=new ArrayList<>();
 		returnlist.addAll(list);
-		if (len != 10) {
+		if (len < 14) {
 			TrainTeacherOrder temp = null;
 		
 			boolean isExist = false;
 			int day = 0;
 			int day2 = 0;
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 14; i++) {
 				isExist = false;
 				day = calendar1.get(Calendar.DAY_OF_YEAR);
 				for (int j = 0; j < len; j++) {
@@ -128,7 +128,7 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 		
 		Calendar calendar2 = Calendar.getInstance();
 		calendar2.setTime(calendar1.getTime());
-		calendar2.add(Calendar.DAY_OF_MONTH, 10);
+		calendar2.add(Calendar.DAY_OF_MONTH, 14);
 	
 
 		// beginTime Between '" + s + " 06:00:00" + "' And '"+ sdf.format(date2)
@@ -144,7 +144,7 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 		int day = 0;
 		int day2 = 0;
 		int count=0,countA=0,countB=0;
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 14; i++) {
 			map=new HashMap<String,Object>();
 			map.put("dinnerDate", calendar1.getTime());
 			day = calendar1.get(Calendar.DAY_OF_YEAR);
@@ -415,7 +415,7 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 			
 			Calendar calendar2 = Calendar.getInstance();
 			calendar2.setTime(calendar1.getTime());
-			calendar2.add(Calendar.DAY_OF_MONTH, 10);
+			calendar2.add(Calendar.DAY_OF_MONTH, 14);
 		
 
 			// beginTime Between '" + s + " 06:00:00" + "' And '"+ sdf.format(date2)
@@ -431,7 +431,7 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 			int day = 0;
 			int day2 = 0;
 			int count=0,countA=0,countB=0;
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 14; i++) {
 				map=new LinkedHashMap<String,String>();
 				map.put("rownum", String.valueOf(i+1));
 				map.put("dinnerDate", sdf.format(calendar1.getTime()));
@@ -521,6 +521,7 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 		request.getSession().removeAttribute("exportOrderUsersIsState");
 		
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");   
+		SimpleDateFormat sdf2=new SimpleDateFormat("yyyy-MM-dd h:mm");   
 		//SimpleDateFormat fmtDateWeek = new SimpleDateFormat("yyyy年M月d日 （E）");
 		//SimpleDateFormat fmtTime = new SimpleDateFormat("h:mm");
 		
@@ -567,7 +568,7 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 				tempMap.put("rownum",String.valueOf(i+1));
 				tempMap.put("xm", String.valueOf(trainTeacherOrder.getXm()));
 				tempMap.put("dinnerGroup", String.valueOf(dinnerGroup));
-				tempMap.put("createTime", String.valueOf(trainTeacherOrder.getCreateTime()));
+				tempMap.put("createTime", String.valueOf(sdf2.format(trainTeacherOrder.getCreateTime())));
 				tempMap.put("remark", String.valueOf(trainTeacherOrder.getRemark()==null?"":trainTeacherOrder.getRemark()));	
 				exportList.add(tempMap);
 			}
@@ -583,7 +584,7 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 			allList.add(orderAllMap);
 	
 			// 在导出方法中进行解析		
-			boolean result = PoiExportExcel.exportExcel(response, dinnerDate+"订餐人员信息", "订餐人员信息", allList);
+			boolean result = PoiExportExcel.exportExcel(response, dinnerDate+" 订餐人员信息", "订餐人员信息", allList);
 			if (result == true) {
 				request.getSession().setAttribute("exportOrderUsersIsEnd", "1");
 			} else {

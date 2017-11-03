@@ -32,7 +32,7 @@ Ext.define("core.ordermanage.ordertotal.view.MainGrid", {
             iconCls: 'x-fa fa-file'
         },{
             xtype: 'tbtext',
-            html: '（*只显示未来10天的订餐数据）',
+            html: '（*只显示未来14天的订餐数据）',
             style: {
                 fontSize: '14px',
                 color: '#C44444',
@@ -59,13 +59,13 @@ Ext.define("core.ordermanage.ordertotal.view.MainGrid", {
             text: '序号',
             align: 'center'
         },{
-            width: 200,
+            width: 250,
             text: "订餐日期",
             dataIndex: "dinnerDate",
             renderer: function(value, metaData) {
                 var reg = new RegExp("^[0-9]*$");    
                 if(reg.test(value)){
-                    return Ext.Date.format(new Date(value), 'Y年m月d日');
+                    return Ext.Date.format(new Date(value), 'Y年m月d日 - D');
                 }
                 return value;
             }

@@ -114,7 +114,18 @@ Ext.define("core.reportcenter.cashreport.view.MainGrid", {
         },{
             width:80,
             text: "交易状态",
-            dataIndex: "CONSUME_STATE"
+            dataIndex: "CONSUME_STATE",
+            renderer: function(value, metaData) {                
+                if(value=="成功"){
+                    return "<span style='color:green'>成功</span>";
+                }else if(value=="销单"){
+                    return "<span style='color:red'>销单</span>";
+                }else if(value=="取消"){
+                    return "<span style='color:black'>取消</span>";
+                }else{
+                    return value;
+                }
+            }
         },{
             width:80,
             text: "结算方式",
@@ -167,7 +178,7 @@ Ext.define("core.reportcenter.cashreport.view.MainGrid", {
             xtype: 'actiontextcolumn',
             text: "操作",
             align:'center',
-            width: 80,
+            width: 100,
             fixed: true,
             items: [ {
                 text:'收银明细',  
@@ -183,6 +194,32 @@ Ext.define("core.reportcenter.cashreport.view.MainGrid", {
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
                     this.fireEvent('detailClick_Tab', {
+                        view: view.grid,
+                        record: rec
+                    });
+                }
+            },{
+                text:'销单',  
+                style:'font-size:12px;',  
+                tooltip: '废除错误录入的单',
+                ref: 'gridDestroy',
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if(record.get("EXPENSESERIAL_ID")==null || record.get("CONSUME_STATE")!="成功"
+                        ||(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 
+                            && roleKey.indexOf("ZONGWUROLE") == -1 && roleKey.indexOf("FOODMANAGER") == -1))
+                        return 'x-hidden-display';
+                    else
+                        return null;
+                    
+                    if (record.get("EXPENSESERIAL_ID")==null || record.get("CONSUME_STATE")!="成功"){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
+                },
+                handler: function(view, rowIndex, colIndex, item) {
+                    var rec = view.getStore().getAt(rowIndex);
+                    this.fireEvent('destroyClick_Tab', {
                         view: view.grid,
                         record: rec
                     });

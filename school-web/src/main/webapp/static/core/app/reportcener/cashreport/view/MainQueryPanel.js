@@ -112,7 +112,8 @@ Ext.define("core.reportcenter.cashreport.view.MainQueryPanel", {
             	fields: ['name', 'value'],
 	            data : [
 	                {"name":"全部", "value":""},
-	                {"name":"成功", "value":"成功"},	              
+	                {"name":"成功", "value":"成功"},	 
+	                {"name":"销单", "value":"销单"},            
 	                {"name":"取消", "value":"取消"}
 	            ]
 	        }),

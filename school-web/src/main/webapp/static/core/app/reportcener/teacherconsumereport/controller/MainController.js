@@ -247,7 +247,8 @@ Ext.define("core.reportcenter.teacherconsumereport.controller.MainController", {
                 var params="?t=1";
                 
                 for(var i in extraParams){
-                    params+="&"+i+"="+extraParams[i];
+                    if(extraParams[i]!=undefined)
+                        params+="&"+i+"="+extraParams[i];                
                 }
                
                 var title = "确定要导出教职工消费汇总信息吗？";

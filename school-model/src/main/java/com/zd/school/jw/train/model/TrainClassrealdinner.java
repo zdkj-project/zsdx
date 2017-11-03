@@ -157,35 +157,35 @@ public class TrainClassrealdinner extends BaseEntity implements Serializable{
         return dinnerStand;
     }
     
-//    @FieldInfo(name = "加菜金额")
-//    @Column(name = "LUNCH_STAND", precision = 8, scale = 2, nullable = true)
-//    private BigDecimal lunchStand;
-//    public void setLunchStand(BigDecimal lunchStand) {
-//        this.lunchStand = lunchStand;
-//    }
-//    public BigDecimal getLunchStand() {
-//        return lunchStand;
-//    }
-//        
-//    @FieldInfo(name = "纸巾")
-//    @Column(name = "DINNER_STAND_REAL", precision = 8, scale = 2, nullable = true)
-//    private BigDecimal dinnerStandReal;
-//    public void setDinnerStandReal(BigDecimal dinnerStandReal) {
-//        this.dinnerStandReal = dinnerStandReal;
-//    }
-//    public BigDecimal getDinnerStandReal() {
-//        return dinnerStandReal;
-//    }
-//    
-//    @FieldInfo(name = "其他")
-//    @Column(name = "DINNER_STAND", precision = 8, scale = 2, nullable = true)
-//    private BigDecimal dinnerStand;
-//    public void setDinnerStand(BigDecimal dinnerStand) {
-//        this.dinnerStand = dinnerStand;
-//    }
-//    public BigDecimal getDinnerStand() {
-//        return dinnerStand;
-//    }
+    @FieldInfo(name = "加菜金额")
+    @Column(name = "ADDDINNER_STAND", precision = 8, scale = 2, nullable = true)
+    private BigDecimal addDinnerStand;
+    public void setAddDinnerStand(BigDecimal addDinnerStand) {
+        this.addDinnerStand = addDinnerStand;
+    }
+    public BigDecimal getAddDinnerStand() {
+        return addDinnerStand;
+    }
+        
+    @FieldInfo(name = "纸巾")
+    @Column(name = "TISSUE_STAND", precision = 8, scale = 2, nullable = true)
+    private BigDecimal tissueStand;
+    public void setTissueStand(BigDecimal tissueStand) {
+        this.tissueStand = tissueStand;
+    }
+    public BigDecimal getTissueStand() {
+        return tissueStand;
+    }
+    
+    @FieldInfo(name = "其他")
+    @Column(name = "OTHER_STAND", precision = 8, scale = 2, nullable = true)
+    private BigDecimal otherStand;
+    public void setOtherStand(BigDecimal otherStand) {
+        this.otherStand = otherStand;
+    }
+    public BigDecimal getOtherStand() {
+        return otherStand;
+    }
         
     @FieldInfo(name = "备注")
     @Column(name = "REMARK", length = 128, nullable = true)

@@ -155,4 +155,19 @@ public class CashExpenseserialServiceImpl extends BaseServiceImpl<CashExpenseser
 
         return true;
     }
+
+	@Override
+	public int doDestroyCash(String uuid, SysUser currentUser) {
+
+		// 先拿到已持久化的实体
+        CashExpenseserial saveEntity = this.get(uuid);
+
+        saveEntity.setConsumeState("销单");
+        saveEntity.setUpdateTime(new Date()); // 设置修改时间
+        saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
+        this.merge(saveEntity);// 执行修改方法
+        
+        return 1;
+        
+	}
 }

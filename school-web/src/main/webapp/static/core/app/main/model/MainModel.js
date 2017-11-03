@@ -176,6 +176,26 @@ Ext.define('core.main.model.MainModel', {
             "text": "学员卡务",
             "iconCls": "",
             "issystem": 1
+        },{
+
+            "parent": "ROOT",
+            "menuLeaf": "LEAF",
+            "bigIcon": "/static/core/resources/images/icon/index_kaoqinjieguo.png",
+            "level": 1,
+            "nodeCode": "",
+            "leaf": true,
+            "isHidden": "0",
+            "treeid": "e6674147-1410-47d8-9289-b19a2843bf0e,02447a39-6f4d-478c-83e5-4046d76758c9",
+            "menuTarget": "teacherorder.mainlayout,core.ordermanage.teacherorder.controller.MainController",
+            "children": [],
+            "menuCode": "TEACHERORDER",
+            "orderIndex": 10,
+            "menuType": "FUNC",
+            "smallIcon": "icon_kaoqinjieguo",
+            "id": "02447a39-6f4d-478c-83e5-4046d76758c9",
+            "text": "教职工订餐",
+            "iconCls": "",
+            "issystem": 1
         }],
 
         otherSystemList:[{ 

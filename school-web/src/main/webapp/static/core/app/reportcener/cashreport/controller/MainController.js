@@ -276,7 +276,8 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
                 var params="?t=1";
                 
                 for(var i in extraParams){
-                    params+="&"+i+"="+extraParams[i];
+                    if(extraParams[i]!=undefined)
+                        params+="&"+i+"="+extraParams[i];
                 }
                
                 var title = "确定要导出收银汇总信息吗？";
@@ -520,6 +521,53 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
 
                 return false;
             },
+
+            destroyClick_Tab:function( data) {
+                var baseGrid = data.view;
+                var record = data.record;
+
+                var self=this;
+                var self=this;
+                var baseGrid = data.view;
+                var record = data.record;
+                var uuid = record.get("EXPENSESERIAL_ID");
+
+                Ext.Msg.confirm('温馨提示', "您确定要销毁此单据吗？ 请慎重！", function (btn, text) {
+                    if (btn == "yes") {
+                        var loading = new Ext.LoadMask(baseGrid, {
+                            msg: '正在提交数据...',
+                            removeMask: true// 完成后移除
+                        });
+                        loading.show();
+                        
+                        self.asyncAjax({
+                            url: comm.get("baseUrl") + "/CashExpenseserial/doDestroyCash",
+                            params:{
+                                uuid:uuid
+                            },
+                            //回调代码必须写在里面
+                            success: function (response) {
+                                data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                                if (data.success) {
+                                    self.Info("销单成功！");
+                                    baseGrid.getStore().load();
+                                }else{
+                                    self.Error(data.obj);
+                                }
+                                loading.hide();
+                            },failure: function(response) {
+                                loading.hide();
+                                Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);                            
+                            }
+                        });
+                    }
+                });
+
+
+                return false;
+
+            }
         }
     },
 

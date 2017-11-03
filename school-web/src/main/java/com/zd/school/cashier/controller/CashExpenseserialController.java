@@ -153,4 +153,24 @@ public class CashExpenseserialController extends FrameWorkController<CashExpense
 			writeJSON(response, jsonBuilder.returnFailureJson("'数据修改失败,详情见错误日志'"));
 		}
     }
+    
+    @RequestMapping("/doDestroyCash")
+    public void doDestroyCash( HttpServletRequest request, HttpServletResponse response)
+            throws IOException, IllegalAccessException, InvocationTargetException {
+		
+		//入库前检查代码
+		
+		//获取当前的操作用户
+		SysUser currentUser = getCurrentSysUser();
+		try {
+			String uuid=request.getParameter("uuid");
+			int row=thisService.doDestroyCash(uuid, currentUser);// 执行修改方法
+			if (row==1)
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"销单成功！\""));
+			else
+				writeJSON(response, jsonBuilder.returnFailureJson("\"销单失败，请联系管理员\""));
+		} catch (Exception e) {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"销单失败，请联系管理员\""));
+		}
+    }
 }

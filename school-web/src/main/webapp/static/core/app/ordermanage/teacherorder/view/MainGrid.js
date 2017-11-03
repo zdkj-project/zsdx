@@ -57,12 +57,12 @@ Ext.define("core.ordermanage.teacherorder.view.MainGrid", {
             text: '序号',
             align: 'center'
         }, {
-            width: 200,
+            width: 250,
             text: "订餐日期",
             dataIndex: "dinnerDate",
             renderer: function(value, metaData) {
                 var date = value.replace(new RegExp(/-/gm), "/");    
-                var ss = Ext.Date.format(new Date(date), 'Y年m月d日')           
+                var ss = Ext.Date.format(new Date(date), 'Y年m月d日 - D')           
                 return ss;
             }
         }, {

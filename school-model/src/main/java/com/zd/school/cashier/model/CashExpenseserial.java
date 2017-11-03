@@ -120,7 +120,8 @@ public class CashExpenseserial extends BaseEntity implements Serializable{
     public String getOpertioner() {
         return opertioner;
     }
-        
+    
+    //成功、取消、销单
     @FieldInfo(name = "交易状态")
     @Column(name = "CONSUME_STATE", length = 8, nullable = false)
     private String consumeState;

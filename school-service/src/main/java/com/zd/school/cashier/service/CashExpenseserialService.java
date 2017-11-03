@@ -76,4 +76,6 @@ public interface CashExpenseserialService extends BaseService<CashExpenseserial>
 	public CashExpenseserial doAddEntity(CashExpenseserial entity, SysUser currentUser);
 
 	public  boolean doSaveConsumeBill(CashExpenseserial bill, List<CashExpensedetail> billDetail) throws InvocationTargetException, IllegalAccessException;
+
+	public int doDestroyCash(String uuid, SysUser currentUser);
 }
