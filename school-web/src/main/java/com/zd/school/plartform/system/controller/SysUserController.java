@@ -629,7 +629,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 	}
 
 	/*
-	 * 一键同步UP的方式
+	 * 一键发卡信息的方式
 	 */
 	@RequestMapping("/doSyncAllCardInfoFromUp")
 	public void doSyncAllCardInfoFromUp(HttpServletRequest request, HttpServletResponse response) throws IOException {

@@ -237,4 +237,7 @@
     <!-- 暂时不加入redis
   		<import resource="redis-config.xml"/>
   	 -->
+  	 
+  	 <!--加入quartz -->
+	<import resource="quartz-config.xml" />
 </beans>

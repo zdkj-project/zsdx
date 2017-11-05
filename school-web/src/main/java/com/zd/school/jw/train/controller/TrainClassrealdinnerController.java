@@ -16,10 +16,12 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.orcl.sync.controller.UserSyncController;
 import com.zd.core.constant.Constant;
 import com.zd.core.constant.StatuVeriable;
 import com.zd.core.controller.core.FrameWorkController;
@@ -54,6 +56,8 @@ import com.zd.school.jw.train.service.TrainClassrealdinnerService ;
 @RequestMapping("/TrainClassrealdinner")
 public class TrainClassrealdinnerController extends FrameWorkController<TrainClassrealdinner> implements Constant {
 
+	private static Logger logger = Logger.getLogger(TrainClassrealdinnerController.class);
+	
     @Resource
     TrainClassrealdinnerService thisService; // service层接口
     
@@ -213,6 +217,9 @@ public class TrainClassrealdinnerController extends FrameWorkController<TrainCla
 				dinnerMap.put("lunchStandReal", String.valueOf(classrealdinner.getLunchStandReal()));
 				dinnerMap.put("dinnerReal", String.valueOf(classrealdinner.getDinnerReal()));
 				dinnerMap.put("dinnerStandReal", String.valueOf(classrealdinner.getDinnerStandReal()));
+				dinnerMap.put("addDinnerStand", String.valueOf(classrealdinner.getAddDinnerStand()));
+				dinnerMap.put("tissueStand", String.valueOf(classrealdinner.getTissueStand()));
+				dinnerMap.put("otherStand", String.valueOf(classrealdinner.getOtherStand()));
 				
 				exportList.add(dinnerMap);
 			}
@@ -220,9 +227,9 @@ public class TrainClassrealdinnerController extends FrameWorkController<TrainCla
 			Map<String, Object> dinnerAllMap = new LinkedHashMap<>();
 			dinnerAllMap.put("data", exportList);
 			dinnerAllMap.put("title", "就餐登记表");
-			dinnerAllMap.put("head", new String[] { "班级名称", "就餐日期", "联系人", "联系电话", "预定早餐围/人数", "预定午餐围/人数", "预定晚餐围/人数","实际早餐围/人数","早餐餐标","实际午餐围/人数","午餐餐标","实际晚餐围/人数","晚餐餐标" }); // 规定名字相同的，设定为合并
-			dinnerAllMap.put("columnWidth", new Integer[] { 15, 15, 15, 15, 17, 17, 17,17, 15, 17,15,17,15 }); // 30代表30个字节，15个字符
-			dinnerAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0}); // 0代表居中，1代表居左，2代表居右
+			dinnerAllMap.put("head", new String[] { "班级名称", "就餐日期", "联系人", "联系电话", "预定早餐围/人数", "预定午餐围/人数", "预定晚餐围/人数","实际早餐围/人数","早餐餐标","实际午餐围/人数","午餐餐标","实际晚餐围/人数","晚餐餐标","加菜金额","纸巾金额","其他金额" }); // 规定名字相同的，设定为合并
+			dinnerAllMap.put("columnWidth", new Integer[] { 15, 15, 15, 15, 17, 17, 17,17, 15, 17,15,17,15,15,15,15 }); // 30代表30个字节，15个字符
+			dinnerAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0,0,0,0}); // 0代表居中，1代表居左，2代表居右
 			dinnerAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
 			allList.add(dinnerAllMap);
 	
@@ -277,6 +284,18 @@ public class TrainClassrealdinnerController extends FrameWorkController<TrainCla
 			org.springframework.web.bind.annotation.RequestMethod.POST })
 	public void getDinnerTotalList( HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ParseException {
+		logger.info("阿斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德斯达打算阿"
+				+ "斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德"
+				+ "斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德"
+				+ "斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德"
+				+ "斯达打算阿斯啥啥阿萨德"
+				+ "斯啥啥阿萨德斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德");
+		logger.error("阿斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德斯达打算阿"
+				+ "斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德"
+				+ "斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德"
+				+ "斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德"
+				+ "斯达打算阿斯啥啥阿萨德"
+				+ "斯啥啥阿萨德斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德斯达打算阿斯啥啥阿萨德");
 		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");   
 	     
 		String strData = ""; // 返回给js的数据
@@ -394,15 +413,18 @@ public class TrainClassrealdinnerController extends FrameWorkController<TrainCla
 				dinnerMap.put("DINNER_REAL", String.valueOf(classrealdinner.get("DINNER_REAL")));
 				dinnerMap.put("COUNT_MONEY_PLAN", String.valueOf(classrealdinner.get("COUNT_MONEY_PLAN")));
 				dinnerMap.put("COUNT_MONEY_REAL", String.valueOf(classrealdinner.get("COUNT_MONEY_REAL")));
+				dinnerMap.put("ADDDINNER_STAND", String.valueOf(classrealdinner.get("ADDDINNER_STAND")));
+				dinnerMap.put("TISSUE_STAND", String.valueOf(classrealdinner.get("TISSUE_STAND")));
+				dinnerMap.put("OTHER_STAND", String.valueOf(classrealdinner.get("OTHER_STAND")));
 				exportList.add(dinnerMap);
 			}
 			// --------2.组装表格数据
 			Map<String, Object> dinnerAllMap = new LinkedHashMap<>();
 			dinnerAllMap.put("data", exportList);
 			dinnerAllMap.put("title", "就餐汇总表");
-			dinnerAllMap.put("head", new String[] { "序号","班级名称", "班级编号", "就餐类型", "计划早餐围/人数", "计划午餐围/人数", "计划晚餐围/人数","实际早餐围/人数","实际午餐围/人数","实际晚餐围/人数","计划总额","实际总额" }); // 规定名字相同的，设定为合并
-			dinnerAllMap.put("columnWidth", new Integer[] { 10, 20, 15, 12, 17, 17, 17,17, 17, 17,15,15 }); // 30代表30个字节，15个字符
-			dinnerAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0 }); // 0代表居中，1代表居左，2代表居右
+			dinnerAllMap.put("head", new String[] { "序号","班级名称", "班级编号", "就餐类型", "计划早餐围/人数", "计划午餐围/人数", "计划晚餐围/人数","实际早餐围/人数","实际午餐围/人数","实际晚餐围/人数","计划总额","实际总额","加菜金额","纸巾金额","其他金额" }); // 规定名字相同的，设定为合并
+			dinnerAllMap.put("columnWidth", new Integer[] { 10, 20, 15, 12, 17, 17, 17,17, 17, 17,15,15,15,15 ,15  }); // 30代表30个字节，15个字符
+			dinnerAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0,0,0 }); // 0代表居中，1代表居左，2代表居右
 			dinnerAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
 			allList.add(dinnerAllMap);
 	
@@ -441,7 +463,7 @@ public class TrainClassrealdinnerController extends FrameWorkController<TrainCla
 		String classId = request.getParameter("classId"); 
 	
 		try{
-			String hql="from TrainClassrealdinner a where a.isDelete=0 and a.classId=? order by a.createTime asc";
+			String hql="from TrainClassrealdinner a where a.isDelete=0 and a.classId=? order by a.dinnerDate asc";
 			List<TrainClassrealdinner> lists=thisService.getForValues(hql,classId);
 			String sheetTitle="";
 			
@@ -464,7 +486,10 @@ public class TrainClassrealdinnerController extends FrameWorkController<TrainCla
 				dinnerMap.put("lunchStandReal", String.valueOf(classrealdinner.getLunchStandReal()));
 				dinnerMap.put("dinnerReal", String.valueOf(classrealdinner.getDinnerReal()));
 				dinnerMap.put("dinnerStandReal", String.valueOf(classrealdinner.getDinnerStandReal()));
-				dinnerMap.put("moneyReal", String.valueOf(classrealdinner.getCountMoneyReal()));			
+				dinnerMap.put("moneyReal", String.valueOf(classrealdinner.getCountMoneyReal()));
+				dinnerMap.put("addDinnerStand", String.valueOf(classrealdinner.getAddDinnerStand()));
+				dinnerMap.put("tissueStand", String.valueOf(classrealdinner.getTissueStand()));
+				dinnerMap.put("otherStand", String.valueOf(classrealdinner.getOtherStand()));
 				dinnerMap.put("version", classrealdinner.getVersion()==0?"未登记":"已登记");
 				dinnerMap.put("remark", classrealdinner.getRemark());			
 				exportList.add(dinnerMap);
@@ -473,9 +498,9 @@ public class TrainClassrealdinnerController extends FrameWorkController<TrainCla
 			Map<String, Object> dinnerAllMap = new LinkedHashMap<>();
 			dinnerAllMap.put("data", exportList);
 			dinnerAllMap.put("title", "班级就餐登记详情表");
-			dinnerAllMap.put("head", new String[] { "班级名称", "就餐日期", "联系人", "联系电话","实际早餐围/人数","早餐餐标","实际午餐围/人数","午餐餐标","实际晚餐围/人数","晚餐餐标","实际金额","是否登记","备注" }); // 规定名字相同的，设定为合并
-			dinnerAllMap.put("columnWidth", new Integer[] { 15, 15, 15, 15, 17, 15, 17,15, 17, 15,10,10,20 }); // 30代表30个字节，15个字符
-			dinnerAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0 }); // 0代表居中，1代表居左，2代表居右
+			dinnerAllMap.put("head", new String[] { "班级名称", "就餐日期", "联系人", "联系电话","实际早餐围/人数","早餐餐标","实际午餐围/人数","午餐餐标","实际晚餐围/人数","晚餐餐标","实际金额","加菜金额","纸巾金额","其他金额","是否登记","备注" }); // 规定名字相同的，设定为合并
+			dinnerAllMap.put("columnWidth", new Integer[] { 15, 15, 15, 15, 17, 12, 17,12, 17, 12,15,12,12,12,10,20 }); // 30代表30个字节，15个字符
+			dinnerAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0,0,0,0 }); // 0代表居中，1代表居左，2代表居右
 			dinnerAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
 			allList.add(dinnerAllMap);
 	
@@ -648,9 +673,7 @@ public class TrainClassrealdinnerController extends FrameWorkController<TrainCla
 						dinnerStandReal=new BigDecimal(0);
 					}
 					BigDecimal dinnerTotal =dinnerStandReal.multiply(new BigDecimal(dinnerReal));
-					moneyTotal = breakfastTotal.add(lunchTotal).add(dinnerTotal);
-					
-					total = total.add(moneyTotal);
+											
 					
 					dinnerMap.put("month", fmtmDate.format(lists.get(6*i+j).getDinnerDate()));
 					dinnerMap.put("day", fmtdDate.format(lists.get(6*i+j).getDinnerDate()));
@@ -667,9 +690,22 @@ public class TrainClassrealdinnerController extends FrameWorkController<TrainCla
 					dinnerMap.put("dinnerStandReal", String.valueOf(dinnerStandReal));
 					dinnerMap.put("dinnerTotal", String.valueOf(dinnerTotal));
 					
-					dinnerMap.put("other", String.valueOf("加菜[   ]"+'\n'+"纸巾[   ]"+'\n'+"其他[   ]"));			
+					BigDecimal addDinnerStand =lists.get(6*i+j).getAddDinnerStand();
+					BigDecimal tissueStand =lists.get(6*i+j).getTissueStand();
+					BigDecimal otherStand =lists.get(6*i+j).getOtherStand();
+					addDinnerStand=addDinnerStand==null?BigDecimal.ZERO:addDinnerStand;
+					tissueStand=tissueStand==null?BigDecimal.ZERO:tissueStand;
+					otherStand=otherStand==null?BigDecimal.ZERO:otherStand;
+					
+					dinnerMap.put("other", String.valueOf("加菜[ "+addDinnerStand+" ]"+'\n'
+							+"纸巾[ "+tissueStand+" ]"+'\n'+"其他[ "+otherStand+" ]"));	
+					
+					moneyTotal = breakfastTotal.add(lunchTotal).add(dinnerTotal)
+							.add(addDinnerStand).add(tissueStand).add(otherStand);			
 					dinnerMap.put("moneyTotal",String.valueOf(moneyTotal) );			
 					exportList.add(dinnerMap);
+									
+					total = total.add(moneyTotal);
 					}
 				}
 				int  a = total.divide(new BigDecimal(100000)).intValue()%10;

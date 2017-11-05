@@ -1,6 +1,7 @@
 package com.zd.school.jw.train.service.Impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -161,6 +162,9 @@ public class TrainClassrealdinnerServiceImpl extends BaseServiceImpl<TrainClassr
 		    	tc.setDinnerStandReal(trainClass.getDinnerStand());
 		    	tc.setDinnerReal(0);
 		    	tc.setDinnerDate(calendar.getTime());
+		    	tc.setAddDinnerStand(BigDecimal.ZERO);
+		    	tc.setTissueStand(BigDecimal.ZERO);
+		    	tc.setOtherStand(BigDecimal.ZERO);
 		    	tc.setCreateTime(currentDate);
 		    	tc.setCreateUser(userId);
 		    	this.merge(tc);

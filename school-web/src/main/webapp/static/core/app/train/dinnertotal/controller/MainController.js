@@ -625,7 +625,10 @@ Ext.define("core.train.dinnertotal.controller.MainController", {
                             var data=result.obj;
                             var html="计划总额："+data.COUNT_MONEY_PLAN+" 元&nbsp;&nbsp;&nbsp;实际总额："+data.COUNT_MONEY_REAL+" 元&nbsp;&nbsp;&nbsp;"+
                             "计划总围/人数："+(data.BREAKFAST_COUNT*1+data.LUNCH_COUNT*1+data.DINNER_COUNT*1)+"&nbsp;&nbsp;&nbsp;"+
-                            "实际总围/人数："+(data.BREAKFAST_REAL*1+data.LUNCH_REAL*1+data.DINNER_REAL*1);
+                            "实际总围/人数："+(data.BREAKFAST_REAL*1+data.LUNCH_REAL*1+data.DINNER_REAL*1)+"&nbsp;&nbsp;&nbsp;"+
+                            "加菜金额："+data.ADDDINNER_STAND+"&nbsp;&nbsp;&nbsp;"+
+                            "纸巾金额："+data.TISSUE_STAND+"&nbsp;&nbsp;&nbsp;"+
+                            "其他金额："+data.OTHER_STAND;
                         
                             baseGrid.down('panel[ref=dinnerTotalInfo]').setHtml(html);                              
                         }else{                                    

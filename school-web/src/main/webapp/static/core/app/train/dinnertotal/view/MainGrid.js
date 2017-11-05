@@ -149,6 +149,18 @@ Ext.define("core.train.dinnertotal.view.MainGrid", {
             width:100,
             text: "实际总额",
             dataIndex: "COUNT_MONEY_REAL"
+        }, {
+            width:100,
+            text: "加菜金额",
+            dataIndex: "ADDDINNER_STAND"
+        }, {
+            width:100,
+            text: "纸巾金额",
+            dataIndex: "TISSUE_STAND"
+        }, {
+            width:100,
+            text: "其他金额",
+            dataIndex: "OTHER_STAND"
         },{
             xtype: 'actiontextcolumn',
             text: "操作",

@@ -51,7 +51,7 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
             beforeclick:function(btn){
 
                 var self=this;
-
+                
                 var fieldset=btn.up("fieldset");
                 var uuid=fieldset.down("field[name=uuid]").getValue();
                 var breakfastRealText=fieldset.down("field[name=breakfastReal]");
@@ -60,13 +60,23 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                 var breakfastStandRealText=fieldset.down("field[name=breakfastStandReal]");
                 var lunchStandRealText=fieldset.down("field[name=lunchStandReal]");
                 var dinnerStandRealText=fieldset.down("field[name=dinnerStandReal]");
+                var addDinnerStandText=fieldset.down("field[name=addDinnerStand]");
+                var tissueStandText=fieldset.down("field[name=tissueStand]");
+                var otherStandText=fieldset.down("field[name=otherStand]");
                     
-                if(!breakfastRealText.isValid()||!lunchRealText.isValid()||!dinnerRealText.isValid()){
+                if(!breakfastRealText.isValid()||!lunchRealText.isValid()||!dinnerRealText.isValid()
+                    ||!breakfastStandRealText.isValid()||!lunchStandRealText.isValid()||!dinnerStandRealText.isValid()
+                    ||!addDinnerStandText.isValid()||!tissueStandText.isValid()||!otherStandText.isValid()){
                     self.Warning("输入的数据有误，请检查！");
                     return false;
                 }
 
                 //Ext.Msg.wait('正在提交中,请稍后...', '温馨提示');
+                var loading = new Ext.LoadMask(baseGrid, {
+                    msg: '正在提交数据...',
+                    removeMask: true// 完成后移除
+                });
+                loading.show();
 
                 self.asyncAjax({
                     url: comm.get("baseUrl")  + "/TrainClassrealdinner/doupdate",
@@ -77,7 +87,10 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                         dinnerReal:dinnerRealText.getValue(),
                         breakfastStandReal:breakfastStandRealText.getValue(),
                         lunchStandReal:lunchStandRealText.getValue(),
-                        dinnerStandReal:dinnerStandRealText.getValue()                      
+                        dinnerStandReal:dinnerStandRealText.getValue(),
+                        addDinnerStand:addDinnerStandText.getValue(),
+                        tissueStand:tissueStandText.getValue(),
+                        otherStand:otherStandText.getValue()                         
                     },
                     timeout:1000*60*60, //1个小时
                     //回调代码必须写在里面
@@ -85,14 +98,17 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                         var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));                
                         if(data.success){
                             //Ext.Msg.hide();
+                            loading.hide();
                             self.Info("登记成功！");
                         }else{
                             //Ext.Msg.hide();
+                            loading.hide();
                             self.Error(data.obj);
                         }
                     },
                     failure: function(response) {
                        // Ext.Msg.hide();
+                        loading.hide();
                         Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);                            
                     }
                 });
@@ -517,6 +533,41 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                                 xtype : 'displayfield',
                                 value:recordData.dinnerReal*recordData.dinnerStandReal,
                                 readOnly :true          
+                            }]
+                        },{                        
+                            xtype: "container",
+                            layout: "column",
+                            labelAlign: "right",
+                            items:[ {
+                                beforeLabelTextTpl: comm.get('required'),
+                                allowBlank: false, 
+                                columnWidth: 0.3,                            
+                                fieldLabel: '加菜金额',
+                                name: 'addDinnerStand',
+                                xtype : 'numberfield',
+                                minValue: 0,
+                                maxValue:9999, 
+                                value: recordData.addDinnerStand
+                            }, {
+                                beforeLabelTextTpl: comm.get('required'),
+                                allowBlank: false, 
+                                columnWidth: 0.3,                               
+                                fieldLabel: '纸巾金额',
+                                name: 'tissueStand',
+                                xtype : 'numberfield',
+                                minValue: 0,
+                                maxValue:9999, 
+                                value: recordData.tissueStand                          
+                            }, {
+                                beforeLabelTextTpl: comm.get('required'),
+                                allowBlank: false, 
+                                columnWidth: 0.3,                                
+                                fieldLabel: '其他金额',
+                                name: 'otherStand',
+                                xtype : 'numberfield',
+                                minValue: 0,
+                                maxValue:9999, 
+                                value: recordData.otherStand                       
                             },{            
                                 columnAlign:'center',
                                 xtype:'button',

@@ -60,11 +60,9 @@ Ext.define("core.system.user.view.DeptTree", {
             var proxy = store.getProxy();
             var filterArry = new Array();
             proxy.extraParams = {
-                deptId: record.get("id"),
-                page: 1,
-                start:0
+                deptId: record.get("id")
             };
-            store.load();
+            store.loadPage(1);
             // var mainLayout = view.up("panel[xtype=teachercourse.mainlayout]");
             // var treePanel = mainLayout.down("panel[xtype=classteacher.classtree]");
             // var filter = "[{'type':'string','comparison':'=','value':'" + record.get("id") + "','field':'claiId'}";

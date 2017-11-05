@@ -96,11 +96,11 @@ public class CardUserInfoToUP implements Serializable {
 				return false;
 		} else if (!userId.equals(other.userId))
 			return false;
-		if (sid == null) {
-			if (other.sid != null)
-				return false;
-		} else if (!sid.equals(other.sid))
-			return false;
+//		if (sid == null) {
+//			if (other.sid != null)
+//				return false;
+//		} else if (!sid.equals(other.sid))
+//			return false;
 		return true;
 	}
 	

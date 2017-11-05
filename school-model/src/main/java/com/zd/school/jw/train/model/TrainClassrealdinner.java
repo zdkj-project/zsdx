@@ -167,7 +167,7 @@ public class TrainClassrealdinner extends BaseEntity implements Serializable{
         return addDinnerStand;
     }
         
-    @FieldInfo(name = "纸巾")
+    @FieldInfo(name = "纸巾金额")
     @Column(name = "TISSUE_STAND", precision = 8, scale = 2, nullable = true)
     private BigDecimal tissueStand;
     public void setTissueStand(BigDecimal tissueStand) {
@@ -177,7 +177,7 @@ public class TrainClassrealdinner extends BaseEntity implements Serializable{
         return tissueStand;
     }
     
-    @FieldInfo(name = "其他")
+    @FieldInfo(name = "其他金额")
     @Column(name = "OTHER_STAND", precision = 8, scale = 2, nullable = true)
     private BigDecimal otherStand;
     public void setOtherStand(BigDecimal otherStand) {

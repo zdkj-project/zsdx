@@ -101,6 +101,18 @@ Ext.define("core.train.dinnertotal.view.ClassDinnerGrid", {
             text: "实际金额",
             dataIndex: "countMoneyReal"
         },{
+            width:100,
+            text: "加菜金额",
+            dataIndex: "addDinnerStand"
+        },{
+            width:100,
+            text: "纸巾金额",
+            dataIndex: "tissueStand"
+        },{
+            width:100,
+            text: "其他金额",
+            dataIndex: "otherStand"
+        },/*{
             flex:1,
             minWidth:100,
             text: "备注",
@@ -119,7 +131,7 @@ Ext.define("core.train.dinnertotal.view.ClassDinnerGrid", {
                 var ss = Ext.Date.format(new Date(date), 'Y-m-d H:i')           
                 return ss;
             }
-        },{
+        },*/{
             width: 80,
             text: "登记状态",
             dataIndex: "version",

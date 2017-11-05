@@ -48,7 +48,7 @@ Ext.define("core.system.user.view.UserGrid", {
             iconCls: 'x-fa fa-key'
         },{
             xtype: 'button',
-            text: '同步数据',
+            text: '同步OA数据',
             ref: 'sync',
             funCode:'girdFuntionBtn',         
             iconCls: 'x-fa fa-rss'

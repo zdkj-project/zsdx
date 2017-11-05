@@ -385,7 +385,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 						if (currentUser.getIsDelete() == 1) {
 							// sqlDelete = "delete from Tc_Employee where
 							// UserId='" + UserId + "'"; 物理删除
-
+							//现在每次同步都会更新这个值，理应判断之后就不同步的，但是影响不大。
 							sqlSb.append(" update Tc_Employee set EmployeeStatusID='26' where UserId='"
 									+ currentUser.getUserId() + "';");// 逻辑删除
 							
@@ -420,18 +420,20 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 						 * }
 						 */
 						else if (!currentUser.equals(upUser)) { // 对比数据（一部分需要判断的数据）是否一致
-							//更新卡片状态
-							int cardTypeId=1;
-							if(currentUser.getJobName()!=null){
-								if(currentUser.getJobName().contains("合同工"))
-									cardTypeId=2;
-								else if(currentUser.getJobName().equals("学员"))
-									cardTypeId=3;
-							}
+							//更新卡片状态； 2017-11-3现在不更新卡类了（胡洋确定及肯定）
+//							int cardTypeId=1;
+//							if(currentUser.getJobName()!=null){
+//								if(currentUser.getJobName().contains("合同工"))
+//									cardTypeId=2;
+//								else if(currentUser.getJobName().equals("学员"))
+//									cardTypeId=3;
+//							}
 							
 							String sqlUpdate = " update Tc_Employee set DepartmentID='" + currentUser.getDepartmentId()
-									+ "'," + "EmployeeName='" + currentUser.getEmployeeName() + "',EmployeeStrID='"
-									+ currentUser.getEmployeeStrId() + "'";
+									+ "'," + "EmployeeName='" + currentUser.getEmployeeName() + "'";
+							
+							//update时不更新人员编号字段了，因为教职工发卡之后，会把印刷卡号绑定到EmployeeStrID字段。
+							//,EmployeeStrID='" + currentUser.getEmployeeStrId() + "'";
 							
 							if(currentUser.getSexId()==null)
 								sqlUpdate+=",SexID=NULL";
@@ -448,7 +450,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 							else
 								sqlUpdate+=	",employeeTel='" + currentUser.getEmployeeTel()+"'";
 							
-							sqlUpdate += ",EmployeeStatusID='24',CardTypeID="+cardTypeId+" "
+							sqlUpdate += ",EmployeeStatusID='24' "		//,CardTypeID="+cardTypeId+"现在不更新卡类了（胡洋确定及肯定）
 									+ " where UserId='" + currentUser.getUserId() + "';";
 							
 							// this.executeSql(sqlUpdate);
