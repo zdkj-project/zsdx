@@ -65,6 +65,9 @@ Ext.define("core.base.view.form.BaseFuncField", {
     },
     onTriggerClick: function () {
         var self = this;
+        if(self.readOnly==true)
+            return;
+        
         //得到功能信息
         var funcController = self.funcController;
         var funcPanel = self.funcPanel;

@@ -177,6 +177,10 @@ Ext.define("core.oa.meeting.meetinginfo.controller.DetailController", {
                             baseProxy.url = comm.get("baseUrl") + "/OaMeetingemp/getNotMeetingUserList";
                             baseProxy.extraParams.whereSql = "";
                             baseProxy.extraParams.meetingId = tabFunData.uuid;
+
+                            var isSelectGrid = basePanel.down("grid[xtype=pubselect.isselectusergrid]");
+                            isSelectGrid.getStore().removeAll();
+                           
                         }
                     }
                 }).show();
@@ -213,6 +217,106 @@ Ext.define("core.oa.meeting.meetinginfo.controller.DetailController", {
                 self.doFastSearch(btn);
                 return false;
             }
+        },
+
+        "basegrid[xtype=meetinginfo.meetingusergrid]  actioncolumn": {
+            gridRemark: function(data) {
+                var self = this;
+                var baseGrid = data.view;
+                var record = data.record;
+                
+                var basePanel = baseGrid.up("basepanel[funCode=meetinginfo_detail]");            
+            
+                            
+                //关键：window的视图控制器
+                var otherController ='meetinginfo.otherController';
+            
+                var insertObj=record.getData();
+
+                var popFunData = Ext.apply(basePanel.funData, {
+                    grid: baseGrid
+                });
+
+                var width = 500;
+                var height = 220;      
+
+                var iconCls = 'x-fa fa-plus-circle';
+                var operType = "edit";
+                var title = "备注信息";
+                        
+
+
+                var win = Ext.create('core.base.view.BaseFormWin', {
+                    title: title,
+                    iconCls: iconCls,
+                    operType: operType,
+                    width: width,
+                    height: height,
+                    controller: otherController,
+                    funData: popFunData,
+                    funCode: "remark_detail",    //修改此funCode，方便用于捕获window的确定按钮
+                    insertObj: insertObj,
+                    record:record,
+                    items: [{
+                        xtype:'meetinginfo.detaillayout',
+                        minWidth:200, 
+                        items: [{
+                            xtype: "meetinginfo.remarkform"
+                        }]               
+                    }]
+                });
+                win.show();
+
+                var objDetForm = win.down("baseform[xtype=meetinginfo.remarkform]");
+                var formDeptObj = objDetForm.getForm();
+
+                self.setFormValue(formDeptObj, insertObj);
+
+
+                return false
+            },
+            gridSetLeave: function(data) {            
+                var self = this;
+
+                var baseGrid = data.view;
+                var record = data.record;
+                var value = data.value;
+                var funCode = baseGrid.funCode;
+                var basePanel = baseGrid.up("basepanel[funCode=" +
+                    funCode + "]");
+                //得到配置信息
+                var funData = basePanel.funData;
+                var pkName = funData.pkName;
+
+                if(value==1)
+                    var title='是否要请假？';
+                else
+                    var title='是否要取消请假？';
+
+                Ext.Msg.confirm('提示', title, function(btn, text) {
+                    if (btn == 'yes') {
+                        //发送ajax请求
+                        var resObj = self.ajax({
+                            url: comm.get("baseUrl") +
+                                "/OaMeetingemp/doUpdateLeave",
+                            params: {
+                                id: record.get(pkName),
+                                val:value
+                            }
+                        });
+                        if (resObj.success) {
+                            baseGrid.getStore().load();
+
+                            self.Info(resObj.obj);
+
+                        } else {
+                            self.Error(resObj.obj);
+                        }
+                    }
+                });
+
+
+            },
         }
     },
     /**
@@ -252,8 +356,17 @@ Ext.define("core.oa.meeting.meetinginfo.controller.DetailController", {
                 });
                 if (resObj.success) {
                     var store = baseGrid.getStore();
-                    store.load();
+                    //store.load();
                     self.Info(resObj.obj);
+
+                    //如果当前页的数据量和删除的数据量一致，则翻到上一页
+                    if(store.getData().length==records.length&&store.currentPage>1){    
+                        store.loadPage(store.currentPage-1);
+                    }else{
+                        //store.load();
+                        store.remove(records); //不刷新的方式
+                    }
+
                 } else {
                     self.Error(resObj.obj);
                 }

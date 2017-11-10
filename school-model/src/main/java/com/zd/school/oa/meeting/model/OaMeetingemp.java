@@ -91,13 +91,23 @@ public class OaMeetingemp extends BaseEntity implements Serializable{
     }
         
     @FieldInfo(name = "结果说明")
-    @Column(name = "RESULT_DESC", length = 64, nullable = true)
+    @Column(name = "RESULT_DESC", length = 512, nullable = true)
     private String resultDesc;
     public void setResultDesc(String resultDesc) {
         this.resultDesc = resultDesc;
     }
     public String getResultDesc() {
         return resultDesc;
+    }
+    //1-请假，其他值-不请假
+    @FieldInfo(name = "是否请假")	
+    @Column(name = "IS_LEAVE", length = 8, nullable = true)
+    private String isLeave;
+    public void setIsLeave(String isLeave) {
+        this.isLeave = isLeave;
+    }
+    public String getIsLeave() {
+        return isLeave;
     }
     
 

@@ -48,16 +48,24 @@ Ext.define("core.oa.meeting.checkresult.controller.MainController", {
                 var pkName = funData.pkName;
                 //得到选中数据
                 var records = baseGrid.getSelectionModel().getSelection();
-                var title = "将导出所有的会议信息";
-                var ids = new Array();
-                if (records.length > 0) {
-                    title = "将导出所选会议的信息";
-                    Ext.each(records, function (rec) {
-                        var pkValue = rec.get(pkName);
-                        ids.push(pkValue);
-                    });
+                // var title = "将导出所有的会议信息";
+                // var ids = new Array();
+                // if (records.length > 0) {
+                //     title = "将导出所选会议的信息";
+                //     Ext.each(records, function (rec) {
+                //         var pkValue = rec.get(pkName);
+                //         ids.push(pkValue);
+                //     });
 
+                // }
+
+                if (records.length !=1) {
+                    self.Warning("请勾选一个会议信息进行导出！");
+                    return false;
                 }
+                var ids =records[0].get(pkName);
+                var title = "将导出勾选的会议信息？";
+
 
                 Ext.Msg.confirm('提示', title, function (btn, text) {
                     if (btn == "yes") {
@@ -68,7 +76,7 @@ Ext.define("core.oa.meeting.checkresult.controller.MainController", {
                             width: 0,
                             height: 0,
                             hidden: true,
-                            html: '<iframe src="' + comm.get('baseUrl') + '/OaMeeting/exportMeetingExcel?ids=' + ids.join(",") + '"></iframe>',
+                            html: '<iframe src="' + comm.get('baseUrl') + '/OaMeeting/exportMeetingExcel?ids=' + ids + '"></iframe>',
                             renderTo: Ext.getBody()
                         });
 
@@ -178,7 +186,7 @@ Ext.define("core.oa.meeting.checkresult.controller.MainController", {
         switch (cmd) {
             case "checkResult": //参会人员
                 insertObj = Ext.apply(insertObj, recordData);
-                tabTitle = "会议考勤结果";
+                tabTitle = insertObj.meetingTitle+"-"+"考勤结果";
                 tabItemId = funCode + "_gridcheckResult";
                 itemXtype = "checkresult.checkresultgrid";
                 //获取主键值

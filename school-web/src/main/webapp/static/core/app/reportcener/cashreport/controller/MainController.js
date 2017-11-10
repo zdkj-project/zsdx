@@ -586,8 +586,8 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
                         if(result.success){
                             var data=result.obj;
                             var html="交易笔数："+data.CASH_NUMBER+" 笔&nbsp;&nbsp;&nbsp;消费总额："+data.CONSUME_TOTAL+" 元&nbsp;&nbsp;&nbsp;"+
-                            "实付金额："+data.REAL_PAY+" 元&nbsp;&nbsp;&nbsp;"+
-                            "找零金额："+data.CHANGE_PAY+" 元&nbsp;&nbsp;&nbsp;";
+                            "实付金额："+data.REAL_PAY+" 元&nbsp;&nbsp;&nbsp;";
+                            //"找零金额："+data.CHANGE_PAY+" 元&nbsp;&nbsp;&nbsp;";
                         
                             baseGrid.down('panel[ref=dinnerTotalInfo]').setHtml(html);                              
                         }else{                                    

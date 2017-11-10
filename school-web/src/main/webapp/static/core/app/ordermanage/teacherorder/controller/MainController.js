@@ -152,7 +152,7 @@ Ext.define("core.ordermanage.teacherorder.controller.MainController", {
                 });
 
                 var width = 500;
-                var height = 200;      
+                var height = 220;      
 
                 var iconCls = 'x-fa fa-plus-circle';
                 var operType = "edit";

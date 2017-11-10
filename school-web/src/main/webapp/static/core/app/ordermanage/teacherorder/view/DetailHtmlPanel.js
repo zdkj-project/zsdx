@@ -12,7 +12,7 @@ Ext.define("core.ordermanage.teacherorder.view.DetailHtmlPanel", {
         tpl: new Ext.XTemplate(
             '<div class="trainClass_classInfo" style="padding: 5px 20px 5px 5px">',
                 '<div class="trainClass_title">订餐说明：</div>',
-                '<ul style="height: 190px;overflow: auto;">'+
+                '<ul style="height: 190px;overflow: auto;padding: 0px 20px;">'+
                     '<li style="width:100%">{orderDesc}</li>',
                     '<div style="clear:both"></div>',
                 '</ul>',

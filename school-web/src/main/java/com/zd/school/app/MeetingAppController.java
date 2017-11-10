@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -61,7 +62,7 @@ public class MeetingAppController {
 			
 			// 设备号查询房间
 			OaInfoterm roomTerm = termService.getByProerties("termCode", termCode);
-
+			
 	        List<OaMeeting> meeting = null;
 	        OaMeetingcheckrule checkrule = null;
 	        List<Object[]> obj = null;
@@ -73,16 +74,16 @@ public class MeetingAppController {
 					// sdf.format(date2) + "' order by beginTime asc");
 	        		//meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomId='" + roomTerm.getRoomId() + "' and Convert(varchar,beginTime,120) like'" + time + "%' order by beginTime asc");
 	        		//注：我们正式使用时需要将可能作为会议室的房间名称发给OA，所以要将房间查询方式换为id
-	        		meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomName='"
-							+ roomTerm.getRoomName() + "' and beginTime Between '" + s + " 06:00:00" + "' And '"
+	        		meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomId like '%"
+							+ roomTerm.getRoomId() + "%'  and beginTime Between '" + s + " 06:00:00" + "' And '"
 							+ sdf.format(date2) + "' order by beginTime asc");
 				} else if (date.getTime() < date3.getTime()) {
-					meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomName='"
-							+ roomTerm.getRoomName() + "' and beginTime Between '" + s + " 12:00:00" + "' And '"
+					meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomId like '%"
+							+ roomTerm.getRoomId() + "%'  and beginTime Between '" + s + " 12:00:00" + "' And '"
 							+ sdf.format(date3) + "' order by beginTime asc");
 				} else {
-					meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomName='"
-							+ roomTerm.getRoomName() + "' and beginTime Between '" + s + " 18:00:00" +  "' And '"
+					meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomId like '%"
+							+ roomTerm.getRoomId() + "%'  and beginTime Between '" + s + " 18:00:00" +  "' And '"
 							+ sdf.format(date4) + "' order by beginTime asc");
 				}
 	        	
@@ -98,6 +99,12 @@ public class MeetingAppController {
  	
  	                String sql = MessageFormat.format("SELECT ATTACH_NAME AS attachName,ATTACH_URL AS attachUrl FROM dbo.BASE_T_ATTACHMENT WHERE  ATTACH_TYPE=''jpg'' AND ENTITY_NAME=''OaMeeting'' AND RECORD_ID=''{0}''", o.getUuid());
  	                List<CommAttachment> attachmentList = meetingService.doQuerySqlObject(sql, CommAttachment.class);
+ 	                if(attachmentList.size()==0){
+ 	                	CommAttachment tempAtt=new CommAttachment();
+ 	                	tempAtt.setAttachName("image");
+ 	                	tempAtt.setAttachUrl("/static/core/resources/images/defaultMettingImg.png");
+ 	                	attachmentList.add(tempAtt);
+ 	                }
  	                o.setAttachment(attachmentList);
  	            }
 	        	
@@ -142,6 +149,8 @@ public class MeetingAppController {
             check = (List<MeetingCheck>) JsonBuilder.getInstance().fromJsonArray(meetcheck,
                     MeetingCheck.class);
         }
+        Calendar calendar1 = Calendar.getInstance();
+        Calendar calendar2 = Calendar.getInstance();
         MeetCheckApp mca = new MeetCheckApp();
         try {
             for (MeetingCheck mc : check) {
@@ -155,13 +164,41 @@ public class MeetingAppController {
                 if (emp != null) {
                     emp.setMeetingId(meeting.getUuid());
                     if (mc.getLg().equals("0")) {
-                        emp.setIncardTime(mc.getTime());
-                        emp.setInResult(mc.getInResult());
+                    	if(emp.getIncardTime()==null){
+                    		emp.setIncardTime(mc.getTime());
+                            emp.setInResult(mc.getInResult());
+                            emp.setAttendResult(mc.getAttendResult());
+                    	}else if(mc.getTime()!=null){
+                    		//解决多个平板上传数据的问题
+                    		calendar1.setTime(emp.getIncardTime());
+                        	calendar2.setTime(mc.getTime());
+                        	if(calendar1.compareTo(calendar2)==1){	//若第二次上传的时间【小于】第一次的时间，那就替换
+                        		emp.setIncardTime(mc.getTime());
+                                emp.setInResult(mc.getInResult());
+                                emp.setAttendResult(mc.getAttendResult());
+                        	}
+                    	}
                     } else if(mc.getLg().equals("1")) {
-                        emp.setOutcardTime(mc.getTime());
-                        emp.setOutResult(mc.getOutResult());
+                    	if(emp.getOutcardTime()==null){
+                    		emp.setOutcardTime(mc.getTime());
+                            emp.setOutResult(mc.getOutResult());
+                            emp.setAttendResult(mc.getAttendResult());
+                    	}else if(mc.getTime()!=null){
+                    		//解决多个平板上传数据的问题
+                    		calendar1.setTime(emp.getOutcardTime());
+                        	calendar2.setTime(mc.getTime());
+                        	if(calendar1.compareTo(calendar2)==-1){	//若第二次上传的时间【大于】第一次的时间，那就替换
+                        		emp.setOutcardTime(mc.getTime());
+                                emp.setOutResult(mc.getOutResult());
+                                emp.setAttendResult(mc.getAttendResult());
+                        	}
+                    	}
+                    }else{
+                    	//当为缺勤的时候，并且判断之前没有考勤数据，就设置为缺勤
+                    	if(emp.getIncardTime()==null && emp.getOutcardTime()==null){
+                    		 emp.setAttendResult(mc.getAttendResult());
+                    	}
                     }
-                    emp.setAttendResult(mc.getAttendResult());
                     emp.setUpdateTime(currentDate);
                     empService.merge(emp);
                 }

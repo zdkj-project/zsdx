@@ -96,12 +96,12 @@ Ext.define("core.reportcenter.cashreport.view.MainGrid", {
         },{
             flex:1,
             minWidth:80,
-            text: "接待部门",
+            text: "部门",
             dataIndex: "RECEPTION_DEPT"
         },{
             flex:1,
             minWidth:80,
-            text: "来访单位",
+            text: "单位",
             dataIndex: "VISITOR_UNIT"
         },/*{
             width:100,
@@ -170,11 +170,11 @@ Ext.define("core.reportcenter.cashreport.view.MainGrid", {
             width:100,
             text: "实付金额",
             dataIndex: "REAL_PAY"
-        }, {
+        },/* {
             width:100,
             text: "找零金额",
             dataIndex: "CHANGE_PAY"
-        },{
+        },*/{
             xtype: 'actiontextcolumn',
             text: "操作",
             align:'center',
@@ -211,11 +211,7 @@ Ext.define("core.reportcenter.cashreport.view.MainGrid", {
                         return 'x-hidden-display';
                     else
                         return null;
-                    
-                    if (record.get("EXPENSESERIAL_ID")==null || record.get("CONSUME_STATE")!="成功"){
-                        return 'x-hidden-display';
-                    } else
-                        return null;
+            
                 },
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);

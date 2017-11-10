@@ -143,7 +143,7 @@ Ext.define("core.system.user.controller.DeptUserController", {
                                 width: 0,
                                 height: 0,
                                 hidden: true,
-                                html: '<iframe src="' + comm.get('baseUrl') + '/usersync/list"></iframe>',
+                                html: '<iframe src="' + comm.get('baseUrl') + '/usersync/syncOaUserAndDept"></iframe>',
                                 renderTo: Ext.getBody()
                             });
 

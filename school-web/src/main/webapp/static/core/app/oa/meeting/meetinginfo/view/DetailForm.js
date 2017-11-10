@@ -22,7 +22,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
         layout: "column",
         labelAlign: "right",
         items: [{
-            beforeLabelTextTpl: comm.get("required"),
+            //beforeLabelTextTpl: comm.get("required"),
             allowBlank: false,
             blankText: "会议主题不能为空",
             fieldLabel: "会议主题",
@@ -32,8 +32,9 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             emptyText: "请输入会议主题",
             maxLength: 50,
             maxLengthText: "最多50个字符,汉字占2个字符",
+            readOnly:true
         }, {
-            beforeLabelTextTpl: comm.get("required"),
+            //beforeLabelTextTpl: comm.get("required"),
             allowBlank: false,
             blankText: "会议名称不能为空",
             fieldLabel: "会议名称",
@@ -43,13 +44,14 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             emptyText: "请输入会议名称",
             maxLength: 50,
             maxLengthText: "最多50个字符,汉字占2个字符",
+            readOnly:true
         }]
     }, {
         xtype: "container",
         layout: "column",
         labelAlign: "right",
         items: [{
-            beforeLabelTextTpl: comm.get("required"),
+            //beforeLabelTextTpl: comm.get("required"),
             allowBlank: false,
             blankText: "会议类型不能为空",
             fieldLabel: "会议类型",
@@ -57,117 +59,10 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             name: "meetingCategory",
             xtype: "basecombobox",
             ddCode: "MEETINGCATEGORY",
-            emptyText: "请选择会议类型"
+            emptyText: "请选择会议类型",
+            readOnly:true
         }, {
-            beforeLabelTextTpl: comm.get("required"),
-            fieldLabel: "是否考勤",
-            columnWidth: 0.19,
-            name: "needChecking",
-            xtype: "checkbox",
-            boxLabel: "考勤",
-            inputValue: "1",
-            checked: true,
-            listeners: {
-                change: function (field, newValue, oldValue) {
-                    var currentForm = field.up("baseform[xtype=meetinginfo.detailform]");
-                    var checkoutFields = currentForm.query("field[ref=checkoutField]");
-                    if (newValue == true) {
-                        for (var i = 0; i < checkoutFields.length; i++) {
-                            checkoutFields[i].setVisible(true);
-                        }
-                    } else {
-                        for (var i = 0; i < checkoutFields.length; i++) {
-                            checkoutFields[i].setVisible(false);
-                        }
-                    }
-                }
-            }
-        }, {
-            fieldLabel: "考勤规则ID",
-            name: "checkruleId",
-            xtype: "textfield",
-            hidden: true
-        }, {
-            ref: 'checkoutField',
-            beforeLabelTextTpl: "",
-            allowBlank: true,
-            blankText: "考勤规则不能为空",
-            columnWidth: 0.3,
-            xtype: "basefuncfield",
-            refController: "meetinginfo.otherController", //该功能主控制器，这里重新指定为当前视图的控制器了
-            funcPanel: "checkrule.mainlayout", //该功能显示的主视图
-            formPanel: "meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
-            funcTitle: "考勤规则选择", //查询窗口的标题
-            configInfo: {
-                width: 1050,
-                height: 600,
-                fieldInfo: "checkruleId~checkruleName,uuid~ruleName",
-                whereSql: " and isDelete='0' and startUsing=1 ",
-                orderSql: " order by createTime DESC ",
-                muiltSelect: false //是否多选
-            },
-            fieldLabel: "考勤规则",
-            emptyText: "请选择考勤规则",
-            name: "checkruleName"
-        }]
-    }, {
-        xtype: "container",
-        layout: "column",
-        labelAlign: "right",
-        items: [{
-            beforeLabelTextTpl: comm.get("required"),
-            allowBlank: false,
-            blankText: "开始时间不能为空",
-            fieldLabel: "开始时间",
-            columnWidth: 0.49,
-            name: "beginTime",
-            xtype: "datetimefield",
-            dateType: 'datetime',
-            format: "Y-m-d H:i:s",
-            emptyText: "请选择开始时间"
-        }, {
-            beforeLabelTextTpl: comm.get("required"),
-            allowBlank: false,
-            blankText: "结束时间不能为空",
-            fieldLabel: "结束时间",
-            columnWidth: 0.49,
-            name: "endTime",
-            xtype: "datetimefield",
-            dateType: 'datetime',
-            format: "Y-m-d H:i:s",
-            emptyText: "请选择结束时间"
-        }]
-    }, {
-        xtype: "container",
-        layout: "column",
-        labelAlign: "right",
-        items: [{
-            fieldLabel: "主持人ID",
-            name: "emceeId",
-            xtype: "textfield",
-            hidden: true
-        }, {
-            columnWidth: 0.49,
-            xtype: "basefuncfield",
-            refController: "pubselect.selectusercontroller",
-            funcPanel: "pubselect.selectuserlayout", //该功能显示的主视图
-            funcGrid: "pubselect.isselectusergrid", //获取数据的界面，muiltSelect=false时，隐藏此界面视图
-            formPanel: "meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
-            funcTitle: "主持人选择", //查询窗口的标题
-            configInfo: {
-                width: 1050,
-                height: 600,
-                fieldInfo: "emceeId~emcee,uuid~xm",
-                whereSql: " and isDelete='0' ",
-                orderSql: " order by createTime DESC ",
-                muiltSelect: false //是否多选
-            },
-            fieldLabel: '主持人',
-            emptyText: "请选择主持人",
-            name: "emcee"
-
-        }, {
-            beforeLabelTextTpl: comm.get("required"),
+            //beforeLabelTextTpl: comm.get("required"),
             allowBlank: false,
             blankText: "会议地点不能为空",
             columnWidth: 0.49,
@@ -189,7 +84,8 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             },
             fieldLabel: "会议地点",
             emptyText: "请选择会议地点",
-            name: "roomName"
+            name: "roomName",
+            readOnly:true,
 
         }, {
             fieldLabel: "房间ID",
@@ -200,6 +96,120 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             maxLength: 36,
             maxLengthText: "最多36个字符,汉字占2个字符",
             hidden: true
+        }]
+    }, {
+        xtype: "container",
+        layout: "column",
+        labelAlign: "right",
+        items: [{
+            //beforeLabelTextTpl: comm.get("required"),
+            allowBlank: false,
+            blankText: "开始时间不能为空",
+            fieldLabel: "开始时间",
+            columnWidth: 0.49,
+            name: "beginTime",
+            xtype: "datetimefield",
+            dateType: 'datetime',
+            format: "Y-m-d H:i:s",
+            emptyText: "请选择开始时间",
+            readOnly:true,
+        }, {
+            //beforeLabelTextTpl: comm.get("required"),
+            allowBlank: false,
+            blankText: "结束时间不能为空",
+            fieldLabel: "结束时间",
+            columnWidth: 0.49,
+            name: "endTime",
+            xtype: "datetimefield",
+            dateType: 'datetime',
+            format: "Y-m-d H:i:s",
+            emptyText: "请选择结束时间",
+            readOnly:true,
+        }]
+    }, {
+        xtype: "container",
+        layout: "column",
+        labelAlign: "right",
+        items: [{
+            fieldLabel: "主持人ID",
+            name: "emceeId",
+            xtype: "textfield",
+            hidden: true
+        }, {
+            //beforeLabelTextTpl: comm.get("required"),
+            //allowBlank: false,
+            columnWidth: 0.49,
+            xtype: "basefuncfield",
+            refController: "pubselect.selectusercontroller",
+            funcPanel: "pubselect.selectuserlayout", //该功能显示的主视图
+            funcGrid: "pubselect.isselectusergrid", //获取数据的界面，muiltSelect=false时，隐藏此界面视图
+            formPanel: "meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
+            funcTitle: "主持人选择", //查询窗口的标题
+            configInfo: {
+                width: 1050,
+                height: 600,
+                fieldInfo: "emceeId~emcee,uuid~xm",
+                whereSql: " and isDelete='0' ",
+                orderSql: " order by createTime DESC ",
+                muiltSelect: false //是否多选
+            },
+            fieldLabel: '主持人',
+            emptyText: "请选择主持人",
+            name: "emcee"
+
+        },{
+            //beforeLabelTextTpl: comm.get("required"),
+            fieldLabel: "是否考勤",
+            columnWidth: 0.19,
+            name: "needChecking",
+            xtype: "checkbox",
+            boxLabel: "考勤",
+            inputValue: "1",
+            checked: true,
+            readOnly:true,
+            hidden: true,
+            listeners: {
+                change: function (field, newValue, oldValue) {
+                    var currentForm = field.up("baseform[xtype=meetinginfo.detailform]");
+                    var checkoutFields = currentForm.query("field[ref=checkoutField]");
+                    if (newValue == true) {
+                        for (var i = 0; i < checkoutFields.length; i++) {
+                            checkoutFields[i].setVisible(true);
+                        }
+                    } else {
+                        for (var i = 0; i < checkoutFields.length; i++) {
+                            checkoutFields[i].setVisible(false);
+                        }
+                    }
+                }
+            }
+        }, {
+            fieldLabel: "考勤规则ID",
+            name: "checkruleId",
+            xtype: "textfield",
+            hidden: true
+        }, {
+            beforeLabelTextTpl: comm.get("required"),
+            ref: 'checkoutField',
+            allowBlank: false,
+            blankText: "考勤规则不能为空",
+            columnWidth: 0.49,
+            xtype: "basefuncfield",
+            refController: "meetinginfo.otherController", //该功能主控制器，这里重新指定为当前视图的控制器了
+            funcPanel: "checkrule.mainlayout", //该功能显示的主视图
+            formPanel: "meetinginfo.detailform",   //指定当前表单的别名，方便其他地方能找到这个表单组件
+            funcTitle: "考勤规则选择", //查询窗口的标题
+            configInfo: {
+                width: 1050,
+                height: 600,
+                fieldInfo: "checkruleId~checkruleName,uuid~ruleName",
+                whereSql: " and isDelete='0' and startUsing=1 ",
+                orderSql: " order by createTime DESC ",
+                muiltSelect: false //是否多选
+            },
+            fieldLabel: "考勤规则",
+            emptyText: "请选择考勤规则",
+            name: "checkruleName"
         }]
     }, {
         xtype: "container",
@@ -228,9 +238,10 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             },
             fieldLabel: '参会人员',
             name: "mettingEmpname",
+            hidden: true,
             allowBlank: true
         }]
-    }, {
+    },{
         xtype: "container",
         layout: "column",
         labelAlign: "right",
@@ -238,14 +249,17 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
             fieldLabel: "会议内容",
             columnWidth: 0.98,
             name: "meetingContent",
-            xtype: "ueditor",
-            height: 200,
-            listeners: {
-                'change': function () {
-                    var me = this;
-                    me.isChanged = true;
-                }
-            }
+            //xtype: "ueditor",
+            xtype: "textarea",
+            height: 100,
+            readOnly:true,
+            fieldStyle :'background:#f8f8f8',
+            // listeners: {
+            //     'change': function () {
+            //         var me = this;
+            //         me.isChanged = true;
+            //     }
+            // }
         }]
     }]
 });

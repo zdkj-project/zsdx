@@ -176,7 +176,8 @@ public class TrainReportController extends FrameWorkController<BaseEntity> imple
 			sql.append("'"+groupType+"',");
 			String page=pageIndex + "," + pageSize;
 
-			List<Map<String, Object>> lists=baseService.getForValuesToSql(sql.toString()+page);				
+			List<Map<String, Object>> lists=baseService.getForValuesToSql(sql.toString()+page);	
+			Map<String, Object> totalMap=lists.get(0);
 			lists.remove(0);
 					
 			// 处理基本数据		
@@ -218,16 +219,35 @@ public class TrainReportController extends FrameWorkController<BaseEntity> imple
 				//tempMap.put("CASH_NUMBER", String.valueOf(cashMap.get("CASH_NUMBER")));
 				tempMap.put("CONSUME_TOTAL", String.valueOf(cashMap.get("CONSUME_TOTAL")));
 				tempMap.put("REAL_PAY", String.valueOf(cashMap.get("REAL_PAY")));
-				tempMap.put("CHANGE_PAY", String.valueOf(cashMap.get("CHANGE_PAY")));
+				//tempMap.put("CHANGE_PAY", String.valueOf(cashMap.get("CHANGE_PAY")));
 				exportList.add(tempMap);
 			}
+			
+			//最后一行加入汇总
+			tempMap=new LinkedHashMap<>();
+			tempMap.put("rownum","");
+			tempMap.put("CONSUME_DATE", "");
+			tempMap.put("CONSUME_SERIAL","");
+			tempMap.put("CONSUME_USER", "");
+			tempMap.put("RECEPTION_DEPT", "");
+			tempMap.put("VISITOR_UNIT", "");
+			tempMap.put("CONSUME_TYPE", "");
+			tempMap.put("CONSUME_STATE", "");
+			tempMap.put("CLEARING_FORM","");
+			tempMap.put("MEAL_TYPE", "汇总");
+			//tempMap.put("CASH_NUMBER", String.valueOf(cashMap.get("CASH_NUMBER")));
+			tempMap.put("CONSUME_TOTAL", String.valueOf(totalMap.get("CONSUME_TOTAL")));
+			tempMap.put("REAL_PAY", String.valueOf(totalMap.get("REAL_PAY")));
+			//tempMap.put("CHANGE_PAY", String.valueOf(cashMap.get("CHANGE_PAY")));
+			exportList.add(tempMap);
+			
 			// --------2.组装表格数据
 			Map<String, Object> cashAllMap = new LinkedHashMap<>();
 			cashAllMap.put("data", exportList);
 			cashAllMap.put("title", "收银汇总表");
-			cashAllMap.put("head", new String[] { "序号","日期", "流水号", "消费人", "接待部门", "来访单位", "消费类型","交易状态","结算方式","快餐类型","消费总额","实付金额","找零金额" }); // 规定名字相同的，设定为合并
-			cashAllMap.put("columnWidth", new Integer[] { 10, 22, 22, 10, 12, 12, 10,10, 10, 10,10,10,10 }); // 30代表30个字节，15个字符
-			cashAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0,0 }); // 0代表居中，1代表居左，2代表居右
+			cashAllMap.put("head", new String[] { "序号","日期", "流水号", "消费人", "部门", "单位", "消费类型","交易状态","结算方式","快餐类型","消费总额","实付金额"}); // 规定名字相同的，设定为合并
+			cashAllMap.put("columnWidth", new Integer[] { 10, 22, 22, 10, 12, 12, 10,10, 10, 10,10,10}); // 30代表30个字节，15个字符
+			cashAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0,0,0,0,0,0}); // 0代表居中，1代表居左，2代表居右
 			cashAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
 			allList.add(cashAllMap);
 	
@@ -479,7 +499,8 @@ public class TrainReportController extends FrameWorkController<BaseEntity> imple
 			sql.append("'"+groupType+"',");
 			String page=pageIndex + "," + pageSize;
 
-			List<Map<String, Object>> lists=baseService.getForValuesToSql(sql.toString()+page);			
+			List<Map<String, Object>> lists=baseService.getForValuesToSql(sql.toString()+page);	
+			Map<String, Object> totalMap=lists.get(0);
 			lists.remove(0);
 					
 			// 处理基本数据		
@@ -499,6 +520,19 @@ public class TrainReportController extends FrameWorkController<BaseEntity> imple
 				tempMap.put("ConsumeNumber", String.valueOf(cashMap.get("ConsumeNumber")));		
 				exportList.add(tempMap);
 			}
+			//最后一行加入汇总
+			tempMap=new LinkedHashMap<>();
+			tempMap.put("rownum", "");
+			tempMap.put("ConsumeDate","");
+			tempMap.put("EmployeeName", "");
+			tempMap.put("EmployeeStrID", "");
+			tempMap.put("TermName", "");
+			tempMap.put("MealTypeName", "");
+			tempMap.put("AccountName", "汇总");			
+			tempMap.put("ConsumeValue", String.valueOf(totalMap.get("ConsumeValue")));
+			tempMap.put("ConsumeNumber", String.valueOf(totalMap.get("ConsumeNumber")));		
+			exportList.add(tempMap);
+			
 			// --------2.组装表格数据
 			Map<String, Object> cashAllMap = new LinkedHashMap<>();
 			cashAllMap.put("data", exportList);
@@ -652,7 +686,8 @@ public class TrainReportController extends FrameWorkController<BaseEntity> imple
 			sql.append("'"+dinnerType+"',");
 			String page=pageIndex + "," + pageSize;
 
-			List<Map<String, Object>> lists=baseService.getForValuesToSql(sql.toString()+page);			
+			List<Map<String, Object>> lists=baseService.getForValuesToSql(sql.toString()+page);		
+			Map<String, Object> totalMap=lists.get(0);
 			lists.remove(0);
 					
 			// 处理基本数据		
@@ -688,6 +723,24 @@ public class TrainReportController extends FrameWorkController<BaseEntity> imple
 				tempMap.put("COUNT_MONEY_REAL", String.valueOf(cashMap.get("COUNT_MONEY_REAL")));
 				exportList.add(tempMap);
 			}
+			//最后一行加入汇总
+			tempMap=new LinkedHashMap<>();
+			tempMap.put("rownum", "");
+			tempMap.put("CLASS_NAME", "");
+			tempMap.put("CLASS_NUMB", "");
+			tempMap.put("BEGIN_DATE","");
+			tempMap.put("END_DATE","");
+			tempMap.put("DINNER_TYPE", "汇总");
+			tempMap.put("BREAKFAST_COUNT", String.valueOf(totalMap.get("BREAKFAST_COUNT")));				
+			tempMap.put("LUNCH_COUNT", String.valueOf(totalMap.get("LUNCH_COUNT")));
+			tempMap.put("DINNER_COUNT", String.valueOf(totalMap.get("DINNER_COUNT")));	
+			tempMap.put("BREAKFAST_REAL", String.valueOf(totalMap.get("BREAKFAST_REAL")));				
+			tempMap.put("LUNCH_REAL", String.valueOf(totalMap.get("LUNCH_REAL")));
+			tempMap.put("DINNER_REAL", String.valueOf(totalMap.get("DINNER_REAL")));		
+			tempMap.put("COUNT_MONEY_PLAN", String.valueOf(totalMap.get("COUNT_MONEY_PLAN")));				
+			tempMap.put("COUNT_MONEY_REAL", String.valueOf(totalMap.get("COUNT_MONEY_REAL")));
+			exportList.add(tempMap);
+			
 			// --------2.组装表格数据
 			Map<String, Object> cashAllMap = new LinkedHashMap<>();
 			cashAllMap.put("data", exportList);

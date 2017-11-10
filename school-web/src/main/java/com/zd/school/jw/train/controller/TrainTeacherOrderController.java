@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
+import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.PoiExportExcel;
 import com.zd.school.cashier.model.CashExpensedetail;
+import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.jw.train.model.TrainTeacherOrder;
 import com.zd.school.jw.train.service.TrainTeacherOrderDescService;
 import com.zd.school.jw.train.service.TrainTeacherOrderService;
@@ -191,6 +193,8 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 		String dinnerDate=request.getParameter("dinnerDate");
 		
 		Date date=sdf.parse(dinnerDate);
+		Integer start = super.start(request);
+		Integer limit = super.limit(request);
 		
 		// 创建 Calendar 对象
 		Calendar calendar1 = Calendar.getInstance();
@@ -207,10 +211,13 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 		// beginTime Between '" + s + " 06:00:00" + "' And '"+ sdf.format(date2)
 		// + "'
 		// 当前节点
-		String hql = "from TrainTeacherOrder where dinnerDate>=? and dinnerDate<? order by createTime asc";
-		List<TrainTeacherOrder> list = thisService.getForValues(hql, calendar1.getTime(), calendar2.getTime());
-
-		String strData = jsonBuilder.buildObjListToJson((long) list.size(), list, true);
+		String hql = "from TrainTeacherOrder where "
+				+ " dinnerDate>=CONVERT(datetime,'"+sdf.format(calendar1.getTime())+"') "
+					+ " and dinnerDate<CONVERT(datetime,'"+sdf.format(calendar2.getTime())+"') order by createTime asc";
+		//List<TrainTeacherOrder> list = thisService.getForValues(hql, calendar1.getTime(), calendar2.getTime());
+		QueryResult<TrainTeacherOrder> result = thisService.doQueryResult(hql, start, limit);
+		
+		String strData = jsonBuilder.buildObjListToJson(result.getTotalCount(), result.getResultList(), true);
 		writeJSON(response, strData);
 
 		// if(result.getTotalCount()>0)

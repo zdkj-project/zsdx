@@ -94,13 +94,13 @@ Ext.define("core.reportcenter.cashreport.view.MainQueryPanel", {
 			columnWidth: 0.2,
 			xtype: "basequeryfield",
 			name: "RECEPTION_DEPT",
-			fieldLabel: "接待部门",
+			fieldLabel: "部门",
 			queryType: "textfield",
 		},{
 			columnWidth: 0.2,
 			xtype: "basequeryfield",
 			name: "VISITOR_UNIT",
-			fieldLabel: "来访单位",
+			fieldLabel: "单位",
 			queryType: "textfield",
 		},{
 			columnWidth: 0.2,

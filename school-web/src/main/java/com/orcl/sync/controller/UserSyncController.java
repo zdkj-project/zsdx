@@ -15,6 +15,7 @@ import com.zd.school.plartform.baseset.service.BaseOrgService;
 import com.zd.school.plartform.baseset.service.BaseUserdeptjobService;
 import com.zd.school.plartform.system.model.SysRole;
 import com.zd.school.plartform.system.model.SysUser;
+import com.zd.school.plartform.system.model.SysUserToUP;
 import com.zd.school.plartform.system.service.SysRoleService;
 import com.zd.school.plartform.system.service.SysUserService;
 import org.apache.log4j.Logger;
@@ -400,5 +401,110 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
 
         writeJSON(response, returnJson.toString());
     }
+    
+    /**
+     * zzk修改
+     * @param request
+     * @param response
+     * @throws IOException
+     */
+    @SuppressWarnings("unchecked")
+	@RequestMapping(value = "syncOaUserAndDept")
+    public void syncOaUserAndDept(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        request.getSession().setAttribute("UserSyncIsEnd", "0");
+        request.getSession().removeAttribute("UserSyncState");
+        try {
+        	 //启用orcl数据库
+	        CustomerContextHolder.setCustomerType(CustomerContextHolder.SESSION_FACTORY_ORACLE);
+	        Session session = sssssss.openSession();
+	        session.beginTransaction();
+	        
+	        //1:查询OA的部门数据
+	        Query query = session.createQuery("from HrDepartment");
+	        List<HrDepartment> deptList = query.list();
+	        
+	        //2:查询OA的岗位数据
+	        query = session.createQuery("from HrPosition");
+	        List<HrPosition> jobList = query.list();
+	        
+	        //3:查询OA的部门岗位数据
+	        query = session.createQuery("from HrDeptPosition");
+	        List<HrDeptPosition> deptJobList = query.list();
+	        
+	        query = session.createQuery("from HrUserDepartmentPosition where departmentId is not null and deptPositionId is not null");
+	        List<HrUserDepartmentPosition> userDeptList = query.list();
+	        
+	        //4：查询用户数据
+            query = session.createQuery("from HrUser where accounts is not null ");
+            List<HrUser> userList = query.list();
 
+	        //提交事务
+	        session.getTransaction().commit();
+	        //关闭session
+	        session.flush();
+	        session.close();
+	        
+	        //切换回Q1
+	        CustomerContextHolder.setCustomerType(CustomerContextHolder.SESSION_FACTORY_MYSQL);
+	        
+	        Integer state=userservice.doSyncOaUserandDept(deptList,jobList,deptJobList,userDeptList,userList);
+	        
+	        if(state==1){
+	        
+	        	//同步成功之后，同步数据到UP库
+	        	// 1.查询这个smallDeptId的最新的部门信息
+	            String sql = "select EXT_FIELD04 as departmentId,EXT_FIELD05 as parentDepartmentId,"
+	                    + "	NODE_TEXT as departmentName,convert(varchar,NODE_LEVEL) as layer,"
+	                    + " convert(varchar,ORDER_INDEX) as layerorder  "
+	                    + " from BASE_T_ORG"
+	                    + " where isdelete=0"
+	                    + " order by DepartmentID asc";
+
+	            List<BaseOrgToUP> deptInfo = orgService.doQuerySqlObject(sql, BaseOrgToUP.class);
+	            
+	           // 2.查询最新的用户、部门信息
+				sql = "select  u.USER_ID as userId,u.XM as employeeName, u.user_numb as employeeStrId,"
+						+ "'' as employeePwd,CASE u.XBM WHEN '2' THEN '0' ELSE '1' END AS sexId,u.isDelete as isDelete,"
+						+ "u.SFZJH AS identifier,'1' AS cardState, " // cardState
+																		// 和 sid
+																		// 都置默认值，现在不做特定的处理
+						+ "'' as sid,org.EXT_FIELD04 as departmentId,"
+						// + "job.JOB_NAME as jobName " 不使用这个job数据了，转而使用编制来判断是否为合同工
+						+ "(" + "	select ITEM_NAME from BASE_T_DICITEM " + "		where ITEM_CODE=u.ZXXBZLB "
+						+ "			and DIC_ID= (select top 1 DIC_ID from BASE_T_DIC where DIC_CODE='ZXXBZLB')"
+						+ ") as jobName " + " from SYS_T_USER u" + " join BASE_T_ORG org on "
+						+ "		(select top 1 DEPT_ID from BASE_T_UserDeptJOB where USER_ID=u.USER_ID and ISDELETE=0 order by master_dept desc,CREATE_TIME desc)=org.dept_ID "
+						// + " join BASE_T_JOB job on "
+						// + " (select top 1 JOB_ID from BASE_T_UserDeptJOB where
+						// USER_ID=u.USER_ID and ISDELETE=0 order by master_dept
+						// desc,CREATE_TIME desc)=job.JOB_ID "
+						+ " where xm not like '%管理员%' and XM not Like '%测试%' and XM not like '%test%'"
+						+ " order by userId asc";
+
+				List<SysUserToUP> userInfos = userservice.doQuerySqlObject(sql, SysUserToUP.class);
+
+				
+	            //2.进入事物之前切换数据源
+	            DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);	         
+	            if(deptInfo.size()!=0){
+	                orgService.syncAllDeptInfoToUP(deptInfo);
+	            }
+				if (userInfos.size() > 0) {
+					userservice.syncUserInfoToAllUP(userInfos, null);
+				} 
+				
+			    DBContextHolder.clearDBType();
+			       
+	          
+	            request.getSession().setAttribute("UserSyncIsEnd", "1");
+	        }else{
+	        	request.getSession().setAttribute("UserSyncIsEnd", "0");
+				request.getSession().setAttribute("UserSyncState", "0");
+	        }
+	        
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            request.getSession().setAttribute("UserSyncState", "0");
+        }
+    }
 }

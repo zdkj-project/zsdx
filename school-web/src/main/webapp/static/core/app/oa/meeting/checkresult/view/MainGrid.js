@@ -25,7 +25,7 @@ Ext.define("core.oa.meeting.checkresult.view.MainGrid", {
              iconCls: 'x-fa fa-file-text'
         }, */{
             xtype: 'button',
-            text: '导出',
+            text: '导出会议信息',
             ref: 'gridExport',
             funCode: 'girdFuntionBtn',
             iconCls: 'x-fa fa-file'
@@ -51,7 +51,7 @@ Ext.define("core.oa.meeting.checkresult.view.MainGrid", {
     },
     /** 排序字段定义 */
     defSort: [{
-       property: "updateTime", //字段名
+       property: "beginTime", //字段名
        direction: "DESC" //升降序
     }],
     /** 扩展参数 */

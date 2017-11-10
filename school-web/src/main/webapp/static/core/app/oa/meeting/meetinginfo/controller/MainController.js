@@ -21,7 +21,16 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                 	btngridExport.setHidden(true);
                 	btnsync.setHidden(true);
                 }
-            }
+            },
+            itemdblclick: function(grid, record, item, index, e, eOpts) {
+                //得到组件
+                var basePanel = grid.up("basepanel");
+                var funCode = basePanel.funCode;
+                var baseGrid = basePanel.down("basegrid[funCode=" + funCode + "]");
+                this.doDetail_Tab(null, "detail", baseGrid, record);
+                return false;
+            },
+            
         },
     	
       
@@ -40,7 +49,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                             width: 0,
                             height: 0,
                             hidden: true,
-                            html: '<iframe src="' + comm.get('baseUrl') + '/meetingsync/meeting"></iframe>',
+                            html: '<iframe src="' + comm.get('baseUrl') + '/meetingsync/syncMeeting"></iframe>',
                             renderTo: Ext.getBody()
                         });
 
@@ -58,9 +67,15 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
 
                                         btn.up("basegrid").getStore().loadPage(1);
                                     } else {
-                                        setTimeout(function () {
-                                            time()
-                                        }, 1000);
+                                        if (data.obj == 0) {    //当为此值，则表明导出失败
+                                            Ext.Msg.hide();
+                                            self.Error("同步失败，请重试或刷新页面！");
+                                            component.destroy();
+                                        } else {
+                                            setTimeout(function () {
+                                                time()
+                                            }, 1000);
+                                        }
                                     }
                                 },
                                 failure: function (response) {
@@ -94,16 +109,23 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                 var pkName = funData.pkName;
                 //得到选中数据
                 var records = baseGrid.getSelectionModel().getSelection();
-                var title = "将导出所有的会议信息";
-                var ids = new Array();
-                if (records.length > 0) {
-                    title = "将导出所选会议的信息";
-                    Ext.each(records, function (rec) {
-                        var pkValue = rec.get(pkName);
-                        ids.push(pkValue);
-                    });
+                // var title = "将导出所有的会议信息";
+                // var ids = new Array();
+                // if (records.length > 0) {
+                //     title = "将导出所选会议的信息";
+                //     Ext.each(records, function (rec) {
+                //         var pkValue = rec.get(pkName);
+                //         ids.push(pkValue);
+                //     });
 
+                // }
+                if (records.length !=1) {
+                    self.Warning("请勾选一个会议信息进行导出！");
+                    return false;
                 }
+                var ids =records[0].get(pkName);
+                var title = "将导出勾选的会议信息？";
+
                 Ext.Msg.confirm('提示', title, function (btn, text) {
                     if (btn == "yes") {
                         Ext.Msg.wait('正在导出中,请稍后...', '温馨提示');
@@ -113,7 +135,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                             width: 0,
                             height: 0,
                             hidden: true,
-                            html: '<iframe src="' + comm.get('baseUrl') + '/OaMeeting/exportMeetingExcel?ids=' + ids.join(",") + '"></iframe>',
+                            html: '<iframe src="' + comm.get('baseUrl') + '/OaMeeting/exportMeetingExcel?ids=' + ids+ '"></iframe>',
                             renderTo: Ext.getBody()
                         });
 
@@ -269,7 +291,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                 break;
             case "meetingEmp": //参会人员
                 insertObj = Ext.apply(insertObj, recordData);
-                tabTitle = recordData["meetingTitle"]+"_"+"参会人员";
+                tabTitle = recordData["meetingTitle"]+"-"+"参会人员";
                 tabItemId = funCode + "_gridMeetingUser";
                 itemXtype = "meetinginfo.meetingusergrid";
                 //获取主键值
@@ -318,7 +340,7 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
                         var objDetailForm = item.down("baseform[funCode=" + detCode + "]");
                         var formDetailObj = objDetailForm.getForm();
                         self.setFormValue(formDetailObj, insertObj);
-                        formDetailObj.findField("mettingEmpname").setVisible(false);
+                        //formDetailObj.findField("mettingEmpname").setVisible(false);
                         break;
                     case "detail":
                         //处理数据字典的值

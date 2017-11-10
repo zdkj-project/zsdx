@@ -6,6 +6,7 @@ import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.ModelUtil;
 import com.zd.core.util.StringUtils;
+import com.zd.school.jw.train.model.TrainClassschedule;
 import com.zd.school.oa.meeting.model.OaMeeting;
 import com.zd.school.oa.meeting.model.OaMeetingemp;
 import com.zd.school.oa.meeting.service.OaMeetingempService;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 
 /**
  * 
@@ -147,7 +149,7 @@ public class OaMeetingempController extends FrameWorkController<OaMeetingemp> im
 			writeJSON(response, jsonBuilder.returnFailureJson("'数据修改失败,详情见错误日志'"));
 		}
     }
-
+    
     /**
      * 获取可选择的参加会议人员
      * @param entity
@@ -170,4 +172,37 @@ public class OaMeetingempController extends FrameWorkController<OaMeetingemp> im
         strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
         writeJSON(response, strData);// 返回数据
     }
+    
+    /**
+	 * @param request
+	 * @param response
+	 * @return void 返回类型
+	 * @throws IOException
+	 *             抛出异常
+	 * @Title: doDelete
+	 * @Description: 更新是否评价
+	 */
+	@RequestMapping("/doUpdateLeave")
+	public void doUpdateLeave(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+		try {
+
+			String id = request.getParameter("id");
+			String val = request.getParameter("val");
+
+			SysUser currentUser = getCurrentSysUser();
+
+			OaMeetingemp emp = thisService.get(id);
+			emp.setIsLeave(val);
+			emp.setUpdateTime(new Date());
+			emp.setUpdateUser(currentUser.getXm());
+
+			thisService.merge(emp);
+
+			writeJSON(response, jsonBuilder.returnSuccessJson("\"设置成功！\""));
+
+		} catch (Exception e) {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"请求失败,请重试或联系管理员！\""));
+		}
+	}
 }

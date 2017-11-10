@@ -19,13 +19,13 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
         xtype: 'toolbar',
         items: [{
             xtype: 'button',
-            text: '导出',
+            text: '导出会议信息',
             ref: 'gridExport',
             funCode: 'girdFuntionBtn',
             iconCls: 'x-fa fa-file'
         },{
             xtype: 'button',
-            text: '同步数据',
+            text: '同步OA会议数据',
             ref: 'sync',
             funCode:'girdFuntionBtn',         
             iconCls: 'x-fa fa-rss'
@@ -79,7 +79,15 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
             minWidth:150,
             text: "会议主题",
             dataIndex: "meetingTitle",
-            align: 'left'
+            align: 'left',
+            renderer: function (value, metaData) {
+                var title = "会议主题";
+               
+                var html = value;
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                return html;
+                
+            }
         },{
             width:80,
             text: "会议类型",
@@ -93,27 +101,27 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
             dataIndex: "roomName",
             align: 'left'
         }, {
-        	width:150,
+        	width:130,
             text: "开始时间",
             dataIndex: "beginTime",
             align: 'left',
             renderer: function(value, metaData) {
                 var date = value.replace(new RegExp(/-/gm), "/");
                 var title = "开始时间";
-                var ss = Ext.Date.format(new Date(date), 'Y-m-d  H:i:s');
+                var ss = Ext.Date.format(new Date(date), 'Y-m-d  H:i');
                 var html = ss;
                 metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return ss;
             }
         }, {
-        	width:150,
+        	width:130,
             text: "结束时间",
             dataIndex: "endTime",
             align: 'left',
             renderer: function(value, metaData) {
                 var date = value.replace(new RegExp(/-/gm), "/");
                 var title = "结束时间";
-                var ss = Ext.Date.format(new Date(date), 'Y-m-d  H:i:s');
+                var ss = Ext.Date.format(new Date(date), 'Y-m-d  H:i');
                 var html = ss;
                 metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return ss;
@@ -191,7 +199,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
                         cmd:"detail"
                     });
                 }
-            },{
+            }/*,{
                 //iconCls: 'x-fa fa-file-text',
                 text:'上传图片',  
                 style:'font-size:12px;',  
@@ -213,7 +221,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
                     } else
                         return null;
                 }
-            }]
+            }*/]
         }]
     },
     emptyText: '<span style="width:100%;text-align:center;display: block;">暂无数据</span>'

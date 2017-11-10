@@ -6,9 +6,7 @@ Ext.define("core.oa.meeting.checkresult.view.CheckResultGrid", {
     al: false,
     frame: false,
     columnLines: false,
-    style: {
-        border: '1px solid #ddd'
-    },
+    
     //排序字段及模式定义
     defSort: [{
         property: 'xm',
@@ -16,7 +14,36 @@ Ext.define("core.oa.meeting.checkresult.view.CheckResultGrid", {
     }],
     extParams: {},
     tbar: [],
-    panelTopBar: false,
+    panelTopBar:{
+        xtype:'toolbar',
+        items: [/*{
+            xtype: 'button',
+            text: '添加',
+            ref: 'gridAddUser',
+            funCode: 'girdFuntionBtn',
+            iconCls: 'x-fa fa-plus-circle'
+        },{
+            xtype: 'button',
+            text: '删除',
+            ref: 'gridDelUser',
+            funCode: 'girdFuntionBtn',
+            iconCls: 'x-fa fa-minus-circle'
+        },*/'->',{
+            xtype: 'tbtext',
+            html:'快速搜索：'
+        },{
+            xtype:'textfield',
+            name:'xm',
+            funCode:'girdFastSearchText',
+            isNotForm:true,   //由于文本框重写了baseform下面的funcode值，所以使用这个属性，防止重写这里设定的fundcode值。
+            emptyText: '请输入姓名'
+        },{
+            xtype: 'button',
+            funCode:'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型
+            ref: 'gridFastSearchBtn',
+            iconCls: 'x-fa fa-search'
+        }]
+    },
     panelBottomBar: false,
     columns: {
         defaults: {
@@ -46,7 +73,7 @@ Ext.define("core.oa.meeting.checkresult.view.CheckResultGrid", {
         }, {
             text: "签到时间",
             dataIndex: "incardTime",
-            width: 100,
+            width: 150,
             renderer: function (value, metaData) {
                 var title = "签到时间";
                 if (Ext.isEmpty(value))
@@ -62,7 +89,7 @@ Ext.define("core.oa.meeting.checkresult.view.CheckResultGrid", {
         }, {
             text: "签退时间",
             dataIndex: "outcardTime",
-            width: 100,
+            width: 150,
             renderer: function (value, metaData) {
                 var title = "签退时间";
                 if (Ext.isEmpty(value))
@@ -98,7 +125,9 @@ Ext.define("core.oa.meeting.checkresult.view.CheckResultGrid", {
                     case "5":
                         html = "迟到早退";
                         break;
-
+                    default:
+                        html="未考勤";
+                        break;
                 }
                 //metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return html;

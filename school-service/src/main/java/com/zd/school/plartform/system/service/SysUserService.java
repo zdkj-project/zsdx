@@ -3,6 +3,11 @@ package com.zd.school.plartform.system.service;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import com.orcl.sync.model.hibernate.hibernate.HrDepartment;
+import com.orcl.sync.model.hibernate.hibernate.HrDeptPosition;
+import com.orcl.sync.model.hibernate.hibernate.HrPosition;
+import com.orcl.sync.model.hibernate.hibernate.HrUser;
+import com.orcl.sync.model.hibernate.hibernate.HrUserDepartmentPosition;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseService;
 import com.zd.school.plartform.system.model.CardUserInfoToUP;
@@ -142,4 +147,7 @@ public interface SysUserService extends BaseService<SysUser> {
     public int syncClassCardInfoFromUp(List<CardUserInfoToUP> upCardUserInfos, String classId);
 
 	public List<SysRole> getSysRoleList(SysUser sysUser);
+
+	public Integer doSyncOaUserandDept(List<HrDepartment> deptList, List<HrPosition> jobList, List<HrDeptPosition> deptJobList,
+			List<HrUserDepartmentPosition> userDeptList, List<HrUser> userList);
 }

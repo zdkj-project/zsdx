@@ -3,21 +3,33 @@ package com.zd.school.oa.meeting.service.Impl;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
+import com.zd.core.util.StringUtils;
+import com.zd.school.build.define.model.BuildRoominfo;
+import com.zd.school.build.define.service.BuildRoominfoService;
 import com.zd.school.oa.meeting.dao.OaMeetingDao;
 import com.zd.school.oa.meeting.model.OaMeeting;
+import com.zd.school.oa.meeting.model.OaMeetingcheckrule;
 import com.zd.school.oa.meeting.model.OaMeetingemp;
 import com.zd.school.oa.meeting.service.OaMeetingService;
+import com.zd.school.oa.meeting.service.OaMeetingcheckruleService;
 import com.zd.school.oa.meeting.service.OaMeetingempService;
+import com.zd.school.plartform.baseset.model.BaseDicitem;
+import com.zd.school.plartform.baseset.service.BaseDicitemService;
 import com.zd.school.plartform.system.model.SysUser;
 import org.apache.log4j.Logger;
+import org.hibernate.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -44,6 +56,15 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
     @Resource
     private OaMeetingempService meetingempService;
 
+    @Resource
+    private BaseDicitemService dicitemService;
+    
+    @Resource
+    private BuildRoominfoService buildService;
+    
+    @Resource
+    private OaMeetingcheckruleService oaMeetingcheckruleService;
+    
 	@Override
 	public QueryResult<OaMeeting> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
         QueryResult<OaMeeting> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
@@ -118,6 +139,11 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 			List<String> excludedProp = new ArrayList<>();
 			excludedProp.add("meetingState");
 			BeanUtils.copyPropertiesExceptNull(saveEntity, entity,excludedProp);
+			
+			if(StringUtils.isEmpty(entity.getRoomId())){
+				saveEntity.setRoomId(null);
+			}
+			
 			saveEntity.setUpdateTime(new Date()); // 设置修改时间
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 			entity = this.merge(saveEntity);// 执行修改方法
@@ -159,6 +185,107 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 			logger.error(e.getMessage());
 			return null;
 		}
+	}
+	@Override
+	public Integer doSyncMetting(List<Object[]> meetingList, List<Object[]> empList) {
+		// TODO Auto-generated method stub
+		int row = 1;
+        OaMeeting m = null;
+        OaMeetingemp emp = null;
+    	try {
+	        //1: 会议类型数据字典
+	        String mapKey = null;
+	        String[] propValue = {"MEETINGCATEGORY"};
+	        Map<String, String> mapDicItem = new HashMap<>();
+	        List<BaseDicitem> listDicItem = dicitemService.queryByProerties("dicCode", propValue);
+	        for (BaseDicitem baseDicitem : listDicItem) {
+	            mapKey = baseDicitem.getItemName() + baseDicitem.getDicCode();
+	            mapDicItem.put(mapKey, baseDicitem.getItemCode());
+	        }
+	        
+	        //2: 获取房间实体，拿到roomid
+	        BuildRoominfo build = null;
+	        Map<String, String> mapRoomInfo = new HashMap<>();
+	        List<BuildRoominfo> roominfoList = buildService.doQueryAll();
+	        for (BuildRoominfo buildRoominfo : roominfoList) {
+	            mapRoomInfo.put(buildRoominfo.getRoomName(), buildRoominfo.getUuid());
+	        }
+	        //3: 获取默认的会议考勤规则
+	        String[] rulePropertyName = {"isDelete","startUsing"};
+	        Object[] rulpropValue = {0,(short)1};
+	        Map<String, String> sortedCondition = new HashMap<>();
+	        sortedCondition.put("createTime", "desc");
+	        List<OaMeetingcheckrule> ruleList = oaMeetingcheckruleService.queryByProerties(rulePropertyName, rulpropValue, sortedCondition, 1);
+
+	        OaMeetingcheckrule checkRule =ruleList.size()>0?ruleList.get(0):null;
+	        
+	        //4：遍历会议列表
+	        for (Object[] o : meetingList) {
+	            m = this.get(o[0].toString());
+	            if (m == null) {
+	                m = new OaMeeting(o[0].toString());
+	                //考勤规则，现在放在第一次同步时来设定，因为后面可能会修改规则，所以之后不再同步
+	                m.setNeedChecking((short) 1);
+	                if(checkRule!=null){
+	                	m.setCheckruleId(checkRule.getUuid());
+	                	m.setCheckruleName(checkRule.getRuleName());
+	                }		           
+	            }
+	            m.setMeetingTitle(o[1].toString());
+	            m.setMeetingName(o[1].toString());
+	            m.setMeetingContent(o[2].toString());
+	            //会议类型数据字典转换
+	            if (o[3] != null){
+	            	String categoryItem=mapDicItem.get(o[3].toString() + "MEETINGCATEGORY");
+	            	if(categoryItem==null)
+	            		categoryItem="7";	//若没有找到类型，则指定为其他
+	                m.setMeetingCategory(categoryItem);
+	            }else{
+	            	m.setMeetingCategory(mapDicItem.get("其他MEETINGCATEGORY"));	//若没有类型，则指定为其他
+	            }
+	            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
+	            m.setBeginTime(sdf.parse(o[4].toString()));
+	            m.setEndTime(sdf.parse(o[5].toString()));
+	            
+	            m.setRoomName(o[6].toString());
+	            if (mapRoomInfo.get(o[6]) != null)
+	                m.setRoomId(mapRoomInfo.get(o[6]));
+	            
+	            this.merge(m);	      
+	        }
+	        
+	        //5：处理会议人员
+            for (Object[] o : empList) {
+                emp = meetingempService.get(o[0].toString() + o[1].toString());
+                if (emp == null) {
+                	emp = new OaMeetingemp(o[0].toString() + o[1].toString());
+                	emp.setAttendResult("0");	//默认为0，未考勤
+                	emp.setMeetingId(o[0].toString());
+                    emp.setEmployeeId(o[1].toString());
+                }
+                
+                emp.setXm(o[2].toString());
+                
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟       
+                emp.setBeginTime(sdf.parse(o[3].toString()));
+                emp.setEndTime(sdf.parse(o[4].toString()));
+             
+                meetingempService.merge(emp);
+            }
+
+            //更新会议的人员id和人员姓名
+            String sql = "UPDATE dbo.OA_T_MEETING SET METTING_EMPID=(SELECT dbo.OA_F_GETMEETINGEMPID(MEETING_ID)),\n" +
+                    "\tMEETING_EMPNMAE=(SELECT dbo.OA_F_GETMEETINGEMPNAME(MEETING_ID))";
+            this.executeSql(sql);
+	        
+    	} catch (Exception e) {
+			// 捕获了异常后，要手动进行回滚；
+			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+			logger.error(e.getStackTrace());
+			row = -1;
+		}
+
+		return row;
 	}
 
 }

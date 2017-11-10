@@ -6,6 +6,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
 	al: false,
     frame: false,
     columnLines: false,
+    selModel:null,
     // style: {
     //     border: '1px solid #ddd'
     // },
@@ -20,7 +21,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
     //panelTopBar:false,
     panelTopBar:{
         xtype:'toolbar',
-        items: [{
+        items: [/*{
             xtype: 'button',
             text: '添加',
             ref: 'gridAddUser',
@@ -32,7 +33,25 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
             ref: 'gridDelUser',
             funCode: 'girdFuntionBtn',
             iconCls: 'x-fa fa-minus-circle'
-        },'->',{
+        },{
+            xtype: 'button',
+            text: '请假',
+            ref: 'gridSetLeave',
+            funCode: 'girdFuntionBtn',
+            iconCls: 'x-fa fa-plus-circle'
+        },{
+            xtype: 'button',
+            text: '补录考勤',
+            ref: 'gridSetAttend',
+            funCode: 'girdFuntionBtn',
+            iconCls: 'x-fa fa-minus-circle'
+        },{
+            xtype: 'button',
+            text: '备注',
+            ref: 'gridSetRemark',
+            funCode: 'girdFuntionBtn',
+            iconCls: 'x-fa fa-minus-circle'
+        },*/'->',{
             xtype: 'tbtext',
             html:'快速搜索：'
         },{
@@ -55,6 +74,11 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
             titleAlign:"center"
         },
         items:[{
+            xtype: "rownumberer",
+            width: 50,
+            text: '序号',
+            align: 'center'
+        },{
 			text: "主键",
 			dataIndex: "uuid",
 			hidden: true
@@ -67,7 +91,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
 			dataIndex: "xbm",
 			columnType: "basecombobox",
 			ddCode: "XBM",
-			width:100
+			width:70
 		}, {
 			text: "部门",
 			dataIndex: "deptName",
@@ -79,7 +103,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
         }, {
             text: "签到时间",
             dataIndex: "incardTime",
-            width: 100,
+            width: 150,
             renderer: function (value, metaData) {
                 var title = "签到时间";
                 if (Ext.isEmpty(value))
@@ -92,10 +116,10 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
                     return ss;
                 }
             }
-        }, {
+        },/* {
             text: "签退时间",
             dataIndex: "outcardTime",
-            width: 100,
+            width: 150,
             renderer: function (value, metaData) {
                 var title = "签退时间";
                 if (Ext.isEmpty(value))
@@ -108,7 +132,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
                     return ss;
                 }
             }
-        }, {
+        },*/ {
             text: "考勤结果",
             dataIndex: "attendResult",
             width:100,
@@ -131,15 +155,101 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
                     case "5":
                         html = "迟到早退";
                         break;
+                    default:
+                        html="未考勤";
+                        break;
 
                 }
                 //metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return html;
             }
         },{
-        	text:"结果说明",
+            text:"是否请假",
+            dataIndex:"isLeave",
+            width:80,
+            renderer: function(value, metaData) {
+                if(value=="1"){
+                    return "<span style='color:red'>是</span>"
+                }else{
+                    return "<span style='color:green'>否</span>"
+                }
+            }
+        },{
+        	text:"备注与说明",
 			dataIndex:"resultDesc",
-			flex:1
-		}]
+			flex:1,
+            minWidth:100,
+            renderer: function (value, metaData) {
+                var title = "备注与说明";
+               
+                var html = value;
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                return html;
+                
+            }
+		},{
+            xtype: 'actiontextcolumn',
+            text: "操作",
+            width: 200,
+            align:'center',
+            fixed: true,
+            items: [{
+                text: ' 请假 ',
+                style: 'font-size:13px;',
+                tooltip: '请假',
+                ref: 'gridDetail',        
+                handler: function (view, rowIndex,colIndex, item) {
+                    var rec = view.getStore().getAt(
+                        rowIndex);
+                    this.fireEvent('gridSetLeave', {
+                        view: view.grid,
+                        record: rec,
+                        value:1
+                    });
+                },
+                getClass :function(v,metadata,record){
+                
+                    if(record.get("isLeave")==1){
+                        return 'x-hidden-display';
+                    }
+                    else
+                        return null;
+                }, 
+            },{
+                text: ' 取消请假 ',
+                style: 'font-size:13px;',
+                tooltip: '取消请假',
+                ref: 'gridDetail',        
+                handler: function (view, rowIndex,colIndex, item) {
+                    var rec = view.getStore().getAt(
+                        rowIndex);
+                    this.fireEvent('gridSetLeave', {
+                        view: view.grid,
+                        record: rec,
+                        value:0
+                    });
+                },
+                getClass :function(v,metadata,record){
+                
+                    if(record.get("isLeave")!=1){
+                        return 'x-hidden-display';
+                    }
+                    else
+                        return null;
+                }, 
+            },{
+                text:' 备注 ',  
+                style:'font-size:13px;',  
+                tooltip: '备注',
+                ref: 'gridDetail',
+                handler: function(view, rowIndex, colIndex, item) {
+                    var rec = view.getStore().getAt(rowIndex);
+                    this.fireEvent('gridRemark', {
+                        view: view.grid,
+                        record: rec
+                    });
+                }
+            }]
+        }]
 	}
 });

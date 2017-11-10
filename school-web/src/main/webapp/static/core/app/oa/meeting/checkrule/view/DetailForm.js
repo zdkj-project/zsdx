@@ -60,7 +60,7 @@ Ext.define("core.oa.meeting.checkrule.view.DetailForm", {
         emptyText: "请输入缺勤分钟",
         maxLength: 2,
         maxLengthText: "最多2个字符,汉字占2个字符",
-    }, {
+    },/* {
         xtype: "container",
         layout: "column",
         labelAlign: "right",
@@ -74,7 +74,7 @@ Ext.define("core.oa.meeting.checkrule.view.DetailForm", {
             emptyText: "请输入是否需要签退",
             maxLength: 2,
             maxLengthText: "最多2个字符,汉字占2个字符",
-            value: 1,
+            value: 0,
             listeners: {
                 change: function (field, newValue, oldValue) {
                     var currentForm = field.up("baseform[xtype=checkrule.detailform]");
@@ -103,6 +103,7 @@ Ext.define("core.oa.meeting.checkrule.view.DetailForm", {
         emptyText: "请输入签退提前分钟",
         maxLength: 2,
         maxLengthText: "最多2个字符,汉字占2个字符",
+        hidden:true
     }, {
         ref: 'checkoutField',
         fieldLabel: "签退延迟分钟",
@@ -112,6 +113,7 @@ Ext.define("core.oa.meeting.checkrule.view.DetailForm", {
         emptyText: "请输入签退延迟分钟",
         maxLength: 2,
         maxLengthText: "最多2个字符,汉字占2个字符",
+        hidden:true
     }, {
         ref: 'checkoutField',
         fieldLabel: "早退分钟",
@@ -121,7 +123,8 @@ Ext.define("core.oa.meeting.checkrule.view.DetailForm", {
         emptyText: "请输入早退分钟",
         maxLength: 2,
         maxLengthText: "最多2个字符,汉字占2个字符",
-    }, {
+        hidden:true
+    },*/ {
         fieldLabel: "规则说明",
         columnWidth: 0.5,
         name: "ruleDesc",

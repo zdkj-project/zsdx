@@ -604,7 +604,7 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 						if (!currentDept.equals(upDept)) { // 对比部分数据是否一致
 							sqlSb.append(" update TC_Department set ParentDepartmentID='"
 									+ currentDept.getParentDepartmentId() + "',DepartmentStatus='1'," + " DepartmentName='"
-									+ currentDept.getDepartmentName() + "',layer='" + currentDept.getLayer() + "',"
+									+ currentDept.getDepartmentName() + "',layer=" + currentDept.getLayer() + ","
 									+ "layerorder='" + currentDept.getLayerorder() + "'" + " where DepartmentID='"
 									+ currentDept.getDepartmentId() + "'");
 						
@@ -622,7 +622,7 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 				if (!isExist) {
 					sqlSb.append(" insert into TC_Department(DepartmentID,ParentDepartmentID,DepartmentName,DepartmentStatus,layer,layerorder) "
 							+ " values('" + currentDept.getDepartmentId() + "','" + currentDept.getParentDepartmentId()
-							+ "'," + "'" + currentDept.getDepartmentName() + "',1,'" + currentDept.getLayer() + "','"
+							+ "'," + "'" + currentDept.getDepartmentName() + "',1," + currentDept.getLayer() + ",'"
 							+ currentDept.getLayerorder() + "')");
 				
 				}

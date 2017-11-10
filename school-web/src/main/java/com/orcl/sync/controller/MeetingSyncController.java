@@ -166,10 +166,11 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
             m = empService.get(o[0].toString() + o[1].toString());
             if (m == null) {
                 m = new OaMeetingemp(o[0].toString() + o[1].toString());
+                m.setAttendResult("0");	//默认为0，未考勤
             }
             m.setMeetingId(o[0].toString());
             m.setEmployeeId(o[1].toString());
-            m.setAttendResult("1");
+            
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
             Query query1 = session.createSQLQuery("select BEGIN_TIME,END_TIME from zsdx_sync.meeting_msg where MEETING_ID='" + o[0].toString() + "'");
             List<Object[]> list1 = query1.list();
@@ -212,4 +213,61 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
             writeJSON(response, jsonBuilder.returnFailureJson("\"会议同步未完成！\""));
         }
     }
+    
+    
+    /**
+     * ZZK修改
+     * @param request
+     * @param response
+     * @throws IOException
+     * @throws ParseException
+     */
+    @SuppressWarnings("unchecked")
+	@RequestMapping(value = "syncMeeting")
+    public void syncMeeting(HttpServletRequest request, HttpServletResponse response) throws IOException, ParseException {
+        request.getSession().setAttribute("syncMeetingInfoIsEnd", "0");
+        request.getSession().removeAttribute("syncMeetingInfoState");
+        
+        try{
+	        //启用orcl数据库
+	        CustomerContextHolder.setCustomerType(CustomerContextHolder.SESSION_FACTORY_ORACLE);
+	        Session session = sssssss.openSession();
+	        session.beginTransaction();
+	        Query query = session.createSQLQuery("select MEETING_ID,cast(MEETING_TITLE as VARCHAR2(255)),cast(CONTENT as VARCHAR2(2048))," +
+	                "cast(MEETING_CATEGORY as VARCHAR2(255)),BEGIN_TIME,END_TIME,cast(ROOM_NAME as VARCHAR2(255)) from zsdx_sync.meeting_msg where BEGIN_TIME >=(sysdate-7) ORDER BY  BEGIN_TIME ASC");
+	        List<Object[]> meetingList = query.list();
+	        
+	        query = session.createSQLQuery("select a.MEETING_ID,a.EMPLOYEE_ID,cast(a.XM as VARCHAR2(255)),b.BEGIN_TIME,b.END_TIME "
+	        		+ " from zsdx_sync.meeting_user a join zsdx_sync.meeting_msg b "
+	        		+ " on a.MEETING_ID =b.MEETING_ID"
+	        		+ " where b.BEGIN_TIME >=(sysdate-7) ");
+	        List<Object[]> empList = query.list();
+	        
+	        //6.提交事务
+	        session.getTransaction().commit();
+	        //7.关闭session
+	        session.flush();
+	        session.close();
+	
+	        CustomerContextHolder.setCustomerType(CustomerContextHolder.SESSION_FACTORY_MYSQL);
+	        
+	        Integer state=meetingService.doSyncMetting(meetingList,empList);
+	        
+	        if(state==1)
+	        	request.getSession().setAttribute("syncMeetingInfoIsEnd", "1");
+	        else{
+	        	request.getSession().setAttribute("syncMeetingInfoIsEnd", "0");
+				request.getSession().setAttribute("syncMeetingInfoState", "0");
+	        }
+        }catch(Exception e){
+        	request.getSession().setAttribute("syncMeetingInfoIsEnd", "0");
+			request.getSession().setAttribute("syncMeetingInfoState", "0");
+        }
+
+       
+
+
+        //writeJSON(response, jsonBuilder.returnSuccessJson("'同步成功'"));
+    }
+
 }

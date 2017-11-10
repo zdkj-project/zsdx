@@ -1,5 +1,7 @@
 package com.zd.school.oa.meeting.service;
 
+import java.util.List;
+
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseService;
 import com.zd.school.oa.meeting.model.OaMeeting;
@@ -89,4 +91,6 @@ public interface OaMeetingService extends BaseService<OaMeeting> {
      * @return
      */
     public Boolean doDeleteMeetingUser(String ids, String userId, SysUser currentUser);
+
+	public Integer doSyncMetting(List<Object[]> meetingList, List<Object[]> empList);
 }

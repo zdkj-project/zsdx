@@ -81,7 +81,7 @@ Ext.define('core.oa.meeting.meetinginfo.view.DetailPanel', {
             '<tpl elseif="attendResult==5">'+
             '<span style="width:10%" data-align="center">迟到早退</span>' +
             '<tpl else >'+
-            '<span style="width:10%" data-align="center"></span>' +
+            '<span style="width:10%" data-align="center">未考勤</span>' +
             '</tpl>' +
             '<span style="width:15%" data-align="center">{resultDesc}</span></li>',
             '</tpl>',

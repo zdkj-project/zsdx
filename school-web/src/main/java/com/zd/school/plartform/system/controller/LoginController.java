@@ -79,6 +79,7 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 		Session session = subject.getSession();
 		// SecurityUtils.getSubject().getSession().setTimeout(-1000l); //永不过期
 		session.setTimeout(1000 * 60 * 30 * 8);   //超时时间为4小时
+	
 		// login失败，要捕获相应异常
 		try {
 			// 执行login之后，会立即执行Realm的getAuthenticationInfo方法，用来判断token信息是否正确。

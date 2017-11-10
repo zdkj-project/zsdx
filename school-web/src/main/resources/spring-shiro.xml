@@ -25,7 +25,7 @@
     <bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
         <constructor-arg value="sid"/>
         <property name="httpOnly" value="true"/>
-        <property name="maxAge" value="180000"/>
+        <property name="maxAge" value="-1"/><!-- cookie过期时间，-1关闭浏览器时过期Cookie；若设置了时间，则超过时间就自动过期了，与session冲突  -->
     </bean>
     
     
@@ -38,7 +38,7 @@
     <!-- 会话验证调度器 -->
 	<bean id="sessionValidationScheduler"
 		class="org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler">
-		<property name="interval" value="600000" />	<!--毫秒，检测时间间距，默认是60分钟 -->
+		<property name="interval" value="600000" />	<!--毫秒，检测时间间距，10分钟检查一次，默认是60分钟 -->
 		<property name="sessionManager" ref="sessionManager" />
 	</bean>
 	
@@ -47,7 +47,7 @@
 		
 	<!-- 会话管理器 -->
     <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
-        <property name="globalSessionTimeout" value="1800000"/>
+        <property name="globalSessionTimeout" value="1800000"/><!-- 全局默认的会话超时时间30分钟 -->
         <property name="deleteInvalidSessions" value="true"/>
         <property name="sessionValidationSchedulerEnabled" value="true"/>
         <property name="sessionValidationScheduler" ref="sessionValidationScheduler"/>
