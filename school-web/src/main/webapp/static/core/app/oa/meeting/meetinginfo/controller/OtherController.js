@@ -336,6 +336,70 @@ Ext.define("core.oa.meeting.meetinginfo.controller.OtherController", {
                 return false;
             }
 
+       },
+
+       'baseformwin[funCode=attend_detail] button[ref=formSave]':{
+            beforeclick:function(btn){
+                var self=this;
+                var win=btn.up("baseformwin")
+                var objForm = win.down("baseform[xtype=meetinginfo.attendform]");
+
+                var formObj = objForm.getForm();
+
+                var params = self.getFormValue(formObj);
+
+                //判断当前是保存还是修改操作
+                if (formObj.isValid()) {
+
+                    Ext.Msg.confirm('温馨提示', "您确定要补录考勤吗？", function (btn2, text) {
+                        if (btn2 == "yes") {
+
+                            var loading = new Ext.LoadMask(objForm, {
+                                msg: '正在提交，请稍等...',
+                                removeMask: true// 完成后移除
+                            });
+                            loading.show();
+
+                            self.asyncAjax({
+                                url: comm.get("baseUrl") + "/OaMeetingemp/doupdate",
+                                params: params,
+                                //回调代码必须写在里面
+                                success: function (response) {
+                                    data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                                    if (data.success) {
+                                        loading.hide();
+                                        win.close();
+                                        win.funData.grid.getStore().load();
+                                        //win.record.set("resultDesc",params.resultDesc);
+                                        //win.record.commit();
+                                        self.Info("保存成功!");
+                                    } else {
+                                        loading.hide();
+                                        self.Error(data.obj);
+                                    }
+                                },failure: function(response) {
+                                    loading.hide();
+                                    Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);                            
+                                }
+                            });
+                        }
+                    });
+
+                } else {
+                    var errors = ["前台验证失败，错误信息："];
+                    formObj.getFields().each(function (f) {
+                        if (!f.isValid()) {
+                            errors.push("<font color=red>" + f.fieldLabel + "</font>：" + f.getErrors().join(","));
+                        }
+                    });
+                    self.msgbox(errors.join("<br/>"));
+                }
+
+                return false;
+            }
+
        }
+
     }
 });

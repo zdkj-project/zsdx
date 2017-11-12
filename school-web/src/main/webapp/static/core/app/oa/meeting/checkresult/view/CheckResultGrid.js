@@ -132,10 +132,30 @@ Ext.define("core.oa.meeting.checkresult.view.CheckResultGrid", {
                 //metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return html;
             }
-        }, {
-            text: "结果说明",
-            dataIndex: "resultDesc",
-            flex: 1
-        }]
+        },{
+            text:"是否请假",
+            dataIndex:"isLeave",
+            width:80,
+            renderer: function(value, metaData) {
+                if(value=="1"){
+                    return "<span style='color:red'>是</span>"
+                }else{
+                    return "<span style='color:green'>否</span>"
+                }
+            }
+        },{
+            text:"备注与说明",
+            dataIndex:"resultDesc",
+            flex:1,
+            minWidth:100,
+            renderer: function (value, metaData) {
+                var title = "备注与说明";
+               
+                var html = value;
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                return html;
+                
+            }
+        },]
     }
 });

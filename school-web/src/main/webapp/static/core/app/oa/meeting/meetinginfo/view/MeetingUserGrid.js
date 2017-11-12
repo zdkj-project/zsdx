@@ -238,6 +238,18 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
                         return null;
                 }, 
             },{
+                text:' 补录考勤 ',  
+                style:'font-size:13px;',  
+                tooltip: '补录考勤',
+                ref: 'gridDetail',
+                handler: function(view, rowIndex, colIndex, item) {
+                    var rec = view.getStore().getAt(rowIndex);
+                    this.fireEvent('gridSetAttend', {
+                        view: view.grid,
+                        record: rec
+                    });
+                }
+            },{
                 text:' 备注 ',  
                 style:'font-size:13px;',  
                 tooltip: '备注',

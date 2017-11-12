@@ -220,6 +220,61 @@ Ext.define("core.oa.meeting.meetinginfo.controller.DetailController", {
         },
 
         "basegrid[xtype=meetinginfo.meetingusergrid]  actioncolumn": {
+            gridSetAttend: function(data) {
+                var self = this;
+                var baseGrid = data.view;
+                var record = data.record;
+                
+                var basePanel = baseGrid.up("basepanel[funCode=meetinginfo_detail]");            
+            
+                            
+                //关键：window的视图控制器
+                var otherController ='meetinginfo.otherController';
+            
+                var insertObj=record.getData();
+
+                var popFunData = Ext.apply(basePanel.funData, {
+                    grid: baseGrid
+                });
+
+                var width = 500;
+                var height = 260;      
+
+                var iconCls = 'x-fa fa-plus-circle';
+                var operType = "edit";
+                var title = "补录考勤";
+                        
+
+
+                var win = Ext.create('core.base.view.BaseFormWin', {
+                    title: title,
+                    iconCls: iconCls,
+                    operType: operType,
+                    width: width,
+                    height: height,
+                    controller: otherController,
+                    funData: popFunData,
+                    funCode: "attend_detail",    //修改此funCode，方便用于捕获window的确定按钮
+                    insertObj: insertObj,
+                    record:record,
+                    items: [{
+                        xtype:'meetinginfo.detaillayout',
+                        minWidth:200, 
+                        items: [{
+                            xtype: "meetinginfo.attendform"
+                        }]               
+                    }]
+                });
+                win.show();
+
+                var objDetForm = win.down("baseform[xtype=meetinginfo.attendform]");
+                var formDeptObj = objDetForm.getForm();
+
+                self.setFormValue(formDeptObj, insertObj);
+
+
+                return false
+            },
             gridRemark: function(data) {
                 var self = this;
                 var baseGrid = data.view;
