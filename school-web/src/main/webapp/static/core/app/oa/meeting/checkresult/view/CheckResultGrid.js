@@ -109,25 +109,26 @@ Ext.define("core.oa.meeting.checkresult.view.CheckResultGrid", {
             renderer: function (value, metaData) {
                 //1-正常 2-迟到 3-早退 4-缺勤5-迟到早退
                 var html = value;
-                switch (value) {
+                switch (value){
                     case "1":
-                        html = "正常";
+                        html = "<span style='color:green'>正常</span>";
                         break;
                     case "2":
-                        html = "迟到";
+                        html = "<span style='color:#ff9b00'>迟到</span>";
                         break;
                     case"3":
-                        html = "早退";
+                        html =  "<span style='color:#0070ff'>早退</span>";
                         break;
                     case "4":
-                        html = "缺勤";
+                        html =  "<span style='color:red'>缺勤</span>";
                         break;
                     case "5":
-                        html = "迟到早退";
+                        html =  "<span style='color:#ff008b'>迟到早退</span>";
                         break;
                     default:
                         html="未考勤";
                         break;
+
                 }
                 //metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return html;

@@ -567,7 +567,64 @@ Ext.define("core.reportcenter.cashreport.controller.MainController", {
 
                 return false;
 
-            }
+            },
+
+            gridRemark: function(data) {
+                var self = this;
+                var baseGrid = data.view;
+                var record = data.record;
+                
+                var basePanel = baseGrid.up("basepanel[funCode=cashreport_main]");            
+            
+                            
+                //关键：window的视图控制器
+                var otherController ='cashreport.otherController';
+            
+                var insertObj=record.getData();
+                insertObj.uuid=insertObj.EXPENSESERIAL_ID;
+                
+                var popFunData = Ext.apply(basePanel.funData, {
+                    grid: baseGrid
+                });
+
+                var width = 500;
+                var height = 220;      
+
+                var iconCls = 'x-fa fa-plus-circle';
+                var operType = "edit";
+                var title = "备注信息";
+                        
+
+
+                var win = Ext.create('core.base.view.BaseFormWin', {
+                    title: title,
+                    iconCls: iconCls,
+                    operType: operType,
+                    width: width,
+                    height: height,
+                    controller: otherController,
+                    funData: popFunData,
+                    funCode: "remark_detail",    //修改此funCode，方便用于捕获window的确定按钮
+                    insertObj: insertObj,
+                    record:record,
+                    items: [{
+                        xtype:'cashreport.detaillayout',
+                        minWidth:200, 
+                        items: [{
+                            xtype: "cashreport.remarkform"
+                        }]               
+                    }]
+                });
+                win.show();
+
+                var objDetForm = win.down("baseform[xtype=cashreport.remarkform]");
+                var formDeptObj = objDetForm.getForm();
+
+                self.setFormValue(formDeptObj, insertObj);
+
+
+                return false
+            },
         }
     },
 

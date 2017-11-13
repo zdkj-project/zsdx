@@ -21,7 +21,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
     //panelTopBar:false,
     panelTopBar:{
         xtype:'toolbar',
-        items: [/*{
+        items: [{
             xtype: 'button',
             text: '添加',
             ref: 'gridAddUser',
@@ -33,7 +33,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
             ref: 'gridDelUser',
             funCode: 'girdFuntionBtn',
             iconCls: 'x-fa fa-minus-circle'
-        },{
+        },/*{
             xtype: 'button',
             text: '请假',
             ref: 'gridSetLeave',
@@ -141,19 +141,19 @@ Ext.define("core.oa.meeting.meetinginfo.view.MeetingUserGrid", {
                 var html = value;
                 switch (value){
                     case "1":
-                        html = "正常";
+                        html = "<span style='color:green'>正常</span>";
                         break;
                     case "2":
-                        html = "迟到";
+                        html = "<span style='color:#ff9b00'>迟到</span>";
                         break;
                     case"3":
-                        html = "早退";
+                        html =  "<span style='color:#0070ff'>早退</span>";
                         break;
                     case "4":
-                        html = "缺勤";
+                        html =  "<span style='color:red'>缺勤</span>";
                         break;
                     case "5":
-                        html = "迟到早退";
+                        html =  "<span style='color:#ff008b'>迟到早退</span>";
                         break;
                     default:
                         html="未考勤";

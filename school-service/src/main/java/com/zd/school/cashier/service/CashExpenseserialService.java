@@ -78,4 +78,6 @@ public interface CashExpenseserialService extends BaseService<CashExpenseserial>
 	public  boolean doSaveConsumeBill(CashExpenseserial bill, List<CashExpensedetail> billDetail) throws InvocationTargetException, IllegalAccessException;
 
 	public int doDestroyCash(String uuid, SysUser currentUser);
+
+	public int doSetRemark(String uuid, String remark, SysUser currentUser);
 }

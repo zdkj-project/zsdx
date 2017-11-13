@@ -173,4 +173,24 @@ public class CashExpenseserialController extends FrameWorkController<CashExpense
 			writeJSON(response, jsonBuilder.returnFailureJson("\"销单失败，请联系管理员\""));
 		}
     }
+    @RequestMapping("/doSetRemark")
+    public void doSetRemark( HttpServletRequest request, HttpServletResponse response)
+            throws IOException, IllegalAccessException, InvocationTargetException {
+		
+		//入库前检查代码
+		
+		//获取当前的操作用户
+		SysUser currentUser = getCurrentSysUser();
+		try {
+			String uuid=request.getParameter("uuid");
+			String remark=request.getParameter("REMARK");
+			int row=thisService.doSetRemark(uuid, remark,currentUser);// 执行修改方法
+			if (row==1)
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"提交成功！\""));
+			else
+				writeJSON(response, jsonBuilder.returnFailureJson("\"提单失败，请联系管理员\""));
+		} catch (Exception e) {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"提交失败，请联系管理员\""));
+		}
+    }
 }

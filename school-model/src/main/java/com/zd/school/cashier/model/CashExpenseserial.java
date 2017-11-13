@@ -19,7 +19,9 @@ import java.util.Set;
  * Reason: TODO ADD REASON(可选). 
  * Description: 消费流水(CASH_T_EXPENSESERIAL)实体类.
  * date: 2017-09-25
- *
+ * 
+ * * 使用备用字段5作为备注数据
+ * 
  * @author  luoyibo 创建文件
  * @version 0.1
  * @since JDK 1.8

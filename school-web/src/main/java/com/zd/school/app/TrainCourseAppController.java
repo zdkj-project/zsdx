@@ -13,6 +13,8 @@ import com.zd.school.oa.meeting.model.OaMeetingemp;
 import com.zd.school.oa.terminal.model.OaInfoterm;
 import com.zd.school.oa.terminal.service.OaInfotermService;
 import com.zd.school.plartform.comm.model.CommAttachment;
+
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -48,6 +50,8 @@ public class TrainCourseAppController {
 	private TrainCourseattendService attendService;
 	@Resource
 	private TrainClassService classService;
+	
+	private static Logger logger = Logger.getLogger(TrainCourseAppController.class);
 
 	@RequestMapping(value = { "/list" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
 			org.springframework.web.bind.annotation.RequestMethod.POST })
@@ -145,9 +149,14 @@ public class TrainCourseAppController {
 					if(voRule==null){
 						TrainCheckrule checkRule = new TrainCheckrule();
 						voRule=ruleService.get(classInfo.getCheckruleId());
-						BeanUtils.copyProperties(checkRule, voRule);
-						voMapRule.put(classId,checkRule);
-						c.setCheckRule(checkRule);
+						if(voRule!=null){
+							BeanUtils.copyProperties(checkRule, voRule);
+							voMapRule.put(classId,checkRule);
+							c.setCheckRule(checkRule);	
+						}else{
+							c.setCheckRule(null);
+						}
+						
 					}else{
 						bothClassId=classId;
 						c.setCheckRule(voRule);
@@ -214,6 +223,9 @@ public class TrainCourseAppController {
 			org.springframework.web.bind.annotation.RequestMethod.POST })
 	public @ResponseBody CourseCheckApp update(String coursecheck, HttpServletRequest request,
 			HttpServletResponse response) throws IOException, ParseException {
+		
+		logger.info("提交课程考勤数据-->参数coursecheck："+coursecheck);
+		
 		Date currentDate = new Date();
 		List<CourseCheck> check = null;
 		if (null != coursecheck) {
@@ -275,16 +287,19 @@ public class TrainCourseAppController {
 				}
 				cca.setCode(true);
 				cca.setMessage("存储数据成功");
+				logger.info("提交课程考勤成功!");
 				return cca;
 			} else {
 				cca.setCode(false);
 				cca.setMessage("没有上传考勤数据");
+				logger.info("没有上传考勤数据!");
 				return cca;
 			}
 
 		} catch (Exception e) {
 			cca.setCode(false);
 			cca.setMessage("存储异常" + e.getMessage());
+			logger.error("提交课程考勤失败-->message:"+e.getStackTrace());			
 			return cca;
 		}
 

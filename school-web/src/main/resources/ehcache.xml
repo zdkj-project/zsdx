@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache name="ehcache-hibernate">
-	<diskStore path="java.io.tmpdir/jw-ehcache" />
+	<diskStore path="java.io.tmpdir/zsdx-ehcache" />
 
 	<defaultCache maxElementsInMemory="1000" eternal="false"
 		overflowToDisk="true" timeToIdleSeconds="300" timeToLiveSeconds="180"

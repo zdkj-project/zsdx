@@ -31,7 +31,7 @@ Ext.define("core.train.class.view.TraineeImportForm", {
         fieldLabel: "是否添加",
         name: "needSynctrainee",
         xtype: "checkbox",
-        //value: '1',
+        value: '1',
         boxLabel: "添加到学员库" 
     },{
         beforeLabelTextTpl: comm.get("required"),

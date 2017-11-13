@@ -1,5 +1,6 @@
 package com.zd.school.app;
 
+import com.orcl.sync.controller.UserSyncController;
 import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.ModelUtil;
 import com.zd.school.jw.model.app.MeetCheckApp;
@@ -14,6 +15,8 @@ import com.zd.school.oa.meeting.service.OaMeetingempService;
 import com.zd.school.oa.terminal.model.OaInfoterm;
 import com.zd.school.oa.terminal.service.OaInfotermService;
 import com.zd.school.plartform.comm.model.CommAttachment;
+
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -40,7 +43,8 @@ public class MeetingAppController {
     private OaInfotermService termService;
     @Resource
     private OaMeetingcheckruleService ruleService;
-
+    
+    private static Logger logger = Logger.getLogger(MeetingAppController.class);
 
     @RequestMapping(value = {"/list"}, method = {org.springframework.web.bind.annotation.RequestMethod.GET,
             org.springframework.web.bind.annotation.RequestMethod.POST})
@@ -99,12 +103,12 @@ public class MeetingAppController {
  	
  	                String sql = MessageFormat.format("SELECT ATTACH_NAME AS attachName,ATTACH_URL AS attachUrl FROM dbo.BASE_T_ATTACHMENT WHERE  ATTACH_TYPE=''jpg'' AND ENTITY_NAME=''OaMeeting'' AND RECORD_ID=''{0}''", o.getUuid());
  	                List<CommAttachment> attachmentList = meetingService.doQuerySqlObject(sql, CommAttachment.class);
- 	                if(attachmentList.size()==0){
- 	                	CommAttachment tempAtt=new CommAttachment();
- 	                	tempAtt.setAttachName("image");
- 	                	tempAtt.setAttachUrl("/static/core/resources/images/defaultMettingImg.png");
- 	                	attachmentList.add(tempAtt);
- 	                }
+// 	                if(attachmentList.size()==0){
+// 	                	CommAttachment tempAtt=new CommAttachment();
+// 	                	tempAtt.setAttachName("image");
+// 	                	tempAtt.setAttachUrl("/static/core/resources/images/defaultMettingImg.png");
+// 	                	attachmentList.add(tempAtt);
+// 	                }
  	                o.setAttachment(attachmentList);
  	            }
 	        	
@@ -143,6 +147,8 @@ public class MeetingAppController {
     public @ResponseBody
     MeetCheckApp update(String meetcheck, HttpServletRequest request,
                         HttpServletResponse response) throws IOException, ParseException {
+    	
+    	logger.info("提交会议考勤数据-->参数meetcheck："+meetcheck);
         List<MeetingCheck> check = null;
         Date currentDate=new Date();
         if (null != meetcheck) {
@@ -210,10 +216,13 @@ public class MeetingAppController {
             }
             mca.setCode(true);
             mca.setMessage("存储数据成功");
+            
+            logger.info("提交会议成功!");
             return mca;
         } catch (Exception e) {
             mca.setCode(false);
             mca.setMessage("参数错误" + e.getMessage());
+            logger.error("提交会议失败-->message:"+e.getStackTrace());
             return mca;
         }
     }

@@ -493,6 +493,7 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
 					userservice.syncUserInfoToAllUP(userInfos, null);
 				} 
 				
+				//3.暂不同步卡发信息数据
 			    DBContextHolder.clearDBType();
 			       
 	          

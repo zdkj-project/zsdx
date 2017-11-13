@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ehcache name="ehcache-shiro">
 
-	<diskStore path="java.io.tmpdir/jw-ehcache" />
+	<diskStore path="java.io.tmpdir/zsdx-shiro-ehcache" />
 	
 	<defaultCache               
         maxElementsInMemory="10000"  
@@ -47,7 +47,7 @@
 	
 </ehcache>
 
-<!-- 
+<!--
 name:缓存名称。
 maxElementsInMemory：缓存最大个数。
 eternal:对象是否永久有效，一但设置了，timeout将不起作用。
@@ -60,4 +60,4 @@ diskPersistent：是否缓存虚拟机重启期数据 Whether the disk store per
 diskExpiryThreadIntervalSeconds：磁盘失效线程运行时间间隔，默认是120秒。
 memoryStoreEvictionPolicy：当达到maxElementsInMemory限制时，Ehcache将会根据指定的策略去清理内存。默认策略是LRU（最近最少使用）。你可以设置为FIFO（先进先出）或是LFU（较少使用）。
 clearOnFlush：内存数量最大时是否清除。
-    -->
+-->

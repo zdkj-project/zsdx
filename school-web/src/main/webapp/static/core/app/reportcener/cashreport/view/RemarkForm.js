@@ -1,6 +1,6 @@
-Ext.define("core.oa.meeting.meetinginfo.view.AttendForm", {
+Ext.define("core.reportcenter.cashreport.view.RemarkForm", {
     extend: "core.base.view.BaseForm",
-    alias: "widget.meetinginfo.attendform",
+    alias: "widget.cashreport.remarkform",
     layout: "form", //从上往下布局
     autoHeight: true,
     frame: false,
@@ -8,7 +8,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.AttendForm", {
     fieldDefaults: { // 统一设置表单字段默认属性
         labelSeparator: "：", // 分隔符
         msgTarget: "qtip",
-        labelWidth: 80,
+        labelWidth: 60,
         labelAlign: "right"
     },
     tbar: [/*{
@@ -23,19 +23,10 @@ Ext.define("core.oa.meeting.meetinginfo.view.AttendForm", {
         name: "uuid",
         xtype: "textfield",
         hidden: true
-    },{
-        beforeLabelTextTpl: comm.get('required'),
-        allowBlank: false,
-        fieldLabel: "考勤结果",
-        name: "attendResult",
-        xtype: "basecombobox",
-        ddCode: "ATTENDRESULT",
-        value:"",
-        emptyText: "请选择考勤结果",
-        editable:false
     },{        
         fieldLabel: "备注",
-        name: "resultDesc",
+        columnWidth: 1,
+        name: "REMARK",
         xtype: "textarea",
         height:80,
         //readOnly:true,

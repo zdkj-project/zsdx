@@ -59,7 +59,7 @@ Ext.define("core.main.view.HeaderSmall",{
             },
             //handler: 'onChangePassword' 
         },
-        { 
+        /*{ 
             tooltip: '修改密码', 
             text: '<span style="color:#fff;font-size: 14px;">修改密码</span>',
             iconCls: 'x-fa fa-key header-button-color', 
@@ -70,7 +70,7 @@ Ext.define("core.main.view.HeaderSmall",{
                 click:'onChangePassword' 
             },
             //handler: 'onChangePassword' 
-        },
+        },*/
         { 
             tooltip: '退出', 
             text: '<span style="color:#fff;font-size: 14px;">退出</span>',

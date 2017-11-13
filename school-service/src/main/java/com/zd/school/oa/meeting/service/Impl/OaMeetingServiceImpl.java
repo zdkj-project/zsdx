@@ -109,14 +109,18 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
         OaMeeting meeting = this.get(ids);
         OaMeetingemp meetingemp = null;
         for (int i = 0; i < userIds.length; i++) {
-            meetingemp = new OaMeetingemp();
+        	meetingemp = meetingempService.get(ids+userIds[i]);
+            if (meetingemp == null) {
+            	meetingemp = new OaMeetingemp(ids+userIds[i]);	//注：主键id为会议id+人员id
+            	meetingemp.setEmployeeId(userIds[i]);
+            	meetingemp.setMeetingId(ids);
+            }
             meetingemp.setBeginTime(meeting.getBeginTime());
             meetingemp.setEndTime(meeting.getEndTime());
-            meetingemp.setEmployeeId(userIds[i]);
             meetingemp.setXm(userNames[i]);
-            meetingemp.setMeetingId(ids);
             meetingemp.setCreateUser(currentUser.getUuid());
             meetingemp.setUpdateUser(currentUser.getUuid());
+            meetingemp.setIsDelete(0);
             meetingempService.merge(meetingemp);
         }
         return true;
@@ -258,10 +262,11 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
             for (Object[] o : empList) {
                 emp = meetingempService.get(o[0].toString() + o[1].toString());
                 if (emp == null) {
-                	emp = new OaMeetingemp(o[0].toString() + o[1].toString());
+                	emp = new OaMeetingemp(o[0].toString() + o[1].toString());	//注：主键id为会议id+人员id
                 	emp.setAttendResult("0");	//默认为0，未考勤
                 	emp.setMeetingId(o[0].toString());
                     emp.setEmployeeId(o[1].toString());
+                    emp.setIsDelete(0);
                 }
                 
                 emp.setXm(o[2].toString());
@@ -274,9 +279,9 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
             }
 
             //更新会议的人员id和人员姓名
-            String sql = "UPDATE dbo.OA_T_MEETING SET METTING_EMPID=(SELECT dbo.OA_F_GETMEETINGEMPID(MEETING_ID)),\n" +
-                    "\tMEETING_EMPNMAE=(SELECT dbo.OA_F_GETMEETINGEMPNAME(MEETING_ID))";
-            this.executeSql(sql);
+			//String sql = "UPDATE dbo.OA_T_MEETING SET METTING_EMPID=(SELECT dbo.OA_F_GETMEETINGEMPID(MEETING_ID)),\n" +
+			//	"\tMEETING_EMPNMAE=(SELECT dbo.OA_F_GETMEETINGEMPNAME(MEETING_ID))";
+            //this.executeSql(sql);
 	        
     	} catch (Exception e) {
 			// 捕获了异常后，要手动进行回滚；

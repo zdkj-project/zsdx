@@ -170,6 +170,19 @@ Ext.define("core.reportcenter.cashreport.view.MainGrid", {
             width:100,
             text: "实付金额",
             dataIndex: "REAL_PAY"
+        },{
+            text:"备注与说明",
+            dataIndex:"REMARK",
+            flex:1,
+            minWidth:80,
+            renderer: function (value, metaData) {
+                var title = "备注与说明";
+               
+                var html = value;
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                return html;
+                
+            }
         },/* {
             width:100,
             text: "找零金额",
@@ -178,7 +191,7 @@ Ext.define("core.reportcenter.cashreport.view.MainGrid", {
             xtype: 'actiontextcolumn',
             text: "操作",
             align:'center',
-            width: 100,
+            width: 150,
             fixed: true,
             items: [ {
                 text:'收银明细',  
@@ -216,6 +229,27 @@ Ext.define("core.reportcenter.cashreport.view.MainGrid", {
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
                     this.fireEvent('destroyClick_Tab', {
+                        view: view.grid,
+                        record: rec
+                    });
+                }
+            },{
+                text:' 备注 ',  
+                style:'font-size:13px;',  
+                tooltip: '备注',
+                ref: 'gridDetail',
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if(record.get("EXPENSESERIAL_ID")==null ||(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 
+                            && roleKey.indexOf("ZONGWUROLE") == -1 && roleKey.indexOf("FOODMANAGER") == -1))
+                        return 'x-hidden-display';
+                    else
+                        return null;
+            
+                },
+                handler: function(view, rowIndex, colIndex, item) {
+                    var rec = view.getStore().getAt(rowIndex);
+                    this.fireEvent('gridRemark', {
                         view: view.grid,
                         record: rec
                     });

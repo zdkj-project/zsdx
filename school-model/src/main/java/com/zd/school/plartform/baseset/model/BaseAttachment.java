@@ -46,7 +46,7 @@ public class BaseAttachment extends BaseEntity implements Serializable {
     }
 
     @FieldInfo(name = "记录ID")
-    @Column(name = "RECORD_ID", length = 36, nullable = false)
+    @Column(name = "RECORD_ID", length = 255, nullable = false)	//会议考勤人员的id很长
     private String recordId;
 
     public void setRecordId(String recordId) {

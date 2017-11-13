@@ -2,6 +2,7 @@ package com.zd.school.app;
 
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
+import com.zd.core.security.SyncJobQuartz;
 import com.zd.core.util.ModelUtil;
 import com.zd.school.cashier.model.CashDinneritem;
 import com.zd.school.cashier.model.CashDishes;
@@ -14,6 +15,8 @@ import com.zd.school.plartform.system.model.SysRole;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.service.SysRoleService;
 import com.zd.school.plartform.system.service.SysUserService;
+
+import org.apache.log4j.Logger;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +40,8 @@ import java.util.*;
 @RequestMapping("/app/cashReset")
 public class CashResetController extends FrameWorkController<CashExpenseserial> implements Constant {
 
+	private static Logger logger = Logger.getLogger(CashResetController.class);
+	
     @Resource
     private CashDishesService thisService; // service层接口
 
@@ -167,24 +172,27 @@ public class CashResetController extends FrameWorkController<CashExpenseserial> 
     @RequestMapping("/doAddConsumeBill")
     public void doAddConsumeBill(HttpServletRequest request, HttpServletResponse response)
             throws IOException, IllegalAccessException, InvocationTargetException {
+    	
         String consumeBill = request.getParameter("consumeBill");
         String billDetail = request.getParameter("billDetail");
 
+    	logger.info("收银数据入库-->参数-->consumeBill："+consumeBill + "; billDetail："+billDetail);
+    	
         String returnData = null;
         try {
             CashExpenseserial billEntity = (CashExpenseserial) jsonBuilder.fromJson(consumeBill, CashExpenseserial.class);
             List<CashExpensedetail> listBillDetail = (List<CashExpensedetail>) jsonBuilder.fromJsonArray(billDetail, CashExpensedetail.class);
             boolean b = billService.doSaveConsumeBill(billEntity, listBillDetail);
-            if (b)
+            if (b){
                 returnData = jsonBuilder.returnSuccessJson("\"单据入库成功\"");
-            else
+                logger.info("入库成功");
+            }else{
                 returnData = jsonBuilder.returnFailureJson("\"单据入库失败\"");
-
+                logger.info("入库失败");
+            }
             writeAppJSON(response, returnData);
-        } catch (InvocationTargetException e) {
-            returnData = jsonBuilder.returnFailureJson(e.getMessage());
-            writeAppJSON(response, returnData);
-        } catch (IllegalAccessException e) {
+        } catch (Exception e) {
+        	logger.info("入库失败:"+e.getStackTrace());
             returnData = jsonBuilder.returnFailureJson(e.getMessage());
             writeAppJSON(response, returnData);
         }

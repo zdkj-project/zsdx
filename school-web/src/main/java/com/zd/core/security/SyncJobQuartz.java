@@ -23,7 +23,7 @@ public class SyncJobQuartz {
 		try {
 			int row=0;
 			// 1：同步OA用户、部门数据
-
+			
 			// 2：同步人员数据到UP
 			row=SyncUserIntoUp();
 			if(row>=0){
@@ -39,7 +39,7 @@ public class SyncJobQuartz {
 				logger.info("定时同步人员发卡数据失败，详见错误日志！");
 			}
 			
-			// 4：同步OA数据
+			// 4：同步OA会议数据
 
 
 		} catch (Exception e) {

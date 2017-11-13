@@ -1,5 +1,18 @@
 package com.zd.school.cashier.service.Impl;
 
+import static com.zd.core.util.BeanUtils.copyProperties;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.DateUtil;
@@ -9,17 +22,6 @@ import com.zd.school.cashier.model.CashExpenseserial;
 import com.zd.school.cashier.service.CashExpensedetailService;
 import com.zd.school.cashier.service.CashExpenseserialService;
 import com.zd.school.plartform.system.model.SysUser;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static com.zd.core.util.BeanUtils.copyProperties;
 
 /**
  * ClassName: CashExpenseserialServiceImpl
@@ -163,6 +165,21 @@ public class CashExpenseserialServiceImpl extends BaseServiceImpl<CashExpenseser
         CashExpenseserial saveEntity = this.get(uuid);
 
         saveEntity.setConsumeState("销单");
+        saveEntity.setUpdateTime(new Date()); // 设置修改时间
+        saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
+        this.merge(saveEntity);// 执行修改方法
+        
+        return 1;
+        
+	}
+	
+	@Override
+	public int doSetRemark(String uuid, String remark,SysUser currentUser) {
+
+		// 先拿到已持久化的实体
+        CashExpenseserial saveEntity = this.get(uuid);
+
+        saveEntity.setExtField05(remark);
         saveEntity.setUpdateTime(new Date()); // 设置修改时间
         saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
         this.merge(saveEntity);// 执行修改方法
