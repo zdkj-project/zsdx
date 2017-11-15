@@ -307,9 +307,9 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
 			mapMeetingCategory.put(baseDicitem.getDicCode() + baseDicitem.getItemCode(), baseDicitem.getItemName());
 		}
 
-        String sql = "SELECT XM,xbm,deptName,jobName,incardTime,outcardTime,attendResult,resultDesc FROM OA_V_MEETINGEMP where MEETING_ID=''{0}''";
+        String sql = "SELECT XM,xbm,deptName,jobName,incardTime,attendResult,isLeave,resultDesc FROM OA_V_MEETINGEMP where MEETING_ID=''{0}''";
         List<Map<String, Object>> allList = new ArrayList<>();
-		Integer[] columnWidth = new Integer[] { 10, 10, 10, 30, 10, 15, 15,20,30};
+		Integer[] columnWidth = new Integer[] { 10, 10, 10, 30, 10, 15, 15,10,40};
 
 		// --------.处理信息，并组装表格数据--------------------
 		String ids = request.getParameter("ids"); 
@@ -349,7 +349,7 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
 		}
 		Map<String, Object> allMap = new LinkedHashMap<>();
 		allMap.put("data", mapList);
-		allMap.put("head", new String[] { "序号", "姓名", "性别", "部门", "岗位", "签到时间", "签退时间",  "考勤结果", "考勤说明 "});
+		allMap.put("head", new String[] { "序号", "姓名", "性别", "部门", "岗位", "签到时间",  "考勤结果", "是否请假", "考勤说明 "});
         allMap.put("headAlignment", new Integer[] { 1, 1, 1, 1, 1, 1, 1, 1,1}); // 0代表居中，1代表居左，2代表居右
 		allMap.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
 		allMap.put("columnAlignment", new Integer[] { 1, 1, 1, 1, 1, 1, 1, 1,1}); // 0代表居中，1代表居左，2代表居右

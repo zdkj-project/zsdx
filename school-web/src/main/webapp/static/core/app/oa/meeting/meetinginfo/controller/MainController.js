@@ -13,12 +13,12 @@ Ext.define("core.oa.meeting.meetinginfo.controller.MainController", {
     control: {
     	"basegrid[xtype=meetinginfo.maingrid]": {
             afterrender: function (grid, eOpts) {
-                var btngridExport = grid.down("button[ref=gridExport]");
+                //var btngridExport = grid.down("button[ref=gridExport]");
                 var btnsync = grid.down("button[ref=sync]");
                 var roleKey = comm.get("roleKey");
                 if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 
                     && roleKey.indexOf("HYKQMANAGER") == -1 && roleKey.indexOf("SITEMANAGER")== -1 ) {
-                	btngridExport.setHidden(true);
+                	//btngridExport.setHidden(true);
                 	btnsync.setHidden(true);
                 }
             },

@@ -11,6 +11,7 @@ Ext.define("core.oa.meeting.checkresult.controller.MainController", {
     init: function () {
     },
     control: {
+        /*
     	"basegrid[xtype=checkresult.maingrid]": {
             afterrender: function (grid, eOpts) {
                 var btngridExport = grid.down("button[ref=gridExport]");
@@ -20,19 +21,7 @@ Ext.define("core.oa.meeting.checkresult.controller.MainController", {
                 }
             }
         },
-    	
-        /**
-         * grid加载后根据权限控制按钮的显示
-         */
-        "basegrid[xtype=checkresult.maingrid]": {
-            afterrender: function (grid, eOpts) {
-                var btnAdd = grid.down("button[ref=gridExport]");
-                var roleKey = comm.get("roleKey");
-                if (roleKey.indexOf("ROLE_ADMIN") == -1&&roleKey.indexOf("SCHOOLADMIN") == -1&&roleKey.indexOf("HYKQMANAGER") == -1) {
-                    btnAdd.setHidden(true);
-                }
-            }
-        },
+        */
         /**
          * 导考勤结果信息
          */

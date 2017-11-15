@@ -97,7 +97,16 @@ public class MeetingAppController {
  	
  	                List<OaMeetingemp> emplist = empService.queryByProerties("meetingId", o.getUuid());
  	                o.setMeetingemp(emplist);
- 	
+ 	                
+ 	                //统计请假人数
+ 	                int leaveNum=0;
+ 	                for(OaMeetingemp emp:emplist){
+ 	                	if("1".equals(emp.getIsLeave())){
+ 	                		leaveNum++;
+ 	                	}
+ 	                }
+ 	                o.setExtField05(String.valueOf(leaveNum));
+ 	                
  	                checkrule = ruleService.get(o.getCheckruleId());
  	                o.setOaMeetingcheckrule(checkrule);
  	

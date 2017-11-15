@@ -126,7 +126,12 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
                 metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return ss;
             }
-        }, {
+        },{
+            width: 80,
+            text: "创建人",
+            dataIndex: "createUser",
+            align: 'left'
+        },  {
             width: 130,
             text: "更新时间",
             dataIndex: "updateTime",
@@ -141,7 +146,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
         },  {
             xtype: 'actiontextcolumn',
             text: "操作",
-            width: 200,
+            width: 150,
             fixed: true,
             align: 'center',
             items: [{
@@ -158,6 +163,9 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
                     });
                 },
                 getClass: function (v, metadata, record) {
+                    if(record.get("createUser")==comm.get("xm")){
+                        return null;
+                    }
                     var roleKey = comm.get("roleKey");
                     if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 
                         && roleKey.indexOf("HYKQMANAGER") == -1 && roleKey.indexOf("SITEMANAGER") == -1 ){
@@ -179,6 +187,9 @@ Ext.define("core.oa.meeting.meetinginfo.view.MainGrid", {
                     });
                 },
                 getClass: function (v, metadata, record) {
+                    if(record.get("createUser")==comm.get("xm")){
+                        return null;
+                    }
                     var roleKey = comm.get("roleKey");
                     if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1
                          && roleKey.indexOf("HYKQMANAGER") == -1  && roleKey.indexOf("SITEMANAGER") == -1 ){

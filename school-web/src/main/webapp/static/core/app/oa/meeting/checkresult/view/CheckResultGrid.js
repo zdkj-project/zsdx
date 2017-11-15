@@ -86,7 +86,8 @@ Ext.define("core.oa.meeting.checkresult.view.CheckResultGrid", {
                     return ss;
                 }
             }
-        }, {
+        },/*
+         {
             text: "签退时间",
             dataIndex: "outcardTime",
             width: 150,
@@ -102,7 +103,8 @@ Ext.define("core.oa.meeting.checkresult.view.CheckResultGrid", {
                     return ss;
                 }
             }
-        }, {
+        }, */
+        {
             text: "考勤结果",
             dataIndex: "attendResult",
             width: 100,

@@ -1,36 +1,42 @@
 package com.zd.school.app;
 
-import com.zd.core.util.BeanUtils;
-import com.zd.core.util.JsonBuilder;
-import com.zd.core.util.ModelUtil;
-import com.zd.school.jw.model.app.CourseCheckApp;
-import com.zd.school.jw.model.app.TrainCourseApp;
-import com.zd.school.jw.train.model.*;
-import com.zd.school.jw.train.model.vo.VoTrainClasstrainee;
-import com.zd.school.jw.train.service.*;
-import com.zd.school.oa.meeting.model.OaMeeting;
-import com.zd.school.oa.meeting.model.OaMeetingemp;
-import com.zd.school.oa.terminal.model.OaInfoterm;
-import com.zd.school.oa.terminal.service.OaInfotermService;
-import com.zd.school.plartform.comm.model.CommAttachment;
-
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.zd.core.util.BeanUtils;
+import com.zd.core.util.JsonBuilder;
+import com.zd.core.util.ModelUtil;
+import com.zd.school.jw.model.app.CourseCheckApp;
+import com.zd.school.jw.model.app.TrainCourseApp;
+import com.zd.school.jw.train.model.CourseCheck;
+import com.zd.school.jw.train.model.TrainCheckrule;
+import com.zd.school.jw.train.model.TrainClass;
+import com.zd.school.jw.train.model.TrainClassschedule;
+import com.zd.school.jw.train.model.TrainCourseattend;
+import com.zd.school.jw.train.model.vo.VoTrainClasstrainee;
+import com.zd.school.jw.train.service.TrainCheckruleService;
+import com.zd.school.jw.train.service.TrainClassService;
+import com.zd.school.jw.train.service.TrainClassscheduleService;
+import com.zd.school.jw.train.service.TrainClasstraineeService;
+import com.zd.school.jw.train.service.TrainCourseattendService;
+import com.zd.school.oa.terminal.model.OaInfoterm;
+import com.zd.school.oa.terminal.service.OaInfotermService;
+import com.zd.school.plartform.comm.model.CommAttachment;
 
 @Controller
 @RequestMapping("/app/traincourse/")

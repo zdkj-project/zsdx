@@ -58,18 +58,18 @@ Ext.define('core.oa.meeting.meetinginfo.view.DetailPanel', {
             '<div class="trainClass_title">参会人员：</div>',
             '<ul class="trainClass_gridUl trainClassTrainee_gridUl">',
             '<li><span style="width:5%">序号</span><span style="width:10%" data-align="center">姓名</span>' +
-            '<span style="width:10%" data-align="center">性别</span><span style="width:15%" data-align="center">部门</span>' +
-            '<span style="width:10%" data-align="center">岗位</span><span style="width:10%" data-align="center">签到时间</span>' +
-            '<span style="width:10%" data-align="center">签退时间</span><span style="width:10%" data-align="center">考勤结果</span>' +
-            '<span style="width:15%" data-align="center">结果说明</span></li>',
+            '<span style="width:5%" data-align="center">性别</span><span style="width:15%" data-align="center">部门</span>' +
+            '<span style="width:10%" data-align="center">岗位</span><span style="width:15%" data-align="center">签到时间</span>' +
+            '<span style="width:10%" data-align="center">考勤结果</span>' +
+            '<span style="width:10%" data-align="center">是否请假</span><span style="width:15%" data-align="center">结果说明</span></li>',
             '{% if (values.length == 0) %}',
             '<li style="width:100%;font-size: 20px;font-weight: 400;text-align: center;line-height: 100px;">此指标暂无评价标准...</li>',
             '{% if (values.length == 0 ) return  %}',   //reutrun 表示不执行下面的了，在for里面可以使用break、continue
             '<tpl for="rows">',
             '<li><span style="width:5%">{[xindex]}</span><span style="width:10%" data-align="center">{xm}</span>' +
-            '<span style="width:10%" data-align="center">{xbm}</span><span style="width:15%" data-align="center">{deptName}</span>' +
-            '<span style="width:10%" data-align="center">{jobName}</span><span style="width:10%" data-align="center">{incardTime}</span>' +
-            '<span style="width:10%" data-align="center">{outcardTime}</span>' +
+            '<span style="width:5%" data-align="center">{xbm}</span><span style="width:15%" data-align="center">{deptName}</span>' +
+            '<span style="width:10%" data-align="center">{jobName}</span><span style="width:15%" data-align="center">{incardTime}</span>' +
+            //'<span style="width:10%" data-align="center">{outcardTime}</span>' +
             '<tpl if="attendResult==1">'+
             '<span style="width:10%" data-align="center">正常</span>' +
             '<tpl elseif="attendResult==2">'+
@@ -82,6 +82,11 @@ Ext.define('core.oa.meeting.meetinginfo.view.DetailPanel', {
             '<span style="width:10%" data-align="center">迟到早退</span>' +
             '<tpl else >'+
             '<span style="width:10%" data-align="center">未考勤</span>' +
+            '</tpl>' +
+            '<tpl if="isLeave==1">'+
+            '<span style="width:10%" data-align="center">是</span>' +        
+            '<tpl else >'+
+            '<span style="width:10%" data-align="center">否</span>' +
             '</tpl>' +
             '<span style="width:15%" data-align="center">{resultDesc}</span></li>',
             '</tpl>',

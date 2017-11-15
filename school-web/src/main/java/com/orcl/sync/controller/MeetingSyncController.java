@@ -65,9 +65,9 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
 	        Session session = sssssss.openSession();
 	        //4.开启事务
 	        session.beginTransaction();
-	
+	        
 	        Query query = session.createSQLQuery("select MEETING_ID,cast(MEETING_TITLE as VARCHAR2(255)),cast(CONTENT as VARCHAR2(2048))," +
-	                "cast(MEETING_CATEGORY as VARCHAR2(255)),BEGIN_TIME,END_TIME,cast(ROOM_NAME as VARCHAR2(255)) from zsdx_sync.meeting_msg ORDER BY  BEGIN_TIME ASC");
+	                "cast(MEETING_CATEGORY as VARCHAR2(255)),BEGIN_TIME,END_TIME,cast(ROOM_NAME as VARCHAR2(255)),cast(CREATE_BY as VARCHAR2(255)) from zsdx_sync.meeting_msg ORDER BY  BEGIN_TIME ASC");
 	        //session.createSQLQuery("update dept set dname='SALES1' where deptno=30").executeUpdate();
 	        List<Object[]> list = query.list();
 	
@@ -127,6 +127,9 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
 	            m.setRoomName(o[6].toString());
 	            if (mapRoomInfo.get(o[6]) != null)
 	                m.setRoomId(mapRoomInfo.get(o[6]));
+	            
+	            //创建人
+	            m.setCreateUser(o[7].toString());
 	          
 	            meetingService.merge(m);
 	        }

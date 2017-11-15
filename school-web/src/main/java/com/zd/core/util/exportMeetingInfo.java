@@ -46,6 +46,7 @@ public class exportMeetingInfo {
                 List<Map<String, Object>> mapMeetingList = (List<Map<String, Object>>) exportInfo.get("data");
                 int exportMeetingCount = mapMeetingList.size();
                 CellStyle headStyle = getCellStyle(workbook,"", (short) 12,false,HorizontalAlignment.CENTER,VerticalAlignment.CENTER);
+                CellStyle titleStyle = getCellStyle(workbook, "", (short) 20, true, HorizontalAlignment.CENTER,VerticalAlignment.CENTER);
                 for (int i = 0; i < exportMeetingCount; i++) {
                     //获取会议的信息
                     Map<String, Object> dataList = mapMeetingList.get(i);
@@ -71,8 +72,10 @@ public class exportMeetingInfo {
                     //第1行
                     sheet.getRow(0).getCell(0).setCellValue("会议主题");
                     sheet.getRow(0).getCell(1).setCellValue(meetingTitle);
+                    sheet.getRow(0).getCell(1).setCellStyle(titleStyle);
+                    sheet.getRow(0).setHeight((short) 0x200);
                     sheet.addMergedRegion(new CellRangeAddress(0, 0, 1,8));
-
+                    
                     //第2行
                     sheet.getRow(1).getCell(0).setCellValue("会议类型");
                     sheet.getRow(1).getCell(1).setCellValue(meetingCategory);
@@ -97,7 +100,8 @@ public class exportMeetingInfo {
 
                     sheet.getRow(4).getCell(0).setCellValue("参会人员");
                     sheet.addMergedRegion(new CellRangeAddress(4, 4, 0,8));
-
+                    sheet.getRow(4).setHeight((short) 0x200);
+                    
                     //参会人员标题
                     row = sheet.createRow(5);
                     for (int j = 0; j < columnCount; j++) {

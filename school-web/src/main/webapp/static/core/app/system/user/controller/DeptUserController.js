@@ -776,10 +776,10 @@ Ext.define("core.system.user.controller.DeptUserController", {
 
                     //刷新用户列表
                     var userStore = userGrid.getStore();
-                    var userPoxy = userStore.getProxy();
-                    userPoxy.extraParams = {
-                        deptId: deptId
-                    };
+                    // var userPoxy = userStore.getProxy();
+                    // userPoxy.extraParams = {
+                    //     deptId: deptId
+                    // };
                     userStore.load();
 
                     self.Info(resObj.obj);
