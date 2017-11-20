@@ -34,7 +34,7 @@ Ext.define("core.train.coursechkresult.view.MainGrid", {
             iconCls: 'x-fa fa-file-text'
         },{
             xtype: 'button',
-            text: '导出',
+            text: '导出班级考勤信息',
             ref: 'gridExport',
             funCode: 'girdFuntionBtn',
             iconCls: 'x-fa fa-file'

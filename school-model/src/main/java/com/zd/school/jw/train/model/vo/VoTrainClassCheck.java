@@ -7,6 +7,8 @@ import com.zd.core.util.DateTimeSerializer;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Column;
+
 /**
  * 班级培训考勤信息
  */
@@ -139,6 +141,22 @@ public class VoTrainClassCheck implements Serializable {
 		this.attendMinute = attendMinute;
 	}
 
+	@FieldInfo(name = "是否请假")	   
+    private String isLeave;
+    public void setIsLeave(String isLeave) {
+        this.isLeave = isLeave;
+    }
+    public String getIsLeave() {
+        return isLeave;
+    }
     
+    @FieldInfo(name = "备注信息")
+    private String remark;
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+    public String getRemark() {
+        return remark;
+    }
     
 }

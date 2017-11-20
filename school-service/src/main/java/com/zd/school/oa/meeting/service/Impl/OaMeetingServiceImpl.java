@@ -255,6 +255,9 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 	            if (mapRoomInfo.get(o[6]) != null)
 	                m.setRoomId(mapRoomInfo.get(o[6]));
 	            
+	            //创建人
+	            m.setCreateUser(o[7].toString());
+	            
 	            this.merge(m);	      
 	        }
 	        

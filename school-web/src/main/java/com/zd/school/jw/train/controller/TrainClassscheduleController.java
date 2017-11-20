@@ -9,9 +9,16 @@ import com.zd.core.util.ExportExcel;
 import com.zd.core.util.ImportExcelUtil;
 import com.zd.core.util.ModelUtil;
 import com.zd.core.util.StringUtils;
+import com.zd.core.util.exportMeetingInfo;
+import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClassschedule;
+import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.jw.train.model.vo.TrainClassCourseEval;
+import com.zd.school.jw.train.service.TrainClassService;
 import com.zd.school.jw.train.service.TrainClassscheduleService;
+import com.zd.school.jw.train.service.TrainClasstraineeService;
+import com.zd.school.plartform.baseset.model.BaseDicitem;
+import com.zd.school.plartform.baseset.service.BaseDicitemService;
 import com.zd.school.plartform.system.model.SysUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -30,7 +37,10 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * ClassName: TrainClassscheduleController Function: ADD FUNCTION. Reason: ADD
@@ -47,6 +57,15 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 
 	@Resource
 	TrainClassscheduleService thisService; // service层接口
+
+	@Resource
+	BaseDicitemService dicitemService;
+
+	@Resource
+	TrainClassService classService; // service层接口
+
+	@Resource
+	TrainClasstraineeService classTraineeService; // service层接口
 
 	/**
 	 * @param entity
@@ -194,7 +213,7 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 			entity.setBeginTime(sdf.parse(courseDate + " " + courseBeginTime));
 			entity.setEndTime(sdf.parse(courseDate + " " + courseEndTime));
 
-			entity = thisService.doUpdateEntity(entity, teachType,currentUser);// 执行修改方法
+			entity = thisService.doUpdateEntity(entity, teachType, currentUser);// 执行修改方法
 			if (ModelUtil.isNotNull(entity))
 				writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
 			else
@@ -419,5 +438,167 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 		strData = jsonBuilder.buildObjListToJson(list.getTotalCount(), list.getResultList(), true);
 
 		writeJSON(response, strData);// 返回数据
+	}
+
+	/**
+	 * 导出班级部分课程的考勤信息
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/exportCourseAttendExcel")
+	public void exportCourseCheckExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getSession().setAttribute("exportCourseAttendIsEnd", "0");
+		request.getSession().removeAttribute("exportCourseAttendIsState");
+
+		String classId = request.getParameter("classId"); // 一门或多门班级课程
+		String ids = request.getParameter("ids"); // 一门或多门班级课程
+
+		SimpleDateFormat fmtDate = new SimpleDateFormat("yyyy年MM月dd日");
+		SimpleDateFormat fmtTime = new SimpleDateFormat("h:mm");
+
+		Map<String, String> mapClassCategory = new HashMap<>();
+		String hql1 = " from BaseDicitem where dicCode in ('ZXXBJLX')";
+		List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
+		for (BaseDicitem baseDicitem : listBaseDicItems1) {
+			mapClassCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
+		}
+
+		Integer[] columnWidth = new Integer[] { 15, 15, 15, 15, 15, 15, 15, 15, 15 };
+
+		// 1.班级信息
+		TrainClass trainClass = classService.get(classId);
+
+		// 2.班级学员信息
+		List<TrainClasstrainee> trainClasstraineeList = null;
+		String hql = " from TrainClasstrainee where (isDelete=0 or isDelete=2) ";
+		String sql = "";
+		if (StringUtils.isNotEmpty(ids)) {
+			hql += " and classId in ('" + classId + "')";
+		}
+		hql += " order by xm asc";
+		trainClasstraineeList = classTraineeService.doQuery(hql);
+
+		// 处理学员基本数据
+		List<Map<String, String>> traineeList = new ArrayList<>();
+		Map<String, String> traineeMap = null;
+		int traineeNum = 0; // 学员人数
+		for (TrainClasstrainee classTrainee : trainClasstraineeList) {
+			traineeMap = new LinkedHashMap<>();
+			traineeMap.put("xm", classTrainee.getXm());
+			traineeNum++;
+			// 只统计不为1的数据
+			traineeList.add(traineeMap);
+		}
+
+		// 3.班级课程信息
+		List<Map<String, Object>> trainClassscheduleList = null;
+		sql = "SELECT CLASS_SCHEDULE_ID,COURSE_NAME,BEGIN_TIME,END_TIME FROM TRAIN_T_CLASSSCHEDULE where ISDELETE=0";
+		sql += " and CLASS_SCHEDULE_ID in ('" + ids.replace(",", "','") + "')";
+		sql += " order by CLASS_SCHEDULE_ID asc";
+		trainClassscheduleList = thisService.getForValuesToSql(sql);
+
+		// 4.班级课程考勤信息信息(最新加入 是否请假、备注)
+		List<Map<String, Object>> voTrainClassCheckList = null;
+		List<String> classScheduleIdList = new ArrayList<>();
+		sql = "SELECT xm,classTraineeId,incardTime,outcardTime,attendResult,attendMinute,isleave,remark FROM TRAIN_V_CHECKRESULT WHERE classScheduleId in ('"
+				+ ids.replace(",", "','") + "') order by classScheduleId asc";
+		voTrainClassCheckList = thisService.getForValuesToSql(sql);
+		int voTrainClassCheckListCount = voTrainClassCheckList.size();
+
+		Map<String, List<String>> traineeResult = new LinkedHashMap<>();
+		List<String> lists = null;
+		Map<String, Object> tcc = null;
+		for (int i = 0; i < voTrainClassCheckListCount; i++) {
+			tcc = voTrainClassCheckList.get(i);
+			lists = traineeResult.get(tcc.get("classTraineeId"));
+			if (lists == null) {
+				lists = new ArrayList<>();
+				lists.add(String.valueOf(i + 1));
+				lists.add(String.valueOf(tcc.get("xm")));
+			}
+			String incardTime = String.valueOf(tcc.get("incardTime"));
+			if (incardTime.equals("null") == false) {
+				incardTime = incardTime.substring(11, incardTime.lastIndexOf("."));
+			}
+			String outcardTime = String.valueOf(tcc.get("outcardTime"));
+			if (outcardTime.equals("null") == false) {
+				outcardTime = outcardTime.substring(11, outcardTime.lastIndexOf("."));
+			}
+			lists.add(incardTime);
+			lists.add(outcardTime);
+			lists.add(String.valueOf(tcc.get("attendMinute")));
+			lists.add(String.valueOf(tcc.get("attendResult")));
+			if("1".equals(tcc.get("isleave")))
+				lists.add("是");
+			else
+				lists.add("否");
+			lists.add(String.valueOf(tcc.get("remark")));
+
+			traineeResult.put(String.valueOf(tcc.get("classTraineeId")), lists);
+		}
+		// System.out.println(traineeResult);
+
+		// ----------------------组装导出数据----------------------------------
+		List<Map<String, Object>> allList = new ArrayList<>();
+
+		// --------1.处理班级基本数据，并组装表格数据（特殊：一行分作两行显示）
+		List<Map<String, Object>> classList1 = new ArrayList<>(); // 虽然内容只有一行，但是由于接口的设定，所以依旧使用list存入数据
+		Map<String, Object> classMap1 = new LinkedHashMap<>();
+		classMap1.put("className", trainClass.getClassName());
+		classMap1.put("classCategory", mapClassCategory.get(trainClass.getClassCategory()));
+		classMap1.put("traineeNum", String.valueOf(traineeNum));
+		classMap1.put("beginDate",
+				fmtDate.format(trainClass.getBeginDate()) + " " + fmtTime.format(trainClass.getBeginDate()));
+		classMap1.put("endDate",
+				fmtDate.format(trainClass.getEndDate()) + " " + fmtTime.format(trainClass.getEndDate()));
+		classMap1.put("needChecking", trainClass.getNeedChecking() == 1 ? "需要" : "不需要");
+		classMap1.put("checkCourse", trainClassscheduleList);
+		classMap1.put("voTrainClassCheck", traineeResult);
+		classList1.add(classMap1);
+		// 第一行数据
+		Map<String, Object> classAllMap1 = new LinkedHashMap<>();
+		classAllMap1.put("data", classList1);
+		classAllMap1.put("title", "班级课程考勤信息表");
+		classAllMap1.put("columnWidth", 15);
+		classAllMap1.put("headColumnCount", 8);
+		allList.add(classAllMap1);
+
+		// 在导出方法中进行解析
+		boolean result = exportMeetingInfo.exportCouseCheckResultInfoExcel(response, trainClass.getClassName() + "班级信息",
+				trainClass.getClassName() + "班课程考勤表", allList);
+		if (result == true) {
+			request.getSession().setAttribute("exportCourseAttendIsEnd", "1");
+		} else {
+			request.getSession().setAttribute("exportCourseAttendIsEnd", "0");
+			request.getSession().setAttribute("exportCourseAttendIsState", "0");
+		}
+
+	}
+
+	/**
+	 * 判断是否导出完毕
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/checkCourseAttendExcelEnd")
+	public void checkCourseCheckExcelEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Object isEnd = request.getSession().getAttribute("exportCourseAttendIsEnd");
+		Object state = request.getSession().getAttribute("exportCourseAttendIsState");
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+		}
 	}
 }

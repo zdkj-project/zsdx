@@ -355,11 +355,14 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         this.classGroup = classGroup;
     }
 
+    
+    
+    
     public TrainClasstrainee() {
         super();
         // TODO Auto-generated constructor stub
     }
-
+    
 
     /**
      * 以下为不需要持久化到数据库中的字段,根据项目的需要手工增加

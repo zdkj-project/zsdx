@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -134,7 +135,7 @@ public class MeetingAppController {
 	        return info;
         }catch (Exception e) {
         	info.setCode(false);
-        	info.setMessage("数据异常调用失败" + e.getMessage());
+        	info.setMessage("数据异常调用失败" +  Arrays.toString( e.getStackTrace()));
 			return info;
 		}
 
@@ -231,7 +232,7 @@ public class MeetingAppController {
         } catch (Exception e) {
             mca.setCode(false);
             mca.setMessage("参数错误" + e.getMessage());
-            logger.error("提交会议失败-->message:"+e.getStackTrace());
+            logger.error("提交会议失败-->message:"+ Arrays.toString( e.getStackTrace()));
             return mca;
         }
     }

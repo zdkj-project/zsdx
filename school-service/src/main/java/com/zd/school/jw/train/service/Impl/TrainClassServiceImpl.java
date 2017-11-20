@@ -337,8 +337,9 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 				for (TrainClasstrainee stp : classTraineeFoodInfos) {
 					// 先拿到已持久化的实体
 					TrainClasstrainee saveTraineeEntity = trainClasstraineeService.get(stp.getUuid());
-
-					BeanUtils.copyPropertiesExceptNull(saveTraineeEntity, stp);
+					List<String> excludes=new ArrayList<>();
+					excludes.add("siesta");	//由于此模型有默认值，所以排除他
+					BeanUtils.copyPropertiesExceptNull(saveTraineeEntity, stp,excludes);
 					saveTraineeEntity.setUpdateTime(new Date()); // 设置修改时间
 					saveTraineeEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 					trainClasstraineeService.update(saveTraineeEntity);// 执行修改方法
@@ -388,8 +389,9 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 			for (TrainClasstrainee stp : classTraineeRoomInfos) {
 				// 先拿到已持久化的实体
 				TrainClasstrainee saveTraineeEntity = trainClasstraineeService.get(stp.getUuid());
-
-				BeanUtils.copyPropertiesExceptNull(saveTraineeEntity, stp);
+				List<String> excludes=new ArrayList<>();
+				excludes.add("lunch");	//由于此模型有默认值，所以排除他
+				BeanUtils.copyPropertiesExceptNull(saveTraineeEntity, stp,excludes);
 				saveTraineeEntity.setUpdateTime(new Date()); // 设置修改时间
 				saveTraineeEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 				trainClasstraineeService.update(saveTraineeEntity);// 执行修改方法

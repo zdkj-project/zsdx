@@ -6,10 +6,12 @@ Ext.define("core.train.coursechkresult.view.ClassCourseGrid", {
     dataUrl: comm.get("baseUrl") + "/TrainClassschedule/list", //数据获取地址
     model: "com.zd.school.jw.train.model.TrainClassschedule", //对应的数据模型
     al:true,
+    pageDisplayInfo:false,
+
     selModel: {
         type: "checkboxmodel",
         headerWidth:50,    //设置这个值为50。 但columns中的defaults中设置宽度，会影响他
-        mode:'single'  //multi,simple,single；默认为多选multi
+        //mode:'single'  //multi,simple,single；默认为多选multi
         //checkOnly:false,    //如果值为true，则只用点击checkbox列才能选中此条记录
         //allowDeselect:true, //如果值true，并且mode值为单选（single）时，可以通过点击checkbox取消对其的选择
     },
@@ -32,7 +34,13 @@ Ext.define("core.train.coursechkresult.view.ClassCourseGrid", {
                 color: '#C44444',
                 fontWeight:800
             }
-        }, '->', {
+        }, '->' ,{
+            xtype: 'button',
+            text: '导出课程考勤信息',
+            ref: 'gridExport',
+            funCode: 'girdFuntionBtn',
+            iconCls: 'x-fa fa-file'
+        },{
             xtype: 'tbtext', 
             html:'快速搜索：'
         },{
@@ -75,7 +83,14 @@ Ext.define("core.train.coursechkresult.view.ClassCourseGrid", {
             flex: 1,
             minWidth:100,
             text: "课程名称",
-            dataIndex: "courseName"
+            dataIndex: "courseName",
+            renderer: function (value, metaData) {
+                var title = "课程名称";
+               
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + value + '"';
+                return value;
+                
+            }
         },{
             width:100,
             text: "上课日期",
@@ -89,7 +104,7 @@ Ext.define("core.train.coursechkresult.view.ClassCourseGrid", {
                 return ss;
             }
         }, {
-            width:150,
+            width:120,
             text: "上课时间",
             dataIndex: "endTime",            
             renderer: function(value, metaData,record) {

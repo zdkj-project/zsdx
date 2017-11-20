@@ -37,7 +37,7 @@ Ext.define("core.base.view.BaseGrid", {
     store:'',           //store的名称，若为空，则在下面的初始化代码中加载，否则不再加载
     al: true,           //是否store自动加载
     remoteSort: true,   //是否远程排序
-
+    pageDisplayInfo:true,   //是否显示分页栏的信息
  
     columns: [],
     /*
@@ -236,7 +236,7 @@ Ext.define("core.base.view.BaseGrid", {
                 cls:'basegridPagingToolbar',         
                 store: this.store,
                 pageSize: this.storePageSize,
-                displayInfo: true,
+                displayInfo: this.pageDisplayInfo,
                 plugins: [
                     //Ext.create('Ext.ux.ProgressBarPager', {}),
                     Ext.create('Ext.ux.ComboPageSize', {})

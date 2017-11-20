@@ -66,7 +66,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 
 	@Resource
 	BaseDicitemService dicitemService;
-	
+
 	@Resource
 	BuildRoominfoService roominfoService;
 
@@ -174,7 +174,8 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 	}
 
 	@Override
-	public int doUpdateRoomInfo(String classId,String roomId, String roomName, String ids, String xbm, SysUser currentUser) {
+	public int doUpdateRoomInfo(String classId, String roomId, String roomName, String ids, String xbm,
+			SysUser currentUser) {
 
 		int result = 0;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -182,23 +183,23 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 		try {
 			synchronized (syncObject) {
 				// 判断性别是否一致
-				String hqlSelect1 = "select count(*) from TrainClasstrainee where classId='"+classId+"' and roomId='" + roomId + "' and xbm!='"
-						+ xbm + "'";
+				String hqlSelect1 = "select count(*) from TrainClasstrainee where classId='" + classId
+						+ "' and roomId='" + roomId + "' and xbm!='" + xbm + "'";
 				if (this.getCount(hqlSelect1) > 0) {
 					return -2; // 性别不一致
 				}
 
 				// 判断人数是否符合要求，若大于最大人数，则不允许设置
-				String hqlSelect2 = "select count(*) from TrainClasstrainee where classId='"+classId+"' and roomId='" + roomId
-						+ "' and uuid not in ('" + ids.replace(",", "','") + "')";
-				
-				//获取此房间的人数
-				BuildRoominfo roomInfo=roominfoService.get(roomId);
-				int roomNum=3;	//默认最大3人
-				if(roomInfo!=null && StringUtils.isNotEmpty(roomInfo.getExtField03())){
-					roomNum=Integer.parseInt(roomInfo.getExtField03());
+				String hqlSelect2 = "select count(*) from TrainClasstrainee where classId='" + classId
+						+ "' and roomId='" + roomId + "' and uuid not in ('" + ids.replace(",", "','") + "')";
+
+				// 获取此房间的人数
+				BuildRoominfo roomInfo = roominfoService.get(roomId);
+				int roomNum = 3; // 默认最大3人
+				if (roomInfo != null && StringUtils.isNotEmpty(roomInfo.getExtField03())) {
+					roomNum = Integer.parseInt(roomInfo.getExtField03());
 				}
-				
+
 				if (this.getCount(hqlSelect2) + traineeLength <= roomNum) {
 					String hqlUpdate = "update TrainClasstrainee t set t.roomId='" + roomId + "',t.roomName='"
 							+ roomName + "'," + "	t.updateUser='" + currentUser.getXm() + "',t.updateTime='"
@@ -241,14 +242,15 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 	}
 
 	@Override
-	public List<ImportNotInfo> doImportTrainee(List<List<Object>> listObject, String classId, String needSync, SysUser currentUser) {
+	public List<ImportNotInfo> doImportTrainee(List<List<Object>> listObject, String classId, String needSync,
+			SysUser currentUser) {
 		// TODO Auto-generated method stub
-		
+
 		List<ImportNotInfo> listNotExit = new ArrayList<>();
 		SimpleDateFormat dateTimeSdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		ImportNotInfo notExits = null;
 		Integer notCount = 1;
-		
+
 		// XBM;HEADSHIPLEVEL 必填项
 		// TRAINEECATEGORY;XWM;XLM;ZZMMM;MZM 同步时需要的项
 		Map<String, String> mapHeadshipLevel = new HashMap<>();
@@ -304,7 +306,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			trainClass.setIsuse(2);
 			trainClass.setUpdateTime(new Date()); // 设置修改时间
 			trainClass.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-			//trainClassService.update(trainClass);
+			// trainClassService.update(trainClass);
 		}
 
 		/**
@@ -319,27 +321,27 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 		TrainTrainee trainTrainee = null;
 		for (int i = 0; i < listObject.size(); i++) {
 			try {
-				
+
 				List<Object> lo = listObject.get(i);
-	
+
 				// 导入的表格会错误的读取空行的内容，所以，当判断第一列为空，就跳过此行。
 				if (!StringUtils.isNotEmpty((String) lo.get(0))) {
 					continue;
 				}
-				
+
 				title = String.valueOf(lo.get(0));
 				doResult = "导入成功"; // 默认是成功
-				//isError = false;
-				
+				// isError = false;
+
 				// 查询学员库是否存在此学生
 				trainTrainee = trainTraineeServie.getByProerties("sfzjh", lo.get(3));
-	
+
 				// 查询此班级，是否已经存在此学员,则取出来进行数据更新操作 //只要存在即可，isdelete为1的会被转为2
 				TrainClasstrainee trainee = this.getByProerties(new String[] { "sfzjh", "classId" },
 						new Object[] { lo.get(3), classId });
 				if (trainee == null)
 					trainee = new TrainClasstrainee();
-	
+
 				trainee.setClassId(classId);
 				trainee.setXm(String.valueOf(lo.get(0)));
 				trainee.setXbm(mapXbm.get(lo.get(1)));
@@ -350,31 +352,31 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 				trainee.setHeadshipLevel(mapHeadshipLevel.get(lo.get(6)));
 				trainee.setClassGroup(mapClassGroup.get(lo.get(8)));
 				trainee.setIsDelete(isDelete); // 设置isdelte值
-				
+
 				if (needSync.equals("1")) { // 同步到学员库
 					if (trainTrainee == null) {
 						trainTrainee = new TrainTrainee();
-	
+
 						// 当学员库没有此学员的时候，暂时加入这些数据（已存在的学员暂时不处理）
 						trainTrainee.setTraineeCategory(mapTraineeCategory.get(lo.get(7)));
 						trainTrainee.setMzm(mapMzm.get(lo.get(9)));
 						trainTrainee.setZzmmm(mapZzmm.get(lo.get(10)));
 						trainTrainee.setXlm(mapXlm.get(lo.get(11)));
 						trainTrainee.setXwm(mapXwm.get(lo.get(12)));
-	
+
 						trainTrainee.setZym(String.valueOf(lo.get(13)));
 						trainTrainee.setGraduateSchool(String.valueOf(lo.get(14)));
 						trainTrainee.setDzxx(String.valueOf(lo.get(15)));
 						trainTrainee.setAddress(String.valueOf(lo.get(16)));
 						trainTrainee.setPartySchoolNumb(String.valueOf(lo.get(17)));
 						trainTrainee.setNationalSchoolNumb(String.valueOf(lo.get(18)));
-	
+
 						// trainTrainee.setZp(String.valueOf(lo.get(19)));
 						// 照片使用身份证号码.jpg
 						trainTrainee.setZp("/static/upload/traineePhoto/" + trainee.getSfzjh() + ".jpg");
-	
+
 					}
-	
+
 					trainTrainee.setXm(trainee.getXm());
 					trainTrainee.setXbm(trainee.getXbm());
 					trainTrainee.setMobilePhone(trainee.getMobilePhone());
@@ -385,10 +387,10 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 					trainTrainee.setIsDelete(0);
 					trainTrainee.setUpdateTime(new Date()); // 设置修改时间
 					trainTrainee.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-	
+
 					trainTraineeServie.merge(trainTrainee);
 				}
-	
+
 				if (trainTrainee != null) {
 					trainee.setTraineeId(trainTrainee.getUuid());
 				}
@@ -412,7 +414,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 				notCount++;
 			}
 		}
-		
+
 		// 如果两个容器的大小一样，表明没有导入数据,否则导入了
 		if (listObject.size() != listNotExit.size()) {
 			trainClassService.update(trainClass);
@@ -470,7 +472,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 	@Override
 	public QueryResult<VoTrainClassCheck> getCheckList(Integer start, Integer limit, String classId,
 			String classScheduleId, String xm) {
-		String sql = "SELECT classTraineeId, classId, traineeId, xm, xbm, mobilePhone, workUnit, classScheduleId,incardTime,outcardTime,attendResult,attendMinute "
+		String sql = "SELECT classTraineeId, classId, traineeId, xm, xbm, mobilePhone, workUnit, classScheduleId,incardTime,outcardTime,attendResult,attendMinute,isLeave,remark "
 				+ " FROM TRAIN_V_CHECKRESULT where 1=1 ";
 		if (StringUtils.isNotEmpty(classId))
 			sql += " and classId='" + classId + "'";
@@ -493,7 +495,8 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 					+ " convert(varchar,b.CardID) as upCardId,convert(varchar,b.FactoryFixID) as factNumb,"
 					+ " convert(int,b.CardStatusIDXF) as useState from Tc_Employee a join TC_Card b "
 					+ " on a.CardID=b.CardID and a.EmployeeID=b.EmployeeID " // 双向关联
-					+ " where a.UserId in('" + ids.replace(",", "','") + "') and (b.CardStatusIDXF=1 or b.CardStatusIDXF=2)";
+					+ " where a.UserId in('" + ids.replace(",", "','")
+					+ "') and (b.CardStatusIDXF=1 or b.CardStatusIDXF=2)";
 
 			List<CardUserInfoToUP> upCardUserInfos = this.doQuerySqlObject(sql, CardUserInfoToUP.class);
 
@@ -511,19 +514,22 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 				}
 
 				userInfoToUP = upCardUserInfos.get(i);
-				
-				if(userInfoToUP.getUseState()==1){
-					//解绑：将正常卡状态为4
-					sqlStr = "UPDATE tc_card SET EMPLOYEEID=0,CardStatusIDXF=4,CardStatusIDJS=4  WHERE CARDID=" + userInfoToUP.getUpCardId() + ";"
-							+" UPDATE tc_employee SET EMPLOYEESTRID='',EmployeeStatusID='26' WHERE userId='" + userInfoToUP.getUserId()+"' ;"
-							+ " insert into tc_ChangeCard_log values('" + currentDate + "','" + xm + "',"
-							+ userInfoToUP.getUpCardId() + "," + userInfoToUP.getUuid() + ",'正常卡解绑');";
-					
-				}else if(userInfoToUP.getUseState()==2){	
-					//解绑：将挂失卡，设置人员绑定卡片id为4
-					sqlStr = " UPDATE tc_employee SET CARDID=0,EMPLOYEESTRID='',EmployeeStatusID='26' WHERE userId='" + userInfoToUP.getUserId()+"' ;"
-							+ " insert into tc_ChangeCard_log values('" + currentDate + "','" + xm + "',"
-							+ userInfoToUP.getUpCardId() + "," + userInfoToUP.getUuid() + ",'挂失卡解绑');";
+
+				if (userInfoToUP.getUseState() == 1) {
+					// 解绑：将正常卡状态为4
+					sqlStr = "UPDATE tc_card SET EMPLOYEEID=0,CardStatusIDXF=4,CardStatusIDJS=4  WHERE CARDID="
+							+ userInfoToUP.getUpCardId() + ";"
+							+ " UPDATE tc_employee SET EMPLOYEESTRID='',EmployeeStatusID='26' WHERE userId='"
+							+ userInfoToUP.getUserId() + "' ;" + " insert into tc_ChangeCard_log values('" + currentDate
+							+ "','" + xm + "'," + userInfoToUP.getUpCardId() + "," + userInfoToUP.getUuid()
+							+ ",'正常卡解绑');";
+
+				} else if (userInfoToUP.getUseState() == 2) {
+					// 解绑：将挂失卡，设置人员绑定卡片id为4
+					sqlStr = " UPDATE tc_employee SET CARDID=0,EMPLOYEESTRID='',EmployeeStatusID='26' WHERE userId='"
+							+ userInfoToUP.getUserId() + "' ;" + " insert into tc_ChangeCard_log values('" + currentDate
+							+ "','" + xm + "'," + userInfoToUP.getUpCardId() + "," + userInfoToUP.getUuid()
+							+ ",'挂失卡解绑');";
 				}
 				sqlSb.append(sqlStr + "  ");
 			}
@@ -549,14 +555,16 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 		int count = 0;
 
 		try {
-//			// 获取未绑定卡的数量
-//			sql = "select Count(CARD_ID) from CARD_T_USEINFO where CARD_TYPE_ID=3 AND USER_ID IS NULL AND USE_STATE !=2 and USE_STATE !=3 ";
-//			count = this.getForValueToSql(sql);
-//
-//			// 判断空闲卡数量
-//			if (count < idsCount) {
-//				return new ArrayList<>();
-//			}
+			// // 获取未绑定卡的数量
+			// sql = "select Count(CARD_ID) from CARD_T_USEINFO where
+			// CARD_TYPE_ID=3 AND USER_ID IS NULL AND USE_STATE !=2 and
+			// USE_STATE !=3 ";
+			// count = this.getForValueToSql(sql);
+			//
+			// // 判断空闲卡数量
+			// if (count < idsCount) {
+			// return new ArrayList<>();
+			// }
 
 			// 获取空闲卡信息
 			sql = "select top " + idsCount
@@ -566,7 +574,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			if (cardUnBinds.size() < idsCount) {
 				return new ArrayList<>();
 			}
-			
+
 			for (int i = 0; i < idsCount; i++) {
 
 				String cardId = String.valueOf(cardUnBinds.get(i).get("CARD_ID"));
@@ -611,11 +619,12 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 				String empId = this
 						.getForValueToSql("select convert(varchar,EMPLOYEEID) as uuid from tc_employee where userId='"
 								+ map.get("USER_ID") + "'");
-				//绑定：设置卡状态为1
-				sqlStr = "UPDATE tc_card SET EMPLOYEEID='" + empId + "',CardStatusIDXF=1,CardStatusIDJS=1  WHERE CARDID=" + map.get("UP_CARD_ID") + ";"
-						+ "	UPDATE tc_employee SET EMPLOYEESTRID='" + map.get("CARD_PRINT_ID") + "',EmployeeStatusID='24',CARDID="
-						+ map.get("UP_CARD_ID") + " WHERE EMPLOYEEID='" + empId + "';"
-						+ " insert into tc_ChangeCard_log values('" + currentDate + "','" + xm + "',"
+				// 绑定：设置卡状态为1
+				sqlStr = "UPDATE tc_card SET EMPLOYEEID='" + empId
+						+ "',CardStatusIDXF=1,CardStatusIDJS=1  WHERE CARDID=" + map.get("UP_CARD_ID") + ";"
+						+ "	UPDATE tc_employee SET EMPLOYEESTRID='" + map.get("CARD_PRINT_ID")
+						+ "',EmployeeStatusID='24',CARDID=" + map.get("UP_CARD_ID") + " WHERE EMPLOYEEID='" + empId
+						+ "';" + " insert into tc_ChangeCard_log values('" + currentDate + "','" + xm + "',"
 						+ map.get("UP_CARD_ID") + "," + empId + ",'绑定');";
 				sqlSb.append(sqlStr + "  ");
 			}
@@ -653,7 +662,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			// 最后执行一次
 			if (sqlSb.length() > 0)
 				this.executeSql(sqlSb.toString());
-			
+
 		} catch (Exception e) {
 			// 捕获了异常后，要手动进行回滚；
 			// TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

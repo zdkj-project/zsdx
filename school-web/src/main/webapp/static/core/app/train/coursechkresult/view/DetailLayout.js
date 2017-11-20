@@ -18,7 +18,7 @@ Ext.define("core.train.coursechkresult.view.DetailLayout", {
 	items: [{
 		xtype: "coursechkresult.classcoursegrid",
         region: "west",
-        width: 700,
+        width: 550,
         split: true,
         /*style: {
             border: '1px solid #ddd'

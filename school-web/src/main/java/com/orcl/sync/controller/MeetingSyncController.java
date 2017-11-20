@@ -237,7 +237,7 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
 	        Session session = sssssss.openSession();
 	        session.beginTransaction();
 	        Query query = session.createSQLQuery("select MEETING_ID,cast(MEETING_TITLE as VARCHAR2(255)),cast(CONTENT as VARCHAR2(2048))," +
-	                "cast(MEETING_CATEGORY as VARCHAR2(255)),BEGIN_TIME,END_TIME,cast(ROOM_NAME as VARCHAR2(255)) from zsdx_sync.meeting_msg where BEGIN_TIME >=(sysdate-7) ORDER BY  BEGIN_TIME ASC");
+	                "cast(MEETING_CATEGORY as VARCHAR2(255)),BEGIN_TIME,END_TIME,cast(ROOM_NAME as VARCHAR2(255)),cast(CREATE_BY as VARCHAR2(255)) from zsdx_sync.meeting_msg where BEGIN_TIME >=(sysdate-7) ORDER BY  BEGIN_TIME ASC");
 	        List<Object[]> meetingList = query.list();
 	        
 	        query = session.createSQLQuery("select a.MEETING_ID,a.EMPLOYEE_ID,cast(a.XM as VARCHAR2(255)),b.BEGIN_TIME,b.END_TIME "

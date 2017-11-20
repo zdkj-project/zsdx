@@ -121,7 +121,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 		TrainClassschedule saveEntity = this.get(entity.getUuid());
 		try {
 			//
-			
+
 			// 查询课程表中是否存在 课程名、教师名一致的课程
 			TrainCourseinfo trainCourseInfo = trainCourseinfoService.getByProerties(
 					new String[] { "courseName", "mainTeacherId", "isDelete" },
@@ -136,21 +136,21 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 
 				// 否则存入到课程库
 				trainCourseInfo = new TrainCourseinfo();
-				trainCourseInfo.setCategoryId(categoryId);			
+				trainCourseInfo.setCategoryId(categoryId);
 				trainCourseInfo.setCourseName(entity.getCourseName());
 				trainCourseInfo.setMainTeacherId(entity.getMainTeacherId());
 				trainCourseInfo.setMainTeacherName(entity.getMainTeacherName());
 			}
 			trainCourseInfo.setCredits(entity.getCredits());
 			trainCourseInfo.setTeachType(teachType); // 当课程不存在，并创建的时候，才会设置教学形式
-			
+
 			trainCourseinfoService.merge(trainCourseInfo);
-			
+
 			entity.setCourseId(trainCourseInfo.getUuid());
 
-			List<String> exclued=new ArrayList<>();
+			List<String> exclued = new ArrayList<>();
 			exclued.add("courseMode");
-			BeanUtils.copyPropertiesExceptNull(saveEntity, entity,exclued);
+			BeanUtils.copyPropertiesExceptNull(saveEntity, entity, exclued);
 			saveEntity.setUpdateTime(new Date()); // 设置修改时间
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 			entity = this.merge(saveEntity);// 执行修改方法
@@ -179,14 +179,19 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 		TrainClassschedule saveEntity = null;
 		try {
 			// 查询此班级是否已经存在此课程,若存在则取出来进行数据更新操作 //只要存在即可，isdelete为1的会被转为2
-			saveEntity = this.getByProerties(new String[] { "courseName", "mainTeacherName", "classId" },
-					new Object[] { entity.getCourseName(), entity.getMainTeacherName(), entity.getClassId()});
-			//若不为null，则使用此班级课程的id
-			if (saveEntity == null)	
-				saveEntity=new TrainClassschedule();
-			
+			// (2017-11-17加入开始结束时间进行判断是否重复)
+			saveEntity = this.getByProerties(
+					new String[] { "courseName", "mainTeacherName", "classId", "beginTime", "endTime" },
+					new Object[] { entity.getCourseName(), entity.getMainTeacherName(), entity.getClassId(),
+							entity.getBeginTime(), entity.getEndTime() });
+			// 若不为null，则使用此班级课程的id
+			if (saveEntity == null)
+				saveEntity = new TrainClassschedule();
+
 			List<String> excludedProp = new ArrayList<>();
 			excludedProp.add("uuid");
+			excludedProp.add("scheduleAddress");
+			excludedProp.add("roomId");
 			BeanUtils.copyProperties(saveEntity, entity, excludedProp);
 			saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
 
@@ -201,8 +206,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 				trainClass.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 				trainClassService.update(trainClass);
 			}
-			
-				
+
 			// 查询课程表中是否存在 课程名、教师名一致的课程
 			TrainCourseinfo trainCourseInfo = trainCourseinfoService.getByProerties(
 					new String[] { "courseName", "mainTeacherId", "isDelete" },
@@ -244,29 +248,29 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 	public int doUpdateRoomInfo(String roomIds, String roomNames, String ids, SysUser currentUser) {
 		int result = 0;
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		
-		//判断房间是否被其他课程使用
-		  
+
+		// 判断房间是否被其他课程使用
+
 		try {
-	        String idArray[]=ids.split(",");
-	        String roomIdArray[]=roomIds.split(",");
-	        String id=null;
-	        String roomId=null;
-	        for(int i=0;i<idArray.length;i++){
-	        	id=idArray[i];
-	        	for(int j=0;j<roomIdArray.length;j++){
-	        		roomId=roomIdArray[j];
-	        		List lists = this.doQuerySql("EXECUTE TRAIN_P_ISUSESITE '"+id+"','"+roomId+"'");
-	        		if("0".equals(lists.get(0).toString())){
-	        			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-	        			return 0;
-	        		}
-	        	}
-	        	String hqlUpdate = "update TrainClassschedule t set t.roomId='" + roomIds + "',t.scheduleAddress='"
+			String idArray[] = ids.split(",");
+			String roomIdArray[] = roomIds.split(",");
+			String id = null;
+			String roomId = null;
+			for (int i = 0; i < idArray.length; i++) {
+				id = idArray[i];
+				for (int j = 0; j < roomIdArray.length; j++) {
+					roomId = roomIdArray[j];
+					List lists = this.doQuerySql("EXECUTE TRAIN_P_ISUSESITE '" + id + "','" + roomId + "'");
+					if ("0".equals(lists.get(0).toString())) {
+						TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+						return 0;
+					}
+				}
+				String hqlUpdate = "update TrainClassschedule t set t.roomId='" + roomIds + "',t.scheduleAddress='"
 						+ roomNames + "'," + "	t.updateUser='" + currentUser.getXm() + "',t.updateTime='"
 						+ sdf.format(new Date()) + "' " + "where t.isDelete!=1 and t.uuid in ('" + id + "')";
 				this.executeHql(hqlUpdate);
-	        }    	
+			}
 			result = 1;
 
 		} catch (Exception e) {
@@ -317,7 +321,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 		String hql = " from BaseDicitem where dicCode in ('TEACHTYPE','CLASSGROUP')";
 		List<BaseDicitem> listTeachType = dicitemService.doQuery(hql);
 		for (BaseDicitem baseDicitem : listTeachType) {
-			if(baseDicitem.getDicCode().equals("TEACHTYPE"))
+			if (baseDicitem.getDicCode().equals("TEACHTYPE"))
 				mapTeachType.put(baseDicitem.getItemName(), baseDicitem.getItemCode());
 			else
 				mapClassGroup.put(baseDicitem.getItemName(), baseDicitem.getItemCode());
@@ -351,20 +355,20 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 		String courseName = null;
 		// String courseMode = null;
 		String courseCredits = null;
-		String isOptional = null;	
+		String isOptional = null;
 		String classGroup = null;
 		TrainCourseinfo trainCourseInfo = null;
 		for (int i = 0; i < importData.size(); i++) {
 
 			try {
-				
+
 				List<Object> lo = importData.get(i);
-				
-				//导入的表格会错误的读取空行的内容，所以，当判断第一列为空，就跳过此行。
-				if(!StringUtils.isNotEmpty((String) lo.get(0))){
+
+				// 导入的表格会错误的读取空行的内容，所以，当判断第一列为空，就跳过此行。
+				if (!StringUtils.isNotEmpty((String) lo.get(0))) {
 					continue;
 				}
-				
+
 				beginTime = String.valueOf(lo.get(0)) + " " + String.valueOf(lo.get(1));
 				endTime = String.valueOf(lo.get(0)) + " " + String.valueOf(lo.get(2));
 
@@ -373,15 +377,16 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 				courseCredits = String.valueOf(lo.get(7));
 				isOptional = String.valueOf(lo.get(8));
 				classGroup = String.valueOf(lo.get(9));
-				
+
 				title = courseName;
 				doResult = "导入成功"; // 默认是成功
 				isError = false;
 
 				// 查询此班级是否已经存在此课程,若存在则取出来进行数据更新操作 //只要存在即可，isdelete为1的会被转为2
 				TrainClassschedule tcs = this.getByProerties(
-						new String[] { "courseName", "mainTeacherName", "classId" },
-						new Object[] { courseName, teacheName, classId });
+						new String[] { "courseName", "mainTeacherName", "classId", "beginTime", "endTime" },
+						new Object[] { courseName, teacheName, classId, dateTimeSdf.parse(beginTime),
+								dateTimeSdf.parse(endTime) });
 				if (tcs == null)
 					tcs = new TrainClassschedule();
 				// TrainClassschedule tcs = new TrainClassschedule();
@@ -393,9 +398,9 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 				tcs.setIsEval(String.valueOf(lo.get(6)).equals("是") ? 1 : 0);
 				tcs.setIsDelete(isDelete); // 设置isdelete为特定的值。
 				tcs.setCredits(Integer.valueOf(courseCredits));
-				tcs.setIsOptional(String.valueOf(isOptional).equals("是") ? 1 : 0);	//课程是否选修课
-				tcs.setClassGroup(mapClassGroup.get(classGroup));	//课程分班
-				
+				tcs.setIsOptional(String.valueOf(isOptional).equals("是") ? 1 : 0); // 课程是否选修课
+				tcs.setClassGroup(mapClassGroup.get(classGroup)); // 课程分班
+
 				// 查询课程表中是否存在 课程名、教师名一致的课程
 				trainCourseInfo = trainCourseinfoService.getByProerties(
 						new String[] { "courseName", "mainTeacherName", "isDelete" },

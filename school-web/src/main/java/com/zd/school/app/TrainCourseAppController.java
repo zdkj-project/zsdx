@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -141,13 +143,33 @@ public class TrainCourseAppController {
 					TrainClass classInfo = classService.get(classId);
 					voList=voMapList.get(classId);
 					if(voList==null){
-						sql = MessageFormat.format(" SELECT CLASS_ID AS classId,xm,CLASS_TRAINEE_ID AS traineeId,"
-								+ "CONVERT(VARCHAR(36),(ISNULL((SELECT top 1 a.FACT_NUMB FROM CARD_T_USEINFO a where a.USER_ID=TRAIN_T_CLASSTRAINEE.CLASS_TRAINEE_ID order BY a.CREATE_TIME desc),''0''))) AS factoryfixId,"
-								+ "CONVERT(VARCHAR(36),(isnull((SELECT top 1 a.UP_CARD_ID FROM CARD_T_USEINFO a where a.USER_ID=TRAIN_T_CLASSTRAINEE.CLASS_TRAINEE_ID order by a.CREATE_TIME desc),''0''))) AS cardNo, "
-								+ "isnull((SELECT top 1 a.USE_STATE FROM CARD_T_USEINFO a where a.USER_ID=TRAIN_T_CLASSTRAINEE.CLASS_TRAINEE_ID order by a.CREATE_TIME desc),0) AS useState "
-								+ " FROM dbo.TRAIN_T_CLASSTRAINEE WHERE ISDELETE=0 and  CLASS_ID=''{0}''", classId);
+						sql = MessageFormat.format("SELECT x.CLASS_ID AS classId,xm,x.CLASS_TRAINEE_ID AS traineeId,"
+								+ "CONVERT(VARCHAR(36),(ISNULL((SELECT top 1 a.FACT_NUMB FROM CARD_T_USEINFO a where a.USER_ID=x.CLASS_TRAINEE_ID order BY a.CREATE_TIME desc),''0''))) AS factoryfixId,"
+								+ "CONVERT(VARCHAR(36),(isnull((SELECT top 1 a.UP_CARD_ID FROM CARD_T_USEINFO a where a.USER_ID=x.CLASS_TRAINEE_ID order by a.CREATE_TIME desc),''0''))) AS cardNo, "
+								+ "isnull((SELECT top 1 a.USE_STATE FROM CARD_T_USEINFO a where a.USER_ID=x.CLASS_TRAINEE_ID order by a.CREATE_TIME desc),0) AS useState,"
+								+ "CONVERT(VARCHAR(36),isNULL(b.IS_LEAVE,''0'')) AS isLeave "
+								+ "FROM dbo.TRAIN_T_CLASSTRAINEE X"
+								+ "	LEFT JOIN dbo.TRAIN_T_COURSEATTEND b "
+								+ " on x.CLASS_TRAINEE_ID=b.TRAINEE_ID  AND X.CLASS_ID = b.CLASS_ID  AND b.CLASS_SCHEDULE_ID=''{0}'' "
+								+ " WHERE x.ISDELETE=0 and  X.CLASS_ID=''{1}''", c.getUuid() , classId);
+						
+//						sql = MessageFormat.format(" SELECT CLASS_ID AS classId,xm,CLASS_TRAINEE_ID AS traineeId,"
+//								+ "CONVERT(VARCHAR(36),(ISNULL((SELECT top 1 a.FACT_NUMB FROM CARD_T_USEINFO a where a.USER_ID=TRAIN_T_CLASSTRAINEE.CLASS_TRAINEE_ID order BY a.CREATE_TIME desc),''0''))) AS factoryfixId,"
+//								+ "CONVERT(VARCHAR(36),(isnull((SELECT top 1 a.UP_CARD_ID FROM CARD_T_USEINFO a where a.USER_ID=TRAIN_T_CLASSTRAINEE.CLASS_TRAINEE_ID order by a.CREATE_TIME desc),''0''))) AS cardNo, "
+//								+ "isnull((SELECT top 1 a.USE_STATE FROM CARD_T_USEINFO a where a.USER_ID=TRAIN_T_CLASSTRAINEE.CLASS_TRAINEE_ID order by a.CREATE_TIME desc),0) AS useState,"
+//								+ "IS_LEAVE AS isLeave "
+//								+ " FROM dbo.TRAIN_T_CLASSTRAINEE WHERE ISDELETE=0 and  CLASS_ID=''{0}''", classId);
 						voList=classService.doQuerySqlObject(sql, VoTrainClasstrainee.class);
 						voMapList.put(classId,voList);
+						
+						//统计请假人数
+	 	                int leaveNum=0;
+						for(int i=0;i<voList.size();i++){									 	           
+	 	                	if("1".equals(voList.get(i).getIsLeave())){
+	 	                		leaveNum++;
+	 	                	}		 	               
+						}
+						c.setExtField05(String.valueOf(leaveNum));					
 					}
 					c.setList(voList);
 					
@@ -209,7 +231,7 @@ public class TrainCourseAppController {
 
 		} catch (Exception e) {
 			tca.setCode(false);
-			tca.setMessage("数据异常调用失败" + e.getMessage());
+			tca.setMessage("数据异常调用失败" +  Arrays.toString( e.getStackTrace()));
 			return tca;
 		}
 
@@ -237,6 +259,8 @@ public class TrainCourseAppController {
 		if (null != coursecheck) {
 			check = (List<CourseCheck>) JsonBuilder.getInstance().fromJsonArray(coursecheck, CourseCheck.class);
 		}
+		Calendar calendar1 = Calendar.getInstance();
+	    Calendar calendar2 = Calendar.getInstance();
 		CourseCheckApp cca = new CourseCheckApp();
 
 		TrainCourseattend attend = null;
@@ -275,12 +299,48 @@ public class TrainCourseAppController {
 						attend.setTraineeId(t.getUserId());
 						attend.setBeginTime(course.getBeginTime());
 						attend.setEndTime(course.getEndTime());
+						
+//						if (t.getLg().equals("0")) {
+//							attend.setIncardTime(t.getTime());
+//						} else if (t.getLg().equals("1")) {
+//							attend.setOutcardTime(t.getTime());
+//						}
+//						attend.setAttendResult(t.getAttendResult());
+											
 						if (t.getLg().equals("0")) {
-							attend.setIncardTime(t.getTime());
-						} else if (t.getLg().equals("1")) {
-							attend.setOutcardTime(t.getTime());
-						}
-						attend.setAttendResult(t.getAttendResult());
+	                    	if(attend.getIncardTime()==null){
+	                    		attend.setIncardTime(t.getTime());	                    		
+	                    		attend.setAttendResult(t.getAttendResult());
+	                    	}else if(t.getTime()!=null){
+	                    		//解决多个平板上传数据的问题
+	                    		calendar1.setTime(attend.getIncardTime());
+	                        	calendar2.setTime(t.getTime());
+	                        	if(calendar1.compareTo(calendar2)==1){	//若第二次上传的时间【小于】第一次的时间，那就替换
+	                        		attend.setIncardTime(t.getTime());
+	                        		attend.setAttendResult(t.getAttendResult());
+	                        	}
+	                    	}
+	                    } else if(t.getLg().equals("1")) {
+	                    	if(attend.getOutcardTime()==null){
+	                    		attend.setOutcardTime(t.getTime());
+	                    		attend.setAttendResult(t.getAttendResult());
+	                    	}else if(t.getTime()!=null){
+	                    		//解决多个平板上传数据的问题
+	                    		calendar1.setTime(attend.getOutcardTime());
+	                        	calendar2.setTime(t.getTime());
+	                        	if(calendar1.compareTo(calendar2)==-1){	//若第二次上传的时间【大于】第一次的时间，那就替换
+	                        		attend.setOutcardTime(t.getTime());
+	                        		attend.setAttendResult(t.getAttendResult());
+	                        	}
+	                    	}
+	                    }else{
+	                    	//当为缺勤的时候，并且判断之前没有考勤数据，就设置为缺勤
+	                    	if(attend.getIncardTime()==null && attend.getOutcardTime()==null){
+	                    		attend.setAttendResult(t.getAttendResult());
+	                    	}
+	                    }
+						
+						
 						attend.setUpdateTime(currentDate);
 						attendService.merge(attend);
 					}
@@ -305,7 +365,7 @@ public class TrainCourseAppController {
 		} catch (Exception e) {
 			cca.setCode(false);
 			cca.setMessage("存储异常" + e.getMessage());
-			logger.error("提交课程考勤失败-->message:"+e.getStackTrace());			
+			logger.error("提交课程考勤失败-->message:"+ Arrays.toString( e.getStackTrace()));			
 			return cca;
 		}
 

@@ -14,11 +14,11 @@ Ext.define("core.train.coursechkresult.controller.MainController", {
     control: {
         "basegrid[xtype=coursechkresult.maingrid]": {
             afterrender: function (grid, eOpts) {
-                var btngridExport = grid.down("button[ref=gridExport]");
-                var roleKey = comm.get("roleKey");
-                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1) {
-                    btngridExport.setHidden(true);
-                }
+                // var btngridExport = grid.down("button[ref=gridExport]");
+                // var roleKey = comm.get("roleKey");
+                // if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1) {
+                //     btngridExport.setHidden(true);
+                // }
             }
         },
 

@@ -24,6 +24,7 @@ import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.BeanUtils;
+import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.PoiExportExcel;
 import com.zd.school.cashier.model.CashExpensedetail;
 import com.zd.school.jw.train.model.TrainClasstrainee;
@@ -627,4 +628,180 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
 		}
 	}
+	
+	
+	
+	/**
+	 * 订餐差异汇总数据
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	@RequestMapping(value = { "/getDinnerDiffTotalList" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
+			org.springframework.web.bind.annotation.RequestMethod.POST })
+	public void getDinnerTotalList( HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ParseException {
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");   
+	     
+		String strData = ""; // 返回给js的数据
+		String startDate=request.getParameter("beginDate");
+		startDate=startDate==null?"1900-1-1":sdf.format(sdf.parse(startDate));
+		
+		String endDate=request.getParameter("endDate");
+		endDate=endDate==null?"2999-12-12":sdf.format(sdf.parse(endDate));
+				
+		String groupType = request.getParameter("GROUP_TYPE");
+		groupType=groupType==null?"":groupType;
+		
+		Integer pageIndex=Integer.parseInt(request.getParameter("page"));;	//page
+		Integer pageSize=Integer.parseInt(request.getParameter("limit"));;	//limit
+		
+		StringBuffer sql = new StringBuffer("EXEC [dbo].[Usp_RPT_DinnerDiffReportSearch] ");
+		sql.append("'" + startDate + "',");
+		sql.append("'" + endDate + "',");		
+		sql.append("'"+groupType+"',");
+		String page=pageIndex + "," + pageSize;
+
+		List<Map<String, Object>> lists=thisService.getForValuesToSql(sql.toString()+page);
+			
+
+		int count=Integer.parseInt(lists.get(0).get("rownum").toString());
+		request.getSession().setAttribute("DinnerDiffTotalDatas", lists.get(0));	//将统计信息存放到session中
+		
+		lists.remove(0);
+		
+		strData = jsonBuilder.buildObjListToJson(Long.valueOf(count), lists, true);// 处理数据
+		
+		writeJSON(response, strData);// 返回数据
+	}
+	
+	@RequestMapping(value = { "/getDinnerDiffTotalDatas" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
+			org.springframework.web.bind.annotation.RequestMethod.POST })
+	public void getDinnerTotalDatas( HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ParseException {
+		Object obj = request.getSession().getAttribute("DinnerDiffTotalDatas");
+		String strData = JsonBuilder.getInstance().toJson(obj);// 处理数据
+		writeJSON(response, jsonBuilder.returnSuccessJson(strData));// 返回数据	
+	}
+	
+	/**
+	 * 导出订餐差异汇总信息
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/exportDinnerDiffTotalExcel")
+	public void exportCashTotalExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getSession().setAttribute("exportDinnerDiffTotalIsEnd", "0");
+		request.getSession().removeAttribute("exportDinnerDiffTotalIsState");
+		
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");   
+		//SimpleDateFormat fmtDateWeek = new SimpleDateFormat("yyyy年M月d日 （E）");
+		//SimpleDateFormat fmtTime = new SimpleDateFormat("h:mm");
+		
+		List<Map<String, Object>> allList = new ArrayList<>();
+			
+		try{
+			String startDate=request.getParameter("beginDate");
+			startDate=startDate==null?"1900-1-1":sdf.format(sdf.parse(startDate));
+			
+			String endDate=request.getParameter("endDate");
+			endDate=endDate==null?"2999-12-12":sdf.format(sdf.parse(endDate));			
+			String groupType = request.getParameter("GROUP_TYPE");
+			groupType=groupType==null?"":groupType;
+			
+			Integer pageIndex=0;
+			Integer pageSize=Integer.MAX_VALUE;
+			
+			StringBuffer sql = new StringBuffer("EXEC [dbo].[Usp_RPT_DinnerDiffReportSearch] ");
+			sql.append("'" + startDate + "',");
+			sql.append("'" + endDate + "',");			
+			sql.append("'"+groupType+"',");
+			String page=pageIndex + "," + pageSize;
+
+			List<Map<String, Object>> lists=thisService.getForValuesToSql(sql.toString()+page);	
+			Map<String, Object> totalMap=lists.get(0);
+			lists.remove(0);
+					
+			// 处理基本数据				
+			List<Map<String, String>> exportList = new ArrayList<>();
+			Map<String, String> tempMap = null;
+			for (Map<String, Object> dinnerDiffMap : lists) {
+								
+				tempMap=new LinkedHashMap<>();
+				tempMap.put("rownum", String.valueOf(dinnerDiffMap.get("rownum")));
+				tempMap.put("dinnerDate", String.valueOf(dinnerDiffMap.get("dinnerDate")));
+				tempMap.put("dinnerCount", String.valueOf(dinnerDiffMap.get("dinnerCount")));
+				tempMap.put("dinnerCountA", String.valueOf(dinnerDiffMap.get("dinnerCountA")));
+				tempMap.put("dinnerCountB", String.valueOf(dinnerDiffMap.get("dinnerCountB")));
+				tempMap.put("realCount", String.valueOf(dinnerDiffMap.get("realCount")));
+				tempMap.put("realDinnerCount", String.valueOf(dinnerDiffMap.get("realDinnerCount")));
+				tempMap.put("notDinnerEatCount", String.valueOf(dinnerDiffMap.get("notDinnerEatCount")));	
+				tempMap.put("notEatdinnerCount", String.valueOf(dinnerDiffMap.get("notEatdinnerCount")));		
+				exportList.add(tempMap);
+			}
+			
+			//最后一行加入汇总
+			tempMap=new LinkedHashMap<>();
+			tempMap.put("rownum","");
+			tempMap.put("dinnerDate", "汇总");
+			tempMap.put("dinnerCount", String.valueOf(totalMap.get("dinnerCount")));
+			tempMap.put("dinnerCountA",  String.valueOf(totalMap.get("dinnerCountA")));
+			tempMap.put("dinnerCountB", String.valueOf(totalMap.get("dinnerCountB")));
+			tempMap.put("realCount", String.valueOf(totalMap.get("realCount")));
+			tempMap.put("realDinnerCount", String.valueOf(totalMap.get("realDinnerCount")));
+			tempMap.put("notDinnerEatCount", String.valueOf(totalMap.get("notDinnerEatCount")));
+			tempMap.put("notEatdinnerCount",  String.valueOf(totalMap.get("notEatdinnerCount")));
+			exportList.add(tempMap);
+						
+			// --------2.组装表格数据
+			Map<String, Object> orderAllMap = new LinkedHashMap<>();
+			orderAllMap.put("data", exportList);
+			orderAllMap.put("title", "订餐就餐汇总信息表");
+			orderAllMap.put("head", new String[] { "序号","就餐日期","订餐总数","A套餐总数","B套餐总数","实际就餐总数","就餐总数（已订餐）","就餐总数（未订餐）","未就餐总数（已订餐）", }); // 规定名字相同的，设定为合并
+			orderAllMap.put("columnWidth", new Integer[] { 10, 15, 12, 12, 12,15,20,20,22 }); // 30代表30个字节，15个字符
+			orderAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0,0,0,0,0}); // 0代表居中，1代表居左，2代表居右
+			orderAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+			allList.add(orderAllMap);
+	
+			// 在导出方法中进行解析		
+			boolean result = PoiExportExcel.exportExcel(response, " 订餐就餐汇总信息", "订餐就餐汇总信息", allList);
+			if (result == true) {
+				request.getSession().setAttribute("exportDinnerDiffTotalIsEnd", "1");
+			} else {
+				request.getSession().setAttribute("exportDinnerDiffTotalIsEnd", "0");
+				request.getSession().setAttribute("exportDinnerDiffTotalIsState", "0");
+			}
+		}catch(Exception e){
+			request.getSession().setAttribute("exportDinnerDiffTotalIsEnd", "0");
+			request.getSession().setAttribute("exportDinnerDiffTotalIsState", "0");
+		}
+	}
+	
+	/**
+	 * 判断是否导出完毕
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/checkExportDinnerDiffTotalEnd")
+	public void checkExportCashTotalEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+		Object isEnd = request.getSession().getAttribute("exportDinnerDiffTotalIsEnd");
+		Object state = request.getSession().getAttribute("exportDinnerDiffTotalIsState");
+		if (isEnd != null) {
+			if ("1".equals(isEnd.toString())) {
+				writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导出完成！\""));
+			} else if (state != null && state.equals("0")) {
+				writeJSON(response, jsonBuilder.returnFailureJson("0"));
+			} else {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+			}
+		} else {
+			writeJSON(response, jsonBuilder.returnFailureJson("\"文件导出未完成！\""));
+		}
+	}
+	
 }

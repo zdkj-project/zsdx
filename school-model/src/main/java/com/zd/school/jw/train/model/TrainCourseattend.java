@@ -110,13 +110,33 @@ public class TrainCourseattend extends BaseEntity implements Serializable{
     @FieldInfo(name = "考勤结果")
     @Column(name = "ATTENT_RESULT",length = 16,nullable = true)
     private String attendResult;
-
     public String getAttendResult() {
         return attendResult;
     }
-
     public void setAttendResult(String attendResult) {
         this.attendResult = attendResult;
+    }
+    
+    
+    //1-请假，其他值-不请假
+    @FieldInfo(name = "是否请假")	
+    @Column(name = "IS_LEAVE", length = 8, nullable = true)
+    private String isLeave;
+    public void setIsLeave(String isLeave) {
+        this.isLeave = isLeave;
+    }
+    public String getIsLeave() {
+        return isLeave;
+    }
+    
+    @FieldInfo(name = "备注信息")
+    @Column(name = "REMARK", length = 512, nullable = true)
+    private String remark;
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+    public String getRemark() {
+        return remark;
     }
     /** 以下为不需要持久化到数据库中的字段,根据项目的需要手工增加
     *@Transient

@@ -15,6 +15,9 @@ public class VoTrainClasstrainee {
 	//卡片使用状态
 	private Integer useState;
 	
+	//是否请假
+	private  String isLeave;
+	
 	public String getClassId() {
 		return classId;
 	}
@@ -50,6 +53,12 @@ public class VoTrainClasstrainee {
 	}
 	public void setUseState(Integer useState) {
 		this.useState = useState;
+	}
+	public String getIsLeave() {
+		return isLeave;
+	}
+	public void setIsLeave(String isLeave) {
+		this.isLeave = isLeave;
 	}
 	
 	

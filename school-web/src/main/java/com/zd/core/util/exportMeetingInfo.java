@@ -456,6 +456,199 @@ public class exportMeetingInfo {
 		return result;
 	}
     
+	/**
+	 * 班级课程考勤信息
+	 * @param response
+	 * @param fileName
+	 * @param sheetTitle
+	 * @param listContent
+	 * @return
+	 * @throws IOException
+	 */
+	public final static boolean exportCouseCheckResultInfoExcel(HttpServletResponse response, String fileName,String sheetTitle, List<Map<String, Object>> listContent) throws IOException {
+		HSSFWorkbook workbook = new HSSFWorkbook();
+		boolean result = false;
+		OutputStream fileOutputStream = null;
+		response.reset();// 清空输出流
+		response.setHeader("Content-disposition","attachment; filename=" + new String((fileName + ".xls").getBytes("GB2312"), "ISO8859-1"));
+		response.setContentType("application/msexcel");
+		if (null != listContent && !listContent.isEmpty()) {
+			try {
+				Map<String, Object> exportInfo = listContent.get(0);
+				Integer columnWidth= (Integer) exportInfo.get("columnWidth");
+				Integer headColumnCount = (Integer) exportInfo.get("headColumnCount");
+				int columnCount = headColumnCount;
+
+				List<Map<String, Object>> mapMeetingList = (List<Map<String, Object>>) exportInfo.get("data");
+				int exportMeetingCount = mapMeetingList.size();
+				CellStyle headStyle = getCellStyle(workbook, "", (short) 12, false, HorizontalAlignment.CENTER,VerticalAlignment.CENTER);
+				CellStyle titleStyle = getCellStyle(workbook, "", (short) 26, true, HorizontalAlignment.CENTER,VerticalAlignment.CENTER);
+				for (int i = 0; i < exportMeetingCount; i++) {
+					// 获取班级的信息
+					Map<String, Object> dataList = mapMeetingList.get(i);
+					String className = (String) dataList.get("className");
+					String classCategory = (String) dataList.get("classCategory");
+					String traineeNum=(String) dataList.get("traineeNum");
+					String beginDate = (String) dataList.get("beginDate");
+					String endDate = (String) dataList.get("endDate");
+					String needChecking = (String) dataList.get("needChecking");
+					// 创建sheet 一个会议一个sheet
+					String sheetName = className+"班课程考勤";
+					Row row = null;
+					Cell cell = null;
+					Sheet sheet = workbook.createSheet(sheetName);
+					for (int j = 0; j < 8; j++) {
+						row = sheet.createRow(j);
+						row.setHeight((short) 0x200);
+						for (int k = 0; k < columnCount; k++) {
+							cell = row.createCell(k);
+							cell.setCellStyle(headStyle);
+						}
+					}
+					// 标题
+					sheet.getRow(0).getCell(0).setCellStyle(titleStyle);
+					sheet.getRow(0).getCell(0).setCellValue(className+"-班级课程考勤详细");
+					sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 7));
+					
+					// 第1行
+					sheet.getRow(3).getCell(0).setCellValue("班级名称");
+					sheet.getRow(3).getCell(1).setCellValue(className);
+					sheet.addMergedRegion(new CellRangeAddress(3, 3, 1, 7));
+
+					// 第2行
+					sheet.getRow(4).getCell(0).setCellValue("班级类型");
+					sheet.getRow(4).getCell(1).setCellValue(classCategory);
+					sheet.addMergedRegion(new CellRangeAddress(4, 4, 1, 3));
+
+					sheet.getRow(4).getCell(4).setCellValue("人数");
+					sheet.getRow(4).getCell(5).setCellValue(traineeNum);
+					sheet.addMergedRegion(new CellRangeAddress(4, 4, 5, 7));
+
+					// 第3行
+					sheet.getRow(5).getCell(0).setCellValue("开始时间");
+                    sheet.getRow(5).getCell(1).setCellValue(beginDate);
+                    sheet.addMergedRegion(new CellRangeAddress(5, 5, 1,3));
+
+                    sheet.getRow(5).getCell(4).setCellValue("结束时间");
+                    sheet.getRow(5).getCell(5).setCellValue(endDate);
+                    sheet.addMergedRegion(new CellRangeAddress(5, 5, 5,7));
+
+                    //第4行
+                    sheet.getRow(6).getCell(0).setCellValue("是否需要考勤");
+                    sheet.getRow(6).getCell(1).setCellValue(needChecking);
+                    sheet.addMergedRegion(new CellRangeAddress(6, 6, 1,7));
+
+					
+					sheet.getRow(7).getCell(0).setCellValue("人员考勤详细");
+                    sheet.addMergedRegion(new CellRangeAddress(7, 7, 0,7));
+					
+					// 课程数据
+					List<Map<String,Object>> trainClassscheduleList =(List<Map<String, Object>>) dataList.get("checkCourse");
+					int trainClassscheduleCount = trainClassscheduleList.size();
+					for (int k = 0; k< 3; k++) {
+						row = sheet.createRow(8+k);
+						row.setHeight((short) 0x250);
+						for (int j = 0; j < trainClassscheduleCount*6+2; j++) {
+							cell = row.createCell(j);
+							cell.setCellStyle(headStyle);
+						}
+					}
+					//创建课程表头
+					for (int j = 0; j < trainClassscheduleCount; j++) {
+						 Map<String,Object> trainClassschedule = trainClassscheduleList.get(j);
+						for (String s : trainClassschedule.keySet()) {
+							Object val = trainClassschedule.get(s);
+							if(s.equals("COURSE_NAME")){
+								sheet.getRow(8).getCell(2+j*6).setCellValue(String.valueOf(val));
+			                    sheet.addMergedRegion(new CellRangeAddress(8, 8, 2+j*6,7+j*6));
+							}
+							if(s.equals("BEGIN_TIME")){
+								sheet.getRow(9).getCell(2+j*6).setCellValue("开始时间");
+			                    sheet.getRow(9).getCell(3+j*6).setCellValue(String.valueOf(val).substring(0, String.valueOf(val).lastIndexOf(".")));
+			                    sheet.addMergedRegion(new CellRangeAddress(9, 9, 3+j*6,7+j*6));
+							}
+							if(s.equals("END_TIME")){
+								sheet.getRow(10).getCell(2+j*6).setCellValue("结束时间");
+			                    sheet.getRow(10).getCell(3+j*6).setCellValue(String.valueOf(val).substring(0, String.valueOf(val).lastIndexOf(".")));
+			                    sheet.addMergedRegion(new CellRangeAddress(10, 10, 3+j*6,7+j*6));
+							}
+						}
+					}
+					row = sheet.createRow(11);
+					row.setHeight((short) 0x200);
+					for (int j = 0; j < (((trainClassscheduleCount*6+2)<8)?8:trainClassscheduleCount*6+2); j++) {
+	                        cell = row.createCell(j);
+	                        cell.setCellStyle(headStyle);
+	                        if(j==0)
+	                        	cell.setCellValue("序号");
+	                        else if(j==1)
+	                        	cell.setCellValue("姓名");
+	                        else if(j%6==2){
+	                        	cell.setCellValue("签到时间");
+	                        }else if(j%6==3){
+	                        	cell.setCellValue("签退时间");
+	                        }else if(j%6==4){
+	                        	cell.setCellValue("上课时长");
+	                        }else if(j%6==5){
+	                        	cell.setCellValue("考情结果");
+	                        }else if(j%6==0){
+	                        	cell.setCellValue("是否请假");
+	                        }else{
+	                        	cell.setCellValue("备注信息");
+	                        }
+	                        sheet.setColumnWidth(j, columnWidth * 256);
+	                    }
+					 
+					// 学员考勤数据
+					 Map<String,List<String>> traineeResult =(Map<String,List<String>>) dataList.get("voTrainClassCheck");
+					 List<String> keylist = new LinkedList<String>();
+					 for (String s : traineeResult.keySet()) {
+						 keylist.add(s);
+					 }
+					 for(int k=0;k<keylist.size();k++){
+						 List<String> val = traineeResult.get(keylist.get(k));
+						 row = sheet.createRow(12+k);
+						 row.setHeight((short) 0x200);
+						 for (int j = 0; j < trainClassscheduleCount*6+2; j++) {
+								cell = row.createCell(j);
+								cell.setCellStyle(headStyle);
+								if(j==0){
+									cell.setCellValue(val.get(j));
+								}else if((j+2)%6==0){	//4+2  10+2 16+2
+									cell.setCellValue(val.get(j)+" 分钟");
+								}else if(val.get(j).equals("null")){
+									cell.setCellValue(" ");
+								}else if((j+1)%6==0){
+									if(val.get(j).equals("1")){
+										cell.setCellValue("正常");
+									}else if(val.get(j).equals("2")){
+										cell.setCellValue("迟到");
+									}else if(val.get(j).equals("3")){
+										cell.setCellValue("早退");
+									}else if(val.get(j).equals("4")){
+										cell.setCellValue("缺勤");
+									}else if(val.get(j).equals("5")){
+										cell.setCellValue("迟到早退");
+									}else{
+										cell.setCellValue(val.get(j));
+									}
+								}else{
+									cell.setCellValue(val.get(j));
+								}
+							}
+					 }
+				}
+				fileOutputStream = response.getOutputStream();
+				workbook.write(fileOutputStream);
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				return false;
+			}
+			result = true;
+		}
+		return result;
+	}
+	
     private static CellStyle getCellStyle(HSSFWorkbook workbook, String fontName, Short fontSize, Boolean isBold, HorizontalAlignment horizontalAlignment, VerticalAlignment verticalAlignment) {
         HSSFFont font = workbook.createFont();
         if (StringUtils.isEmpty(fontName))
