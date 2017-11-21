@@ -804,4 +804,192 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 		}
 	}
 	
+	/**
+	 * 获取每天的教师是否订餐就餐情况
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	@RequestMapping("/getOrderDetailList")
+	public void getOrderDetailList(HttpServletRequest request, HttpServletResponse response)
+			throws IOException, IllegalAccessException, InvocationTargetException {
+
+		String type=request.getParameter("type");
+		
+		String year=request.getParameter("YEAR");
+		String month=request.getParameter("MONTH");	
+		String day=request.getParameter("DAY");
+		
+		if(month.length()==1)
+			month="0"+month;
+		if(day.length()==1)
+			day="0"+day;	
+		String date=year+"-"+month+"-"+day;
+		
+		String sql="";
+		if("1".equals(type)){
+			sql="SELECT convert(varchar,a.EmployeeName) as EmployeeName,"
+					+ " convert(varchar,a.EmployeeStrID) as EmployeeStrID "
+					+ " FROM YCSCMDB_up6.dbo.TE_ConsumeDetailXF a"
+					+ " join YCSCMDB_up6.dbo.TC_EMPLOYEE b on a.employeeid=b.employeeid"
+					+ " join TRAIN_T_TEACHERORDER c on b.userId=c.user_id"
+					+ " where a.mealTypeName='早餐' and a.departmentId not like 'Train%' "
+					+ " and c.dinner_date='"+date+"' "
+					+ " and CONVERT(varchar(10),consumeDate, 23)=c.dinner_date"
+					+ " order by EmployeeStrID desc";
+			
+		}else if("2".equals(type)){
+			sql="SELECT convert(varchar,b.EmployeeName) as EmployeeName,"
+					+ " convert(varchar,b.EmployeeStrID) as EmployeeStrID"
+					+ " FROM TRAIN_T_TEACHERORDER a "
+					+ " join YCSCMDB_up6.dbo.TC_EMPLOYEE b on  a.user_id=b.userid "
+					+ " where a.dinner_date='"+date+"' "
+					+ " and b.employeeId not in ("
+					+ " SELECT employeeId "
+					+ " FROM YCSCMDB_up6.dbo.TE_ConsumeDetailXF "
+					+ "	where mealTypeName='早餐' and departmentId not like 'Train%'	"
+					+ " and CONVERT(varchar(10),consumeDate, 23)='"+date+"')"
+					+ " order by EmployeeStrID desc";
+			
+		}else if("3".equals(type)){
+			sql="SELECT convert(varchar,a.EmployeeName) as EmployeeName,"
+					+ " convert(varchar,a.EmployeeStrID) as EmployeeStrID"
+					+ " FROM YCSCMDB_up6.dbo.TE_ConsumeDetailXF a"
+					+ " join YCSCMDB_up6.dbo.TC_EMPLOYEE b on a.employeeid=b.employeeid"
+					+ " where "
+					+ " a.mealTypeName='早餐' and a.departmentId not like 'Train%' "
+					+ " and CONVERT(varchar(10),a.consumeDate, 23)='"+date+"'	"
+					+ " and b.userid not in ("
+					+ " SELECT user_id"
+					+ " FROM TRAIN_T_TEACHERORDER"
+					+ " where dinner_date='"+date+"'"
+					+ " )"
+					+ "order by EmployeeStrID desc";
+		}
+		
+		
+		List<Map<String,Object>> lists=thisService.getForValuesToSql(sql);
+		
+		String strData = jsonBuilder.buildObjListToJson((long) lists.size(), lists, true);
+		writeJSON(response, strData);
+
+	}
+	
+	
+	
+	/**
+	 * 教职工订餐就餐差异汇总数据
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	@RequestMapping(value = { "/getTeacherOrderDiffTotalList" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
+			org.springframework.web.bind.annotation.RequestMethod.POST })
+	public void getTeacherOrderDiffTotalList( HttpServletRequest request, HttpServletResponse response)
+			throws IOException, ParseException {
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");   
+	     
+		String strData = ""; // 返回给js的数据
+		String year=request.getParameter("YEAR");	
+		String month=request.getParameter("MONTH");
+						
+		Integer pageIndex=Integer.parseInt(request.getParameter("page"));;	//page
+		Integer pageSize=Integer.parseInt(request.getParameter("limit"));;	//limit
+		
+		StringBuffer sql = new StringBuffer("EXEC [dbo].[Usp_RPT_TeacherDinnerTotalReportSearch] ");
+		sql.append("'" + year + "',");
+		sql.append("'" + month + "',");		
+		String page=pageIndex + "," + pageSize;
+
+		List<Map<String, Object>> lists=thisService.getForValuesToSql(sql.toString()+page);
+			
+
+		int count=Integer.parseInt(lists.get(0).get("rownum").toString());
+		
+		lists.remove(0);
+		
+		strData = jsonBuilder.buildObjListToJson(Long.valueOf(count), lists, true);// 处理数据
+		
+		writeJSON(response, strData);// 返回数据
+	}
+	
+	/**
+	 * 导出订餐差异汇总信息
+	 *
+	 * @param request
+	 * @param response
+	 * @throws Exception
+	 */
+	@RequestMapping("/exportTeacherOrderDiffTotalExcel")
+	public void exportTeacherOrderDiffTotalExcel(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		request.getSession().setAttribute("exportDinnerDiffTotalIsEnd", "0");
+		request.getSession().removeAttribute("exportDinnerDiffTotalIsState");
+		
+		SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");   
+		//SimpleDateFormat fmtDateWeek = new SimpleDateFormat("yyyy年M月d日 （E）");
+		//SimpleDateFormat fmtTime = new SimpleDateFormat("h:mm");
+		
+		List<Map<String, Object>> allList = new ArrayList<>();
+			
+		try{
+			String year=request.getParameter("YEAR");	
+			String month=request.getParameter("MONTH");
+							
+			Integer pageIndex=0;
+			Integer pageSize=Integer.MAX_VALUE;
+			
+			StringBuffer sql = new StringBuffer("EXEC [dbo].[Usp_RPT_TeacherDinnerTotalReportSearch] ");
+			sql.append("'" + year + "',");
+			sql.append("'" + month + "',");		
+			String page=pageIndex + "," + pageSize;
+
+			List<Map<String, Object>> lists=thisService.getForValuesToSql(sql.toString()+page);
+					
+			lists.remove(0);
+					
+			// 处理基本数据				
+			List<Map<String, String>> exportList = new ArrayList<>();
+			Map<String, String> tempMap = null;
+			for (Map<String, Object> dinnerDiffMap : lists) {
+								
+				tempMap=new LinkedHashMap<>();
+				tempMap.put("rownum", String.valueOf(dinnerDiffMap.get("rownum")));
+				tempMap.put("dinnerDate", String.valueOf(dinnerDiffMap.get("dinnerDate")));
+				tempMap.put("dinnerCount", String.valueOf(dinnerDiffMap.get("dinnerCount")));
+				tempMap.put("dinnerCountA", String.valueOf(dinnerDiffMap.get("dinnerCountA")));
+				tempMap.put("dinnerCountB", String.valueOf(dinnerDiffMap.get("dinnerCountB")));
+				tempMap.put("realCount", String.valueOf(dinnerDiffMap.get("realCount")));
+				tempMap.put("realDinnerCount", String.valueOf(dinnerDiffMap.get("realDinnerCount")));
+				tempMap.put("notDinnerEatCount", String.valueOf(dinnerDiffMap.get("notDinnerEatCount")));	
+				tempMap.put("notEatdinnerCount", String.valueOf(dinnerDiffMap.get("notEatdinnerCount")));		
+				exportList.add(tempMap);
+			}
+						
+			// --------2.组装表格数据
+			Map<String, Object> orderAllMap = new LinkedHashMap<>();
+			orderAllMap.put("data", exportList);
+			orderAllMap.put("title", "订餐就餐汇总信息表");
+			orderAllMap.put("head", new String[] { "序号","就餐日期","订餐总数","A套餐总数","B套餐总数","实际就餐总数","就餐总数（已订餐）","就餐总数（未订餐）","未就餐总数（已订餐）", }); // 规定名字相同的，设定为合并
+			orderAllMap.put("columnWidth", new Integer[] { 10, 15, 12, 12, 12,15,20,20,22 }); // 30代表30个字节，15个字符
+			orderAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0,0,0,0,0}); // 0代表居中，1代表居左，2代表居右
+			orderAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
+			allList.add(orderAllMap);
+	
+			// 在导出方法中进行解析		
+			boolean result = PoiExportExcel.exportExcel(response, " 订餐就餐汇总信息", "订餐就餐汇总信息", allList);
+			if (result == true) {
+				request.getSession().setAttribute("exportDinnerDiffTotalIsEnd", "1");
+			} else {
+				request.getSession().setAttribute("exportDinnerDiffTotalIsEnd", "0");
+				request.getSession().setAttribute("exportDinnerDiffTotalIsState", "0");
+			}
+		}catch(Exception e){
+			request.getSession().setAttribute("exportDinnerDiffTotalIsEnd", "0");
+			request.getSession().setAttribute("exportDinnerDiffTotalIsState", "0");
+		}
+	}
+	
 }

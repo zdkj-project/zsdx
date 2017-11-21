@@ -1,7 +1,7 @@
 Ext.define("core.ordermanage.orderdiffreport.view.DetailLayout", {
 	extend:"core.base.view.BasePanel",
-	alias: "widget.cashreport.detaillayout",
-	funCode: "cashreport_detail",
+	alias: "widget.orderdiffreport.detaillayout",
+	funCode: "orderdiffreport_detail",
 	funData: {
 		action: comm.get("baseUrl") + "/TrainReport", //请求Action
 		whereSql: "", //表格查询条件
@@ -11,9 +11,9 @@ Ext.define("core.ordermanage.orderdiffreport.view.DetailLayout", {
 	},
 	layout: 'fit',
     /*关联此视图控制器*/
-	controller: 'cashreport.detailController',
+	controller: 'orderdiffreport.detailController',
 	items: [{
-		xtype: "cashreport.cashdetailgrid"
+		xtype: "orderdiffreport.ordertotaldetailgrid"
 	}],
 
 	/*设置最小宽度*/

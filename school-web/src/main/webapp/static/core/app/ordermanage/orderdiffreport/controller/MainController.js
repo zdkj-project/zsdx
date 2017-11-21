@@ -330,11 +330,15 @@ Ext.define("core.ordermanage.orderdiffreport.controller.MainController", {
                 var detCode = basePanel.detCode;
                 var funData = basePanel.funData;
 
-                //获取主键值              
-                var pkValue = record.get("EXPENSESERIAL_ID");
+                //获取主键值   
+                var year = record.get("YEAR");
+                var month = record.get("MONTH");           
+                var day = record.get("DAY");
+                
+                var dinnerDate=record.get("dinnerDate");
 
                 //设置tab页的itemId
-                var tabItemId = funCode + "_gridDetail"+pkValue;     //命名规则：funCode+'_ref名称',确保不重复
+                var tabItemId = funCode + "_gridDetail"+dinnerDate;     //命名规则：funCode+'_ref名称',确保不重复
                 //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
                 var tabItem = tabPanel.getComponent(tabItemId);
             
@@ -358,7 +362,7 @@ Ext.define("core.ordermanage.orderdiffreport.controller.MainController", {
                     });
 
 
-                    var tabTitle = record.get("CONSUME_SERIAL")+"-收银明细";
+                    var tabTitle = record.get("dinnerDate")+"-订餐就餐明细";
 
                     tabItem = Ext.create({
                         xtype: 'container',
@@ -366,7 +370,7 @@ Ext.define("core.ordermanage.orderdiffreport.controller.MainController", {
                         //iconCls: 'x-fa fa-clipboard',
                         scrollable: true,
                         itemId: tabItemId,
-                        itemPKV: pkValue,    //保存主键值
+                        itemPKV: dinnerDate,    //保存主键值
                         layout: 'fit',
                     });
                     tabPanel.add(tabItem);
@@ -383,18 +387,68 @@ Ext.define("core.ordermanage.orderdiffreport.controller.MainController", {
                             insertObj: insertObj,                //保存一些需要默认值，提供给提交事件中使用
                             funData: popFunData,                //保存funData数据，提供给提交事件中使用
                             items: [{
-                                xtype: detLayout                            
+                                xtype: detLayout,  
+                                layout: 'hbox',                              
+                                items: [{
+                                    xtype: "orderdiffreport.ordereatdetailgrid",
+                                    title:'就餐名单（已订餐）',
+                                    flex:1,
+                                    split:true,
+                                    height:'100%',                                    
+                                    border:1
+                                },{
+                                    xtype: "orderdiffreport.ordernoteatdetailgrid",
+                                    title:'未就餐名单（已订餐）',
+                                    flex:1,
+                                    split:true,
+                                    height:'100%',
+                                    border:1
+                                },{
+                                    xtype: "orderdiffreport.notordereatdetailgrid",
+                                    title:'就餐名单（未订餐）',
+                                    flex:1,
+                                    split:true,
+                                    height:'100%',
+                                    border:1
+                                }],
+                          
                             }]
                         });
                         tabItem.add(item);
+                        
+                        var orderEatDetailGrid = tabItem.down("basegrid[xtype=orderdiffreport.ordereatdetailgrid]");
+                        var params1={
+                            YEAR:year,
+                            MONTH:month,
+                            DAY:day,
+                            type:"1"
+                        };
+                        orderEatDetailGrid.getStore().getProxy().extraParams=params1;
+                        orderEatDetailGrid.getStore().load();
 
-                        var cashDetailGrid = tabItem.down("basegrid[xtype=cashreport.cashdetailgrid]");
-                        cashDetailGrid.getStore().getProxy().extraParams.filter = '[{"type":"string","comparison":"=","value":"' + pkValue + '","field":"expenseserialId"}]';
-                        cashDetailGrid.getStore().load();
+                        var orderNotEatDetailGrid = tabItem.down("basegrid[xtype=orderdiffreport.ordernoteatdetailgrid]");
+                        var params2={
+                            YEAR:year,
+                            MONTH:month,
+                            DAY:day,
+                            type:"2"
+                        };
+                        orderNotEatDetailGrid.getStore().getProxy().extraParams=params2;
+                        orderNotEatDetailGrid.getStore().load();
+
+                        var notOrderEatDetailGrid = tabItem.down("basegrid[xtype=orderdiffreport.notordereatdetailgrid]");
+                        var params3={
+                            YEAR:year,
+                            MONTH:month,
+                            DAY:day,
+                            type:"3"
+                        };
+                        notOrderEatDetailGrid.getStore().getProxy().extraParams=params3;
+                        notOrderEatDetailGrid.getStore().load();
 
                     }, 30);
 
-                }  else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据
+                }  else if(tabItem.itemPKV&&tabItem.itemPKV!=dinnerDate){     //判断是否点击的是同一条数据
                     self.Warning("您当前已经打开了一个编辑窗口了！");
                     return;
                 }

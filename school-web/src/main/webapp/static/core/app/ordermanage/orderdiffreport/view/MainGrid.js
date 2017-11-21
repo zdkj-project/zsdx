@@ -139,8 +139,12 @@ Ext.define("core.ordermanage.orderdiffreport.view.MainGrid", {
             minWidth:150,
             text: "就餐总数（已订餐）",
             dataIndex: "realDinnerCount",
-            renderer: function(value, metaData) {               
-                return "<span style='color:#0087ff'>"+value+" 份</span>";
+            renderer: function(value, metaData) {    
+                var title = "说明";
+               
+                var html = "若：已订餐的就餐总数 大于 订餐总数，则存在部分人员多次刷卡消费的情况！";
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';                
+                return "<span style='color:#0087ff'>"+value+" 份</span>";                   
             }
         },{
             flex:1.5,      
@@ -162,12 +166,12 @@ Ext.define("core.ordermanage.orderdiffreport.view.MainGrid", {
             xtype: 'actiontextcolumn',
             text: "操作",
             align:'center',
-            width: 100,
+            width: 110,
             fixed: true,
             items: [ {
-                text:'订餐明细',  
+                text:'每日订餐明细',  
                 style:'font-size:12px;',  
-                tooltip: '收银明细',
+                tooltip: '每日订餐明细',
                 ref: 'gridDetail',                
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
@@ -175,7 +179,31 @@ Ext.define("core.ordermanage.orderdiffreport.view.MainGrid", {
                         view: view.grid,
                         record: rec
                     });
-                }
+                },
+                getClass: function (v, metadata, record) {
+                    if (record.get("DAY")==null){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
+                },
+            },{
+                text:'按月份/年度汇总',  
+                style:'font-size:12px;',  
+                tooltip: '按月份/年度汇总',
+                ref: 'gridDetail',                
+                handler: function(view, rowIndex, colIndex, item) {
+                    var rec = view.getStore().getAt(rowIndex);
+                    this.fireEvent('detailTotalClick_Tab', {
+                        view: view.grid,
+                        record: rec
+                    });
+                },
+                getClass: function (v, metadata, record) {
+                    if (record.get("DAY")!=null){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
+                },
             }]
         }]
     },
