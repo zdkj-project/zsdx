@@ -145,12 +145,20 @@ Ext.define("core.train.trainee.view.DetailForm", {
         labelAlign: "right",
         items: [{
             fieldLabel: "所在单位",
-            columnWidth: 1,
+            columnWidth: 0.5,
             name: "workUnit",
             xtype: "textfield",
             emptyText: "请输入所在单位",
             maxLength: 128,
             maxLengthText: "最多128个字符,汉字占2个字符",
+        },{
+            fieldLabel: "学号",
+            columnWidth: 0.5,
+            name: "traineeNumber",
+            xtype: "textfield",
+            emptyText: "请输入学号",
+            maxLength: 20,
+            maxLengthText: "最多20个字符,汉字占2个字符",
         }]
     }, {
         xtype: "container",

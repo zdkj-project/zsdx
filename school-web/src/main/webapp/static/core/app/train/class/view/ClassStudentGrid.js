@@ -102,11 +102,17 @@ Ext.define("core.train.class.view.ClassStudentGrid", {
             columnType: "basecombobox", //列类型
             ddCode: "MZM" //字典代码    
         }, {
-            width: 100,
+            width: 80,
             text: "职务",
-            dataIndex: "position",
+            dataIndex: "position", 
+            renderer: function (value, metaData) {
+                var title = "职务";
+                var html = value;
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                return html;
+            }
         }, {
-            width: 100,
+            width: 90,
             text: "行政级别",
             dataIndex: "headshipLevel",
             columnType: "basecombobox", //列类型
@@ -121,7 +127,7 @@ Ext.define("core.train.class.view.ClassStudentGrid", {
             dataIndex: "mobilePhone",
         }, {
             flex: 1,
-            minWidth: 120,
+            minWidth: 100,
             text: "所在单位",
             dataIndex: "workUnit",
             renderer: function (value, metaData) {
@@ -131,11 +137,15 @@ Ext.define("core.train.class.view.ClassStudentGrid", {
                 return html;
             }
         }, {
-            width: 100,
+            width: 90,
             text: "学员类别",
             dataIndex: "traineeCategory",
             columnType: "basecombobox", //列类型
             ddCode: "TRAINEECATEGORY" //字典代码
+        },{
+            width: 120,
+            text: "学号",
+            dataIndex: "traineeNumber",
         },{
             width: 80,
             text: "学员分班",

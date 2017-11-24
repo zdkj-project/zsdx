@@ -33,7 +33,7 @@ Ext.define("core.train.calcucredit.view.MainGrid", {
          iconCls: 'x-fa fa-plus-circle'
          },*/ {
             xtype: 'button',
-            text: '导出',
+            text: '导出班级学分汇总',
             ref: 'gridExport',
             funCode: 'girdFuntionBtn',
             disabled: false,

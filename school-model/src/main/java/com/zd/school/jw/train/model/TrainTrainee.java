@@ -57,7 +57,7 @@ public class TrainTrainee extends BaseEntity implements Serializable{
         return mzm;
     }
 
-    @MapperCell(cellName="所在单位",order=10,width = 40)
+    @MapperCell(cellName="所在单位",order=8,width = 40)
     @FieldInfo(name = "所在单位")
     @Column(name = "WORK_UNIT", length = 128, nullable = true)
     private String workUnit;
@@ -99,7 +99,7 @@ public class TrainTrainee extends BaseEntity implements Serializable{
         return headshipLevel;
     }
 
-    @MapperCell(cellName="身份证件号",order=7,width = 25)
+    @MapperCell(cellName="身份证件号",order=6,width = 25)
     @FieldInfo(name = "身份证件号")
     @Column(name = "SFZJH", length = 20, nullable = true)
     private String sfzjh;
@@ -110,7 +110,7 @@ public class TrainTrainee extends BaseEntity implements Serializable{
         return sfzjh;
     }
 
-    @MapperCell(cellName="手机号码",order=8,width = 20)
+    @MapperCell(cellName="手机号码",order=7,width = 20)
     @FieldInfo(name = "移动电话")
     @Column(name = "MOBILE_PHONE", length = 36, nullable = false)
     private String mobilePhone;
@@ -228,6 +228,21 @@ public class TrainTrainee extends BaseEntity implements Serializable{
     public void setTraineeCategory(String traineeCategory) {
         this.traineeCategory = traineeCategory;
     }
+    
+    //新加入
+    @MapperCell(cellName="学号",order=10)
+    @FieldInfo(name = "学号")
+    @Column(name = "TRAINEE_NUMBER", length = 20, nullable = true)
+    private  String traineeNumber;
+
+    public String getTraineeNumber() {
+        return traineeNumber;
+    }
+
+    public void setTraineeNumber(String traineeNumber) {
+        this.traineeNumber = traineeNumber;
+    }
+    
     /** 以下为不需要持久化到数据库中的字段,根据项目的需要手工增加
     *@Transient
     *@FieldInfo(name = "")
@@ -271,7 +286,7 @@ public class TrainTrainee extends BaseEntity implements Serializable{
         this.headshipLevelName = headshipLevelName;
     }
 
-    @MapperCell(cellName="政治面貌 ",order=12)
+    @MapperCell(cellName="政治面貌 ",order=11)
     @FieldInfo(name = "政治面貌")
     @Transient
     private String zzmmmName;
@@ -284,7 +299,7 @@ public class TrainTrainee extends BaseEntity implements Serializable{
         this.zzmmmName = zzmmmName;
     }
 
-    @MapperCell(cellName="学历",order=13)
+    @MapperCell(cellName="学历",order=12)
     @FieldInfo(name = "学历")
     @Transient
     private String xlmName;
@@ -298,7 +313,7 @@ public class TrainTrainee extends BaseEntity implements Serializable{
     }
 
 
-    @MapperCell(cellName="学位",order=14)
+    @MapperCell(cellName="学位",order=13)
     @FieldInfo(name = "学位")
     @Transient
     private String xwmName;
@@ -311,7 +326,7 @@ public class TrainTrainee extends BaseEntity implements Serializable{
         this.xwmName = xwmName;
     }
 
-    @MapperCell(cellName="学员类别",order=11)
+    @MapperCell(cellName="学员类别",order=9)
     @FieldInfo(name = "学员类型")
     @Transient
     private String traineeCategoryName;

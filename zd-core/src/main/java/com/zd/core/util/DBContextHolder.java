@@ -13,6 +13,8 @@ public class DBContextHolder{
 	 	public static final String DATA_SOURCE_Q1 = "dataSourceQ1";  
 	    public static final String DATA_SOURCE_OA = "dataSourceSyncOA"; 
 	    public static final String DATA_SOURCE_UP6 = "dataSourceUP6"; 
+	    //public static final String DATA_SOURCE_MYSQL = "dataSourceMysql"; 
+	    
 	    
 	    private static final ThreadLocal<String> contextHolder = new ThreadLocal<String>();  
 	      

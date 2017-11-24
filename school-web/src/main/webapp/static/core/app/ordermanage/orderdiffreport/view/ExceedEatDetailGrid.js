@@ -1,7 +1,7 @@
-/*订餐及吃过早餐的*/
-Ext.define("core.ordermanage.orderdiffreport.view.OrderEatDetailGrid", {
+/*订餐且多刷卡的*/
+Ext.define("core.ordermanage.orderdiffreport.view.ExceedEatDetailGrid", {
     extend: "core.base.view.BaseGrid",
-    alias: "widget.orderdiffreport.ordereatdetailgrid",
+    alias: "widget.orderdiffreport.exceedeatdetailgrid",
     al:false,
     frame: false,
     columnLines: false,
@@ -88,6 +88,11 @@ Ext.define("core.ordermanage.orderdiffreport.view.OrderEatDetailGrid", {
             minWidth:90,
             text: "人员编号",
             dataIndex: "EmployeeStrID"
+        },{
+            flex:0.8,
+            minWidth:80,
+            text: "多刷次数",
+            dataIndex: "number"
         }]
     },
     emptyText: '<span style="width:100%;text-align:center;display: block;">暂无数据</span>'

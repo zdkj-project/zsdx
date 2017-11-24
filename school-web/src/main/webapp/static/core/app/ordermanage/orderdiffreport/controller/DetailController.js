@@ -20,97 +20,23 @@ Ext.define("core.ordermanage.orderdiffreport.controller.DetailController", {
     },
     /** 该视图内的组件事件注册 */
     control: {   
-        //快速搜索文本框回车事件
-        "basepanel basegrid[xtype=cashreport.cashdetailgrid] field[funCode=girdFastSearchText]": {
-            specialkey: function (field, e) {
-                if (e.getKey() == e.ENTER) {
-                    //得到组件                 
-                    var baseGrid = field.up("basegrid");
-                    if (!baseGrid)
-                        return false;
-
-                    var toolBar = field.up("toolbar");
-                    if (!toolBar)
-                        return false;
-                    
-                    var newFilter=[];
-                    var girdSearchTexts = toolBar.query("field[funCode=girdFastSearchText]");
-                    for (var i in girdSearchTexts) {
-                        var name = girdSearchTexts[i].getName();
-                        var value = girdSearchTexts[i].getValue();
-                        newFilter.push({"type":"string","comparison":"","value":value,"field":name});
-                    }
-                  
-                    var store = baseGrid.getStore();
-                    var proxy = store.getProxy();
-
-                    var filter=JSON.parse(proxy.extraParams.filter);               
-                    for(var i=0;i<filter.length;i++){
-                        if(filter[i].field=="expenseserialId"){
-                            newFilter.push({"type":"string","comparison":"=","value":filter[i].value,"field":"expenseserialId"});
-                            break;
-                        }
-                    }
-
-                    proxy.extraParams.filter =JSON.stringify(newFilter);
-                    store.loadPage(1);
-                }
-                return false;
-            }
-        },  
-        //快速搜索按按钮
-        "basepanel basegrid[xtype=cashreport.cashdetailgrid] button[ref=gridFastSearchBtn]": {
-            beforeclick: function (btn) {
-                //得到组件                 
-                var baseGrid = btn.up("basegrid");
-                if (!baseGrid)
-                    return false;
-
-                var toolBar = btn.up("toolbar");
-                if (!toolBar)
-                    return false;
-                
-                var newFilter=[];
-                var girdSearchTexts = toolBar.query("field[funCode=girdFastSearchText]");
-                for (var i in girdSearchTexts) {
-                    var name = girdSearchTexts[i].getName();
-                    var value = girdSearchTexts[i].getValue();
-                    newFilter.push({"type":"string","comparison":"","value":value,"field":name});
-                }
-              
-                var store = baseGrid.getStore();
-                var proxy = store.getProxy();
-
-                var filter=JSON.parse(proxy.extraParams.filter);               
-                for(var i=0;i<filter.length;i++){
-                    if(filter[i].field=="expenseserialId"){
-                        newFilter.push({"type":"string","comparison":"=","value":filter[i].value,"field":"expenseserialId"});
-                        break;
-                    }
-                }
-
-                proxy.extraParams.filter =JSON.stringify(newFilter);
-                store.loadPage(1);
-               
-                return false;
-            }
-        },
-
-        /**
-         * 导出班级就餐详情数据
-         */
-        "basepanel basegrid[xtype=cashreport.cashdetailgrid] button[ref=gridExport]": {
+       
+        "basepanel basegrid[xtype=orderdiffreport.ordertotaldetailgrid] button[ref=gridExport]": {
             beforeclick: function (btn) {
                 var self = this;
                 //得到组件
                 var baseGrid=btn.up("basegrid");
                 var baseFormTab=baseGrid.up("baseformtab");
 
+                //获取表格参数
+                var extraParams = baseGrid.getStore().getProxy().extraParams;
+                var params="?t=1";
                 
-                var expenseserialId=baseFormTab.insertObj.EXPENSESERIAL_ID;
-                var consumeSerial=baseFormTab.insertObj.CONSUME_SERIAL;
-                var params="?expenseserialId="+expenseserialId+"&consumeSerial="+consumeSerial;
-                var title = "确定要导出此流水号的详细信息吗？";
+                for(var i in extraParams){
+                    if(extraParams[i]!=undefined)
+                        params+="&"+i+"="+extraParams[i];
+                }
+                var title = "确定要导出订餐就餐差异汇总信息吗？";
             
                 Ext.Msg.confirm('提示', title, function (btn, text) {
                     if (btn == "yes") {
@@ -121,14 +47,14 @@ Ext.define("core.ordermanage.orderdiffreport.controller.DetailController", {
                             width: 0,
                             height:0,
                             hidden:true,
-                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainReport/exportCashDetailExcel' + params + '"></iframe>',
+                            html: '<iframe src="' + comm.get('baseUrl') + '/TrainTeacherOrder/exportTeacherOrderDiffTotalExcel' + params + '"></iframe>',
                             renderTo: Ext.getBody()
                         });
                         
                        
                         var time=function(){
                             self.syncAjax({
-                                url: comm.get('baseUrl') + '/TrainReport/checkCashDetailEnd',
+                                url: comm.get('baseUrl') + '/TrainTeacherOrder/checkExportTeacherOrderDiffTotalEnd',
                                 timeout: 1000*60*30,        //半个小时         
                                 //回调代码必须写在里面
                                 success: function(response) {

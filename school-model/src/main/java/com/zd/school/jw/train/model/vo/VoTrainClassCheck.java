@@ -159,4 +159,13 @@ public class VoTrainClassCheck implements Serializable {
         return remark;
     }
     
+    @FieldInfo(name = "学号")  
+    private  String traineeNumber;
+
+    public String getTraineeNumber() {
+        return traineeNumber;
+    }
+    public void setTraineeNumber(String traineeNumber) {
+        this.traineeNumber = traineeNumber;
+    }
 }

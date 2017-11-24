@@ -1,26 +1,18 @@
 package com.zd.core.security;
 
-import java.io.IOException;
 import java.util.List;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.orcl.sync.model.hibernate.hibernate.HrDepartment;
 import com.orcl.sync.model.hibernate.hibernate.HrDeptPosition;
 import com.orcl.sync.model.hibernate.hibernate.HrPosition;
 import com.orcl.sync.model.hibernate.hibernate.HrUser;
 import com.orcl.sync.model.hibernate.hibernate.HrUserDepartmentPosition;
-import com.zd.core.util.CustomerContextHolder;
 import com.zd.core.util.DBContextHolder;
-import com.zd.school.plartform.baseset.model.BaseOrgToUP;
+import com.zd.school.oa.meeting.service.OaMeetingService;
 import com.zd.school.plartform.baseset.service.BaseOrgService;
 import com.zd.school.plartform.system.model.CardUserInfoToUP;
 import com.zd.school.plartform.system.model.SysUserToUP;
@@ -32,28 +24,31 @@ public class SyncJobQuartz {
 	@Resource
 	private SysUserService thisService; // service层接口
 	
-	@Resource
-    private SessionFactory sssssss;
+
     @Resource
     private BaseOrgService orgService;
+    
+    @Resource
+    private OaMeetingService meetingService;
+    
     
 	private static Logger logger = Logger.getLogger(SyncJobQuartz.class);
 
 	protected void execute() {
 		try {
 			int row=0;
-//			// 1：同步OA用户、部门数据
-//			row=syncOaUserAndDept();
-//			if(row>=0){
-//				logger.info("定时同步OA人员部门数据成功！");
-//			}else{
-//				logger.info("定时同步OA人员部门数据失败，详见错误日志！");
-//			}
+			// 1：同步OA用户、部门数据
+			row=syncOaUserAndDept();
+			if(row>=0){
+				logger.info("定时同步OA人员部门数据成功！");
+			}else{
+				logger.info("定时同步OA人员部门数据失败，详见错误日志！");
+			}
 			
 			// 2：同步人员数据到UP
 			row=SyncUserIntoUp();
 			if(row>=0){
-				logger.info("定时同步人员数据,影响"+row+"条数据！");
+				logger.info("定时同步人员数据成功！");
 			}else{
 				logger.info("定时同步人员数据失败，详见错误日志！");
 			}
@@ -61,13 +56,18 @@ public class SyncJobQuartz {
 			// 3：同步UP中的发卡数据
 			row=SyncUserCardFromUp();
 			if(row>=0){
-				logger.info("定时同步人员发卡数据,影响"+row+"条数据！");
+				logger.info("定时同步人员发卡数据成功！");
 			}else{
 				logger.info("定时同步人员发卡数据失败，详见错误日志！");
 			}
 			
 			// 4：同步OA会议数据
-
+			row=syncOaMeeting();
+			if(row>=0){
+				logger.info("定时同步OA会议数据成功！");
+			}else{
+				logger.info("定时同步OA会议数据失败，详见错误日志！");
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -110,7 +110,8 @@ public class SyncJobQuartz {
 
 		} catch (Exception e) {
 			row = -1;
-			logger.error(e.getStackTrace());
+			logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
 		} finally {
 			// 恢复数据源
 			DBContextHolder.clearDBType();
@@ -164,7 +165,8 @@ public class SyncJobQuartz {
 
 		} catch (Exception e) {
 			row = -1;
-			logger.error(e.getStackTrace());
+			logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
 		}
 
 		return row;
@@ -173,45 +175,64 @@ public class SyncJobQuartz {
     private int syncOaUserAndDept() {
     	int row = 0;
         try {
-        	 //启用orcl数据库
-	        CustomerContextHolder.setCustomerType(CustomerContextHolder.SESSION_FACTORY_ORACLE);
-	        Session session = sssssss.openSession();
-	        session.beginTransaction();
+        	//切换oracle数据库
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_OA);
 	        
-	        //1:查询OA的部门数据
-	        Query query = session.createQuery("from HrDepartment");
-	        List<HrDepartment> deptList = query.list();
-	        
+			//1:查询OA的部门数据
+	        List<HrDepartment> deptList =  thisService.getForValues("from HrDepartment");
+	      
 	        //2:查询OA的岗位数据
-	        query = session.createQuery("from HrPosition");
-	        List<HrPosition> jobList = query.list();
+	        List<HrPosition> jobList = thisService.getForValues("from HrPosition");
 	        
 	        //3:查询OA的部门岗位数据
-	        query = session.createQuery("from HrDeptPosition");
-	        List<HrDeptPosition> deptJobList = query.list();
+	        List<HrDeptPosition> deptJobList =thisService.getForValues("from HrDeptPosition");
 	        
-	        query = session.createQuery("from HrUserDepartmentPosition where departmentId is not null and deptPositionId is not null");
-	        List<HrUserDepartmentPosition> userDeptList = query.list();
+	        //4:查询OA用户部门岗位数据
+	        List<HrUserDepartmentPosition> userDeptList =thisService.getForValues("from HrUserDepartmentPosition where departmentId is not null and deptPositionId is not null");
 	        
-	        //4：查询用户数据
-            query = session.createQuery("from HrUser where accounts is not null ");
-            List<HrUser> userList = query.list();
+	        //5：查询用户数据
+            List<HrUser> userList = thisService.getForValues("from HrUser where accounts is not null ");
 
-	        //提交事务
-	        session.getTransaction().commit();
-	        //关闭session
-	        session.flush();
-	        session.close();
-	        
-	        //切换回Q1
-	        CustomerContextHolder.setCustomerType(CustomerContextHolder.SESSION_FACTORY_MYSQL);
+	    
+            //重置数据库源，切换回Q1
+            DBContextHolder.clearDBType();	        	     
 	        
 	        Integer state=thisService.doSyncOaUserandDept(deptList,jobList,deptJobList,userDeptList,userList);
 	        
-	        row=1;
+	        row=state;
         } catch (Exception e) {
         	row = -1;
-            logger.error(e.getMessage());         
+            logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
+        }
+        return row;
+    }
+    
+    private int syncOaMeeting() {
+    	int row = 0;
+        try {
+        	//切换oracle数据库
+        	DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_OA);
+			
+			// 从这个表直接获取人员数据，并进行拆分入库
+			// 目前MEETING_USER_IDS 的字符长度为4000，可能会存在隐患，今后OA那边可能会处理，改为clob类型
+			List<Object[]> meetingList = thisService.ObjectQuerySql(
+				"select MEETING_ID,cast(MEETING_TITLE as VARCHAR2(255)),cast(CONTENT as VARCHAR2(2048)),"
+						+ " cast(MEETING_CATEGORY as VARCHAR2(255)),BEGIN_TIME,END_TIME,"
+						+ " cast(ROOM_NAME as VARCHAR2(255)),cast(CREATE_BY as VARCHAR2(255)),"
+						+ " cast(MEETING_USER_IDS as  VARCHAR2(4000)), cast(MEETING_USER_NAMES as  VARCHAR2(4000))"
+						+ " from zsdx_sync.meeting_msg where BEGIN_TIME >=(sysdate-7) ORDER BY  BEGIN_TIME ASC");
+	    
+            //重置数据库源，切换回Q1
+            DBContextHolder.clearDBType();	        	     
+
+            Integer state = meetingService.doSyncMetting(meetingList);
+	        
+	        row=state;
+        } catch (Exception e) {
+        	row = -1;
+            logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
         }
         return row;
     }

@@ -103,24 +103,24 @@ Ext.define("core.ordermanage.orderdiffreport.view.MainGrid", {
             //     return value;                           
             // }
         },{  
-            flex:1,      
-            minWidth:100,
+            flex:0.8,      
+            minWidth:80,
             text: "订餐总数",
             dataIndex: "dinnerCount",
             renderer: function(value, metaData) {               
                 return value+" 份";
             }
         }, {
-            flex:1,      
-            minWidth:100,
+            flex:0.9,      
+            minWidth:90,
             text: "A套餐总数",
             dataIndex: "dinnerCountA",
             renderer: function(value, metaData) {               
                 return value+" 份";
             }
         },{
-            flex:1,      
-            minWidth:100,
+            flex:0.9,      
+            minWidth:90,
             text: "B套餐总数",
             dataIndex: "dinnerCountB",
             renderer: function(value, metaData) {               
@@ -135,28 +135,36 @@ Ext.define("core.ordermanage.orderdiffreport.view.MainGrid", {
                 return "<span style='color:green'>"+value+" 份</span>";
             }
         },{
-            flex:1.5,      
-            minWidth:150,
+            flex:1.4,      
+            minWidth:140,
             text: "就餐总数（已订餐）",
-            dataIndex: "realDinnerCount",
-            renderer: function(value, metaData) {    
-                var title = "说明";
-               
-                var html = "若：已订餐的就餐总数 大于 订餐总数，则存在部分人员多次刷卡消费的情况！";
-                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';                
-                return "<span style='color:#0087ff'>"+value+" 份</span>";                   
-            }
+            dataIndex: "realDinnerCount",     
+            renderer: function(value, metaData) {               
+                return "<span style='color:#0087ff'>"+value+" 份</span>";
+            }   
         },{
-            flex:1.5,      
-            minWidth:150,
+            flex:1.4,      
+            minWidth:140,
             text: "就餐总数（未订餐）",
             dataIndex: "notDinnerEatCount",
             renderer: function(value, metaData) {               
                 return "<span style='color:#ff00ae'>"+value+" 份</span>";
             }
         },{
-            flex:1.6,      
-            minWidth:160,
+            flex:1.3,      
+            minWidth:130,
+            text: "订餐且多刷总数",
+            dataIndex: "exceedEatCount",
+            renderer: function(value, metaData) {    
+                var title = "说明";
+               
+                var html = "每天只能订一餐，若存在教职工已订餐，但在就餐时，打了多份餐，那么就会把多次刷卡的数据记录在这里！";
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';                
+                return "<span style='color:#7e2561'>"+value+" 份</span>";                   
+            }
+        },{
+            flex:1.55,      
+            minWidth:155,
             text: "未就餐总数（已订餐）",
             dataIndex: "notEatdinnerCount",
             renderer: function(value, metaData) {               
@@ -193,7 +201,7 @@ Ext.define("core.ordermanage.orderdiffreport.view.MainGrid", {
                 ref: 'gridDetail',                
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
-                    this.fireEvent('detailTotalClick_Tab', {
+                    this.fireEvent('detailDiffTotalClick_Tab', {
                         view: view.grid,
                         record: rec
                     });

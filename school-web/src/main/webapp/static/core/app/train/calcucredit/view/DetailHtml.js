@@ -38,7 +38,7 @@ Ext.define("core.train.calcucredit.view.DetailHtml", {
             '<span style="width:10%" data-align="center">上课日期</span><span style="width:10%" data-align="center">上课时间</span>' +
             '<span style="width:10%" data-align="center">课程学分</span><span style="width:10%" data-align="center">实际学分</span></li>',
             '{% if (values.rows.length == 0) %}',
-            '<li style="width:100%;font-size: 14px;font-weight: 400;text-align: center;line-height: 100px;">此指标暂无评价标准...</li>',
+            '<li style="width:100%;font-size: 14px;font-weight: 400;text-align: center;line-height: 100px;">暂无课程数据...</li>',
             '{% if (values.rows.length == 0 ) return  %}',   //reutrun 表示不执行下面的了，在for里面可以使用break、continue
             '<tpl for="rows">',
             '<li><span style="width:5%">{[xindex]}</span><span style="width: 25%;text-align:left;" >{className}</span><span style="width: 30%;text-align:left;" >{courseName}</span>' +

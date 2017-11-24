@@ -9,6 +9,7 @@ Ext.define("core.ordermanage.orderdiffreport.view.NotOrderEatDetailGrid", {
     //model: "com.zd.school.cashier.model.CashExpensedetail", //对应的数据模型
     noPagging:true,
     remoteSort:false,
+    selModel:null,
     /**
      * 高级查询面板
      */
@@ -79,12 +80,12 @@ Ext.define("core.ordermanage.orderdiffreport.view.NotOrderEatDetailGrid", {
             align: 'center'
         }, {
             flex:1,
-            minWidth:100,
+            minWidth:90,
             text: "姓名",
             dataIndex: "EmployeeName"
         }, {
             flex:1,
-            minWidth:100,
+            minWidth:90,
             text: "人员编号",
             dataIndex: "EmployeeStrID"
         }]

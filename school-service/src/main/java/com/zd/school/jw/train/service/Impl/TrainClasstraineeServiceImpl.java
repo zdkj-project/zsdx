@@ -351,32 +351,33 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 				trainee.setPosition(String.valueOf(lo.get(5)));
 				trainee.setHeadshipLevel(mapHeadshipLevel.get(lo.get(6)));
 				trainee.setClassGroup(mapClassGroup.get(lo.get(8)));
+				trainee.setTraineeNumber(String.valueOf(lo.get(9)));	//学号
 				trainee.setIsDelete(isDelete); // 设置isdelte值
 
 				if (needSync.equals("1")) { // 同步到学员库
 					if (trainTrainee == null) {
 						trainTrainee = new TrainTrainee();
 
-						// 当学员库没有此学员的时候，暂时加入这些数据（已存在的学员暂时不处理）
-						trainTrainee.setTraineeCategory(mapTraineeCategory.get(lo.get(7)));
-						trainTrainee.setMzm(mapMzm.get(lo.get(9)));
-						trainTrainee.setZzmmm(mapZzmm.get(lo.get(10)));
-						trainTrainee.setXlm(mapXlm.get(lo.get(11)));
-						trainTrainee.setXwm(mapXwm.get(lo.get(12)));
+						// 当学员库没有此学员的时候，暂时加入这些数据（已存在的学员暂时不处理）					
+						trainTrainee.setMzm(mapMzm.get(lo.get(10)));
+						trainTrainee.setZzmmm(mapZzmm.get(lo.get(11)));
+						trainTrainee.setXlm(mapXlm.get(lo.get(12)));
+						trainTrainee.setXwm(mapXwm.get(lo.get(13)));
 
-						trainTrainee.setZym(String.valueOf(lo.get(13)));
-						trainTrainee.setGraduateSchool(String.valueOf(lo.get(14)));
-						trainTrainee.setDzxx(String.valueOf(lo.get(15)));
-						trainTrainee.setAddress(String.valueOf(lo.get(16)));
-						trainTrainee.setPartySchoolNumb(String.valueOf(lo.get(17)));
-						trainTrainee.setNationalSchoolNumb(String.valueOf(lo.get(18)));
+						trainTrainee.setZym(String.valueOf(lo.get(14)));
+						trainTrainee.setGraduateSchool(String.valueOf(lo.get(15)));
+						trainTrainee.setDzxx(String.valueOf(lo.get(16)));
+						trainTrainee.setAddress(String.valueOf(lo.get(17)));
+						trainTrainee.setPartySchoolNumb(String.valueOf(lo.get(18)));
+						trainTrainee.setNationalSchoolNumb(String.valueOf(lo.get(19)));
 
 						// trainTrainee.setZp(String.valueOf(lo.get(19)));
 						// 照片使用身份证号码.jpg
 						trainTrainee.setZp("/static/upload/traineePhoto/" + trainee.getSfzjh() + ".jpg");
 
 					}
-
+					
+					trainTrainee.setTraineeCategory(mapTraineeCategory.get(lo.get(7)));
 					trainTrainee.setXm(trainee.getXm());
 					trainTrainee.setXbm(trainee.getXbm());
 					trainTrainee.setMobilePhone(trainee.getMobilePhone());
@@ -384,6 +385,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 					trainTrainee.setWorkUnit(trainee.getWorkUnit());
 					trainTrainee.setPosition(trainee.getPosition());
 					trainTrainee.setHeadshipLevel(trainee.getHeadshipLevel());
+					trainTrainee.setTraineeNumber(trainee.getTraineeNumber());	//学号
 					trainTrainee.setIsDelete(0);
 					trainTrainee.setUpdateTime(new Date()); // 设置修改时间
 					trainTrainee.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
@@ -472,7 +474,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 	@Override
 	public QueryResult<VoTrainClassCheck> getCheckList(Integer start, Integer limit, String classId,
 			String classScheduleId, String xm) {
-		String sql = "SELECT classTraineeId, classId, traineeId, xm, xbm, mobilePhone, workUnit, classScheduleId,incardTime,outcardTime,attendResult,attendMinute,isLeave,remark "
+		String sql = "SELECT classTraineeId, classId, traineeId, xm, xbm, mobilePhone, workUnit, classScheduleId,incardTime,outcardTime,attendResult,attendMinute,isLeave,remark,traineeNumber "
 				+ " FROM TRAIN_V_CHECKRESULT where 1=1 ";
 		if (StringUtils.isNotEmpty(classId))
 			sql += " and classId='" + classId + "'";
@@ -480,6 +482,9 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			sql += " and classScheduleId='" + classScheduleId + "'";
 		if (StringUtils.isNotEmpty(xm))
 			sql += " and xm like '%" + xm + "%'";
+		
+		sql+=" order by traineeNumber asc,xm asc";
+		
 		QueryResult<VoTrainClassCheck> qr = this.doQueryResultSqlObject(sql, start, limit, VoTrainClassCheck.class);
 
 		return qr;

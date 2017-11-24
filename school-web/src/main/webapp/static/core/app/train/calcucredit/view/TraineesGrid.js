@@ -28,7 +28,7 @@ Ext.define('core.train.calcucredit.view.TraineesGrid', {
         xtype: 'toolbar',
         items: [{
             xtype: 'button',
-            text: '导出',
+            text: '导出学员学分汇总',
             ref: 'gridExport',
             funCode: 'girdFuntionBtn',
             iconCls: 'x-fa fa-file'
@@ -69,7 +69,7 @@ Ext.define('core.train.calcucredit.view.TraineesGrid', {
             text: '序号',
             align: 'center'
         }, {
-            width: 100,
+            width: 80,
             text: "姓名",
             dataIndex: "xm"
         }, {
@@ -84,21 +84,37 @@ Ext.define('core.train.calcucredit.view.TraineesGrid', {
             dataIndex: "mobilePhone"
         },{
             flex:1,
-            minWidth: 120,
+            minWidth: 100,
             text: "所在单位",
-            dataIndex: "workUnit"
+            dataIndex: "workUnit",
+            renderer: function (value, metaData) {
+                var title = "所在单位";
+                var html = value;
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                return html;
+            }
+        },{
+            width:120,
+            text: "学号",
+            dataIndex: "traineeNumber"
         },{
             width:120,
             text: "职务",
-            dataIndex: "position"
+            dataIndex: "position",
+            renderer: function (value, metaData) {
+                var title = "职务";
+                var html = value;
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
+                return html;
+            }
         },{
-            width:120,
+            width:100,
             text: "行政级别",
             dataIndex: "headshipLevel",
             columnType: "basecombobox", //列类型
             ddCode: "HEADSHIPLEVEL" //字典代码
         },{
-            width:100,
+            width:80,
             text: "学分 ",
             dataIndex: "realRredit"
         },{
@@ -117,7 +133,7 @@ Ext.define('core.train.calcucredit.view.TraineesGrid', {
             xtype: 'actiontextcolumn',
             text: "操作",
             align: 'center',
-            width: 100,
+            width: 80,
             fixed: true,
             items: [{
                 text: '详情',

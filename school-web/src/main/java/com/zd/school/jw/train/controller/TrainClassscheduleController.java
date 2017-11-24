@@ -428,10 +428,12 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 
 		String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
 				+ ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId,evalState "
-				+ ",teachTypeName FROM TRAIN_V_CLASSCOURSEEVAL where classId=''{0}'' ";
+				+ ",teachTypeName FROM TRAIN_V_CLASSCOURSEEVAL where  classId=''{0}'' ";
 		sql = MessageFormat.format(sql, classId);
 		if (StringUtils.isNotEmpty(orderSql)) {
 			sql += orderSql;
+		}else{
+			sql += " ORDER BY evalState desc,courseDate asc,courseTime asc";
 		}
 		QueryResult<TrainClassCourseEval> list = thisService.doQueryResultSqlObject(sql, start, limit,
 				TrainClassCourseEval.class);
@@ -496,14 +498,14 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 		List<Map<String, Object>> trainClassscheduleList = null;
 		sql = "SELECT CLASS_SCHEDULE_ID,COURSE_NAME,BEGIN_TIME,END_TIME FROM TRAIN_T_CLASSSCHEDULE where ISDELETE=0";
 		sql += " and CLASS_SCHEDULE_ID in ('" + ids.replace(",", "','") + "')";
-		sql += " order by CLASS_SCHEDULE_ID asc";
+		sql += " order by BEGIN_TIME asc";
 		trainClassscheduleList = thisService.getForValuesToSql(sql);
 
 		// 4.班级课程考勤信息信息(最新加入 是否请假、备注)
 		List<Map<String, Object>> voTrainClassCheckList = null;
 		List<String> classScheduleIdList = new ArrayList<>();
-		sql = "SELECT xm,classTraineeId,incardTime,outcardTime,attendResult,attendMinute,isleave,remark FROM TRAIN_V_CHECKRESULT WHERE classScheduleId in ('"
-				+ ids.replace(",", "','") + "') order by classScheduleId asc";
+		sql = "SELECT xm,classTraineeId,incardTime,outcardTime,attendResult,attendMinute,isleave,remark,traineeNumber FROM TRAIN_V_CHECKRESULT WHERE classScheduleId in ('"
+				+ ids.replace(",", "','") + "') order by beginTime asc";
 		voTrainClassCheckList = thisService.getForValuesToSql(sql);
 		int voTrainClassCheckListCount = voTrainClassCheckList.size();
 
@@ -517,6 +519,7 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 				lists = new ArrayList<>();
 				lists.add(String.valueOf(i + 1));
 				lists.add(String.valueOf(tcc.get("xm")));
+				lists.add(String.valueOf(tcc.get("traineeNumber")));
 			}
 			String incardTime = String.valueOf(tcc.get("incardTime"));
 			if (incardTime.equals("null") == false) {
@@ -562,11 +565,11 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 		classAllMap1.put("data", classList1);
 		classAllMap1.put("title", "班级课程考勤信息表");
 		classAllMap1.put("columnWidth", 15);
-		classAllMap1.put("headColumnCount", 8);
+		classAllMap1.put("headColumnCount", 9);
 		allList.add(classAllMap1);
 
 		// 在导出方法中进行解析
-		boolean result = exportMeetingInfo.exportCouseCheckResultInfoExcel(response, trainClass.getClassName() + "班级信息",
+		boolean result = exportMeetingInfo.exportCouseCheckResultInfoExcel(response, trainClass.getClassName() + "班级课程考勤信息",
 				trainClass.getClassName() + "班课程考勤表", allList);
 		if (result == true) {
 			request.getSession().setAttribute("exportCourseAttendIsEnd", "1");

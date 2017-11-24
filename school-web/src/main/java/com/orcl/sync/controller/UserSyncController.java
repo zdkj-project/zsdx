@@ -1,37 +1,33 @@
 package com.orcl.sync.controller;
 
-import com.orcl.sync.model.hibernate.hibernate.*;
-import com.zd.core.constant.Constant;
-import com.zd.core.controller.core.FrameWorkController;
-import com.zd.core.util.CustomerContextHolder;
-import com.zd.core.util.DBContextHolder;
-import com.zd.core.util.DateUtil;
-import com.zd.core.util.StringUtils;
-import com.zd.school.oa.doc.model.DocSendcheck;
-import com.zd.school.plartform.baseset.model.*;
-import com.zd.school.plartform.baseset.service.BaseDeptjobService;
-import com.zd.school.plartform.baseset.service.BaseJobService;
-import com.zd.school.plartform.baseset.service.BaseOrgService;
-import com.zd.school.plartform.baseset.service.BaseUserdeptjobService;
-import com.zd.school.plartform.system.model.SysRole;
-import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.plartform.system.model.SysUserToUP;
-import com.zd.school.plartform.system.service.SysRoleService;
-import com.zd.school.plartform.system.service.SysUserService;
-import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import java.io.IOException;
+import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.text.MessageFormat;
-import java.util.*;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.orcl.sync.model.hibernate.hibernate.HrDepartment;
+import com.orcl.sync.model.hibernate.hibernate.HrDeptPosition;
+import com.orcl.sync.model.hibernate.hibernate.HrPosition;
+import com.orcl.sync.model.hibernate.hibernate.HrUser;
+import com.orcl.sync.model.hibernate.hibernate.HrUserDepartmentPosition;
+import com.zd.core.constant.Constant;
+import com.zd.core.controller.core.FrameWorkController;
+import com.zd.core.util.DBContextHolder;
+import com.zd.school.oa.doc.model.DocSendcheck;
+import com.zd.school.plartform.baseset.model.BaseOrgToUP;
+import com.zd.school.plartform.baseset.service.BaseDeptjobService;
+import com.zd.school.plartform.baseset.service.BaseJobService;
+import com.zd.school.plartform.baseset.service.BaseOrgService;
+import com.zd.school.plartform.baseset.service.BaseUserdeptjobService;
+import com.zd.school.plartform.system.model.SysUserToUP;
+import com.zd.school.plartform.system.service.SysRoleService;
+import com.zd.school.plartform.system.service.SysUserService;
 
 @Controller
 @RequestMapping("/usersync")
@@ -39,18 +35,18 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
 
     private static Logger logger = Logger.getLogger(UserSyncController.class);
 
-    private static final HttpServletRequest HttpServletRequest = null;
-    private static final HttpServletResponse HttpServletResponse = null;
-    private static final HttpServletRequest HttpServletRequest1 = null;
-    private static final HttpServletResponse HttpServletResponse1 = null;
-    private static final HttpServletRequest HttpServletRequestDeptJob = null;
-    private static final HttpServletResponse HttpServletResponseDeptJob = null;
-    private static final HttpServletRequest HttpServletRequestUserDeptJob = null;
-    private static final HttpServletResponse HttpServletResponseUserDeptJob = null;
+//    private static final HttpServletRequest HttpServletRequest = null;
+//    private static final HttpServletResponse HttpServletResponse = null;
+//    private static final HttpServletRequest HttpServletRequest1 = null;
+//    private static final HttpServletResponse HttpServletResponse1 = null;
+//    private static final HttpServletRequest HttpServletRequestDeptJob = null;
+//    private static final HttpServletResponse HttpServletResponseDeptJob = null;
+//    private static final HttpServletRequest HttpServletRequestUserDeptJob = null;
+//    private static final HttpServletResponse HttpServletResponseUserDeptJob = null;
 
-    @Resource
+    //@Resource
     //orcl的session工厂
-    private SessionFactory sssssss;
+    //private SessionFactory sssssss;
     @Resource
     private BaseOrgService orgService;
     @Resource
@@ -68,7 +64,7 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
     @Resource
     private BaseUserdeptjobService userdeptjobService;
 
-
+/* 已废弃
     @RequestMapping(value = "list")
     public void create(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.getSession().setAttribute("UserSyncIsEnd", "0");
@@ -353,24 +349,9 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
         }
         writeJSON(response, jsonBuilder.returnSuccessJson("'同步成功'"));
     }
-
-    @RequestMapping("/checkUserSyncEnd")
-    public void checkUserSyncEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        Object isEnd = request.getSession().getAttribute("UserSyncIsEnd");
-        Object state = request.getSession().getAttribute("UserSyncState");
-        if (isEnd != null) {
-            if ("1".equals(isEnd.toString())) {
-                writeJSON(response, jsonBuilder.returnSuccessJson("\"同步完成！\""));
-            } else if (state != null && state.equals("0")) {
-                writeJSON(response, jsonBuilder.returnFailureJson("0"));
-            } else {
-                writeJSON(response, jsonBuilder.returnFailureJson("\"同步未完成！\""));
-            }
-        } else {
-            writeJSON(response, jsonBuilder.returnFailureJson("\"同步未完成！\""));
-        }
-    }
-
+*/
+    
+/*已废弃
     @RequestMapping(value = "deptToUp")
     public void syncDeptToUp(HttpServletRequest request, HttpServletResponse response) throws IOException{
         StringBuffer returnJson = null;
@@ -401,6 +382,7 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
 
         writeJSON(response, returnJson.toString());
     }
+ */
     
     /**
      * zzk修改
@@ -408,44 +390,32 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
      * @param response
      * @throws IOException
      */
-    @SuppressWarnings("unchecked")
 	@RequestMapping(value = "syncOaUserAndDept")
     public void syncOaUserAndDept(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.getSession().setAttribute("UserSyncIsEnd", "0");
         request.getSession().removeAttribute("UserSyncState");
         try {
-        	 //启用orcl数据库
-	        CustomerContextHolder.setCustomerType(CustomerContextHolder.SESSION_FACTORY_ORACLE);
-	        Session session = sssssss.openSession();
-	        session.beginTransaction();
+        	//切换oracle数据库
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_OA);
 	        
 	        //1:查询OA的部门数据
-	        Query query = session.createQuery("from HrDepartment");
-	        List<HrDepartment> deptList = query.list();
-	        
+	        List<HrDepartment> deptList =  userservice.getForValues("from HrDepartment");
+	      
 	        //2:查询OA的岗位数据
-	        query = session.createQuery("from HrPosition");
-	        List<HrPosition> jobList = query.list();
+	        List<HrPosition> jobList = userservice.getForValues("from HrPosition");
 	        
 	        //3:查询OA的部门岗位数据
-	        query = session.createQuery("from HrDeptPosition");
-	        List<HrDeptPosition> deptJobList = query.list();
+	        List<HrDeptPosition> deptJobList =userservice.getForValues("from HrDeptPosition");
 	        
-	        query = session.createQuery("from HrUserDepartmentPosition where departmentId is not null and deptPositionId is not null");
-	        List<HrUserDepartmentPosition> userDeptList = query.list();
+	        //4:查询OA用户部门岗位数据
+	        List<HrUserDepartmentPosition> userDeptList =userservice.getForValues("from HrUserDepartmentPosition where departmentId is not null and deptPositionId is not null");
 	        
-	        //4：查询用户数据
-            query = session.createQuery("from HrUser where accounts is not null ");
-            List<HrUser> userList = query.list();
-
-	        //提交事务
-	        session.getTransaction().commit();
-	        //关闭session
-	        session.flush();
-	        session.close();
+	        //5：查询用户数据
+            List<HrUser> userList = userservice.getForValues("from HrUser where accounts is not null ");
+            
 	        
-	        //切换回Q1
-	        CustomerContextHolder.setCustomerType(CustomerContextHolder.SESSION_FACTORY_MYSQL);
+	        //重置数据库源，切换回Q1
+            DBContextHolder.clearDBType();
 	        
 	        Integer state=userservice.doSyncOaUserandDept(deptList,jobList,deptJobList,userDeptList,userList);
 	        
@@ -462,7 +432,7 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
 
 	            List<BaseOrgToUP> deptInfo = orgService.doQuerySqlObject(sql, BaseOrgToUP.class);
 	            
-	           // 2.查询最新的用户、部门信息
+	            // 2.查询最新的用户、部门信息
 				sql = "select  u.USER_ID as userId,u.XM as employeeName, u.user_numb as employeeStrId,"
 						+ "'' as employeePwd,CASE u.XBM WHEN '2' THEN '0' ELSE '1' END AS sexId,u.isDelete as isDelete,"
 						+ "u.SFZJH AS identifier,'1' AS cardState, " // cardState
@@ -494,6 +464,8 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
 				} 
 				
 				//3.暂不同步卡发信息数据
+				
+				//重置数据源
 			    DBContextHolder.clearDBType();
 			       
 	          
@@ -505,7 +477,25 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
 	        
         } catch (Exception e) {
             logger.error(e.getMessage());
+            logger.error(e.getStackTrace());
             request.getSession().setAttribute("UserSyncState", "0");
+        }
+    }
+    
+    @RequestMapping("/checkUserSyncEnd")
+    public void checkUserSyncEnd(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Object isEnd = request.getSession().getAttribute("UserSyncIsEnd");
+        Object state = request.getSession().getAttribute("UserSyncState");
+        if (isEnd != null) {
+            if ("1".equals(isEnd.toString())) {
+                writeJSON(response, jsonBuilder.returnSuccessJson("\"同步完成！\""));
+            } else if (state != null && state.equals("0")) {
+                writeJSON(response, jsonBuilder.returnFailureJson("0"));
+            } else {
+                writeJSON(response, jsonBuilder.returnFailureJson("\"同步未完成！\""));
+            }
+        } else {
+            writeJSON(response, jsonBuilder.returnFailureJson("\"同步未完成！\""));
         }
     }
 }

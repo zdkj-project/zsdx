@@ -601,7 +601,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		// 处理班级基本数据
 		List<Map<String, String>> traineeList = new ArrayList<>();
 		Map<String, String> traineeMap = null;
-		int k = 0;
+		int k = 1;
 		for (Map<String, Object> list1 : list) {
 			traineeMap = new LinkedHashMap<>();
 			traineeMap.put("xh", String.valueOf(k++));
@@ -700,7 +700,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 
 		List<Map<String, Object>> allList = new ArrayList<>();
 		Integer[] columnWidth = new Integer[] { 10, 30, 30, 20, 20, 20, 20 };
-		Integer[] headColumnWidth = new Integer[] { 10, 15, 15, 15, 25, 25, 25, 30 };
+		Integer[] headColumnWidth = new Integer[] { 10, 15, 15,20, 15, 25, 25, 25, 30 };
 
 		// 数据字典项
 		String mapKey = null;
@@ -714,7 +714,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 
 		// 获取班级所有学员信息
 		List<Map<String, Object>> classTraineetList = new ArrayList<>();
-		String sql = "select CLASS_TRAINEE_ID,XM,XBM,REAL＿CREDIT,MOBILE_PHONE,WORK_UNIT,POSITION,HEADSHIP_LEVEL from TRAIN_T_CLASSTRAINEE where ISDELETE=0 AND CLASS_ID='"
+		String sql = "select CLASS_TRAINEE_ID,XM,XBM,REAL＿CREDIT,MOBILE_PHONE,WORK_UNIT,POSITION,HEADSHIP_LEVEL,TRAINEE_NUMBER from TRAIN_T_CLASSTRAINEE where (ISDELETE=0 or ISDELETE=2) AND CLASS_ID='"
 				+ classId + "' order by xm asc";
 		classTraineetList = thisService.getForValuesToSql(sql);
 
@@ -722,19 +722,25 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		List<Map<String, String>> traineeList = new ArrayList<>();
 		List<String> classTraineeIdList = new ArrayList<>();
 		Map<String, String> traineeMap = null;
-		int j = 0;
+		int j = 1;
 		for (Map<String, Object> list : classTraineetList) {
 			traineeMap = new LinkedHashMap<>();
 			classTraineeIdList.add(String.valueOf(list.get("CLASS_TRAINEE_ID")));
+			
+			String headShipLevel=mapDicItem.get(String.valueOf(list.get("HEADSHIP_LEVEL")) + "HEADSHIPLEVEL");
+			if(headShipLevel==null)
+				headShipLevel="";
+			
 			traineeMap.put("xh", String.valueOf(j++));
 			traineeMap.put("xm", String.valueOf(list.get("XM")));
 			traineeMap.put("xb", mapDicItem.get(String.valueOf(list.get("XBM")) + "XBM"));
+			traineeMap.put("xuehao", String.valueOf(list.get("TRAINEE_NUMBER")));
 			traineeMap.put("xf", (String.valueOf(list.get("REAL＿CREDIT"))).equals("null") ? ""
 					: String.valueOf(list.get("REAL＿CREDIT")));
 			traineeMap.put("phone", String.valueOf(list.get("MOBILE_PHONE")));
 			traineeMap.put("position", String.valueOf(list.get("POSITION")));
-			traineeMap.put("headShipLevel",
-					mapDicItem.get(String.valueOf(list.get("HEADSHIP_LEVEL")) + "HEADSHIPLEVEL"));
+			traineeMap.put("headShipLevel",headShipLevel);
+					
 			traineeMap.put("workUnit", String.valueOf(list.get("WORK_UNIT")));
 			traineeMap.put("classTraineeId", String.valueOf(list.get("CLASS_TRAINEE_ID")));
 			traineeList.add(traineeMap);
@@ -753,7 +759,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		for (int i = 0; i < classTraineeIdList.size(); i++) {
 			traineeCreditList = new ArrayList<>();
 			String classTraineeId = classTraineeIdList.get(i);
-			int k = 0;
+			int k = 1;
 			for (Map<String, Object> list : classTrainCreditList) {
 				traineeCreditMap = new LinkedHashMap<>();
 				if (classTraineeId.equals(String.valueOf(list.get("classTraineeId")))) {

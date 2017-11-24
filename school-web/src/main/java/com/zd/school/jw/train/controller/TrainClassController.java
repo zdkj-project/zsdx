@@ -1080,7 +1080,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 	}
 
 	/**
-	 * 导出班级所有信息
+	 * 导出班级考勤所有信息
 	 *
 	 * @param request
 	 * @param response
@@ -1131,13 +1131,13 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				List<Map<String,Object>> trainClassscheduleList = null;
 				sql = "SELECT CLASS_SCHEDULE_ID,COURSE_NAME,BEGIN_TIME,END_TIME FROM TRAIN_T_CLASSSCHEDULE where ISDELETE=0";
 		        sql += " and CLASS_ID='" + ids +"'";
-		        sql += " order by CLASS_SCHEDULE_ID asc";
+		        sql += " order by BEGIN_TIME asc";
 				trainClassscheduleList = classScheduleSerive.getForValuesToSql(sql);
 
 				// 4.班级学员信息
 				List<Map<String,Object>> voTrainClassCheckList = null;
 				List<String> classScheduleIdList = new ArrayList<>();
-				sql="SELECT xm,classTraineeId,incardTime,outcardTime,attendResult,attendMinute FROM TRAIN_V_CHECKRESULT WHERE classId='" + ids +"'"+" order by classScheduleId asc";
+				sql="SELECT xm,classTraineeId,incardTime,outcardTime,attendResult,attendMinute,isleave,remark,traineeNumber FROM TRAIN_V_CHECKRESULT WHERE classId='" + ids +"'"+" order by beginTime asc";
 				voTrainClassCheckList = trainClasstraineeService.getForValuesToSql(sql);
 				int voTrainClassCheckListCount = voTrainClassCheckList.size();
 				
@@ -1151,6 +1151,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 						lists=new ArrayList<>();
 						lists.add(String.valueOf(i+1));
 						lists.add(String.valueOf(tcc.get("xm")));
+						lists.add(String.valueOf(tcc.get("traineeNumber")));
 					}
 					String incardTime=String.valueOf(tcc.get("incardTime"));
 					if(incardTime.equals("null")==false) {
@@ -1164,6 +1165,11 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 					lists.add(outcardTime);
 					lists.add(String.valueOf(tcc.get("attendMinute")));
 					lists.add(String.valueOf(tcc.get("attendResult")));
+					if("1".equals(tcc.get("isleave")))
+						lists.add("是");
+					else
+						lists.add("否");
+					lists.add(String.valueOf(tcc.get("remark")));
 					
 					traineeResult.put(String.valueOf(tcc.get("classTraineeId")), lists);
 				}
@@ -1187,13 +1193,14 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				// 第一行数据
 				Map<String, Object> classAllMap1 = new LinkedHashMap<>();
 				classAllMap1.put("data", classList1);
-				classAllMap1.put("title", "班级基本信息表");
+				classAllMap1.put("title", "班级课程考勤信息表");
 				classAllMap1.put("columnWidth", 15);
-				classAllMap1.put("headColumnCount", 10);
+				classAllMap1.put("headColumnCount", 9);
 				allList.add(classAllMap1);
 				
 		// 在导出方法中进行解析
-		boolean result = exportMeetingInfo.exportCheckResultInfoExcel(response, trainClass.getClassName()+"班级信息", trainClass.getClassName()+"班考勤表", allList);
+		//boolean result = exportMeetingInfo.exportCheckResultInfoExcel(response, trainClass.getClassName()+"班级课程考勤信息", trainClass.getClassName()+"班课程考勤表", allList);
+		boolean result = exportMeetingInfo.exportCouseCheckResultInfoExcel(response, trainClass.getClassName()+"班级课程考勤信息", trainClass.getClassName()+"班课程考勤表", allList);
 		if (result == true) {
 			request.getSession().setAttribute("exportCourseCheckIsEnd", "1");
 		} else {

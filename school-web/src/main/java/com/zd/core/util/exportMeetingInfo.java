@@ -497,7 +497,7 @@ public class exportMeetingInfo {
 					Row row = null;
 					Cell cell = null;
 					Sheet sheet = workbook.createSheet(sheetName);
-					for (int j = 0; j < 8; j++) {
+					for (int j = 0; j < 9; j++) {
 						row = sheet.createRow(j);
 						row.setHeight((short) 0x200);
 						for (int k = 0; k < columnCount; k++) {
@@ -508,12 +508,12 @@ public class exportMeetingInfo {
 					// 标题
 					sheet.getRow(0).getCell(0).setCellStyle(titleStyle);
 					sheet.getRow(0).getCell(0).setCellValue(className+"-班级课程考勤详细");
-					sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 7));
+					sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 8));
 					
 					// 第1行
 					sheet.getRow(3).getCell(0).setCellValue("班级名称");
 					sheet.getRow(3).getCell(1).setCellValue(className);
-					sheet.addMergedRegion(new CellRangeAddress(3, 3, 1, 7));
+					sheet.addMergedRegion(new CellRangeAddress(3, 3, 1, 8));
 
 					// 第2行
 					sheet.getRow(4).getCell(0).setCellValue("班级类型");
@@ -522,7 +522,7 @@ public class exportMeetingInfo {
 
 					sheet.getRow(4).getCell(4).setCellValue("人数");
 					sheet.getRow(4).getCell(5).setCellValue(traineeNum);
-					sheet.addMergedRegion(new CellRangeAddress(4, 4, 5, 7));
+					sheet.addMergedRegion(new CellRangeAddress(4, 4, 5, 8));
 
 					// 第3行
 					sheet.getRow(5).getCell(0).setCellValue("开始时间");
@@ -531,16 +531,16 @@ public class exportMeetingInfo {
 
                     sheet.getRow(5).getCell(4).setCellValue("结束时间");
                     sheet.getRow(5).getCell(5).setCellValue(endDate);
-                    sheet.addMergedRegion(new CellRangeAddress(5, 5, 5,7));
+                    sheet.addMergedRegion(new CellRangeAddress(5, 5, 5,8));
 
                     //第4行
                     sheet.getRow(6).getCell(0).setCellValue("是否需要考勤");
                     sheet.getRow(6).getCell(1).setCellValue(needChecking);
-                    sheet.addMergedRegion(new CellRangeAddress(6, 6, 1,7));
+                    sheet.addMergedRegion(new CellRangeAddress(6, 6, 1,8));
 
 					
 					sheet.getRow(7).getCell(0).setCellValue("人员考勤详细");
-                    sheet.addMergedRegion(new CellRangeAddress(7, 7, 0,7));
+                    sheet.addMergedRegion(new CellRangeAddress(7, 7, 0,8));
 					
 					// 课程数据
 					List<Map<String,Object>> trainClassscheduleList =(List<Map<String, Object>>) dataList.get("checkCourse");
@@ -548,7 +548,7 @@ public class exportMeetingInfo {
 					for (int k = 0; k< 3; k++) {
 						row = sheet.createRow(8+k);
 						row.setHeight((short) 0x250);
-						for (int j = 0; j < trainClassscheduleCount*6+2; j++) {
+						for (int j = 0; j < trainClassscheduleCount*6+3; j++) {
 							cell = row.createCell(j);
 							cell.setCellStyle(headStyle);
 						}
@@ -559,44 +559,48 @@ public class exportMeetingInfo {
 						for (String s : trainClassschedule.keySet()) {
 							Object val = trainClassschedule.get(s);
 							if(s.equals("COURSE_NAME")){
-								sheet.getRow(8).getCell(2+j*6).setCellValue(String.valueOf(val));
-			                    sheet.addMergedRegion(new CellRangeAddress(8, 8, 2+j*6,7+j*6));
+								sheet.getRow(8).getCell(3+j*6).setCellValue(String.valueOf(val));
+			                    sheet.addMergedRegion(new CellRangeAddress(8, 8, 3+j*6,8+j*6));
 							}
 							if(s.equals("BEGIN_TIME")){
-								sheet.getRow(9).getCell(2+j*6).setCellValue("开始时间");
-			                    sheet.getRow(9).getCell(3+j*6).setCellValue(String.valueOf(val).substring(0, String.valueOf(val).lastIndexOf(".")));
-			                    sheet.addMergedRegion(new CellRangeAddress(9, 9, 3+j*6,7+j*6));
+								sheet.getRow(9).getCell(3+j*6).setCellValue("开始时间");
+			                    sheet.getRow(9).getCell(4+j*6).setCellValue(String.valueOf(val).substring(0, String.valueOf(val).lastIndexOf(".")));
+			                    sheet.addMergedRegion(new CellRangeAddress(9, 9, 4+j*6,8+j*6));
 							}
 							if(s.equals("END_TIME")){
-								sheet.getRow(10).getCell(2+j*6).setCellValue("结束时间");
-			                    sheet.getRow(10).getCell(3+j*6).setCellValue(String.valueOf(val).substring(0, String.valueOf(val).lastIndexOf(".")));
-			                    sheet.addMergedRegion(new CellRangeAddress(10, 10, 3+j*6,7+j*6));
+								sheet.getRow(10).getCell(3+j*6).setCellValue("结束时间");
+			                    sheet.getRow(10).getCell(4+j*6).setCellValue(String.valueOf(val).substring(0, String.valueOf(val).lastIndexOf(".")));
+			                    sheet.addMergedRegion(new CellRangeAddress(10, 10, 4+j*6,8+j*6));
 							}
 						}
 					}
 					row = sheet.createRow(11);
 					row.setHeight((short) 0x200);
-					for (int j = 0; j < (((trainClassscheduleCount*6+2)<8)?8:trainClassscheduleCount*6+2); j++) {
-	                        cell = row.createCell(j);
+					for (int j = 0; j < (((trainClassscheduleCount*6+3)<9)?9:trainClassscheduleCount*6+3); j++) {
+							sheet.setColumnWidth(j, columnWidth * 256);
+							cell = row.createCell(j);
 	                        cell.setCellStyle(headStyle);
 	                        if(j==0)
 	                        	cell.setCellValue("序号");
 	                        else if(j==1)
 	                        	cell.setCellValue("姓名");
-	                        else if(j%6==2){
-	                        	cell.setCellValue("签到时间");
+	                        else if(j==2){
+	                        	cell.setCellValue("学号");
+	                        	sheet.setColumnWidth(j, 17 * 256);
 	                        }else if(j%6==3){
-	                        	cell.setCellValue("签退时间");
+	                        	cell.setCellValue("签到时间");
 	                        }else if(j%6==4){
-	                        	cell.setCellValue("上课时长");
+	                        	cell.setCellValue("签退时间");
 	                        }else if(j%6==5){
-	                        	cell.setCellValue("考情结果");
+	                        	cell.setCellValue("上课时长");
 	                        }else if(j%6==0){
+	                        	cell.setCellValue("考勤结果");
+ 	                        }else if((j-1)%6==0){			//0 1 2 3 4 5 6 7 8    9 10 11 12 13 14
 	                        	cell.setCellValue("是否请假");
 	                        }else{
 	                        	cell.setCellValue("备注信息");
 	                        }
-	                        sheet.setColumnWidth(j, columnWidth * 256);
+	                        
 	                    }
 					 
 					// 学员考勤数据
@@ -609,16 +613,14 @@ public class exportMeetingInfo {
 						 List<String> val = traineeResult.get(keylist.get(k));
 						 row = sheet.createRow(12+k);
 						 row.setHeight((short) 0x200);
-						 for (int j = 0; j < trainClassscheduleCount*6+2; j++) {
+						 for (int j = 0; j < trainClassscheduleCount*6+3; j++) {
 								cell = row.createCell(j);
 								cell.setCellStyle(headStyle);
 								if(j==0){
 									cell.setCellValue(val.get(j));
-								}else if((j+2)%6==0){	//4+2  10+2 16+2
+								}else if((j+1)%6==0){	//5+1  11+1 15+1
 									cell.setCellValue(val.get(j)+" 分钟");
-								}else if(val.get(j).equals("null")){
-									cell.setCellValue(" ");
-								}else if((j+1)%6==0){
+								}else if(j%6==0){
 									if(val.get(j).equals("1")){
 										cell.setCellValue("正常");
 									}else if(val.get(j).equals("2")){
@@ -630,8 +632,10 @@ public class exportMeetingInfo {
 									}else if(val.get(j).equals("5")){
 										cell.setCellValue("迟到早退");
 									}else{
-										cell.setCellValue(val.get(j));
+										cell.setCellValue("未考勤");
 									}
+								}else if(val.get(j).equals("null")){
+									cell.setCellValue(" ");
 								}else{
 									cell.setCellValue(val.get(j));
 								}
@@ -831,17 +835,18 @@ public class exportMeetingInfo {
 				// 标题
 				sheet.getRow(0).getCell(0).setCellStyle(titleStyle);
 				sheet.getRow(0).getCell(0).setCellValue(sheetName);
-				sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 7));
+				sheet.addMergedRegion(new CellRangeAddress(0, 2, 0, 8));
 				
 				// 第1行
 				sheet.getRow(3).getCell(0).setCellValue("序号");
 				sheet.getRow(3).getCell(1).setCellValue("姓名");
 				sheet.getRow(3).getCell(2).setCellValue("性别");
-				sheet.getRow(3).getCell(3).setCellValue("学分");
-				sheet.getRow(3).getCell(4).setCellValue("移动电话");
-				sheet.getRow(3).getCell(5).setCellValue("职务");
-				sheet.getRow(3).getCell(6).setCellValue("职级");
-				sheet.getRow(3).getCell(7).setCellValue("所在单位");
+				sheet.getRow(3).getCell(3).setCellValue("学号");
+				sheet.getRow(3).getCell(4).setCellValue("学分");
+				sheet.getRow(3).getCell(5).setCellValue("移动电话");
+				sheet.getRow(3).getCell(6).setCellValue("职务");
+				sheet.getRow(3).getCell(7).setCellValue("职级");
+				sheet.getRow(3).getCell(8).setCellValue("所在单位");
 				
 				//导出第一页数据
 				Map<String, Object> traineeMap = null;

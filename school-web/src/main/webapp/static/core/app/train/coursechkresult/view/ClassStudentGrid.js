@@ -9,13 +9,7 @@ Ext.define("core.train.coursechkresult.view.ClassStudentGrid", {
     columnLines: false,
     dataUrl: comm.get("baseUrl") + "/TrainClasstrainee/getCheckList", //数据获取地址
     model: "com.zd.school.jw.train.model.vo.VoTrainClassCheck", //对应的数据模型
-    selModel: {
-        type: "checkboxmodel",
-        headerWidth:50,    //设置这个值为50。 但columns中的defaults中设置宽度，会影响他
-        mode:'single'  //multi,simple,single；默认为多选multi
-        //checkOnly:false,    //如果值为true，则只用点击checkbox列才能选中此条记录
-        //allowDeselect:true, //如果值true，并且mode值为单选（single）时，可以通过点击checkbox取消对其的选择
-    },
+    selModel:null,
     /**
      * 工具栏操作按钮
      * 继承自core.base.view.BaseGrid可以在此覆盖重写
@@ -80,7 +74,7 @@ Ext.define("core.train.coursechkresult.view.ClassStudentGrid", {
             width: 100,
             text: "手机号码",
             dataIndex: "mobilePhone",
-        }, {
+        },{
             width: 100,
             text: "所在单位",
             dataIndex: "workUnit",
@@ -90,10 +84,14 @@ Ext.define("core.train.coursechkresult.view.ClassStudentGrid", {
                 metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + html + '"';
                 return html;
             }
+        },{
+            width: 120,
+            text: "学号",
+            dataIndex: "traineeNumber",
         }, {
             text: "签到时间",
             dataIndex: "incardTime",
-            width: 100,
+            width: 80,
             renderer: function (value, metaData) {
                 var title = "签到时间";
                 if (Ext.isEmpty(value))
@@ -109,7 +107,7 @@ Ext.define("core.train.coursechkresult.view.ClassStudentGrid", {
         }, {
             text: "签退时间",
             dataIndex: "outcardTime",
-            width: 100,
+            width: 80,
             renderer: function (value, metaData) {
                 var title = "签退时间";
                 if (Ext.isEmpty(value))
@@ -125,7 +123,7 @@ Ext.define("core.train.coursechkresult.view.ClassStudentGrid", {
         }, {
             text: "上课时长",
             dataIndex: "attendMinute",
-            width: 100,
+            width: 80,
             renderer: function (value, metaData) {
                 return value+" 分钟";
             }

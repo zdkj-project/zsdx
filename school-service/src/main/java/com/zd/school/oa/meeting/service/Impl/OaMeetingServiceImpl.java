@@ -191,11 +191,12 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 		}
 	}
 	@Override
-	public Integer doSyncMetting(List<Object[]> meetingList, List<Object[]> empList) {
+	public Integer doSyncMetting(List<Object[]> meetingList) {
 		// TODO Auto-generated method stub
 		int row = 1;
         OaMeeting m = null;
         OaMeetingemp emp = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 小写的mm表示的是分钟
     	try {
 	        //1: 会议类型数据字典
 	        String mapKey = null;
@@ -247,7 +248,7 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 	            }else{
 	            	m.setMeetingCategory(mapDicItem.get("其他MEETINGCATEGORY"));	//若没有类型，则指定为其他
 	            }
-	            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟
+	          
 	            m.setBeginTime(sdf.parse(o[4].toString()));
 	            m.setEndTime(sdf.parse(o[5].toString()));
 	            
@@ -258,28 +259,55 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 	            //创建人
 	            m.setCreateUser(o[7].toString());
 	            
-	            this.merge(m);	      
+	            
+	            this.merge(m);	
+	            
+	            
+	            //5. 处理会议人员（从MEETING_USER_IDS、MEETING_USER_NAMES字段获取，逗号隔开）
+	            String meetingUserIds=String.valueOf(o[8]);
+	            String meetingUserNames=String.valueOf(o[9]);
+	            //当人员id不为空的时候就处理
+	            if(StringUtils.isNotEmpty(meetingUserIds)){
+	            	String[] userIds=meetingUserIds.split(",");
+	            	String[] userNames=meetingUserNames.split(",");
+	            	for(int i=0;i<userIds.length;i++){	            
+	            		emp = meetingempService.get(m.getUuid()+ userIds[i]);
+						if (emp == null) {
+							emp = new OaMeetingemp(m.getUuid() + userIds[i]); // 注：主键id为会议id+人员id
+							emp.setAttendResult("0"); // 默认为0，未考勤
+							emp.setMeetingId(m.getUuid());
+							emp.setEmployeeId(userIds[i]);
+							emp.setIsDelete(0);
+						}
+
+						emp.setXm(userNames[i]);				
+						emp.setBeginTime(m.getBeginTime());
+						emp.setEndTime(m.getEndTime());
+
+						meetingempService.merge(emp);
+	            	}
+	            }	           
 	        }
 	        
-	        //5：处理会议人员
-            for (Object[] o : empList) {
-                emp = meetingempService.get(o[0].toString() + o[1].toString());
-                if (emp == null) {
-                	emp = new OaMeetingemp(o[0].toString() + o[1].toString());	//注：主键id为会议id+人员id
-                	emp.setAttendResult("0");	//默认为0，未考勤
-                	emp.setMeetingId(o[0].toString());
-                    emp.setEmployeeId(o[1].toString());
-                    emp.setIsDelete(0);
-                }
-                
-                emp.setXm(o[2].toString());
-                
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟       
-                emp.setBeginTime(sdf.parse(o[3].toString()));
-                emp.setEndTime(sdf.parse(o[4].toString()));
-             
-                meetingempService.merge(emp);
-            }
+	        //5：处理会议人员（不再这样处理）
+//            for (Object[] o : empList) {
+//                emp = meetingempService.get(o[0].toString() + o[1].toString());
+//                if (emp == null) {
+//                	emp = new OaMeetingemp(o[0].toString() + o[1].toString());	//注：主键id为会议id+人员id
+//                	emp.setAttendResult("0");	//默认为0，未考勤
+//                	emp.setMeetingId(o[0].toString());
+//                    emp.setEmployeeId(o[1].toString());
+//                    emp.setIsDelete(0);
+//                }
+//                
+//                emp.setXm(o[2].toString());
+//                
+//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//小写的mm表示的是分钟       
+//                emp.setBeginTime(sdf.parse(o[3].toString()));
+//                emp.setEndTime(sdf.parse(o[4].toString()));
+//             
+//                meetingempService.merge(emp);
+//            }
 
             //更新会议的人员id和人员姓名
 			//String sql = "UPDATE dbo.OA_T_MEETING SET METTING_EMPID=(SELECT dbo.OA_F_GETMEETINGEMPID(MEETING_ID)),\n" +
@@ -289,6 +317,8 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
     	} catch (Exception e) {
 			// 捕获了异常后，要手动进行回滚；
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+
+            logger.error(e.getMessage());
 			logger.error(e.getStackTrace());
 			row = -1;
 		}

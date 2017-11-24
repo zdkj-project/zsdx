@@ -23,7 +23,7 @@ Ext.define("core.ordermanage.orderdiffreport.view.MainQueryPanel", {
 			dataType:'date',		//指定查询设置filter时的进行判断的类型，date或者datetime
 			operationType:">=",	
 			name: "beginDate",
-			fieldLabel: "收银开始日期",
+			fieldLabel: "订餐开始日期",
 			format:"Y年m月d日"
 		},{
 			columnWidth:0.25,
@@ -33,7 +33,7 @@ Ext.define("core.ordermanage.orderdiffreport.view.MainQueryPanel", {
 			dataType:'date',
 			operationType:"<=",		//运算符
 			name: "endDate",
-			fieldLabel: "收银结束日期",	
+			fieldLabel: "订餐结束日期",	
 			format:"Y年m月d日"
 		},{
 			columnWidth: 0.5,

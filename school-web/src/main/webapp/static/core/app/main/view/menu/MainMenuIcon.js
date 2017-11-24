@@ -13,7 +13,7 @@ Ext.define('core.main.view.menu.MainMenuIcon', {
     tpl:new Ext.XTemplate(
         '<tpl for=".">',
             '<div class="mainMenuIcon-wrap">',
-                '<tpl if="taskNumber != null ">',  // <-- Note that the > is encoded
+                '<tpl if="taskNumber != null && taskNumber &gt; 0 ">',  // <-- Note that the > is encoded
                     '<span class="mainMenuIcon-tag">{taskNumber}</span>',
                 '</tpl>',
                 '<tpl if="bigIcon !=\'\' ">',  // <-- Note that the > is encoded

@@ -355,7 +355,18 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         this.classGroup = classGroup;
     }
 
-    
+    //新加入
+    @FieldInfo(name = "学号")
+    @Column(name = "TRAINEE_NUMBER", length = 20, nullable = true)
+    private  String traineeNumber;
+
+    public String getTraineeNumber() {
+        return traineeNumber;
+    }
+
+    public void setTraineeNumber(String traineeNumber) {
+        this.traineeNumber = traineeNumber;
+    }
     
     
     public TrainClasstrainee() {

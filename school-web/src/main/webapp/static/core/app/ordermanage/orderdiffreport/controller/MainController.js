@@ -334,7 +334,7 @@ Ext.define("core.ordermanage.orderdiffreport.controller.MainController", {
                 var year = record.get("YEAR");
                 var month = record.get("MONTH");           
                 var day = record.get("DAY");
-                
+
                 var dinnerDate=record.get("dinnerDate");
 
                 //设置tab页的itemId
@@ -397,20 +397,27 @@ Ext.define("core.ordermanage.orderdiffreport.controller.MainController", {
                                     height:'100%',                                    
                                     border:1
                                 },{
-                                    xtype: "orderdiffreport.ordernoteatdetailgrid",
-                                    title:'未就餐名单（已订餐）',
-                                    flex:1,
-                                    split:true,
-                                    height:'100%',
-                                    border:1
-                                },{
                                     xtype: "orderdiffreport.notordereatdetailgrid",
                                     title:'就餐名单（未订餐）',
                                     flex:1,
                                     split:true,
                                     height:'100%',
                                     border:1
-                                }],
+                                },{
+                                    xtype: "orderdiffreport.exceedeatdetailgrid",
+                                    title:'订餐且多刷名单',
+                                    flex:1.3,
+                                    split:true,
+                                    height:'100%',
+                                    border:1
+                                },{
+                                    xtype: "orderdiffreport.ordernoteatdetailgrid",
+                                    title:'未就餐名单（已订餐）',
+                                    flex:1,
+                                    split:true,
+                                    height:'100%',
+                                    border:1
+                                },],
                           
                             }]
                         });
@@ -446,6 +453,110 @@ Ext.define("core.ordermanage.orderdiffreport.controller.MainController", {
                         notOrderEatDetailGrid.getStore().getProxy().extraParams=params3;
                         notOrderEatDetailGrid.getStore().load();
 
+                        var exceedEatDetailGrid = tabItem.down("basegrid[xtype=orderdiffreport.exceedeatdetailgrid]");
+                        var params4={
+                            YEAR:year,
+                            MONTH:month,
+                            DAY:day,
+                            type:"4"
+                        };
+                        exceedEatDetailGrid.getStore().getProxy().extraParams=params4;
+                        exceedEatDetailGrid.getStore().load();
+
+                    }, 30);
+
+                }  else if(tabItem.itemPKV&&tabItem.itemPKV!=dinnerDate){     //判断是否点击的是同一条数据
+                    self.Warning("您当前已经打开了一个编辑窗口了！");
+                    return;
+                }
+
+                tabPanel.setActiveTab(tabItem);
+
+                return false;
+            },
+            detailDiffTotalClick_Tab: function (data) {
+                var baseGrid = data.view;
+                var record = data.record;
+
+                var self=this;
+                //得到组件             
+
+                var tabPanel = baseGrid.up("tabpanel[xtype=app-main]");
+
+                //得到配置信息
+                var funCode = baseGrid.funCode;
+                var basePanel = baseGrid.up("basepanel[funCode=" + funCode + "]");
+                var detCode = basePanel.detCode;
+                var funData = basePanel.funData;
+
+                //获取主键值   
+                var year = record.get("YEAR");
+                var month = record.get("MONTH");
+                
+                var dinnerDate=record.get("dinnerDate");
+
+                //设置tab页的itemId
+                var tabItemId = funCode + "_gridDetail"+dinnerDate;     //命名规则：funCode+'_ref名称',确保不重复
+                //获取tabItem；若不存在，则表示要新建tab页，否则直接打开
+                var tabItem = tabPanel.getComponent(tabItemId);
+            
+
+                //判断是否已经存在tab了
+                if (!tabItem) {
+
+                    var detLayout = basePanel.detLayout;
+                    var defaultObj = funData.defaultObj;
+
+                    //关键：window的视图控制器
+                    var otherController = basePanel.otherController;
+                    if (!otherController)
+                        otherController = '';
+              
+
+                    //处理特殊默认值
+                    var insertObj = record.data;
+                    var popFunData = Ext.apply(funData, {
+                        grid: baseGrid
+                    });
+
+
+                    var tabTitle = record.get("dinnerDate")+"-订餐就餐差异汇总";
+
+                    tabItem = Ext.create({
+                        xtype: 'container',
+                        title: tabTitle,
+                        //iconCls: 'x-fa fa-clipboard',
+                        scrollable: true,
+                        itemId: tabItemId,
+                        itemPKV: dinnerDate,    //保存主键值
+                        layout: 'fit',
+                    });
+                    tabPanel.add(tabItem);
+
+                    //延迟放入到tab中
+                    setTimeout(function () {
+                        //创建组件
+                        var item = Ext.widget("baseformtab", {
+                            operType: 'detail',
+                            controller: otherController,         //指定重写事件的控制器
+                            funCode: "orderDiffTotal",                    //指定mainLayout的funcode
+                            detCode: "orderDiffTotal",                    //指定detailLayout的funcode
+                            tabItemId: tabItemId,                //指定tab页的itemId
+                            insertObj: insertObj,                //保存一些需要默认值，提供给提交事件中使用
+                            funData: popFunData,                //保存funData数据，提供给提交事件中使用
+                            items: [{
+                                xtype: detLayout                                
+                            }]
+                        });
+                        tabItem.add(item);
+                        
+                        var orderTotalDetailGrid = tabItem.down("basegrid[xtype=orderdiffreport.ordertotaldetailgrid]");
+                        var params={
+                            YEAR:year,
+                            MONTH:month
+                        };
+                        orderTotalDetailGrid.getStore().getProxy().extraParams=params;
+                        orderTotalDetailGrid.getStore().load();
                     }, 30);
 
                 }  else if(tabItem.itemPKV&&tabItem.itemPKV!=dinnerDate){     //判断是否点击的是同一条数据

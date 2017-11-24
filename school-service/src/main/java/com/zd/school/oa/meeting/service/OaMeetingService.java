@@ -92,5 +92,5 @@ public interface OaMeetingService extends BaseService<OaMeeting> {
      */
     public Boolean doDeleteMeetingUser(String ids, String userId, SysUser currentUser);
 
-	public Integer doSyncMetting(List<Object[]> meetingList, List<Object[]> empList);
+	public Integer doSyncMetting(List<Object[]> meetingList);
 }
