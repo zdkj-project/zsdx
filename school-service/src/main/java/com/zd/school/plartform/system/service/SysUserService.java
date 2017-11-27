@@ -2,6 +2,7 @@ package com.zd.school.plartform.system.service;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Map;
 
 import com.orcl.sync.model.hibernate.hibernate.HrDepartment;
 import com.orcl.sync.model.hibernate.hibernate.HrDeptPosition;
@@ -148,6 +149,6 @@ public interface SysUserService extends BaseService<SysUser> {
 
 	public List<SysRole> getSysRoleList(SysUser sysUser);
 
-	public Integer doSyncOaUserandDept(List<HrDepartment> deptList, List<HrPosition> jobList, List<HrDeptPosition> deptJobList,
-			List<HrUserDepartmentPosition> userDeptList, List<HrUser> userList);
+	public Integer doSyncOaUserandDept(List<Map<String, Object>> deptList, List<Map<String, Object>> jobList, List<Map<String, Object>> deptJobList,
+			List<Map<String, Object>> userDeptList, List<Map<String, Object>> userList);
 }

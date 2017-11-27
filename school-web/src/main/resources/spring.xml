@@ -171,7 +171,11 @@
         <!-- 配置hibernate配置文件所在的位置 -->
         <property name="configLocation" value="classpath:spring-hibernate.cfg.xml"></property>
         <!-- 扫描的数据包 -->
-        <property name="packagesToScan" value="com.zd"></property>
+        <property name="packagesToScan" >
+        	<list>
+        		<value>com.zd</value>
+        	</list>
+        </property>
     </bean>
 
     <!-- 配置OA同步的SessionFactory，由spring提供 

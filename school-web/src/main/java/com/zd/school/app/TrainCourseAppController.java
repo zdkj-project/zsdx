@@ -94,15 +94,15 @@ public class TrainCourseAppController {
 					// where scheduleAddress='" + roomTerm.getRoomName() + "'
 					// and beginTime Between '" + s + " 06:00:00' And '" +
 					// sdf.format(date2) + "' order by beginTime asc");
-					course = courseService.doQuery("from TrainClassschedule where isDelete=0 and roomId like '%"
+					course = courseService.doQuery("from TrainClassschedule where (isDelete=0 or isDelete=2) and roomId like '%"
 							+ roomTerm.getRoomId() + "%' and beginTime Between '" + s + " 06:00:00" + "' And '"
 							+ sdf.format(date2) + "' order by beginTime asc",0,3);
 				} else if (date.getTime() < date3.getTime()) {
-					course = courseService.doQuery("from TrainClassschedule where isDelete=0 and roomId like '%"
+					course = courseService.doQuery("from TrainClassschedule where (isDelete=0 or isDelete=2)  and roomId like '%"
 							+ roomTerm.getRoomId() + "%' and beginTime Between '" + s + " 12:00:00" + "' And '"
 							+ sdf.format(date3) + "' order by beginTime asc",0,3);
 				} else {
-					course = courseService.doQuery("from TrainClassschedule where isDelete=0 and roomId like '%"
+					course = courseService.doQuery("from TrainClassschedule where (isDelete=0 or isDelete=2)  and roomId like '%"
 							+ roomTerm.getRoomId() + "%' and beginTime Between '" + s + " 18:00:00" +  "' And '"
 							+ sdf.format(date4) + "' order by beginTime asc",0,3);
 				}
@@ -151,7 +151,7 @@ public class TrainCourseAppController {
 								+ "FROM dbo.TRAIN_T_CLASSTRAINEE X"
 								+ "	LEFT JOIN dbo.TRAIN_T_COURSEATTEND b "
 								+ " on x.CLASS_TRAINEE_ID=b.TRAINEE_ID  AND X.CLASS_ID = b.CLASS_ID  AND b.CLASS_SCHEDULE_ID=''{0}'' "
-								+ " WHERE x.ISDELETE=0 and  X.CLASS_ID=''{1}''", c.getUuid() , classId);
+								+ " WHERE (x.ISDELETE=0 or x.ISDELETE=2) and  X.CLASS_ID=''{1}''", c.getUuid() , classId);
 						
 //						sql = MessageFormat.format(" SELECT CLASS_ID AS classId,xm,CLASS_TRAINEE_ID AS traineeId,"
 //								+ "CONVERT(VARCHAR(36),(ISNULL((SELECT top 1 a.FACT_NUMB FROM CARD_T_USEINFO a where a.USER_ID=TRAIN_T_CLASSTRAINEE.CLASS_TRAINEE_ID order BY a.CREATE_TIME desc),''0''))) AS factoryfixId,"

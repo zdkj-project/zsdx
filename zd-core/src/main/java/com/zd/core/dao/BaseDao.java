@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import org.hibernate.Session;
+
 /**
  * @param <E>
  * @ClassName: BaseDao
@@ -15,6 +17,7 @@ import java.util.Map;
  */
 public interface BaseDao<E> {
 
+	public Session getSession();
     /**
      * 持久化对象实体
      *

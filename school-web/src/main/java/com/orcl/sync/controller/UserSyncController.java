@@ -1,7 +1,10 @@
 package com.orcl.sync.controller;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -11,11 +14,6 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.orcl.sync.model.hibernate.hibernate.HrDepartment;
-import com.orcl.sync.model.hibernate.hibernate.HrDeptPosition;
-import com.orcl.sync.model.hibernate.hibernate.HrPosition;
-import com.orcl.sync.model.hibernate.hibernate.HrUser;
-import com.orcl.sync.model.hibernate.hibernate.HrUserDepartmentPosition;
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.util.DBContextHolder;
@@ -397,28 +395,31 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
         try {
         	//切换oracle数据库
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_OA);
-	        
+			
 	        //1:查询OA的部门数据
-	        List<HrDepartment> deptList =  userservice.getForValues("from HrDepartment");
-	      
-	        //2:查询OA的岗位数据
-	        List<HrPosition> jobList = userservice.getForValues("from HrPosition");
-	        
+			//如下方式，必须让实体类与数据库进行绑定之后才能使用，否则不能映射。 故使用sql的方式读取数据
+	        //List<HrDepartment> deptList =  userservice.getForValues("from HrDepartment");
+			List<Map<String,Object>> deptList = userservice.getForValuesToSql("select * from ZSDX_SYNC.HR_DEPARTMENT");			
+		
+	        //2查询OA的岗位数据
+	        //List<HrPosition> jobList = userservice.getForValues("from HrPosition");
+	        List<Map<String,Object>> jobList = userservice.getForValuesToSql("select * from ZSDX_SYNC.HR_POSITION");
+	     
 	        //3:查询OA的部门岗位数据
-	        List<HrDeptPosition> deptJobList =userservice.getForValues("from HrDeptPosition");
-	        
+	        //List<HrDeptPosition> deptJobList =userservice.getForValues("from HrDeptPosition");
+	        List<Map<String,Object>> deptJobList = userservice.getForValuesToSql("select * from ZSDX_SYNC.HR_DEPT_POSITION");
+	       
 	        //4:查询OA用户部门岗位数据
-	        List<HrUserDepartmentPosition> userDeptList =userservice.getForValues("from HrUserDepartmentPosition where departmentId is not null and deptPositionId is not null");
-	        
+	        //List<HrUserDepartmentPosition> userDeptList =userservice.getForValues("from HrUserDepartmentPosition where departmentId is not null and deptPositionId is not null");
+	        List<Map<String,Object>> userDeptList = userservice.getForValuesToSql("select * from ZSDX_SYNC.HR_USER_DEPARTMENT_POSITION");
+	   
 	        //5：查询用户数据
-            List<HrUser> userList = userservice.getForValues("from HrUser where accounts is not null ");
-            
-	        
+            List<Map<String,Object>> userList = userservice.getForValuesToSql("select ID,USER_NAME,ACCOUNTS,IS_ONTHEJOB,IS_ENABLE,USER_SEX,CREATE_DATE,CREATE_NAME  from ZSDX_SYNC.HR_USER where ACCOUNTS is not null");
+
 	        //重置数据库源，切换回Q1
             DBContextHolder.clearDBType();
 	        
 	        Integer state=userservice.doSyncOaUserandDept(deptList,jobList,deptJobList,userDeptList,userList);
-	        
 	        if(state==1){
 	        
 	        	//同步成功之后，同步数据到UP库
@@ -477,7 +478,7 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
 	        
         } catch (Exception e) {
             logger.error(e.getMessage());
-            logger.error(e.getStackTrace());
+            logger.error(Arrays.toString(e.getStackTrace()));
             request.getSession().setAttribute("UserSyncState", "0");
         }
     }
@@ -498,4 +499,5 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
             writeJSON(response, jsonBuilder.returnFailureJson("\"同步未完成！\""));
         }
     }
+   
 }

@@ -1,16 +1,13 @@
 package com.zd.core.security;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
 
-import com.orcl.sync.model.hibernate.hibernate.HrDepartment;
-import com.orcl.sync.model.hibernate.hibernate.HrDeptPosition;
-import com.orcl.sync.model.hibernate.hibernate.HrPosition;
-import com.orcl.sync.model.hibernate.hibernate.HrUser;
-import com.orcl.sync.model.hibernate.hibernate.HrUserDepartmentPosition;
 import com.zd.core.util.DBContextHolder;
 import com.zd.school.oa.meeting.service.OaMeetingService;
 import com.zd.school.plartform.baseset.service.BaseOrgService;
@@ -111,7 +108,7 @@ public class SyncJobQuartz {
 		} catch (Exception e) {
 			row = -1;
 			logger.error(e.getMessage());
-            logger.error(e.getStackTrace());
+			logger.error(Arrays.toString(e.getStackTrace()));
 		} finally {
 			// 恢复数据源
 			DBContextHolder.clearDBType();
@@ -166,7 +163,7 @@ public class SyncJobQuartz {
 		} catch (Exception e) {
 			row = -1;
 			logger.error(e.getMessage());
-            logger.error(e.getStackTrace());
+			 logger.error(Arrays.toString(e.getStackTrace()));
 		}
 
 		return row;
@@ -179,21 +176,25 @@ public class SyncJobQuartz {
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_OA);
 	        
 			//1:查询OA的部门数据
-	        List<HrDepartment> deptList =  thisService.getForValues("from HrDepartment");
-	      
-	        //2:查询OA的岗位数据
-	        List<HrPosition> jobList = thisService.getForValues("from HrPosition");
-	        
+			//如下方式，必须让实体类与数据库进行绑定之后才能使用，否则不能映射。 故使用sql的方式读取数据
+	        //List<HrDepartment> deptList =  userservice.getForValues("from HrDepartment");
+			List<Map<String,Object>> deptList = thisService.getForValuesToSql("select * from ZSDX_SYNC.HR_DEPARTMENT");			
+		
+	        //2查询OA的岗位数据
+	        //List<HrPosition> jobList = userservice.getForValues("from HrPosition");
+	        List<Map<String,Object>> jobList = thisService.getForValuesToSql("select * from ZSDX_SYNC.HR_POSITION");
+	     
 	        //3:查询OA的部门岗位数据
-	        List<HrDeptPosition> deptJobList =thisService.getForValues("from HrDeptPosition");
-	        
+	        //List<HrDeptPosition> deptJobList =userservice.getForValues("from HrDeptPosition");
+	        List<Map<String,Object>> deptJobList = thisService.getForValuesToSql("select * from ZSDX_SYNC.HR_DEPT_POSITION");
+	       
 	        //4:查询OA用户部门岗位数据
-	        List<HrUserDepartmentPosition> userDeptList =thisService.getForValues("from HrUserDepartmentPosition where departmentId is not null and deptPositionId is not null");
-	        
+	        //List<HrUserDepartmentPosition> userDeptList =userservice.getForValues("from HrUserDepartmentPosition where departmentId is not null and deptPositionId is not null");
+	        List<Map<String,Object>> userDeptList = thisService.getForValuesToSql("select * from ZSDX_SYNC.HR_USER_DEPARTMENT_POSITION");
+	   
 	        //5：查询用户数据
-            List<HrUser> userList = thisService.getForValues("from HrUser where accounts is not null ");
-
-	    
+            List<Map<String,Object>> userList = thisService.getForValuesToSql("select ID,USER_NAME,ACCOUNTS,IS_ONTHEJOB,IS_ENABLE,USER_SEX,CREATE_DATE,CREATE_NAME  from ZSDX_SYNC.HR_USER where ACCOUNTS is not null");
+            		  
             //重置数据库源，切换回Q1
             DBContextHolder.clearDBType();	        	     
 	        
@@ -203,7 +204,7 @@ public class SyncJobQuartz {
         } catch (Exception e) {
         	row = -1;
             logger.error(e.getMessage());
-            logger.error(e.getStackTrace());
+            logger.error(Arrays.toString(e.getStackTrace()));
         }
         return row;
     }
@@ -232,7 +233,7 @@ public class SyncJobQuartz {
         } catch (Exception e) {
         	row = -1;
             logger.error(e.getMessage());
-            logger.error(e.getStackTrace());
+            logger.error(Arrays.toString(e.getStackTrace()));
         }
         return row;
     }

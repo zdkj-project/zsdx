@@ -1,20 +1,23 @@
 package com.zd.core.service;
 
-import com.zd.core.dao.BaseDao;
-import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.util.DateUtil;
-import com.zd.core.util.EntityUtil;
-import jxl.Workbook;
-import jxl.write.Label;
-import jxl.write.WritableSheet;
-import jxl.write.WritableWorkbook;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.hibernate.Session;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.zd.core.dao.BaseDao;
+import com.zd.core.model.extjs.QueryResult;
+import com.zd.core.util.DateUtil;
+import com.zd.core.util.EntityUtil;
+
+import jxl.Workbook;
+import jxl.write.Label;
+import jxl.write.WritableSheet;
+import jxl.write.WritableWorkbook;
 
 /**
  * @param <E>
@@ -31,6 +34,12 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      */
     protected BaseDao<E> dao;
 
+    @Override
+	public Session getSession() {
+		// TODO Auto-generated method stub
+    	return this.dao.getSession();
+	}
+    
     /**
      * 持久化对象实体.
      *
@@ -734,4 +743,6 @@ public class BaseServiceImpl<E> implements BaseService<E> {
     public <T> QueryResult<T> doQueryResultSqlObject(String sql, Integer start, Integer limit, Class<T> clz) {
         return this.dao.doQueryResultSqlObject(sql, start, limit, clz);
     }
+
+	
 }

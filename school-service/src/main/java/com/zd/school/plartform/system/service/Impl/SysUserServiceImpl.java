@@ -1,5 +1,23 @@
 package com.zd.school.plartform.system.service.Impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+
+import org.apache.log4j.Logger;
+import org.apache.shiro.crypto.hash.Sha256Hash;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
 import com.orcl.sync.model.hibernate.hibernate.HrDepartment;
 import com.orcl.sync.model.hibernate.hibernate.HrDeptPosition;
 import com.orcl.sync.model.hibernate.hibernate.HrPosition;
@@ -8,13 +26,9 @@ import com.orcl.sync.model.hibernate.hibernate.HrUserDepartmentPosition;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
-import com.zd.core.util.CustomerContextHolder;
 import com.zd.core.util.DateUtil;
 import com.zd.core.util.SortListUtil;
 import com.zd.core.util.StringUtils;
-import com.zd.school.oa.meeting.model.OaMeeting;
-import com.zd.school.oa.meeting.model.OaMeetingemp;
-import com.zd.school.oa.meeting.service.Impl.OaMeetingServiceImpl;
 import com.zd.school.plartform.baseset.model.BaseDeptjob;
 import com.zd.school.plartform.baseset.model.BaseJob;
 import com.zd.school.plartform.baseset.model.BaseOrg;
@@ -31,22 +45,6 @@ import com.zd.school.plartform.system.model.SysUserToUP;
 import com.zd.school.plartform.system.service.SysRoleService;
 import com.zd.school.plartform.system.service.SysUserService;
 import com.zd.school.teacher.teacherinfo.service.TeaTeacherbaseService;
-
-import org.apache.log4j.Logger;
-import org.apache.shiro.crypto.hash.Sha256Hash;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-
-import javax.annotation.Resource;
-import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * 
@@ -885,42 +883,59 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 		return list;
 	}
-
+	
+	/**
+	 * 各个数据改为map的形式去存取
+	 * @param deptList
+	 * @param jobList
+	 * @param deptJobList
+	 * @param userDeptList
+	 * @param userList
+	 * @return
+	 */
 	@Override
-	public Integer doSyncOaUserandDept(List<HrDepartment> deptList, List<HrPosition> jobList,
-			List<HrDeptPosition> deptJobList, List<HrUserDepartmentPosition> userDeptList, List<HrUser> userList) {
+	public Integer doSyncOaUserandDept(List<Map<String,Object>> deptList, List<Map<String,Object>> jobList,
+			List<Map<String,Object>> deptJobList, List<Map<String,Object>> userDeptList,List<Map<String,Object>> userList) {
 		int row = 1;
 		try {
+			Map<String,Object> map=null;
+			
 			/**
 			 * 1：处理部门数据
 			 */
 			String sql = "update BASE_T_ORG set isdelete=1 where parent_node!='ROOT'";
 			orgService.executeSql(sql);
 			BaseOrg org = null;
-			for (HrDepartment hd : deptList) {
-				org = orgService.get(hd.getId());
+			for(int i=0;i<deptList.size();i++){
+				map=deptList.get(i);
+				String id=String.valueOf(map.get("ID"));
+				org = orgService.get(id);
 				if (org == null)
-					org = new BaseOrg(hd.getId());
-				org.setCreateTime(hd.getCreateDate());
-				org.setCreateUser(hd.getCreateName());
-				org.setIsDelete(hd.getIsEnable() == 0 ? 1 : 0);
-				org.setUpdateTime(hd.getUpdateDate());
-				org.setUpdateUser(hd.getUpdateName());
+					org = new BaseOrg(id);
+				org.setCreateTime((Date) map.get("CREATE_DATE"));
+				org.setCreateUser((String) map.get("CREATE_NAME"));
+				String idEnable=String.valueOf(map.get("IS_ENABLE"));
+				org.setIsDelete("0".equals(idEnable) ? 1 : 0);
+				org.setUpdateTime((Date) map.get("UPDATE_DATE"));
+				org.setUpdateUser((String) map.get("UPDATE_NAME"));
 				org.setDeptType("03");
+				
 				//如果为0，那么上级节点设置为root节点
-				if("0".equals(hd.getParentid().trim()))
+				String parentId=String.valueOf(map.get("PARENTID"));
+				if("0".equals(parentId.trim()))
 					org.setParentNode("2851655E-3390-4B80-B00C-52C7CA62CB39");
 				else
-					org.setParentNode(hd.getParentid());
+					org.setParentNode(parentId);
 				
-				org.setNodeCode(hd.getCode());
-				org.setNodeText(hd.getNames());
+				org.setNodeCode((String)map.get("CODE"));
+				org.setNodeText((String)map.get("NAMES"));
 				org.setIssystem(0);
-				org.setOrderIndex(hd.getOrderby());
-				org.setExtField01(hd.getParentid());
+				org.setOrderIndex(Integer.parseInt(String.valueOf(map.get("ORDERBY"))));
+				org.setExtField01(parentId);
 
 				orgService.merge(org);
 			}
+			
 			// 更新一些非同步内容（生成副ID）
 			String rootId = "2851655E-3390-4B80-B00C-52C7CA62CB39";
 			String rootCode = "001";
@@ -933,22 +948,25 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			sql = "update BASE_T_JOB set isdelete=1";
 			jobservice.executeSql(sql);
 			BaseJob b = null;
-			for (HrPosition h : jobList) {
-				b = jobservice.get(h.getId());
+			for (int i=0;i<jobList.size();i++) {
+				map=jobList.get(i);
+				String id=String.valueOf(map.get("ID"));
+				
+				b = jobservice.get(id);
 				if (b == null) {
-					b = new BaseJob(h.getId());
+					b = new BaseJob(id);
 				}
-				b.setCreateTime(h.getCreateDate());
-				b.setCreateUser(h.getCreateName());
-				b.setUpdateTime(h.getUpdateDate());
-				b.setCreateUser(h.getUpdateName());
-				b.setOrderIndex(h.getOrderby());
+				b.setCreateTime((Date) map.get("CREATE_DATE"));
+				b.setCreateUser((String) map.get("CREATE_NAME"));
+				b.setUpdateTime((Date) map.get("UPDATE_DATE"));
+				b.setUpdateUser((String) map.get("UPDATE_NAME"));
+				b.setOrderIndex(Integer.parseInt(String.valueOf(map.get("ORDERBY"))));
 				b.setIsDelete(0);
-				b.setJobName(h.getNames());
-				b.setRemark(h.getDuty());
+				b.setJobName((String) map.get("NAMES"));
+				b.setRemark((String) map.get("DUTY"));
 
 				jobservice.merge(b);
-			}
+			}		
 			
 			/**
 			 * 3：处理部门岗位数据
@@ -956,23 +974,26 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			sql = "delete from BASE_T_DEPTJOB";
 	        deptjobService.executeSql(sql);
 	        BaseDeptjob dj = null;
-	        for (HrDeptPosition hdp : deptJobList) {
-	            dj = deptjobService.get(hdp.getId());
+	        for (int i=0;i<deptJobList.size();i++) {
+	        	map=deptJobList.get(i);
+				String id=String.valueOf(map.get("ID"));
+				
+	            dj = deptjobService.get(id);
 	            if (dj == null) {
-	                dj = new BaseDeptjob(hdp.getId());
+	                dj = new BaseDeptjob(id);
 	            }
-	            dj.setDeptId(hdp.getDepartmentId());
-	            dj.setJobId(hdp.getPositionId());
-	            dj.setParentdeptId(hdp.getPredepartmentId());
-	            dj.setParentjobId(hdp.getPrepositionId());
-	            dj.setCreateUser(hdp.getCreateName());
-	            dj.setCreateTime(hdp.getCreateDate());
-	            dj.setUpdateUser(hdp.getUpdateName());
-	            dj.setUpdateTime(hdp.getUpdateDate());
+	            dj.setDeptId((String) map.get("DEPARTMENT_ID"));
+	            dj.setJobId((String) map.get("POSITION_ID"));
+	            dj.setParentdeptId((String) map.get("PREDEPARTMENT_ID"));
+	            dj.setParentjobId((String) map.get("PREPOSITION_ID"));
+	            dj.setCreateUser((String) map.get("CREATE_NAME"));
+	            dj.setCreateTime((Date) map.get("CREATE_DATE"));
+	            dj.setUpdateUser((String) map.get("UPDATE_NAME"));
+	            dj.setUpdateTime((Date) map.get("UPDATE_DATE"));
 	            dj.setIsDelete(0);
 	            dj.setJobType(2);
 	            deptjobService.merge(dj);
-	        }
+	        }	      
 	        
 	        /**
 	         * 4：处理用户数据
@@ -993,27 +1014,34 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
             Integer integer = 1;
             String userNumb = "";
             SysUser u = null;
-            for (HrUser d : userList) {
+            for (int i=0;i<userList.size();i++) {
                 userNumb = "";
-                u = this.get(d.getId());
+                map=userList.get(i);
+				String id=String.valueOf(map.get("ID"));
+				
+                u = this.get(id);
                 if (u == null) {
-                    u = new SysUser(d.getId());
+                    u = new SysUser(id);
                     userNumb = justYear + StringUtils.addString(integer.toString(), "0", 6,"L");
-                    u.setXm(d.getUserName());
-                    u.setUserName(d.getAccounts());
+                    u.setXm((String) map.get("USER_NAME"));
+                    u.setUserName((String) map.get("ACCOUNTS"));
                     u.setUserPwd(defaultPwd);
                     u.setUserNumb(userNumb);
-                    u.setIsDelete(d.getIsOnthejob() == 0 ? 1 : 0);
+                                                      
+                    u.setIsDelete("0".equals(String.valueOf(map.get("IS_ONTHEJOB"))) ? 1: 0);
+                                                          
+                    String idEnable=String.valueOf(map.get("IS_ENABLE"));
+                    u.setState("0".equals(idEnable) ? "1" : "0");
+    				
                     u.setCategory("1");
-                    u.setState(d.getIsEnable() == 0 ? "1" : "0");
                     u.setIssystem(1);
                     u.setIsHidden("0");
-                    if (d.getUserSex() != null) {
-                        u.setXbm(mapDicItme.get(d.getUserSex()));
+                    if (map.get("USER_SEX") != null) {
+                        u.setXbm(mapDicItme.get((String) map.get("USER_SEX")));
                     }
                     u.setSchoolId("2851655E-3390-4B80-B00C-52C7CA62CB39");
-                    u.setCreateTime(d.getCreateDate());
-                    u.setCreateUser(d.getCreateName());
+                    u.setCreateTime((Date) map.get("CREATE_DATE"));
+                    u.setCreateUser((String) map.get("CREATE_NAME"));
 
                     Set<SysRole> theUserRole = u.getSysRoles();
                     theUserRole.add(defaultRole);
@@ -1021,14 +1049,14 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
                     integer++;
                     this.merge(u);
                 }else {
-                	 u.setXm(d.getUserName());
-                     u.setUserName(d.getAccounts());
-                     u.setIsDelete(d.getIsOnthejob() == 0 ? 1 : 0);
-                     if (d.getUserSex() != null) {
-                         u.setXbm(mapDicItme.get(d.getUserSex()));
+                	 u.setXm((String) map.get("USER_NAME"));
+                     u.setUserName((String) map.get("ACCOUNTS"));
+                     u.setIsDelete("0".equals(String.valueOf(map.get("IS_ONTHEJOB"))) ? 1: 0);                     
+                     if ( map.get("USER_SEX") != null) {
+                         u.setXbm(mapDicItme.get((String) map.get("USER_SEX")));
                      }
-                     u.setCreateTime(d.getCreateDate());
-                     u.setCreateUser(d.getCreateName());
+                     u.setCreateTime((Date) map.get("CREATE_DATE"));
+                     u.setCreateUser((String) map.get("CREATE_NAME"));
                 }
             }
             
@@ -1047,25 +1075,41 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
             sql = "delete from BASE_T_USERDEPTJOB";
             userdeptjobService.executeSql(sql);
             BaseUserdeptjob udj = null;
-            for (HrUserDepartmentPosition hudp : userDeptList) {
-                udj = new BaseUserdeptjob(hudp.getId());
-                udj.setUserId(hudp.getSysUserId());
-                udj.setDeptId(hudp.getDepartmentId());
-                udj.setJobId(hudp.getDeptPositionId());
-                udj.setMasterDept(hudp.getMasterflag());
-                udj.setCreateUser(hudp.getCreateBy());
-                udj.setCreateTime(hudp.getCreateDate());
-                mapKdy = hudp.getDepartmentId() + "," + hudp.getDeptPositionId();
-                udj.setDeptjobId(mapDeptJob.get(mapKdy));
+            for (int i=0;i<userDeptList.size();i++) {
+            	map=userDeptList.get(i);
+            	logger.error(map);
+				String id=String.valueOf(map.get("ID"));
+				String job=(String) map.get("DEPT_POSITION_ID");
+	            String dept=(String) map.get("DEPARTMENT_ID");
+	            
+	            if(dept==null||job==null)
+	            	continue;
+	            
+                udj = new BaseUserdeptjob(id);
+                udj.setUserId((String) map.get("SYS_USER_ID"));
+                
+             
+                udj.setDeptId(dept);
+                
+                             
+                udj.setJobId(job);
+                udj.setMasterDept(Integer.parseInt(String.valueOf(map.get("MASTERFLAG"))));
+                udj.setCreateUser((String) map.get("CREATE_BY"));
+                udj.setCreateTime((Date) map.get("CREATE_DATE"));
+                
+                mapKdy = dept + "," + job;
+                String deptJobId=mapDeptJob.get(mapKdy);
+                udj.setDeptjobId(deptJobId==null?"":deptJobId);
+                
                 userdeptjobService.merge(udj);
                 mapKdy = "";
-            }
-
+            }                   
 			
 		} catch (Exception e) {
 			// 捕获了异常后，要手动进行回滚；
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
-			logger.error(e.getStackTrace());
+			logger.error(e.getMessage());
+            logger.error(Arrays.toString(e.getStackTrace()));
 			row = -1;
 		}
 
