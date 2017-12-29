@@ -7,6 +7,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Formula;
+
 import com.zd.core.annotation.FieldInfo;
 import com.zd.core.model.BaseEntity;
 
@@ -98,5 +100,16 @@ public class CardUserInfo extends BaseEntity implements Serializable {
         this.cardTypeId = cardTypeId;
     }
     
+    @FieldInfo(name = "学员姓名")
+    @Formula("(SELECT top 1 a.XM FROM TRAIN_T_CLASSTRAINEE a where a.CLASS_TRAINEE_ID=USER_ID)")
+    private String traineeName;
+
+    public String getTraineeName() {
+        return traineeName;
+    }
+
+    public void setTraineeName(String traineeName) {
+        this.traineeName = traineeName;
+    }
   
 }

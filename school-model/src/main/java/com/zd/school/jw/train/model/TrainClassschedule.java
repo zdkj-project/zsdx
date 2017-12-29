@@ -20,7 +20,8 @@ import java.util.List;
  * 
  * ClassName: TrainClassschedule Function: TODO ADD FUNCTION. Reason: TODO ADD
  * REASON(可选). Description: 班级课程日历(TRAIN_T_CLASSSCHEDULE)实体类. date: 2017-03-07
- *
+ * 分班原则：若班级课程是分班的，则学员必须是对应分班的才能上课
+ * 			若班级课程是不分班的，则所有学员可以来上课
  * @author luoyibo 创建文件
  * @version 0.1
  * @since JDK 1.8

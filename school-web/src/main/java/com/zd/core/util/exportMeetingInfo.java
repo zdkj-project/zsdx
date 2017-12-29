@@ -520,7 +520,7 @@ public class exportMeetingInfo {
 					sheet.getRow(4).getCell(1).setCellValue(classCategory);
 					sheet.addMergedRegion(new CellRangeAddress(4, 4, 1, 3));
 
-					sheet.getRow(4).getCell(4).setCellValue("人数");
+					sheet.getRow(4).getCell(4).setCellValue("总人数");
 					sheet.getRow(4).getCell(5).setCellValue(traineeNum);
 					sheet.addMergedRegion(new CellRangeAddress(4, 4, 5, 8));
 
@@ -565,12 +565,24 @@ public class exportMeetingInfo {
 							if(s.equals("BEGIN_TIME")){
 								sheet.getRow(9).getCell(3+j*6).setCellValue("开始时间");
 			                    sheet.getRow(9).getCell(4+j*6).setCellValue(String.valueOf(val).substring(0, String.valueOf(val).lastIndexOf(".")));
-			                    sheet.addMergedRegion(new CellRangeAddress(9, 9, 4+j*6,8+j*6));
+			                    sheet.addMergedRegion(new CellRangeAddress(9, 9, 4+j*6,5+j*6));
 							}
 							if(s.equals("END_TIME")){
-								sheet.getRow(10).getCell(3+j*6).setCellValue("结束时间");
-			                    sheet.getRow(10).getCell(4+j*6).setCellValue(String.valueOf(val).substring(0, String.valueOf(val).lastIndexOf(".")));
-			                    sheet.addMergedRegion(new CellRangeAddress(10, 10, 4+j*6,8+j*6));
+								sheet.getRow(9).getCell(6+j*6).setCellValue("结束时间");
+			                    sheet.getRow(9).getCell(7+j*6).setCellValue(String.valueOf(val).substring(0, String.valueOf(val).lastIndexOf(".")));
+			                    sheet.addMergedRegion(new CellRangeAddress(9, 9, 7+j*6,8+j*6));
+							}							
+							if(s.equals("lateNum")){
+								sheet.getRow(10).getCell(3+j*6).setCellValue("迟到人数");
+								sheet.getRow(10).getCell(4+j*6).setCellValue(String.valueOf(val));	
+							}
+							if(s.equals("absentNum")){
+								sheet.getRow(10).getCell(5+j*6).setCellValue("缺勤/未考勤人数");
+								sheet.getRow(10).getCell(6+j*6).setCellValue(String.valueOf(val));	
+							}
+							if(s.equals("percent")){
+								sheet.getRow(10).getCell(7+j*6).setCellValue("到课率");
+								sheet.getRow(10).getCell(8+j*6).setCellValue(String.valueOf(val));	
 							}
 						}
 					}

@@ -74,7 +74,7 @@ Ext.define("core.ordermanage.ordertotal.view.MainGrid", {
             minWidth:200,
             text: "总订餐人数",
             dataIndex: "count"
-        }, {        
+        }/*, {        
             flex:1,
             minWidth:200,
             text: "A套餐人数",
@@ -84,7 +84,7 @@ Ext.define("core.ordermanage.ordertotal.view.MainGrid", {
             minWidth:200,
             text: "B套餐人数",
             dataIndex: "countB"
-        },{
+        },*/,{
             xtype: 'actiontextcolumn',
             text: "操作",
             align:'center',

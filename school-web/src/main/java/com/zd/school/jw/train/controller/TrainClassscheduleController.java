@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * ClassName: TrainClassscheduleController Function: ADD FUNCTION. Reason: ADD
@@ -456,7 +457,7 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 
 		String classId = request.getParameter("classId"); // 一门或多门班级课程
 		String ids = request.getParameter("ids"); // 一门或多门班级课程
-
+		String[] idsArray=ids.split(",");
 		SimpleDateFormat fmtDate = new SimpleDateFormat("yyyy年MM月dd日");
 		SimpleDateFormat fmtTime = new SimpleDateFormat("h:mm");
 
@@ -479,7 +480,7 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 		if (StringUtils.isNotEmpty(ids)) {
 			hql += " and classId in ('" + classId + "')";
 		}
-		hql += " order by xm asc";
+		hql += " order by traineeNumber asc,xm asc";
 		trainClasstraineeList = classTraineeService.doQuery(hql);
 
 		// 处理学员基本数据
@@ -504,11 +505,46 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 		// 4.班级课程考勤信息信息(最新加入 是否请假、备注)
 		List<Map<String, Object>> voTrainClassCheckList = null;
 		List<String> classScheduleIdList = new ArrayList<>();
-		sql = "SELECT xm,classTraineeId,incardTime,outcardTime,attendResult,attendMinute,isleave,remark,traineeNumber FROM TRAIN_V_CHECKRESULT WHERE classScheduleId in ('"
-				+ ids.replace(",", "','") + "') order by beginTime asc";
+		sql = "SELECT classScheduleId,xm,classTraineeId,incardTime,outcardTime,attendResult,attendMinute,isleave,remark,traineeNumber FROM TRAIN_V_CHECKRESULT WHERE classScheduleId in ('"
+				+ ids.replace(",", "','") + "') order by  traineeNumber asc,xm asc";
 		voTrainClassCheckList = thisService.getForValuesToSql(sql);
 		int voTrainClassCheckListCount = voTrainClassCheckList.size();
-
+		
+		//new 5.统计课程的总人数、迟到人数、缺勤人数
+		Map<String, Object> tcsMap=null;
+		for(int i=0;i<trainClassscheduleList.size();i++){
+			tcsMap = trainClassscheduleList.get(i);
+			String schedule_id = String.valueOf(tcsMap.get("CLASS_SCHEDULE_ID"));		
+		
+			long countNum = voTrainClassCheckList.stream()
+					.filter((e)->e.get("classScheduleId").equals(schedule_id)).count();
+			
+			long lateNum = voTrainClassCheckList.stream()
+					.filter((e)->e.get("classScheduleId").equals(schedule_id))
+					.filter((e)-> "2".equals(e.get("attendResult")))
+					.count();	
+			
+			long absentNum = voTrainClassCheckList.stream()
+					.filter((e)->e.get("classScheduleId").equals(schedule_id))
+					.filter((e)->{
+						//未考勤和缺勤的人，都算作缺勤人数
+						if(StringUtils.isEmpty(String.valueOf(e.get("attendResult")))|| "4".equals(e.get("attendResult"))){
+							return true;
+						}else{
+							return false;
+						}
+					}).count();
+					
+			//到课百分率
+			int percent=(int)(((float)(countNum-absentNum)/(float)countNum)*10000);
+			
+			//tcsMap.put("countNum", countNum);
+			tcsMap.put("lateNum", lateNum);
+			tcsMap.put("absentNum", absentNum);
+			tcsMap.put("percent", percent/100f+"%");
+		}
+			
+		
 		Map<String, List<String>> traineeResult = new LinkedHashMap<>();
 		List<String> lists = null;
 		Map<String, Object> tcc = null;

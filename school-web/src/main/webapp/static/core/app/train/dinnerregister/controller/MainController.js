@@ -72,7 +72,7 @@ Ext.define("core.train.dinnerregister.controller.MainController", {
                 }
 
                 //Ext.Msg.wait('正在提交中,请稍后...', '温馨提示');
-                var loading = new Ext.LoadMask(baseGrid, {
+                var loading = new Ext.LoadMask(fieldset, {
                     msg: '正在提交数据...',
                     removeMask: true// 完成后移除
                 });

@@ -1,5 +1,7 @@
 package com.zd.school.jw.train.model.vo;
 
+import java.util.Date;
+
 public class VoTrainClasstrainee {
 	//班级id
 	private String classId;
@@ -18,6 +20,10 @@ public class VoTrainClasstrainee {
 	//是否请假
 	private  String isLeave;
 	
+	//签到时间
+	private  Date incardTime;
+	
+		
 	public String getClassId() {
 		return classId;
 	}
@@ -59,6 +65,12 @@ public class VoTrainClasstrainee {
 	}
 	public void setIsLeave(String isLeave) {
 		this.isLeave = isLeave;
+	}
+	public Date getIncardTime() {
+		return incardTime;
+	}
+	public void setIncardTime(Date incardTime) {
+		this.incardTime = incardTime;
 	}
 	
 	

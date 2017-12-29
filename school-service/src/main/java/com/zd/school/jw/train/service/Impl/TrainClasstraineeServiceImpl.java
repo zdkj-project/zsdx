@@ -474,8 +474,14 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 	@Override
 	public QueryResult<VoTrainClassCheck> getCheckList(Integer start, Integer limit, String classId,
 			String classScheduleId, String xm) {
-		String sql = "SELECT classTraineeId, classId, traineeId, xm, xbm, mobilePhone, workUnit, classScheduleId,incardTime,outcardTime,attendResult,attendMinute,isLeave,remark,traineeNumber "
+		String sql = "SELECT classTraineeId as classTraineeId, classId as classId, traineeId as traineeId,"
+				+ " xm as xm, xbm as xbm, mobilePhone as mobilePhone, workUnit as workUnit,"
+				+ " classScheduleId as classScheduleId,incardTime as incardTime,outcardTime as outcardTime,"
+				+ " attendResult as attendResult,attendMinute as attendMinute,isLeave as isLeave,"
+				+ " remark as remark,traineeNumber as traineeNumber"
 				+ " FROM TRAIN_V_CHECKRESULT where 1=1 ";
+		
+	
 		if (StringUtils.isNotEmpty(classId))
 			sql += " and classId='" + classId + "'";
 		if (StringUtils.isNotEmpty(classScheduleId))

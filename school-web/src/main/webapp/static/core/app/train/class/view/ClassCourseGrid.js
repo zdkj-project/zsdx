@@ -26,6 +26,12 @@ Ext.define("core.train.class.view.ClassCourseGrid", {
             iconCls: 'x-fa fa-plus-circle'
         },{
             xtype: 'button',
+            text: '修改',
+            ref: 'gridEdit_Tab',
+            funCode: 'girdFuntionBtn',
+            iconCls: 'x-fa fa-pencil-square-o'
+        },{
+            xtype: 'button',
             text: '导入课程信息',
             ref: 'gridImport',
             funCode: 'girdFuntionBtn',

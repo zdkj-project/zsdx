@@ -155,8 +155,8 @@ Ext.define("core.train.class.view.DetailForm", {
                 name: "className",
                 xtype: "textfield",
                 emptyText: "请输入班级名称",
-                maxLength: 64,
-                maxLengthText: "最多64个字符,汉字占2个字符",
+                maxLength: 32,
+                maxLengthText: "最多32个字符",
             },
             // {
             //     beforeLabelTextTpl: comm.get('required'),

@@ -19,6 +19,7 @@ import com.zd.school.plartform.system.model.SysUserToUP;
 import com.zd.school.plartform.system.service.SysUserService;
 import com.zd.school.push.service.PushInfoService;
 import org.apache.log4j.Logger;
+import org.hibernate.jdbc.Work;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -26,6 +27,9 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -305,60 +309,82 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 	public int doEditClassFood(TrainClass entity, String classFoodInfo, SysUser currentUser) {
 		int result = 0;
 
-		try {
-			// 先拿到已持久化的实体
-			TrainClass saveEntity = this.get(entity.getUuid());
+	
+		Date currentDate=new Date();
+		// 先拿到已持久化的实体
+		TrainClass saveEntity = this.get(entity.getUuid());
 
-			saveEntity.setDinnerType(entity.getDinnerType());
-			saveEntity.setAvgNumber(entity.getAvgNumber());
-			saveEntity.setBreakfastStand(entity.getBreakfastStand());
-			saveEntity.setBreakfastCount(entity.getBreakfastCount());
-			saveEntity.setLunchStand(entity.getLunchStand());
-			saveEntity.setLunchCount(entity.getLunchCount());
-			saveEntity.setDinnerStand(entity.getDinnerStand());
-			saveEntity.setDinnerCount(entity.getDinnerCount());
-			// BeanUtils.copyPropertiesExceptNull(saveEntity, entity);
-			// //entity会出现默认值，导致赋值不正确
+		saveEntity.setDinnerType(entity.getDinnerType());
+		saveEntity.setAvgNumber(entity.getAvgNumber());
+		saveEntity.setBreakfastStand(entity.getBreakfastStand());
+		saveEntity.setBreakfastCount(entity.getBreakfastCount());
+		saveEntity.setLunchStand(entity.getLunchStand());
+		saveEntity.setLunchCount(entity.getLunchCount());
+		saveEntity.setDinnerStand(entity.getDinnerStand());
+		saveEntity.setDinnerCount(entity.getDinnerCount());
+		// BeanUtils.copyPropertiesExceptNull(saveEntity, entity);
+		// //entity会出现默认值，导致赋值不正确
 
-			Integer isuse = saveEntity.getIsuse();
-			if (isuse != null && isuse != 0) // 当班级已经提交过一次之后，每次修改都设置为2
-				saveEntity.setIsuse(2);
+		Integer isuse = saveEntity.getIsuse();
+		if (isuse != null && isuse != 0) // 当班级已经提交过一次之后，每次修改都设置为2
+			saveEntity.setIsuse(2);
 
-			saveEntity.setUpdateTime(new Date()); // 设置修改时间
-			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-			this.update(saveEntity);
+		saveEntity.setUpdateTime(currentDate); // 设置修改时间
+		saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
+		this.update(saveEntity);
 
-			if (saveEntity.getDinnerType() == 3) {
-				// 把班级学员的数据，还原为json对象
-				@SuppressWarnings("unchecked")
-				List<TrainClasstrainee> classTraineeFoodInfos = (List<TrainClasstrainee>) JsonBuilder.getInstance()
-						.fromJsonArray(classFoodInfo, TrainClasstrainee.class);
+		if (saveEntity.getDinnerType() == 3) {
+			// 把班级学员的数据，还原为json对象
+			@SuppressWarnings("unchecked")
+			List<TrainClasstrainee> classTraineeFoodInfos = (List<TrainClasstrainee>) JsonBuilder.getInstance()
+					.fromJsonArray(classFoodInfo, TrainClasstrainee.class);
 
-				for (TrainClasstrainee stp : classTraineeFoodInfos) {
-					// 先拿到已持久化的实体
-					TrainClasstrainee saveTraineeEntity = trainClasstraineeService.get(stp.getUuid());
-					List<String> excludes=new ArrayList<>();
-					excludes.add("siesta");	//由于此模型有默认值，所以排除他
-					BeanUtils.copyPropertiesExceptNull(saveTraineeEntity, stp,excludes);
-					saveTraineeEntity.setUpdateTime(new Date()); // 设置修改时间
-					saveTraineeEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-					trainClasstraineeService.update(saveTraineeEntity);// 执行修改方法
-
-				}
-			} else {
-				// 清除班级学员的早 中 晚餐的数据
-				String hql = "update TrainClasstrainee set breakfast=0,lunch=0,dinner=0 where classId='"
-						+ saveEntity.getUuid() + "'";
-				this.executeHql(hql);
-			}
-			result = 1;
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
+			trainClasstraineeService.getSession().doWork((x)->{
+				TrainClasstrainee stp=null;
+				//sql时间
+				java.sql.Date sqlDate=new java.sql.Date(currentDate.getTime());
+				
+				String sql="update TRAIN_T_CLASSTRAINEE set BREAKFAST=?,LUNCH=?,DINNER=?,"
+						+ "UPDATE_TIME=?,UPDATE_USER=? where CLASS_TRAINEE_ID=?";
+				PreparedStatement ps=x.prepareStatement(sql);
+								
+				for(int i=0;i<classTraineeFoodInfos.size();i++){  
+					stp=classTraineeFoodInfos.get(i);
+                    ps.setInt(1,stp.getBreakfast());  
+                    ps.setInt(2, stp.getLunch());  
+                    ps.setInt(3, stp.getDinner());  
+                    ps.setDate(4, sqlDate);
+                    ps.setString(5, currentUser.getXm());
+                    ps.setString(6, stp.getUuid());
+                    ps.addBatch();  
+                    
+                    if((i+1)%30 == 0){
+                    	ps.executeBatch();                             
+                    }
+                }  
+				ps.executeBatch();
+				
+			});
+			//这种方式太慢了，40条数据需要1.6秒，上面的方式只需要80毫秒
+//				for (TrainClasstrainee stp : classTraineeFoodInfos) {
+//					// 先拿到已持久化的实体
+//					TrainClasstrainee saveTraineeEntity = trainClasstraineeService.get(stp.getUuid());
+//					List<String> excludes=new ArrayList<>();
+//					excludes.add("siesta");	//由于此模型有默认值，所以排除他
+//					BeanUtils.copyPropertiesExceptNull(saveTraineeEntity, stp,excludes);
+//					saveTraineeEntity.setUpdateTime(new Date()); // 设置修改时间
+//					saveTraineeEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
+//					trainClasstraineeService.update(saveTraineeEntity);// 执行修改方法
+//				}
+		} else {
+			// 清除班级学员的早 中 晚餐的数据
+			String hql = "update TrainClasstrainee set breakfast=0,lunch=0,dinner=0 where classId='"
+					+ saveEntity.getUuid() + "'";
+			this.executeHql(hql);
 		}
+		result = 1;
+		
 		/*
 		 * 不应该捕获unchecked异常，否则不会自动回滚； 若要捕获只能手动回滚 或 抛出运行时异常 catch (Exception e) {
 		 * // TODO: handle exception logger.error(e.getMessage()); result = 0; }
@@ -371,40 +397,61 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 	public int doEditClassRoom(TrainClass entity, String classRoomInfo, SysUser currentUser) {
 		int result = 0;
 
-		try {
-			// 先拿到已持久化的实体
-			TrainClass saveEntity = this.get(entity.getUuid());
-			Integer isuse = saveEntity.getIsuse();
-			if (isuse != null && isuse != 0) // 当班级已经提交过一次之后，每次修改都设置为2
-				saveEntity.setIsuse(2);
+		
+		Date currentDate=new Date();
+		// 先拿到已持久化的实体
+		TrainClass saveEntity = this.get(entity.getUuid());
+		Integer isuse = saveEntity.getIsuse();
+		if (isuse != null && isuse != 0) // 当班级已经提交过一次之后，每次修改都设置为2
+			saveEntity.setIsuse(2);
 
-			saveEntity.setUpdateTime(new Date()); // 设置修改时间
-			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-			this.update(saveEntity);
+		saveEntity.setUpdateTime(currentDate); // 设置修改时间
+		saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
+		this.update(saveEntity);
 
-			@SuppressWarnings("unchecked")
-			List<TrainClasstrainee> classTraineeRoomInfos = (List<TrainClasstrainee>) JsonBuilder.getInstance()
-					.fromJsonArray(classRoomInfo, TrainClasstrainee.class);
+		@SuppressWarnings("unchecked")
+		List<TrainClasstrainee> classTraineeRoomInfos = (List<TrainClasstrainee>) JsonBuilder.getInstance()
+				.fromJsonArray(classRoomInfo, TrainClasstrainee.class);
 
-			for (TrainClasstrainee stp : classTraineeRoomInfos) {
-				// 先拿到已持久化的实体
-				TrainClasstrainee saveTraineeEntity = trainClasstraineeService.get(stp.getUuid());
-				List<String> excludes=new ArrayList<>();
-				excludes.add("lunch");	//由于此模型有默认值，所以排除他
-				BeanUtils.copyPropertiesExceptNull(saveTraineeEntity, stp,excludes);
-				saveTraineeEntity.setUpdateTime(new Date()); // 设置修改时间
-				saveTraineeEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-				trainClasstraineeService.update(saveTraineeEntity);// 执行修改方法
-			}
+		trainClasstraineeService.getSession().doWork((x)->{
+			TrainClasstrainee stp=null;
+			//sql时间
+			java.sql.Date sqlDate=new java.sql.Date(currentDate.getTime());
+			
+			String sql="update TRAIN_T_CLASSTRAINEE set SIESTA=?,SLEEP=?,"
+					+ "UPDATE_TIME=?,UPDATE_USER=? where CLASS_TRAINEE_ID=?";
+			PreparedStatement ps=x.prepareStatement(sql);
+							
+			for(int i=0;i<classTraineeRoomInfos.size();i++){  
+				stp=classTraineeRoomInfos.get(i);
+                ps.setInt(1,stp.getSiesta());  
+                ps.setInt(2, stp.getSleep()); 
+                ps.setDate(3, sqlDate);
+                ps.setString(4, currentUser.getXm());
+                ps.setString(5, stp.getUuid());
+                ps.addBatch();  
+                
+                if((i+1)%30 == 0){
+                	ps.executeBatch();                             
+                }
+            }  
+			ps.executeBatch();
+			
+		});
+			//这种方式太慢了，40条数据需要1秒，上面的方式只需要80毫秒
+//			for (TrainClasstrainee stp : classTraineeRoomInfos) {
+//				// 先拿到已持久化的实体
+//				TrainClasstrainee saveTraineeEntity = trainClasstraineeService.get(stp.getUuid());
+//				List<String> excludes=new ArrayList<>();
+//				excludes.add("lunch");	//由于此模型有默认值，所以排除他
+//				BeanUtils.copyPropertiesExceptNull(saveTraineeEntity, stp,excludes);
+//				saveTraineeEntity.setUpdateTime(new Date()); // 设置修改时间
+//				saveTraineeEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
+//				trainClasstraineeService.update(saveTraineeEntity);// 执行修改方法
+//			}
 
-			result = 1;
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		result = 1;
+		
 		/*
 		 * 不应该捕获unchecked异常，否则不会自动回滚； 若要捕获只能手动回滚 或 抛出运行时异常 catch (Exception e) {
 		 * // TODO: handle exception logger.error(e.getMessage()); result = 0; }

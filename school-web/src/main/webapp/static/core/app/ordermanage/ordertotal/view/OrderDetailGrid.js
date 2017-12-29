@@ -66,12 +66,15 @@ Ext.define("core.ordermanage.ordertotal.view.OrderDetailGrid", {
             text: "预定套餐",
             dataIndex: "dinnerGroup",
             renderer: function(value, metaData) {
+                /*
                 if(value==1)
                     return "<span style='color:green'>A套餐</span>";
                 else if(value==2)
                     return "<span style='color:blue'>B套餐</span>";
                 else
                     return "其他";
+                */
+                 return "<span style='color:green'>已订餐</span>";
             }
         }, {
             flex:1,

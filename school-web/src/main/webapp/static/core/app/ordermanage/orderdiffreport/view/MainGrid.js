@@ -110,7 +110,7 @@ Ext.define("core.ordermanage.orderdiffreport.view.MainGrid", {
             renderer: function(value, metaData) {               
                 return value+" 份";
             }
-        }, {
+        }/*, {
             flex:0.9,      
             minWidth:90,
             text: "A套餐总数",
@@ -126,7 +126,7 @@ Ext.define("core.ordermanage.orderdiffreport.view.MainGrid", {
             renderer: function(value, metaData) {               
                 return value+" 份";
             }
-        },{
+        }*/,{
             flex:1,      
             minWidth:100,
             text: "实际就餐总数",

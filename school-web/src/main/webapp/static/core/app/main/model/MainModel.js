@@ -193,7 +193,27 @@ Ext.define('core.main.model.MainModel', {
             "menuType": "FUNC",
             "smallIcon": "icon_kaoqinjieguo",
             "id": "02447a39-6f4d-478c-83e5-4046d76758c9",
-            "text": "教职工订餐",
+            "text": "员工订餐",
+            "iconCls": "",
+            "issystem": 1
+        },{
+
+            "parent": "ROOT",
+            "menuLeaf": "LEAF",
+            "bigIcon": "/static/core/resources/images/icon/index_xueyuantongji.png",
+            "level": 1,
+            "nodeCode": "",
+            "leaf": true,
+            "isHidden": "0",
+            "treeid": "e3191cc8-5146-44e9-8667-6218c294be0c",
+            "menuTarget": "myconsumereport.mainlayout,core.reportcenter.myconsumereport.controller.MainController",
+            "children": [],
+            "menuCode": "MYCONSUME",
+            "orderIndex": 11,
+            "menuType": "FUNC",
+            "smallIcon": "icon_xueyuantongji",
+            "id": "e3191cc8-5146-44e9-8667-6218c294be0c",
+            "text": "个人消费",
             "iconCls": "",
             "issystem": 1
         }],

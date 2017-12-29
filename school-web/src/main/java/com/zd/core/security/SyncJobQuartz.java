@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 
 import com.zd.core.util.DBContextHolder;
 import com.zd.school.oa.meeting.service.OaMeetingService;
+import com.zd.school.plartform.baseset.model.BaseOrgToUP;
 import com.zd.school.plartform.baseset.service.BaseOrgService;
 import com.zd.school.plartform.system.model.CardUserInfoToUP;
 import com.zd.school.plartform.system.model.SysUserToUP;
@@ -42,7 +43,15 @@ public class SyncJobQuartz {
 				logger.info("定时同步OA人员部门数据失败，详见错误日志！");
 			}
 			
-			// 2：同步人员数据到UP
+			// 2：同步部门数据到UP
+			row=SyncDeptIntoUp();
+			if(row>=0){
+				logger.info("定时同步部门数据成功！");
+			}else{
+				logger.info("定时同步部门数据失败，详见错误日志！");
+			}
+			
+			// 3：同步人员数据到UP
 			row=SyncUserIntoUp();
 			if(row>=0){
 				logger.info("定时同步人员数据成功！");
@@ -50,7 +59,7 @@ public class SyncJobQuartz {
 				logger.info("定时同步人员数据失败，详见错误日志！");
 			}
 			
-			// 3：同步UP中的发卡数据
+			// 4：同步UP中的发卡数据
 			row=SyncUserCardFromUp();
 			if(row>=0){
 				logger.info("定时同步人员发卡数据成功！");
@@ -58,7 +67,7 @@ public class SyncJobQuartz {
 				logger.info("定时同步人员发卡数据失败，详见错误日志！");
 			}
 			
-			// 4：同步OA会议数据
+			// 5：同步OA会议数据
 			row=syncOaMeeting();
 			if(row>=0){
 				logger.info("定时同步OA会议数据成功！");
@@ -71,14 +80,46 @@ public class SyncJobQuartz {
 			logger.error(e.getStackTrace());
 		}
 	}
+	
+	private int SyncDeptIntoUp() {
+		int row = 0;
+		try {
+			// 1.查询最新的用户、部门信息
+			String sql = "select EXT_FIELD04 as departmentId,EXT_FIELD05 as parentDepartmentId,"
+                    + "	NODE_TEXT as departmentName,convert(varchar,NODE_LEVEL) as layer,"
+                    + " convert(varchar,ORDER_INDEX) as layerorder  "
+                    + " from BASE_T_ORG"
+                    + " where isdelete=0"
+                    + " order by DepartmentID asc";
 
+			List<BaseOrgToUP> deptInfos = thisService.doQuerySqlObject(sql, BaseOrgToUP.class);
+
+			// 2.进入事物之前切换数据源
+			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
+			
+			if (deptInfos.size() > 0) {
+				row = orgService.syncAllDeptInfoToUP(deptInfos);
+			}
+
+		} catch (Exception e) {
+			row = -1;
+			logger.error(e.getMessage());
+			logger.error(Arrays.toString(e.getStackTrace()));
+		} finally {
+			// 恢复数据源
+			DBContextHolder.clearDBType();
+		}
+
+		return row;
+	}
+	
 	private int SyncUserIntoUp() {
 		int row = 0;
 		try {
 			// 1.查询最新的用户、部门信息
 			String sql = "select  u.USER_ID as userId,u.XM as employeeName, u.user_numb as employeeStrId,"
 					+ "'' as employeePwd,CASE u.XBM WHEN '2' THEN '0' ELSE '1' END AS sexId,u.isDelete as isDelete,"
-					+ "u.SFZJH AS identifier,'1' AS cardState, " // cardState
+					+ "u.SFZJH AS identifier,u.MOBILE as employeeTel,'1' AS cardState, " // cardState
 																	// 和 sid
 																	// 都置默认值，现在不做特定的处理
 					+ "'' as sid,org.EXT_FIELD04 as departmentId,"

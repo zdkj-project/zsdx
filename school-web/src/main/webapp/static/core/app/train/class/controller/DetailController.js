@@ -885,6 +885,13 @@ Ext.define("core.train.class.controller.DetailController", {
                 return false;
             }
         },
+        //编辑班级课程界面
+        "basepanel basegrid[xtype=class.classcoursegrid] button[ref=gridEdit_Tab]":{
+            beforeclick:function(btn){
+                this.doAddCourseDetail_Tab(btn, "edit", null, null);
+                return false;
+            }
+        },
         "basepanel basegrid[xtype=class.classcoursegrid] button[ref=gridDownTemplate]": {
             beforeclick: function(btn) {        
                 var self = this;
@@ -1434,6 +1441,20 @@ Ext.define("core.train.class.controller.DetailController", {
                 var formDeptObj = objDetForm.getForm();
                 self.setFormValue(formDeptObj, insertObj);
             
+                if(insertObj.beginTime){
+                    var beginTimeDate=new Date(insertObj.beginTime);
+                    var startDate=Ext.Date.dateFormat(beginTimeDate, 'Y-m-d H:i');
+                    startDate=startDate.split(" ");
+                    formDeptObj.findField("courseDate").setValue(beginTimeDate);
+                    formDeptObj.findField("courseBeginTime").setValue(startDate[1]);
+                }
+                if(insertObj.endTime){
+                    var endTimeDate=new Date(insertObj.endTime);
+                    var endDate=Ext.Date.dateFormat(endTimeDate, 'Y-m-d H:i');
+                    endDate=endDate.split(" ");
+                    formDeptObj.findField("courseDate").setValue(endTimeDate);
+                    formDeptObj.findField("courseEndTime").setValue(endDate[1]);
+                }
             },30);
                            
         }else if(tabItem.itemPKV&&tabItem.itemPKV!=pkValue){     //判断是否点击的是同一条数据

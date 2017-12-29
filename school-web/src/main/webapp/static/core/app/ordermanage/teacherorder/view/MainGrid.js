@@ -18,7 +18,7 @@ Ext.define("core.ordermanage.teacherorder.view.MainGrid", {
         xtype:'toolbar',
         items: [ {
             xtype: 'tbtext',
-            html: '教职工订餐',
+            html: '员工订餐',
             style: {
                 fontSize: '16px',
                 color: '#C44444',
@@ -65,30 +65,6 @@ Ext.define("core.ordermanage.teacherorder.view.MainGrid", {
                 var ss = Ext.Date.format(new Date(date), 'Y年m月d日 - D')           
                 return ss;
             }
-        }, {
-            width: 200,
-            text: "订餐情况",
-            dataIndex: "dinnerGroup",
-            align:'center',
-            renderer: function(value, metaData) {
-                if(value==1)
-                    return "<span style='color:green'>A套餐</span>";
-                else if(value==2)
-                    return "<span style='color:blue'>B套餐</span>";
-                else
-                    return "<span style='color:red'>未订餐</span>";
-            }
-        },{
-            flex:1,
-            minWidth: 200,
-            text: "备注",
-            dataIndex: "remark",
-            renderer: function (value, metaData) {
-                var title = " 备注 ";
-                metaData.tdAttr = 'data-qtitle="' + title +
-                    '" data-qtip="' + value + '"';
-                return value;
-            }
         },{
             xtype: 'actiontextcolumn',
             text: "订餐操作",
@@ -96,9 +72,9 @@ Ext.define("core.ordermanage.teacherorder.view.MainGrid", {
             align:'center',
             fixed: true,
             items: [{
-                text: ' A套餐 ',
+                text: ' 预定早餐 ',
                 style: 'font-size:13px;',
-                tooltip: 'A套餐',
+                tooltip: '预定早餐',
                 ref: 'gridArrangeSite',
                
                 handler: function (view, rowIndex,colIndex, item) {
@@ -109,8 +85,16 @@ Ext.define("core.ordermanage.teacherorder.view.MainGrid", {
                         record: rec,
                         value:1
                     });
-                }
-            }, {
+                },
+                getClass :function(v,metadata,record){
+                
+                    if(record.get("dinnerGroup")==1){
+                        return 'x-hidden-display';
+                    }
+                    else
+                        return null;
+                }, 
+            }, /*{
                 text: ' B套餐 ',
                 style: 'font-size:13px;',
                 tooltip: 'B套餐',
@@ -124,7 +108,7 @@ Ext.define("core.ordermanage.teacherorder.view.MainGrid", {
                         value:2
                     });
                 }
-            }, {
+            }, */{
                 text: ' 取消订餐 ',
                 style: 'font-size:13px;',
                 tooltip: '取消订餐',
@@ -166,6 +150,36 @@ Ext.define("core.ordermanage.teacherorder.view.MainGrid", {
                         return null;
                 }, 
             }]
+        },{
+            width: 200,
+            text: "订餐情况",
+            dataIndex: "dinnerGroup",
+            align:'center',
+            renderer: function(value, metaData) {
+                /*
+                if(value==1)
+                    return "<span style='color:green'>A套餐</span>";
+                else if(value==2)
+                    return "<span style='color:blue'>B套餐</span>";
+                else
+                    return "<span style='color:red'>未订餐</span>";
+                */
+                if(value==1)
+                    return "<span style='color:green'>已订餐</span>";
+                else 
+                    return "<span style='color:red'>未订餐</span>";
+            }
+        },{
+            flex:1,
+            minWidth: 200,
+            text: "备注",
+            dataIndex: "remark",
+            renderer: function (value, metaData) {
+                var title = " 备注 ";
+                metaData.tdAttr = 'data-qtitle="' + title +
+                    '" data-qtip="' + value + '"';
+                return value;
+            }
         }]
     },
 });

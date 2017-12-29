@@ -436,7 +436,7 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
 	            // 2.查询最新的用户、部门信息
 				sql = "select  u.USER_ID as userId,u.XM as employeeName, u.user_numb as employeeStrId,"
 						+ "'' as employeePwd,CASE u.XBM WHEN '2' THEN '0' ELSE '1' END AS sexId,u.isDelete as isDelete,"
-						+ "u.SFZJH AS identifier,'1' AS cardState, " // cardState
+						+ "u.SFZJH AS identifier,u.MOBILE as employeeTel,'1' AS cardState, " // cardState
 																		// 和 sid
 																		// 都置默认值，现在不做特定的处理
 						+ "'' as sid,org.EXT_FIELD04 as departmentId,"

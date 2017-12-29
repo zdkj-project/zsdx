@@ -23,7 +23,12 @@ Ext.define("core.train.cardinfo.view.MainGrid", {
             xtype: 'textfield',
             name: 'cardPrintId',
             funCode: 'girdFastSearchText',
-            emptyText: '请输印刷卡号'
+            emptyText: '请输入印刷卡号'
+        },  {
+            xtype: 'textfield',
+            name: 'traineeName',
+            funCode: 'girdFastSearchText',
+            emptyText: '请输入姓名'
         }, {
             xtype: 'button',
             funCode: 'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型
@@ -39,10 +44,7 @@ Ext.define("core.train.cardinfo.view.MainGrid", {
     /** 排序字段定义 */
     defSort: [{
         property: "cardPrintId", //字段名
-        direction: "DESC" //升降序
-    },{
-        property: "createTime", //字段名
-        direction: "DESC" //升降序
+        direction: "ASC" //升降序
     }],
     /** 扩展参数 */
     extParams: {
@@ -55,12 +57,16 @@ Ext.define("core.train.cardinfo.view.MainGrid", {
         text: '序号',
         align: 'center'
     },{
-    	flex:0.5,
-        width:100,
+    	flex:1,
+        minWidth:100,
         text: "印刷卡号",
         dataIndex: "cardPrintId",
+    },{
+        flex:1,
+        text: "学员姓名",
+        dataIndex: "traineeName" 
     }, {
-    	flex:0.5,
+    	flex:1,
         text: "卡的使用状态",
         dataIndex: "useState",
         columnType: "basecombobox", //列类型
