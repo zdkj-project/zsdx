@@ -21,7 +21,7 @@ Ext.define('core.train.alleval.view.EvalGrid', {
         xtype: 'toolbar',
         items: [{
             xtype: 'button',
-            text: '管理评价',
+            text: '班级评价结果',
             ref: 'gridClassEval',
             funCode: 'girdFuntionBtn',   //指定此类按钮为girdFuntionBtn类型，用于于右边的按钮进行功能区分
             iconCls: 'x-fa fa-plus-circle',          

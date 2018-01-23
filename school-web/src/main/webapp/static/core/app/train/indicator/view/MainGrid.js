@@ -115,10 +115,10 @@ Ext.define("core.train.indicator.view.MainGrid", {
                         html = "课程评价";
                         break;
                     case 2:
-                        html = "管理评价";
+                        html = "班级评价";
                         break;
                     case 3:
-                        html = "课程/管理评价";
+                        html = "课程/班级评价";
                         break;
                 }
                 return html;

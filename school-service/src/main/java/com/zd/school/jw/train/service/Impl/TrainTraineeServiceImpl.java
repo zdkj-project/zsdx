@@ -152,7 +152,8 @@ public class TrainTraineeServiceImpl extends BaseServiceImpl<TrainTrainee> imple
 			List<Object> lo = listTrainee.get(i);
 
 			// 查询学员库是否存在此学员，如果存在，则直接修改，不添加
-			trainee = this.getByProerties("sfzjh", lo.get(3));
+			trainee = this.getByProerties(new String[] { "sfzjh", "isDelete" }, new Object[] { lo.get(3), 0 });
+
 			if (trainee == null) {
 				trainee = new TrainTrainee();
 				trainee.setCreateUser(currentUser.getXm()); // 设置修改人的中文名

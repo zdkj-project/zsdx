@@ -1129,7 +1129,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				}
 				// 3.班级课程信息
 				List<Map<String,Object>> trainClassscheduleList = null;
-				sql = "SELECT CLASS_SCHEDULE_ID,COURSE_NAME,BEGIN_TIME,END_TIME FROM TRAIN_T_CLASSSCHEDULE where ISDELETE=0";
+				sql = "SELECT CLASS_SCHEDULE_ID,COURSE_NAME,BEGIN_TIME,END_TIME FROM TRAIN_T_CLASSSCHEDULE where (ISDELETE=0 or ISDELETE=2) ";
 		        sql += " and CLASS_ID='" + ids +"'";
 		        sql += " order by BEGIN_TIME asc";
 				trainClassscheduleList = classScheduleSerive.getForValuesToSql(sql);

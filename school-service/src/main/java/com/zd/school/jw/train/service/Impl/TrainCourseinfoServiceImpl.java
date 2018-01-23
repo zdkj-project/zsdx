@@ -10,6 +10,7 @@ import com.zd.school.jw.train.model.TrainCourseEval;
 import com.zd.school.jw.train.model.TrainCoursecategory;
 import com.zd.school.jw.train.model.TrainCourseinfo;
 import com.zd.school.jw.train.model.TrainTeacher;
+import com.zd.school.jw.train.model.TrainTrainee;
 import com.zd.school.jw.train.service.TrainCoursecategoryService;
 import com.zd.school.jw.train.service.TrainCourseinfoService;
 import com.zd.school.jw.train.service.TrainTeacherService;
@@ -203,6 +204,7 @@ public class TrainCourseinfoServiceImpl extends BaseServiceImpl<TrainCourseinfo>
         String teachType = null;
         String teacherId = null;
         String teacherName = null;
+        String courseName=null;
         //所有的课程分类
         Map<String, TrainCoursecategory> mapCoursecategory = new HashMap<>();
         List<TrainCoursecategory> lisCourSecategory = coursecategoryService.doQueryAll();
@@ -226,36 +228,66 @@ public class TrainCourseinfoServiceImpl extends BaseServiceImpl<TrainCourseinfo>
         }
 
         //导入数据
+        TrainCourseinfo course=null;
+        boolean isExist=true;
         for (int i = 0; i < listCourse.size(); i++) {
             List<Object> lo = listCourse.get(i);
+            
+            //分类找不到，则不导入
+            TrainCoursecategory  tcc=mapCoursecategory.get(lo.get(1));
+            if(tcc==null)
+            	continue;
+            
             categoryId = mapCoursecategory.get(lo.get(1)).getUuid();
             categoryCode = mapCoursecategory.get(lo.get(1)).getNodeCode();
             teachType = mapTeachType.get(lo.get(2));
             //teacherId = mapTeacher.get(lo.get(6));
             teacherName = lo.get(5).toString();
             teacherId = this.getMainTeacherid(mapTeacher, teacherName);
-
-            TrainCourseinfo course = new TrainCourseinfo();
+            courseName= String.valueOf(lo.get(0));
+            
+            //没有对应的教师，该课程不导入
+            if (StringUtils.isEmpty(teacherId))
+            	continue;
+            	
+           
+        	// 查询课程表中是否存在 课程名、教师名一致的课程；若存在，则替换
+			course = this.getByProerties(
+					new String[] { "courseName", "mainTeacherId", "isDelete" },
+					new Object[] { courseName, teacherId, 0 });
+			
+			// 如果存在，则替换；否则新建
+			if (course == null) {
+				isExist = false;
+				course = new TrainCourseinfo();
+				course.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
+				course.setCourseName(courseName);
+				course.setMainTeacherName(String.valueOf(teacherName));
+	            course.setMainTeacherId(teacherId);
+	            //导入时不做多老师的拆分
+	            course.setCourseMode(2);
+	            course.setPeriod(1);
+	            
+			}else{
+				isExist=true;
+			}
+			
             course.setCategoryId(categoryId);
             course.setCategoryCode(categoryCode);
             course.setTeachType(teachType);
-            course.setCourseName(String.valueOf(lo.get(0)));
-            //course.setCourseCode(String.valueOf(lo.get(1)));
-
-            course.setPeriod(1);
+            //course.setCourseCode(String.valueOf(lo.get(1)));          
             course.setPeriodTime(Integer.parseInt(lo.get(3).toString()));
             course.setCredits(Integer.parseInt(lo.get(4).toString()));
-
-            course.setMainTeacherName(String.valueOf(teacherName));
-            course.setMainTeacherId(teacherId);
             course.setCourseDesc(String.valueOf(lo.get(6)));
-            //导入时不做多老师的拆分
-            course.setCourseMode(2);
-
-            //没有对应的教师，该课程不导入
-            if (!StringUtils.isEmpty(teacherId))
+          
+            course.setUpdateTime(new Date());
+            course.setUpdateUser(currentUser.getXm());
+            
+            if(isExist==true)
+            	this.merge(course);
+            else
                 this.doAddEntity(course, currentUser);
-
+            	
         }
     }
 

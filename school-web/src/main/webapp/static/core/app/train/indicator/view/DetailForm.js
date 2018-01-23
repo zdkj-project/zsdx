@@ -56,8 +56,8 @@ Ext.define("core.train.indicator.view.DetailForm", {
             ref:'indicatorObject',
             items: [
                 { boxLabel: '课程评价', name: 'indicatorObject', inputValue: '1', checked: true },
-                { boxLabel: '管理评价', name: 'indicatorObject', inputValue: '2' },
-                { boxLabel: '课程/管理评价', name: 'indicatorObject', inputValue: '3' }
+                { boxLabel: '班级评价', name: 'indicatorObject', inputValue: '2' },
+                { boxLabel: '课程/班级评价', name: 'indicatorObject', inputValue: '3' }
             ]
         }]
     },{

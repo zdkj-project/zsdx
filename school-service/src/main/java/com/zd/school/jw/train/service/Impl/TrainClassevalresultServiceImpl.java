@@ -4,6 +4,7 @@ import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.BeanUtils;
 import com.zd.school.jw.train.dao.TrainClassevalresultDao;
+import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClassevalresult;
 import com.zd.school.jw.train.model.TrainClassschedule;
 import com.zd.school.jw.train.model.TrainIndicatorStand;
@@ -152,30 +153,35 @@ public class TrainClassevalresultServiceImpl extends BaseServiceImpl<TrainClasse
 
     @Override
     public Boolean doStartClassEval(String ids) throws InvocationTargetException, IllegalAccessException {
-        List<TrainIndicatorStand> indicatorStands = standService.getClassEvalStand();
-        TrainClassevalresult classEvalStand = null;
-        for (TrainIndicatorStand inStand : indicatorStands) {
-            classEvalStand = new TrainClassevalresult();
-            classEvalStand.setClassId(ids);
-            classEvalStand.setIndicatorId(inStand.getIndicatorId());
-            classEvalStand.setIndicatorName(inStand.getIndicatorName());
-            classEvalStand.setStandId(inStand.getUuid());
-            classEvalStand.setIndicatorStand(inStand.getIndicatorStand());
-            classEvalStand.setAdvise("");
-            classEvalStand.setBasSatisfactioncount(0);
-            classEvalStand.setNoSatisfactioncount(0);
-            classEvalStand.setVerySatisfactioncount(0);
-            classEvalStand.setSatisfactioncount(0);
-            classEvalStand.setVerySatisfaction(BigDecimal.valueOf(0));
-            classEvalStand.setSatisfaction(BigDecimal.valueOf(0));
+    	TrainClass trainClass = classService.get(ids);
+    	
+    	if(trainClass.getIsEval()==0){
+    		List<TrainIndicatorStand> indicatorStands = standService.getClassEvalStand();
+            TrainClassevalresult classEvalStand = null;
+            for (TrainIndicatorStand inStand : indicatorStands) {
+                classEvalStand = new TrainClassevalresult();
+                classEvalStand.setClassId(ids);
+                classEvalStand.setIndicatorId(inStand.getIndicatorId());
+                classEvalStand.setIndicatorName(inStand.getIndicatorName());
+                classEvalStand.setStandId(inStand.getUuid());
+                classEvalStand.setIndicatorStand(inStand.getIndicatorStand());
+                classEvalStand.setAdvise("");
+                classEvalStand.setBasSatisfactioncount(0);
+                classEvalStand.setNoSatisfactioncount(0);
+                classEvalStand.setVerySatisfactioncount(0);
+                classEvalStand.setSatisfactioncount(0);
+                classEvalStand.setVerySatisfaction(BigDecimal.valueOf(0));
+                classEvalStand.setSatisfaction(BigDecimal.valueOf(0));
 
-            this.merge(classEvalStand);
-        }
+                this.merge(classEvalStand);
+            }
+    	}
+        
         classService.updateByProperties("uuid",ids,"isEval",1);
 
-        //同步启动班级下的需要评价课程
-        String[] propName ={"classId","isEval"};
-        Object[] propValue = {ids,1};
+        //同步启动班级下的需要评价课程(开启未评价的)
+        String[] propName ={"classId","isEval","evalState"};
+        Object[] propValue = {ids,1,0};
         List<TrainClassschedule> classCourse = scheduleService.queryByProerties(propName, propValue);
         for (TrainClassschedule trainClassschedule : classCourse) {
             courseevalresultService.doStartCourseEval(trainClassschedule.getUuid());

@@ -333,8 +333,8 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 				doResult = "导入成功"; // 默认是成功
 				// isError = false;
 
-				// 查询学员库是否存在此学生
-				trainTrainee = trainTraineeServie.getByProerties("sfzjh", lo.get(3));
+				// 查询学员库是否存在此学生（2018-1-22改）
+				trainTrainee = trainTraineeServie.getByProerties(new String[] { "sfzjh", "isDelete" }, new Object[] { lo.get(3), 0 });
 
 				// 查询此班级，是否已经存在此学员,则取出来进行数据更新操作 //只要存在即可，isdelete为1的会被转为2
 				TrainClasstrainee trainee = this.getByProerties(new String[] { "sfzjh", "classId" },
