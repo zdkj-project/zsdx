@@ -86,6 +86,14 @@ public class TrainTraineeController extends FrameWorkController<TrainTrainee> im
                       HttpServletResponse response) throws IOException, IllegalAccessException, InvocationTargetException {
         // 此处为放在入库前的一些检查的代码，如唯一校验等
         try {
+        	
+			String hql1 = " o.isDelete='0'";
+			if (thisService.IsFieldExist("sfzjh", entity.getSfzjh(), "-1", hql1)) {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"学员的身份证件号不能重复！\""));
+				return;
+			}
+
+			
             if (!file.isEmpty() && file.getSize() > 0) {
                 // 重命名上传后的文件名
                 String myFileName = file.getOriginalFilename();
@@ -188,6 +196,12 @@ public class TrainTraineeController extends FrameWorkController<TrainTrainee> im
 
         // 入库前检查代码
         try {
+        	String hql1 = " o.isDelete='0'";
+			if (thisService.IsFieldExist("sfzjh", entity.getSfzjh(), entity.getUuid(), hql1)) {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"学员的身份证件号不能重复！\""));
+				return;
+			}
+			
             if (!file.isEmpty() && file.getSize() > 0) {
                 // 重命名上传后的文件名
                 String myFileName = file.getOriginalFilename();

@@ -133,7 +133,7 @@ Ext.define('core.main.model.MainModel', {
             "menuType": "FUNC",
             "smallIcon": "icon_kechenkaoqin",
             "id": "22b334e9-9685-41fb-8baa-a48abf577769",
-            "text": "培训考勤",
+            "text": "培训考勤结果",
             "iconCls": "",
             "issystem": 1
         },

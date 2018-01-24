@@ -10,6 +10,7 @@ import com.zd.core.util.PoiExportExcel;
 import com.zd.core.util.StringUtils;
 import com.zd.school.excel.FastExcel;
 import com.zd.school.jw.train.model.TrainTeacher;
+import com.zd.school.jw.train.model.TrainTrainee;
 import com.zd.school.jw.train.service.TrainTeacherService;
 import com.zd.school.plartform.baseset.model.BaseDicitem;
 import com.zd.school.plartform.baseset.service.BaseDicitemService;
@@ -30,6 +31,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,6 +96,13 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
                       HttpServletResponse response) throws IOException, IllegalAccessException, InvocationTargetException {
         // 此处为放在入库前的一些检查的代码，如唯一校验等
         try {
+        	String hql1 = " o.isDelete='0'";
+			if (thisService.IsFieldExist("sfzjh", entity.getSfzjh(), "-1", hql1)) {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"教师的身份证件号不能重复！\""));
+				return;
+			}
+
+			
             if (!file.isEmpty() && file.getSize() > 0) {
                 // 重命名上传后的文件名
                 String myFileName = file.getOriginalFilename();
@@ -195,6 +204,12 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
 
         // 入库前检查代码
         try {
+        	String hql1 = " o.isDelete='0'";
+			if (thisService.IsFieldExist("sfzjh", entity.getSfzjh(), entity.getUuid(), hql1)) {
+				writeJSON(response, jsonBuilder.returnFailureJson("\"教师的身份证件号不能重复！\""));
+				return;
+			}
+			
             if (!file.isEmpty() && file.getSize() > 0) {
                 // 重命名上传后的文件名
                 String myFileName = file.getOriginalFilename();
@@ -262,7 +277,7 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
     @RequestMapping(value = "/importData", method = {RequestMethod.GET, RequestMethod.POST})
     public void uploadExcel(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) throws Exception {
         try {
-
+        	SysUser currentUser=getCurrentSysUser();
             InputStream in = null;
             List<List<Object>> listObject = null;
             if (!file.isEmpty()) {
@@ -284,11 +299,21 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
                     mapKey = baseDicitem.getItemName() + baseDicitem.getDicCode();
                     mapDicItem.put(mapKey, baseDicitem.getItemCode());
                 }
+                TrainTeacher teacher=null;
                 for (int i = 0; i < listObject.size(); i++) {
                     List<Object> lo = listObject.get(i);
-
-                    TrainTeacher teacher = new TrainTeacher();
-
+                    
+                    // 查询师资库是否存在此教师，如果存在，则直接修改，不添加
+                    if(StringUtils.isNotEmpty(String.valueOf(lo.get(15))))
+                    	teacher = thisService.getByProerties(new String[] { "sfzjh", "isDelete" }, new Object[] { lo.get(15), 0 });
+                    else
+                    	teacher=null;
+                    
+        			if (teacher == null) {
+        				teacher = new TrainTeacher();
+        				teacher.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
+        			}
+        			
                     teacher.setXm(String.valueOf(lo.get(0)));
                     teacher.setXbm(mapDicItem.get(String.valueOf(lo.get(1)) + "XBM"));
                     teacher.setPosition(String.valueOf(lo.get(2)));
@@ -309,7 +334,10 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
                     teacher.setTeachingProject(String.valueOf(lo.get(14)));
                     teacher.setSfzjh(String.valueOf(lo.get(15)));
                     teacher.setZp("/static/upload/trainTeacherPhoto/" + String.valueOf(lo.get(15)) + ".jpg");
-
+                    
+                    teacher.setUpdateTime(new Date());
+                    teacher.setUpdateUser(currentUser.getXm());
+        			
                     thisService.merge(teacher);
 
                 }

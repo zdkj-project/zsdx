@@ -4,6 +4,7 @@ package com.zd.school.jw.train.controller;
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
+import com.zd.core.util.BeanUtils;
 import com.zd.core.util.ImportExcelUtil;
 import com.zd.core.util.ModelUtil;
 import com.zd.core.util.StringUtils;
@@ -98,7 +99,43 @@ public class TrainCourseinfoController extends FrameWorkController<TrainCoursein
         //获取当前操作用户
         SysUser currentUser = getCurrentSysUser();
         try {
+        	String[] mainTeacherId = new String[0];
+            String[] mainTeacherName = new String[0];
+            if (entity.getCourseMode() == 2) {
+                //如果是团队授课，是不拆分多个教师的
+            	TrainCourseinfo trainCourseInfo = thisService.getByProerties(
+    					new String[] { "courseName", "mainTeacherId", "isDelete" },
+    					new Object[] { entity.getCourseName(), entity.getMainTeacherId(), 0 });
 
+    			// 如果存在，把课程id和教师id直接存放到当前班级课程中
+    			// 否则，创建新的课程，并查找教师id
+    			if (trainCourseInfo != null) {
+    				writeJSON(response, jsonBuilder.returnFailureJson("\"【"+entity.getCourseName()+"】课程已存在此主讲教师！\""));
+    	            return;
+    			}
+    			
+            } else {
+                //如果是单一授课,则多个教师要进行拆分
+            	if (entity.getMainTeacherId() != null || entity.getMainTeacherId().length() > 0) {
+            		 mainTeacherId = entity.getMainTeacherId().split(",");
+                     mainTeacherName = entity.getMainTeacherName().split(",");
+                     for (Integer i = 0; i < mainTeacherName.length; i++) {
+
+                     	// 查询课程表中是否存在 课程名、教师名一致的课程
+             			TrainCourseinfo trainCourseInfo = thisService.getByProerties(
+             					new String[] { "courseName", "mainTeacherId", "isDelete" },
+             					new Object[] { entity.getCourseName(), mainTeacherId[i], 0 });
+
+             			// 如果存在，把课程id和教师id直接存放到当前班级课程中
+             			// 否则，创建新的课程，并查找教师id
+             			if (trainCourseInfo != null) {
+             				writeJSON(response, jsonBuilder.returnFailureJson("\"【"+entity.getCourseName()+"】课程已存在【"+mainTeacherName[i]+"】教师！\""));
+            	            return;
+             			}
+                     }
+            	}
+            }
+            
 /*			String hql1 = " o.isDelete='0' and o.categoryId='"+entity.getCategoryId()+"'";
             if (thisService.IsFieldExist("courseName", entity.getCourseName(), "-1", hql1)) {
 	            writeJSON(response, jsonBuilder.returnFailureJson("\"课程名称不能重复！\""));

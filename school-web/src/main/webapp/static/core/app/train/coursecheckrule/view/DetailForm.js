@@ -97,7 +97,7 @@ Ext.define("core.train.coursecheckrule.view.DetailForm", {
             name: "needCheckout",
             xtype: "checkbox",
             boxLabel: "签退",
-            value:1,
+            value:0,
             listeners: {
                 change: function(field, newValue , oldValue ) {
                     
@@ -131,7 +131,8 @@ Ext.define("core.train.coursecheckrule.view.DetailForm", {
         layout: "column",
         labelAlign: "right",
         ref:'checkoutCtr',
-        items: [,{         
+        hidden:true,
+        items: [{         
             fieldLabel: "签退提前分钟",
             columnWidth: 0.5,
             name: "outBefore",
@@ -155,6 +156,7 @@ Ext.define("core.train.coursecheckrule.view.DetailForm", {
         layout: "column",
         labelAlign: "right",
         ref:'checkoutCtr',
+        hidden:true,
         items: [{           
             fieldLabel: "早退分钟",
             columnWidth: 0.5,

@@ -119,7 +119,20 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 
 			entity.setBeginTime(sdf.parse(courseDate + " " + courseBeginTime));
 			entity.setEndTime(sdf.parse(courseDate + " " + courseEndTime));
-
+			
+			// 查询此班级是否已经存在此课程
+			TrainClassschedule tcs = thisService.getByProerties(
+					new String[] { "courseName", "mainTeacherName", "classId", "beginTime", "endTime" },
+					new Object[] { entity.getCourseName(), entity.getMainTeacherName(), entity.getClassId(),entity.getBeginTime(),
+							entity.getEndTime() });
+			
+			if(tcs!=null){
+				writeJSON(response, jsonBuilder.returnFailureJson("\"此班级已经存在此时段的相同课程！\""));
+				return;
+			}
+				
+			
+			
 			// 判断房间是否被其他课程使用
 			// if(StringUtils.isNotEmpty(entity.getRoomId())){
 			// String roomIdArray[]=entity.getRoomId().split(",");
@@ -197,14 +210,14 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 		// 获取当前操作用户
 		SysUser currentUser = getCurrentSysUser();
 		try {
-
+			/*
 			String courseId = entity.getCourseId();
 
 			String hql1 = " o.isDelete!=1 and o.classId='" + entity.getClassId() + "'";
 			if (thisService.IsFieldExist("courseId", courseId, entity.getUuid(), hql1)) {
 				writeJSON(response, jsonBuilder.returnFailureJson("\"班级课程不能重复！\""));
 				return;
-			}
+			}*/
 
 			String teachType = request.getParameter("teachType");
 			String courseDate = request.getParameter("courseDate");
@@ -213,7 +226,18 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 
 			entity.setBeginTime(sdf.parse(courseDate + " " + courseBeginTime));
 			entity.setEndTime(sdf.parse(courseDate + " " + courseEndTime));
-
+			
+			// 查询此班级是否已经存在此课程
+			TrainClassschedule tcs = thisService.getByProerties(
+					new String[] { "courseName", "mainTeacherName", "classId", "beginTime", "endTime" },
+					new Object[] { entity.getCourseName(), entity.getMainTeacherName(), entity.getClassId(),entity.getBeginTime(),
+							entity.getEndTime() });
+			
+			if(tcs!=null&&tcs.getUuid()!=entity.getUuid()){
+				writeJSON(response, jsonBuilder.returnFailureJson("\"此班级已经存在此时段的相同课程！\""));
+				return;
+			}
+						
 			entity = thisService.doUpdateEntity(entity, teachType, currentUser);// 执行修改方法
 			if (ModelUtil.isNotNull(entity))
 				writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -497,7 +521,7 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 
 		// 3.班级课程信息
 		List<Map<String, Object>> trainClassscheduleList = null;
-		sql = "SELECT CLASS_SCHEDULE_ID,COURSE_NAME,BEGIN_TIME,END_TIME FROM TRAIN_T_CLASSSCHEDULE where ISDELETE=0";
+		sql = "SELECT CLASS_SCHEDULE_ID,COURSE_NAME,BEGIN_TIME,END_TIME FROM TRAIN_T_CLASSSCHEDULE where (ISDELETE=0 or ISDELETE=2) ";
 		sql += " and CLASS_SCHEDULE_ID in ('" + ids.replace(",", "','") + "')";
 		sql += " order by BEGIN_TIME asc";
 		trainClassscheduleList = thisService.getForValuesToSql(sql);

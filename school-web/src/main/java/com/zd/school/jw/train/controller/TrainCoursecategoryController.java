@@ -188,6 +188,19 @@ public class TrainCoursecategoryController extends FrameWorkController<TrainCour
 		//获取当前的操作用户
 		SysUser currentUser = getCurrentSysUser();
 		try {
+		
+		    String categoryName = entity.getNodeText();
+		      
+			String hql1 = " o.isDelete='0' ";
+/*	        if (thisService.IsFieldExist("categoryCode", categoryCode, "-1", hql1)) {
+	            writeJSON(response, jsonBuilder.returnFailureJson("\"课程分类编码不能重复！\""));
+	            return;
+	        }*/
+	        if (thisService.IsFieldExist("nodeText", categoryName, entity.getUuid(), hql1)) {
+	            writeJSON(response, jsonBuilder.returnFailureJson("\"课程分类名称不能重复！\""));
+	            return;
+	        }	 
+	        
 			entity = thisService.doUpdateEntity(entity, currentUser);// 执行修改方法
 			if (ModelUtil.isNotNull(entity))
 				writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));

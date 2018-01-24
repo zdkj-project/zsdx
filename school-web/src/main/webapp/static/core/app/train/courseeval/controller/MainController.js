@@ -239,10 +239,13 @@ Ext.define("core.train.courseeval.controller.MainController", {
         var insertObj = self.getDefaultValue(defaultObj);
         var itemXtype = "courseeval.evalurlform";
         //不能重复启动
+        /*
         if (recordData.isEval > 0) {
             self.Warning("此培训班已启动评价，不能重复启动");
             return false;
         }
+        */
+        
         var title = "确定要启动对此班级的评价吗？";
         Ext.Msg.confirm('提示', title, function (btn, text) {
             if (btn == "yes") {

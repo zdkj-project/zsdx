@@ -439,7 +439,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 						if (trainTeachers.size() > 1) {
 							// 若存在多个同名老师，则记录报错信息
 							errorLevel = "错误";
-							doResult = "异常信息：系统中存在同名的老师 " + teaStr[j] + "；请在班级课程管理处进行手动添加！";
+							doResult = "异常信息：系统中存在同名的老师 " + teaStr[j] + ",无法自动确定老师；请在班级课程管理处进行手动添加！";
 							teaIds = null;
 							isError = true;
 							break;
@@ -471,7 +471,8 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 					// trainCourseInfo.setMainTeacherId(trainTeachers.get(0).getUuid());
 					// }
 					// }
-
+					
+					//当没发生错误的时候，才会添加入库				
 					if (isError == false)
 						trainCourseinfoService.merge(trainCourseInfo);
 				}

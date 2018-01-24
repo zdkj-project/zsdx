@@ -526,9 +526,9 @@ public class PoiExportExcel {
                 sheetName = "教学组";
 
             for (String isSheet : mapSheetName.values()) {
-                if (sheetName == isSheet) {
+                if (sheetName.equals(isSheet)) {
                 	sheetNameCount++;
-                	sheetName += String.valueOf(sheetNameCount);
+                	sheetName += "("+String.valueOf(sheetNameCount)+")";
                 }
             }
             mapSheetName.put(classScheduleId, sheetName);

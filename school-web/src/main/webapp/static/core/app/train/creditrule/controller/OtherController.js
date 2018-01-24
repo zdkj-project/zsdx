@@ -99,8 +99,6 @@ Ext.define("core.train.creditrule.controller.OtherController", {
 
                     if (data.success) {
 
-                        self.Info("保存成功!");
-
                         var grid = basetab.funData.grid; //此tab是否保存有grid参数
                         if (!Ext.isEmpty(grid)) {
                             var store = grid.getStore();                           
@@ -109,6 +107,8 @@ Ext.define("core.train.creditrule.controller.OtherController", {
 
                         loading.hide();
                         tabPanel.remove(tabItem);
+
+                        self.Info("保存成功!");
                     } else {
                         self.Error(data.obj);
                         loading.hide();
