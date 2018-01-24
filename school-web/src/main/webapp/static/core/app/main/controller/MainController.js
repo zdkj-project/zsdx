@@ -515,6 +515,24 @@ Ext.define('core.main.controller.MainController', {
         }else{
              tabPanel.setActiveTab( tabItem);
         }   
-    }
+    },
 
+
+    onShowQrCode:function(btn){
+        var win=Ext.get("app-qrcode");
+        if(!win){
+            win=Ext.widget("main.qrcode");
+            var x=btn.getXY()[0];
+            var y=btn.getXY()[1]+40;
+            win.showAt(x,y);
+        }
+        win.show();
+    },
+
+    onHideQrCode:function(){
+        var win=Ext.get("app-qrcode");
+        if(win)
+            win.hide();
+    }
+    
 }); 

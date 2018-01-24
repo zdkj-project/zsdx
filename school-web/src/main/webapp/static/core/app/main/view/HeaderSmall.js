@@ -35,6 +35,18 @@ Ext.define("core.main.view.HeaderSmall",{
             }
         },
         '->',{ 
+            //tooltip: '手机考勤APP下载', 
+            text: '<span style="color:#fff;font-size: 14px;">手机考勤APP下载</span>',
+            iconCls: 'x-fa fa-android header-button-color', 
+            cls: 'core-header-button', 
+            //overCls: '', 
+            focusCls : '', 
+            changeType:'mainsmallheader',
+            listeners:{
+                mouseover : 'onShowQrCode',
+                mouseout:'onHideQrCode'
+            }
+        },{ 
             tooltip: '展开', 
             text: '<span style="color:#fff;font-size: 14px;">展开</span>',
             iconCls: 'x-fa fa-angle-double-down header-button-color', 
@@ -44,8 +56,7 @@ Ext.define("core.main.view.HeaderSmall",{
             changeType:'mainbigheader',
             listeners:{
                 click:'onChangeMainHeader' 
-            },
-            //handler: 'onChangePassword' 
+            }
         },
         { 
             tooltip: '清除缓存', 
@@ -56,8 +67,7 @@ Ext.define("core.main.view.HeaderSmall",{
             focusCls : '', 
             listeners:{
                 click:'onWipeCache'
-            },
-            //handler: 'onChangePassword' 
+            }
         },
         /*{ 
             tooltip: '修改密码', 
