@@ -13,6 +13,8 @@ Ext.define('core.main.model.MainModel', {
        //currentDateWeek:Ext.Date.format(new Date(), 'Y年n月j日 D'),
        	onlineNum:66,
 
+        NewInfoNum:0,
+
         // 系统菜单的定义，这个菜单可以是从后台通过ajax传过来的  
 		systemMenu:'null',
 

@@ -1,15 +1,17 @@
 package com.zd.school.jw.train.model;
 
-import com.zd.core.annotation.FieldInfo;
-import com.zd.core.model.BaseEntity;
-import com.zd.school.excel.annotation.MapperCell;
-import org.hibernate.annotations.Formula;
+import java.io.Serializable;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.io.Serializable;
+
+import org.hibernate.annotations.Formula;
+
+import com.zd.core.annotation.FieldInfo;
+import com.zd.core.model.BaseEntity;
+import com.zd.school.excel.annotation.MapperCell;
 
 /**
  * ClassName: TrainCourseinfo
@@ -231,7 +233,7 @@ public class TrainCourseinfo extends BaseEntity implements Serializable {
 
     @MapperCell(cellName = "教学形式", order = 4)
     @FieldInfo(name = "教学形式名称")
-    @Formula("(SELECT a.ITEM_NAME FROM dbo.BASE_T_DICITEM a WHERE a.DIC_ID=(SELECT b.DIC_ID FROM BASE_T_DIC b WHERE b.DIC_CODE='TEACHTYPE') AND a.ITEM_CODE=TEACH_TYPE)")
+    @Formula("(SELECT a.ITEM_NAME FROM dbo.BASE_T_DICITEM a WHERE a.isDelete=0 and a.DIC_ID=(SELECT b.DIC_ID FROM BASE_T_DIC b WHERE b.DIC_CODE='TEACHTYPE') AND a.ITEM_CODE=TEACH_TYPE)")
     private String teachTypeName;
 
     public String getTeachTypeName() {

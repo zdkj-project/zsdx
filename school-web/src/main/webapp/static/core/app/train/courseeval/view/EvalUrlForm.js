@@ -9,8 +9,11 @@ Ext.define("core.train.courseeval.view.EvalUrlForm", {
     fieldDefaults: { // 统一设置表单字段默认属性
         labelSeparator: "：", // 分隔符
         msgTarget: "qtip",
-        labelWidth: 100,
+        labelWidth: 70,
         labelAlign: "right"
+    },
+    style:{
+        textAlign:'center'
     },
     items: [{
         fieldLabel: "主键",
@@ -18,20 +21,20 @@ Ext.define("core.train.courseeval.view.EvalUrlForm", {
         xtype: "textfield",
         hidden: true
     }, {
-        xtype: "container",
-        layout: "column",
-        labelAlign: "right",
-        items: [{
-            beforeLabelTextTpl: '',
-            allowBlank: false,
-            blankText: "评价地址",
-            fieldLabel: "评价地址",
-            columnWidth: 1,
-            height:50,
-            name: "evalUrl",
-            xtype: "textfield",
-            readOnly:true
-        }]
+        xtype:'image',
+        ref:'CouserEvalQrCode',
+        src: '',
+        width: 300,
+        height: 300
+    },{
+        beforeLabelTextTpl: '',
+        allowBlank: false,
+        blankText: "评价地址",
+        fieldLabel: "评价地址",
+        height:40,
+        name: "evalUrl",
+        xtype: "textfield",
+        readOnly:true  
     }]
 });
 

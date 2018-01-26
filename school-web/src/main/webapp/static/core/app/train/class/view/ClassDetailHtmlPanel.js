@@ -46,11 +46,25 @@ Ext.define("core.train.class.view.ClassDetailHtmlPanel", {
                     '<li style="width:100%;font-size: 13px;font-weight: 400;text-align: center;line-height: 100px;">此班级暂无学员信息...</li>',
                 '{% if (values.classTrainee.length == 0 ) return  %}',   //reutrun 表示不执行下面的了，在for里面可以使用break、continue
                     '<tpl for="classTrainee">',
-                        '<li><span style="width:5%">{[xindex]}</span><span style="width:10%">{xm}</span><span style="width:5%">{xbm}</span><span style="width:10%">{mz}</span><span style="width:10%">{position}</span><span style="width:10%">{headshipLevel}</span><span style="width:15%">{phone}</span><span style="width:15%" title="{workUnit}">{workUnit}</span><span style="width:10%">{traineeCategory}</span><span style="width:10%">{isDelete}</span></li>',        
+                        '<li><span style="width:5%">{[xindex]}</span><span style="width:10%">{xm}</span><span style="width:5%">{xbm}</span><span style="width:10%">{mz}</span><span style="width:10%">{position}</span><span style="width:10%">{headshipLevel}</span>',                
+                        '<span style="width:15%">{[this.doPhone(values.phone)]}</span>',                                               
+                        '<span style="width:15%" title="{workUnit}">{workUnit}</span><span style="width:10%">{traineeCategory}</span><span style="width:10%">{isDelete}</span></li>',        
                     '</tpl>',           
                     '<div style="clear:both"></div>',
                 '</ul>',   
-            '</div>'
+            '</div>',
+            {
+                // XTemplate configuration:
+                disableFormats: true,
+                // member functions:              
+                doPhone:function(phone){
+                    var reg = /^(0|86|17951)?(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$/;
+                    if (reg.test(phone))
+                        return phone.substr(0, 3) + '****' + phone.substr(7);
+                    else
+                        return "无效的手机号！";
+                }
+            }
         ),
         data:{  }
     },{

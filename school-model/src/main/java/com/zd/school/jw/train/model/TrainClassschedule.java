@@ -1,5 +1,20 @@
 package com.zd.school.jw.train.model;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.AttributeOverride;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Formula;
+
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.zd.core.annotation.FieldInfo;
 import com.zd.core.model.BaseEntity;
@@ -7,14 +22,6 @@ import com.zd.core.util.DateTimeSerializer;
 import com.zd.school.excel.annotation.MapperCell;
 import com.zd.school.jw.train.model.vo.VoTrainClasstrainee;
 import com.zd.school.plartform.comm.model.CommAttachment;
-
-import org.hibernate.annotations.Formula;
-
-import javax.persistence.*;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
 
 /**
  * 
@@ -288,7 +295,7 @@ public class TrainClassschedule extends BaseEntity implements Serializable {
 	}
 
 	@FieldInfo(name = "教学形式名称")
-	@Formula("(SELECT a.ITEM_NAME FROM dbo.BASE_T_DICITEM a WHERE a.DIC_ID=(SELECT b.DIC_ID FROM BASE_T_DIC b WHERE b.DIC_CODE='TEACHTYPE') AND a.ITEM_CODE=(select top 1 c.TEACH_TYPE from TRAIN_T_COURSEINFO c where c.COURSE_ID=COURSE_ID))")
+	@Formula("(SELECT a.ITEM_NAME FROM dbo.BASE_T_DICITEM a WHERE a.isDelete=0 and a.DIC_ID=(SELECT b.DIC_ID FROM BASE_T_DIC b WHERE b.DIC_CODE='TEACHTYPE') AND a.ITEM_CODE=(select top 1 c.TEACH_TYPE from TRAIN_T_COURSEINFO c where c.COURSE_ID=COURSE_ID))")
 	private String teachTypeName;
 
 	public String getTeachTypeName() {

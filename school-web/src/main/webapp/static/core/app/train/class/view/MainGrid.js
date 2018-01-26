@@ -11,6 +11,13 @@ Ext.define("core.train.class.view.MainGrid", {
     panelButtomBar: {
         xtype: 'class.mainquerypanel',
     },
+    selModel: {
+        type: "checkboxmodel",   
+        headerWidth:50,    //设置这个值为50。 但columns中的defaults中设置宽度，会影响他
+        mode:'single',  //multi,simple,single；默认为多选multi
+        //checkOnly:false,    //如果值为true，则只用点击checkbox列才能选中此条记录
+        //allowDeselect:true, //如果值true，并且mode值为单选（single）时，可以通过点击checkbox取消对其的选择
+    },
     /**
      * 工具栏操作按钮
      * 继承自core.base.view.BaseGrid可以在此覆盖重写
@@ -237,7 +244,11 @@ Ext.define("core.train.class.view.MainGrid", {
                 },
                 getClass: function (v, metadata, record) {
                     var roleKey = comm.get("roleKey");
-                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
+                    var teaId=comm.get("teaId");
+                    if( teaId && record.get("bzrId").indexOf(teaId)!=-1){   //若为班主任则显示按钮
+                        return null;
+                    } else if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 
+                        && roleKey.indexOf("PEIXUNROLE") == -1){
                         return 'x-hidden-display';
                     } else
                         return null;
@@ -263,8 +274,11 @@ Ext.define("core.train.class.view.MainGrid", {
                     });
                 },
                 getClass: function (v, metadata, record) {
-                    var roleKey = comm.get("roleKey");
-                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
+                    var roleKey = comm.get("roleKey");                
+                    var teaId=comm.get("teaId");
+                    if( teaId && record.get("bzrId").indexOf(teaId)!=-1){   //若为班主任则显示按钮
+                        return null;
+                    } else if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
                         return 'x-hidden-display';
                     } else
                         return null;
@@ -291,7 +305,10 @@ Ext.define("core.train.class.view.MainGrid", {
                 },
                 getClass: function (v, metadata, record) {
                     var roleKey = comm.get("roleKey");
-                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
+                    var teaId=comm.get("teaId");
+                    if( teaId && record.get("bzrId").indexOf(teaId)!=-1){   //若为班主任则显示按钮
+                        return null;
+                    } else if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
                         return 'x-hidden-display';
                     } else
                         return null;
@@ -318,7 +335,10 @@ Ext.define("core.train.class.view.MainGrid", {
                 },
                 getClass: function (v, metadata, record) {
                     var roleKey = comm.get("roleKey");
-                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
+                    var teaId=comm.get("teaId");
+                    if( teaId && record.get("bzrId").indexOf(teaId)!=-1){   //若为班主任则显示按钮
+                        return null;
+                    } else if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
                         return 'x-hidden-display';
                     } else
                         return null;
@@ -355,7 +375,10 @@ Ext.define("core.train.class.view.MainGrid", {
                 },
                 getClass: function (v, metadata, record) {
                     var roleKey = comm.get("roleKey");
-                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
+                    var teaId=comm.get("teaId");
+                    if( teaId && record.get("bzrId").indexOf(teaId)!=-1){   //若为班主任则显示按钮
+                        return null;
+                    } else if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1){
                         return 'x-hidden-display';
                     } else
                         return null;
@@ -367,7 +390,12 @@ Ext.define("core.train.class.view.MainGrid", {
                 ref: 'gridDelete',
                 getClass :function(v,metadata,record){
                 	var roleKey = comm.get("roleKey");
-                    if((record.get("isuse")!=null&&record.get("isuse")!=0)||(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1))
+                    var teaId=comm.get("teaId");
+                    if(record.get("isuse")!=null&&record.get("isuse")!=0){
+                        return 'x-hidden-display';
+                    }else if( teaId && record.get("bzrId").indexOf(teaId)!=-1){   //若为班主任则显示按钮
+                        return null;
+                    } else if(roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1)
                         return 'x-hidden-display';
                     else
                         return null;

@@ -18,9 +18,9 @@ import com.zd.core.model.BaseEntity;
 import com.zd.core.util.DateTimeSerializer;
 
 @Entity
-@Table(name = "PUSH_T_PUSHINFO")
+@Table(name = "PUSH_T_PUSHINFO_HISTORY")
 @AttributeOverride(name = "uuid", column = @Column(name = "PUSHINFO_ID", length = 36, nullable = false) )
-public class PushInfo extends BaseEntity implements Serializable {
+public class PushInfoHistory extends BaseEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	// @Column(name = "PUSH_TYPE", length = 128, nullable = false)
@@ -140,7 +140,6 @@ public class PushInfo extends BaseEntity implements Serializable {
 		this.emplId = emplId;
 	}
 	
-	
 	@FieldInfo(name = "发信人")
     @Formula("(SELECT a.XM FROM dbo.SYS_T_USER a WHERE a.USER_ID=CREATE_USER)")
     private String sendUser;
@@ -154,6 +153,5 @@ public class PushInfo extends BaseEntity implements Serializable {
 		this.sendUser = sendUser;
 	}
 	
-
 
 }

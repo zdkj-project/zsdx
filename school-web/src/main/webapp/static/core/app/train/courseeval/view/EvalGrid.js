@@ -237,13 +237,30 @@ Ext.define('core.train.courseeval.view.EvalGrid', {
         items: [{
             xtype: 'label',
             ref: 'label1',
-            text: '班级信息：0',
-            padding: '0 10 0 5'
+            text: '',
+            padding: '0 10 0 5',
+            style:{
+                fontSize:'14px',
+                fontWeight: 400,
+                lineHeight:'30px'
+            }
         }, {
             xtype: 'button',
             ref: 'btnPreview',
-            text: '预览评价',
-            padding: '0 10 0 5',
+            text: '预览班级评价',
+            padding: '5',
+            margin:'0 5',
+            hidden:true,
+            style:{
+                fontSize:'14px'
+            }
+        },{
+            xtype: 'button',
+            ref: 'btnOpenClassEval',
+            text: '班级评价地址',
+            padding: '5',
+            margin:'0 5',
+            hidden:true,
             style:{
                 fontSize:'14px'
             }

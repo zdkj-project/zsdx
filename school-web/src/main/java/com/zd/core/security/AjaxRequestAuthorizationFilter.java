@@ -186,6 +186,11 @@ public class AjaxRequestAuthorizationFilter extends PassThruAuthenticationFilter
 			            sb = sb.deleteCharAt(sb.length()-1);
 					session.setAttribute("ROLE_KEY", sb.toString());
 					
+					//查询对应的教师表的id
+					String hql="select uuid from TrainTeacher where mobilePhone=?";
+					String uuid = sysUserService.getForValue(hql, sysUser.getUserName());	
+					session.setAttribute("TEA_ID", uuid);
+					
 			        //System.out.println("模拟登录完毕！");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block

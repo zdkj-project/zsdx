@@ -965,7 +965,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
         String[] sendUserIds = sendUserId.split(",");
         List<SysUser> sendUserList =  userService.queryByProerties("uuid", sendUserIds);
         for (SysUser sysUser : sendUserList) {
-            pushService.pushInfo(sysUser.getXm(), sysUser.getMobile(), "培训安排通知", sendInfo, InfoPushWay.DX.getCode());
+            pushService.pushInfo(currentUser.getUuid(), sysUser.getUuid(), sysUser.getXm(), String.valueOf(sysUser.getMobile()), "培训安排通知", sendInfo, InfoPushWay.DX.getCode());
         }
 
         return true;

@@ -33,7 +33,6 @@ import com.zd.core.util.ModelUtil;
 import com.zd.core.util.PoiExportExcel;
 import com.zd.core.util.StringUtils;
 import com.zd.core.util.exportMeetingInfo;
-import com.zd.school.excel.FastExcel;
 import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClassschedule;
 import com.zd.school.jw.train.model.TrainClasstrainee;
@@ -42,32 +41,10 @@ import com.zd.school.jw.train.service.TrainClassService;
 import com.zd.school.jw.train.service.TrainClassrealdinnerService;
 import com.zd.school.jw.train.service.TrainClassscheduleService;
 import com.zd.school.jw.train.service.TrainClasstraineeService;
-import com.zd.school.plartform.baseset.model.BaseAttachment;
 import com.zd.school.plartform.baseset.model.BaseDicitem;
-import com.zd.school.plartform.baseset.service.BaseAttachmentService;
 import com.zd.school.plartform.baseset.service.BaseDicitemService;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.model.SysUserToUP;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.annotation.Resource;
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 /**
  * 

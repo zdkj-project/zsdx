@@ -70,6 +70,8 @@
             comm.add("xm","${SESSION_SYS_USER.xm}");
             comm.add("globalRoleId","${SESSION_SYS_USER.sysRoles}");
             comm.add("roleKey","${ROLE_KEY}");
+            comm.add("teaId","${TEA_ID}");      //教师的id，用来在班级管理中判断是否拥有是某班级的班主任
+            
         }
     }
     ExtCommLoad();

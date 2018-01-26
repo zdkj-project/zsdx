@@ -419,7 +419,7 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
     }
 
     @FieldInfo(name = "班级类型")
-    @Formula("(SELECT a.ITEM_NAME FROM BASE_T_DICITEM a WHERE a.DIC_ID=(SELECT b.DIC_ID FROM BASE_T_DIC b WHERE b.DIC_CODE='ZXXBJLX') AND a.ITEM_CODE=(SELECT c.CLASS_CATEGORY FROM TRAIN_T_CLASS c WHERE c.CLASS_ID=CLASS_ID))")
+    @Formula("(SELECT a.ITEM_NAME FROM BASE_T_DICITEM a WHERE a.isDelete=0 and a.DIC_ID=(SELECT b.DIC_ID FROM BASE_T_DIC b WHERE b.DIC_CODE='ZXXBJLX') AND a.ITEM_CODE=(SELECT c.CLASS_CATEGORY FROM TRAIN_T_CLASS c WHERE c.CLASS_ID=CLASS_ID))")
     private String classCategory;
 
     public String getClassCategory() {

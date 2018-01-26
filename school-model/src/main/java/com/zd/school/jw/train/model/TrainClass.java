@@ -515,7 +515,7 @@ public class TrainClass extends BaseEntity implements Serializable {
     }
 
     @FieldInfo(name = "班级类型名称")
-    @Formula("(SELECT a.ITEM_NAME FROM dbo.BASE_T_DICITEM a WHERE a.DIC_ID=(SELECT b.DIC_ID FROM BASE_T_DIC b WHERE b.DIC_CODE='ZXXBJLX') AND a.ITEM_CODE=(select top 1 c.CLASS_CATEGORY from TRAIN_T_CLASS c where c.CLASS_ID=CLASS_ID))")
+    @Formula("(SELECT a.ITEM_NAME FROM dbo.BASE_T_DICITEM a WHERE a.isDelete=0 and a.DIC_ID=(SELECT b.DIC_ID FROM BASE_T_DIC b WHERE b.DIC_CODE='ZXXBJLX') AND a.ITEM_CODE=(select top 1 c.CLASS_CATEGORY from TRAIN_T_CLASS c where c.CLASS_ID=CLASS_ID))")
     private String classCategoryName;
 
     public String getClassCategoryName() {

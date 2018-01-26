@@ -378,6 +378,22 @@ Ext.define("core.train.class.controller.MainController", {
                 var btnEdit = baseGrid.down("button[ref=gridEdit_Tab]");
                 var btnDelete = baseGrid.down("button[ref=gridDelete]");
 
+                var roleKey = comm.get("roleKey");
+                var teaId=comm.get("teaId");
+                if( teaId && record.get("bzrId").indexOf(teaId)!=-1){   //若为班主任则显示按钮
+                    var btnExport = baseGrid.down("button[ref=gridExport]");
+                    btnEdit.setHidden(false);
+                    btnDelete.setHidden(false);
+                    btnUse.setHidden(false);
+                    btnExport.setHidden(false);
+                }else if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("PEIXUNROLE") == -1) {
+                    var btnExport = baseGrid.down("button[ref=gridExport]");
+                    btnEdit.setHidden(true);
+                    btnDelete.setHidden(true);
+                    btnUse.setHidden(true);
+                    btnExport.setHidden(true);
+                } 
+
                 if (records.length == 0) {
                     if (btnImportTrainee)
                         btnImportTrainee.setDisabled(true);

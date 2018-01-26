@@ -148,6 +148,11 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 		session.removeAttribute("accessToken");	//非单点登录，清除它
 		session.removeAttribute("accessAccount");	//非单点登录，清除它
 		
+		//查询对应的教师表的id
+		String hql="select uuid from TrainTeacher where mobilePhone=?";
+		String uuid = sysUserService.getForValue(hql, sysUser.getUserName());	
+		session.setAttribute("TEA_ID", uuid);
+		
 		result.put("result", 1);
 		writeJSON(response, jsonBuilder.toJson(result));		
 	}

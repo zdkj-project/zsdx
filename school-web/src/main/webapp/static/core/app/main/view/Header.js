@@ -36,12 +36,11 @@ Ext.define("core.main.view.Header",{
             }
         },
         '->',{
-            xtype:'container',
+            xtype:'container',    
             height:100,
             layout:'vbox',
             items:[{
                 flex:1,
-                width:'100%',
                 xtype:'toolbar',
                 cls:'appHeader-btnTbar',
                 style:{
@@ -73,6 +72,19 @@ Ext.define("core.main.view.Header",{
                         listeners:{
                             click:'onChangeMainHeader' 
                         },
+                    },{ 
+                        tooltip: '今日收信', 
+                        bind:{
+                            text: '<span style="color:#fff;font-size: 14px;">今日收信（{NewInfoNum}）</span>',
+                        },
+                        iconCls: 'x-fa fa-envelope header-button-color', 
+                        cls: 'core-header-button', 
+                        //overCls: '', 
+                        focusCls : '', 
+                        listeners:{
+                            click:'onOpenPushInfo' 
+                        },
+                        //handler: 'onChangePassword' 
                     },
                     { 
                         tooltip: '清除缓存', 
@@ -113,10 +125,11 @@ Ext.define("core.main.view.Header",{
             },{
                 flex:1,
                 xtype: 'tbtext',
+                width:'100%',
                 bind:{
-                    html: '<div class="index_welcome">'+
-                        '<img src="static/core/resources/images/index_user_icon.png" width="20px" />'+
-                        '<span>欢迎您，{currentUser}！ 今天是{currentDateWeek} | 当前在线人数：{onlineNum}人</span>'+
+                    html: '<div class="index_welcome" style="text-align:right;margin-right: 10px;">'+
+                        '<img style="float:none" src="static/core/resources/images/index_user_icon.png" width="20px" />'+
+                        '<span style="float:right">欢迎您，{currentUser}！ 今天是{currentDateWeek} | 当前在线人数：{onlineNum}人</span>'+
                     '</div>', 
                 },
             }]

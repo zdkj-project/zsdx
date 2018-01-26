@@ -57,6 +57,19 @@ Ext.define("core.main.view.HeaderSmall",{
             listeners:{
                 click:'onChangeMainHeader' 
             }
+        },{ 
+            tooltip: '今日收信', 
+            bind:{
+                text: '<span style="color:#fff;font-size: 14px;">今日收信（{NewInfoNum}）</span>',
+            },
+            iconCls: 'x-fa fa-envelope header-button-color', 
+            cls: 'core-header-button', 
+            //overCls: '', 
+            focusCls : '', 
+            listeners:{
+                click:'onOpenPushInfo' 
+            },
+            //handler: 'onChangePassword' 
         },
         { 
             tooltip: '清除缓存', 

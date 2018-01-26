@@ -35,10 +35,10 @@ Ext.define('core.main.controller.MainController', {
             }
             */
             
-           
-
-            
         });
+    
+        //调用此方法，自动定时获取收信数量
+        this.doGetNewInfoNum();
     },
     //若与其他控制器存在相同的方法名，则仅仅会执行这个view里面的事件
     onItemSelected: function (sender, record) {
@@ -533,6 +533,43 @@ Ext.define('core.main.controller.MainController', {
         var win=Ext.get("app-qrcode");
         if(win)
             win.hide();
+    },
+
+    doGetNewInfoNum:function(){
+        var self=this;
+        doAjax();  //率先执行一次
+        setInterval(function(){
+            doAjax();                
+        },1000*60*5);  //每5分钟执行一次
+
+        function doAjax(){
+             Ext.Ajax.request({
+                url: comm.get('baseUrl') + '/PushInfo/getInfoNum',
+                method: "GET",
+                async: true,
+                success: function(response) {
+                    var resObj = Ext.decode(response.responseText);
+                    if (resObj.success) {
+                        self.getView().getViewModel().set("NewInfoNum",resObj.obj);
+                    }
+                       
+                },
+                failure: function(response) {
+                }
+            })
+        }
+    },
+
+    onOpenPushInfo:function(btn){
+        var menus = this.getView().getViewModel().get('systemMenu');
+    
+        for(var i=0;i<menus.length;i++){
+            if(menus[i].menuCode=="MESSAGE_INFO"){
+                menus[i].textBase=menus[i].text;
+                this.onMenuItemClick(null,menus[i]);
+                break;
+            }
+        }
     }
     
 }); 
