@@ -44,20 +44,19 @@
 	    </property>  
 	</bean>  
 	
-	<!-- ======================== 调度触发器 ======================== -->  
+	<!-- ======================== 调度触发器 ========================
 	<bean id="CronTriggerBean2" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
 	    <property name="jobDetail" ref="DinnerJobQuarzMethod"></property>  
 	    <property name="cronExpression" value="0 0 3 * * ?"></property>  
 	</bean>  
+	-->  
 	
-	
-	<!-- ======================== 调度触发器 ======================== -->  
+	<!-- ======================== 调度触发器 ======================== 
 	<bean id="CronTriggerBean3" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
 	    <property name="jobDetail" ref="DinnerJobQuarzMethod2"></property>  
 	    <property name="cronExpression" value="0 10 10 * * ?"></property>  
 	</bean>  
-	
-	
+	-->  
 	
 	
 	<!-- ======================== 调度工厂 ======================== -->  
@@ -65,8 +64,10 @@
 	    <property name="triggers">  
 	        <list>  
 	            <ref bean="CronTriggerBean"/>  
+	            <!-- 
 	            <ref bean="CronTriggerBean2"/>  
 	            <ref bean="CronTriggerBean3"/>  
+	             -->
 	        </list>  
 	    </property>  
 	</bean>    

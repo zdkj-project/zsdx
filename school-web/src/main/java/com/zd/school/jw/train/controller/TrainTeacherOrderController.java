@@ -26,8 +26,6 @@ import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.PoiExportExcel;
-import com.zd.school.cashier.model.CashExpensedetail;
-import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.jw.train.model.TrainTeacherOrder;
 import com.zd.school.jw.train.service.TrainTeacherOrderDescService;
 import com.zd.school.jw.train.service.TrainTeacherOrderService;

@@ -142,7 +142,7 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenu> implements SysM
         if (!author.equals("8a8a8834533a065601533a065ae80000"))
             hql += " where isHidden='0'";
         hql += " order by parentNode,orderIndex asc ";
-        List<SysMenu> lists = super.doQuery(hql.toString());
+        List<SysMenu> lists = this.doQuery(hql.toString());
         //对于超级管理员的用户与角色，默认有所有菜单的权限
         if (authorType.equals(AuthorType.ROLE)) {
             SysRole thisRole = sysRoleService.get(author);

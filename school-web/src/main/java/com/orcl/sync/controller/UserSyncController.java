@@ -480,7 +480,10 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
             logger.error(e.getMessage());
             logger.error(Arrays.toString(e.getStackTrace()));
             request.getSession().setAttribute("UserSyncState", "0");
-        }
+            
+        }  finally {
+			DBContextHolder.clearDBType();
+		}
     }
     
     @RequestMapping("/checkUserSyncEnd")

@@ -935,6 +935,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 				orgService.merge(org);
 			}
+			logger.info("处理部门数据");
 			
 			// 更新一些非同步内容（生成副ID）
 			String rootId = "2851655E-3390-4B80-B00C-52C7CA62CB39";
@@ -967,6 +968,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 				jobservice.merge(b);
 			}		
+			logger.info("处理岗位数据");
 			
 			/**
 			 * 3：处理部门岗位数据
@@ -994,6 +996,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 	            dj.setJobType(2);
 	            deptjobService.merge(dj);
 	        }	      
+	        logger.info("处理部门岗位数据");
 	        
 	        /**
 	         * 4：处理用户数据
@@ -1059,7 +1062,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
                      u.setCreateUser((String) map.get("CREATE_NAME"));
                 }
             }
-            
+            logger.info("处理用户数据");
             
             /**
              * 5：处理用户部门岗位
@@ -1077,7 +1080,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
             BaseUserdeptjob udj = null;
             for (int i=0;i<userDeptList.size();i++) {
             	map=userDeptList.get(i);
-            	logger.error(map);
+   
 				String id=String.valueOf(map.get("ID"));
 				String job=(String) map.get("DEPT_POSITION_ID");
 	            String dept=(String) map.get("DEPARTMENT_ID");
@@ -1104,7 +1107,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
                 userdeptjobService.merge(udj);
                 mapKdy = "";
             }                   
-			
+            logger.info("处理用户部门岗位数据");
+            
 		} catch (Exception e) {
 			// 捕获了异常后，要手动进行回滚；
 			TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();

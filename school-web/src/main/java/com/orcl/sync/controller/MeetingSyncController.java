@@ -213,6 +213,9 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
 			logger.error(Arrays.toString(e.getStackTrace()));
 			request.getSession().setAttribute("syncMeetingInfoIsEnd", "0");
 			request.getSession().setAttribute("syncMeetingInfoState", "0");
+		
+		} finally {
+			DBContextHolder.clearDBType();
 		}
 
 		// writeJSON(response, jsonBuilder.returnSuccessJson("'同步成功'"));

@@ -16,6 +16,8 @@ import com.zd.school.plartform.system.service.SysUserService;
 
 /**
  * 处理未预定早餐的人，无法刷卡的功能
+ * 废弃
+ * 改为在执行刷卡的存储过程中进行判断
  * @author Administrator
  *
  */

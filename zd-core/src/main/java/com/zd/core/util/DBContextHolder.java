@@ -28,6 +28,7 @@ public class DBContextHolder{
 	      
 	    public static void clearDBType() {  
 	        contextHolder.remove();  
+	        contextHolder.set(DBContextHolder.DATA_SOURCE_Q1);  //重置后，强行设置为q1库
 	    }
 
 }

@@ -41,9 +41,9 @@
         <property name="password" value="${passwordQ1}"/>
 
         <!-- 配置初始化大小、最小、最大 -->
-        <property name="initialSize" value="1"/>
+        <property name="initialSize" value="5"/>
         <property name="minIdle" value="10"/>
-        <property name="maxActive" value="100"/>
+        <property name="maxActive" value="200"/>
         <!-- 配置获取连接等待超时的时间 -->
         <property name="maxWait" value="60000"/>
         <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
@@ -71,9 +71,9 @@
         <property name="password" value="${passwordUp6}" />
 
         <!-- 配置初始化大小、最小、最大 -->
-        <property name="initialSize" value="1" />
+        <property name="initialSize" value="5" />
         <property name="minIdle" value="10" />
-        <property name="maxActive" value="100" />
+        <property name="maxActive" value="200" />
         <!-- 配置获取连接等待超时的时间 -->
         <property name="maxWait" value="60000" />
         <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
@@ -120,9 +120,9 @@
         <property name="username" value="${usernameOA}" />
         <property name="password" value="${passwordOA}" />
 
-        <property name="initialSize" value="2" />
-        <property name="minIdle" value="2" />
-        <property name="maxActive" value="5" />
+        <property name="initialSize" value="5" />
+        <property name="minIdle" value="10" />
+        <property name="maxActive" value="100" />
  
         <property name="maxWait" value="60000" />      
         <property name="timeBetweenEvictionRunsMillis" value="60000" />     
