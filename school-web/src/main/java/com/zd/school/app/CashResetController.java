@@ -20,6 +20,7 @@ import org.apache.log4j.Logger;
 import org.apache.shiro.crypto.hash.Sha256Hash;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -66,13 +67,17 @@ public class CashResetController extends FrameWorkController<CashExpenseserial> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    @RequestMapping("/casherLogin")
+    @RequestMapping(value = "/casherLogin", method = { RequestMethod.GET, RequestMethod.POST })
     public void casherLogin(HttpServletRequest request, HttpServletResponse response)
             throws IOException, IllegalAccessException, InvocationTargetException {
+    	logger.info("---收银操作员登录开始---");
+    	
         String strData = "";
         String userName = request.getParameter("userName");
         String userPwd = request.getParameter("userPwd");
-
+        
+        logger.info("---收银操作员："+userName);
+        
         String userPwdEncode = new Sha256Hash(userPwd).toHex();
         String[] propName = {"userName", "userPwd", "isDelete", "state"};
         Object[] propValue = {userName, userPwdEncode, 0, "0"};
@@ -95,6 +100,9 @@ public class CashResetController extends FrameWorkController<CashExpenseserial> 
 
             strData = jsonBuilder.returnFailureJson("\"密码错误或账号已锁定，请和管理员联系\"");
         }
+        
+        logger.info("---收银操作员登录结束---");
+        
         writeJSON(response, strData);
     }
 
@@ -106,7 +114,7 @@ public class CashResetController extends FrameWorkController<CashExpenseserial> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    @RequestMapping("/getCashMealList")
+    @RequestMapping(value = "/getCashMealList", method = { RequestMethod.GET, RequestMethod.POST })
     public void getCashMealList(HttpServletRequest request, HttpServletResponse response)
             throws IOException, IllegalAccessException, InvocationTargetException {
         String strData = "";
@@ -138,7 +146,7 @@ public class CashResetController extends FrameWorkController<CashExpenseserial> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    @RequestMapping("/getDishesList")
+    @RequestMapping(value = "/getDishesList", method = { RequestMethod.GET, RequestMethod.POST })
     public void getDishesList(HttpServletRequest request, HttpServletResponse response)
             throws IOException, IllegalAccessException, InvocationTargetException {
         String strData = "";
@@ -169,7 +177,7 @@ public class CashResetController extends FrameWorkController<CashExpenseserial> 
      * @throws IllegalAccessException
      * @throws InvocationTargetException
      */
-    @RequestMapping("/doAddConsumeBill")
+    @RequestMapping(value = "/doAddConsumeBill", method = { RequestMethod.GET, RequestMethod.POST })
     public void doAddConsumeBill(HttpServletRequest request, HttpServletResponse response)
             throws IOException, IllegalAccessException, InvocationTargetException {
     	

@@ -177,6 +177,7 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
 		request.getSession().removeAttribute("syncMeetingInfoState");
 
 		try {
+			logger.info("准备同步OA会议！");
 			//切换oracle数据库
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_OA);
 			
@@ -196,11 +197,15 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
 //							+ " from zsdx_sync.meeting_user a join zsdx_sync.meeting_msg b "
 //							+ " on a.MEETING_ID =b.MEETING_ID" + " where b.BEGIN_TIME >=(sysdate-7) ");
 			
+			logger.info("查询到OA会议数据！");
 			
 			DBContextHolder.clearDBType();
-
+			
+			logger.info("开始同步OA会议数据！");
+			
 			Integer state = meetingService.doSyncMetting(meetingList);
 			
+			logger.info("同步OA会议数据完毕！");
 			if (state == 1)
 				request.getSession().setAttribute("syncMeetingInfoIsEnd", "1");
 			else {
