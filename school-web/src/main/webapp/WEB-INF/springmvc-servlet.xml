@@ -21,7 +21,8 @@
 	<context:component-scan base-package="org.activiti.rest.editor" />
 	<context:component-scan base-package="org.activiti.rest.diagram" />
 	<context:component-scan base-package="com.orcl" />
-	 -->
+	 -->	
+	
 	 
 	<!-- 默认的注解映射的支持 -->
 	<!-- 默认的注解映射的支持 -->

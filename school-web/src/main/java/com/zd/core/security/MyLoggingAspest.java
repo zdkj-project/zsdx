@@ -10,6 +10,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -27,6 +28,9 @@ public class MyLoggingAspest {
 
 	@Resource
 	private SysOperateLogService logService; 
+	
+	@Value("${isLogInDB}")
+	private String isLogInDB;
 	
 	@Pointcut("execution(* *..service..*.do*(..))")
 	public void pointService() {
@@ -85,8 +89,11 @@ public class MyLoggingAspest {
 		
 			operteLog.setExceptionClass(e.getClass().getName());
 			operteLog.setExceptionDetail(e.getMessage());
+			operteLog.setMethodResult("请求失败，错误信息："+e.getMessage());
 			
-			logService.merge(operteLog);	//发生异常后，也存入数据库
+			//当不为0时，就记录
+			if(!isLogInDB.equals("0"))
+				logService.merge(operteLog);	//发生异常后，也存入数据库
 			
 			//发现错误后，要抛出运行时异常，让程序自动回滚，并让上层控制器自动捕获异常并返回数据给前端；
 			throw new RuntimeException(e);		//抛出后，下面的代码不再执行。
@@ -94,7 +101,9 @@ public class MyLoggingAspest {
 		// 后置通知
 		logger.info("【请求结束】");
 
-		logService.merge(operteLog);	//成功执行后，也存入数据库
+		//当不为0时，就记录
+		if(!isLogInDB.equals("0"))
+			logService.merge(operteLog);	//成功执行后，也存入数据库
 		
 		return result;
 	}

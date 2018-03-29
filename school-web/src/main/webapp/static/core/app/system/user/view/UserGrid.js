@@ -178,6 +178,14 @@ Ext.define("core.system.user.view.UserGrid", {
                 style:'font-size:12px;',
                 tooltip: '部门岗位',
                 ref: 'gridDeptJob',
+                getClass :function(v,metadata,record){
+                    var roleKey = comm.get("roleKey");
+                    //当用户没有具备超级管理员和安全管理员角色时，就隐藏此功能
+                    if(roleKey.indexOf("ROLE_ADMIN") == -1 &&roleKey.indexOf("SYSTEMADMIN") == -1)
+                        return 'x-hidden-display';
+                    else
+                        return null;
+                }, 
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
                     this.fireEvent('gridDeptJobClick', {
@@ -191,6 +199,14 @@ Ext.define("core.system.user.view.UserGrid", {
                 style:'font-size:12px;',
                 tooltip: '角色管理',
                 ref: 'gridRole',
+                getClass :function(v,metadata,record){
+                    var roleKey = comm.get("roleKey");
+                    //当用户没有具备超级管理员和安全管理员角色时，就隐藏此功能
+                    if(roleKey.indexOf("ROLE_ADMIN") == -1 &&roleKey.indexOf("SAFEADMIN") == -1)
+                        return 'x-hidden-display';
+                    else
+                        return null;
+                },  
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
                     this.fireEvent('gridUserRoleClick', {
@@ -204,6 +220,14 @@ Ext.define("core.system.user.view.UserGrid", {
                 style:'font-size:12px;',         
                 tooltip: '编辑',
                 ref: 'gridEdit',
+                getClass :function(v,metadata,record){
+                    var roleKey = comm.get("roleKey");
+                    //当用户没有具备超级管理员和系统管理员角色时，就隐藏此功能
+                    if(roleKey.indexOf("ROLE_ADMIN") == -1 &&roleKey.indexOf("SYSTEMADMIN") == -1)
+                        return 'x-hidden-display';
+                    else
+                        return null;
+                },  
                 handler: function(view, rowIndex, colIndex, item) {                 
                     var rec = view.getStore().getAt(rowIndex);
                     this.fireEvent('editClick_Tab', {

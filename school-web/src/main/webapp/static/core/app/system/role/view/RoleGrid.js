@@ -118,6 +118,7 @@ Ext.define("core.system.role.view.RoleGrid", {
             text: "操作",
             width:180,
             resizable :false,
+            align:'center',
             items: [{
                 text:'编辑',  
                 style:'font-size:12px;',                    
@@ -155,6 +156,14 @@ Ext.define("core.system.role.view.RoleGrid", {
                 style:'font-size:12px;',
                 tooltip: '角色用户',
                 ref: 'gridDetail',
+                getClass :function(v,metadata,record){
+                    var roleKey = comm.get("roleKey");
+                    //当用户没有具备超级管理员和安全管理员角色时，就隐藏此功能
+                    if(roleKey.indexOf("ROLE_ADMIN") == -1 &&roleKey.indexOf("SAFEADMIN") == -1)
+                        return 'x-hidden-display';
+                    else
+                        return null;
+                },
                 handler: function(view, rowIndex, colIndex, item) {             
                     var rec = view.getStore().getAt(rowIndex);
                     this.fireEvent('detailClick_Tab', {

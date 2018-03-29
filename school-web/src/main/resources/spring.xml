@@ -38,6 +38,7 @@
         <property name="locations">
             <list>
                 <value>classpath:sqlserver.properties</value>
+                <value>classpath:parameter.properties</value>              
                 <!--暂时不加入redis <value>classpath:jedis.properties</value>	 -->
             </list>
         </property>
