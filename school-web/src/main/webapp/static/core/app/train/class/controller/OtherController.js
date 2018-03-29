@@ -357,7 +357,7 @@ Ext.define("core.train.class.controller.OtherController", {
 
                     self.asyncAjax({
                         url: funData.action + "/" + act,
-                        params: params,
+                        params: Ext.urlEncode(params),
                         //回调代码必须写在里面
                         success: function (response) {
                             data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
@@ -1325,7 +1325,7 @@ Ext.define("core.train.class.controller.OtherController", {
 
             var resObj = self.ajax({
                 url: funData.action + "/" + act,
-                params: params
+                params: Ext.urlEncode(params),
             });
             if (resObj.success) {
                 //采用返回的数据刷新表单

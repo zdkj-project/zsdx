@@ -14,12 +14,23 @@
     <!-- 配置自动检测  -->
     <!-- Enable annotation util configuration -->
     <context:annotation-config/>
-    <!-- Scan packages for Spring annotations -->
+    
+    <!-- Scan packages for Spring annotations,排除扫描controller的容器 -->
+	<context:component-scan base-package="com.zd">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+	</context:component-scan>
+	<context:component-scan base-package="com.orcl"/>
+    <!-- Scan packages for Spring annotations 
     <context:component-scan base-package="com.zd"/>
     <context:component-scan base-package="org.activiti.rest.editor"/>
     <context:component-scan base-package="org.activiti.rest.diagram"/>
     <context:component-scan base-package="com.orcl"/>
-
+	-->
+	
+	
     <!-- 配置数据源,这里采用的是阿里巴巴的 durid -->
     <!-- 引入 sql server 属性配置文件 -->
     <bean id="propertyConfigure"
