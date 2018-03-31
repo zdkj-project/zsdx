@@ -69,9 +69,9 @@ public class AutoScheduleCourseService {
 		String queryClassHQL="select gc from JwTGrade grade, JwTGradeclass gc where gc.graiId=grade.uuid and grade.sectionCode='"+acsbaseinfo.getStage()+"'";
 		String queryTeacherHQL="select t from TeaTeacherbase t ,SysUser su where su.uuid=t.uuid and "
 				+ "exists(select gc from JwTGradeclass gc,JwTGrade g,JwCourseteacher ct where  ct.tteacId =t.uuid and ct.claiId=gc.uuid and  g.uuid=gc.graiId and g.sectionCode='"+acsbaseinfo.getStage()+"')  ";
-		List<TeaTeacherbase> teachers= teaTeacherbaseService.doQuery(queryTeacherHQL);
-		List<JwTGradeclass> gclases =jwTGradeclassService.doQuery(queryClassHQL);
-		List<AcsCoursefeature> coursefeatures=coursefeatureService.doQueryAll();
+		List<TeaTeacherbase> teachers= teaTeacherbaseService.getQuery(queryTeacherHQL);
+		List<JwTGradeclass> gclases =jwTGradeclassService.getQuery(queryClassHQL);
+		List<AcsCoursefeature> coursefeatures=coursefeatureService.getQueryAll();
 		List<TeacherWrap> teacherwps=initTeacherWrap( teachers);
 		ClassWrap[] classWraps=new ClassWrap[gclases.size()];
 		for(int i=0;i<gclases.size();i++){
@@ -149,7 +149,7 @@ public class AutoScheduleCourseService {
 	private void saveScheduleResult(ClassWrap[] classWraps,AcsBaseinfo acsbaseinfo){
 		List<JwCourseArrange> coursearglist=convertClsWpList2CrsArgeList(classWraps, acsbaseinfo);
 		for(JwCourseArrange jca:coursearglist){
-			courseArrangeService.merge(jca);
+			courseArrangeService.doMerge(jca);
 		}
 	}
 	

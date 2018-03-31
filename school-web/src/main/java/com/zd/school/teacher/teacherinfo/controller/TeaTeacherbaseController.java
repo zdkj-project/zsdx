@@ -125,7 +125,7 @@ public class TeaTeacherbaseController extends FrameWorkController<TeaTeacherbase
         countHql.append(whereSql);
         countHql.append(querySql);
         countHql.append(parentSql);
-        List<TeaTeacherbase> lists = thisService.doQuery(hql.toString(), super.start(request), entity.getLimit());// 执行查询方法
+        List<TeaTeacherbase> lists = thisService.getQuery(hql.toString(), super.start(request), entity.getLimit());// 执行查询方法
         Integer count = thisService.getCount(countHql.toString());// 查询总记录数
         strData = jsonBuilder.buildObjListToJson(new Long(count), lists, true);// 处理数据
         writeJSON(response, strData);// 返回数据
@@ -202,7 +202,7 @@ public class TeaTeacherbaseController extends FrameWorkController<TeaTeacherbase
         entity.setCreateUser(userCh); //创建人
 
         //持久化到数据库
-        entity = thisService.merge(entity);
+        entity = thisService.doMerge(entity);
 
         //返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -220,7 +220,7 @@ public class TeaTeacherbaseController extends FrameWorkController<TeaTeacherbase
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {
@@ -277,7 +277,7 @@ public class TeaTeacherbaseController extends FrameWorkController<TeaTeacherbase
 
         perEntity.setUpdateTime(new Date()); //设置修改时间
         perEntity.setUpdateUser(userCh); //设置修改人的中文名
-        entity = thisService.merge(perEntity);//执行修改方法
+        entity = thisService.doMerge(perEntity);//执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
@@ -425,7 +425,7 @@ public class TeaTeacherbaseController extends FrameWorkController<TeaTeacherbase
                 entity.setUserName(userName);
 
                 // 7、存入数据库
-                this.thisService.persist(entity);
+                this.thisService.doPersist(entity);
             }
 
         } catch (Exception e) {

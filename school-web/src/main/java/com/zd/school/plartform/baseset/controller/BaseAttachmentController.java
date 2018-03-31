@@ -78,7 +78,7 @@ public class BaseAttachmentController extends FrameWorkController<BaseAttachment
         countHql.append(whereSql);
         countHql.append(querySql);
         countHql.append(parentSql);
-        List<BaseAttachment> lists = thisService.doQuery(hql.toString(), start, limit);// 执行查询方法
+        List<BaseAttachment> lists = thisService.getQuery(hql.toString(), start, limit);// 执行查询方法
         Integer count = thisService.getCount(countHql.toString());// 查询总记录数
         strData = jsonBuilder.buildObjListToJson(new Long(count), lists, true);// 处理数据
         writeJSON(response, strData);// 返回数据
@@ -111,7 +111,7 @@ public class BaseAttachmentController extends FrameWorkController<BaseAttachment
         entity.setCreateUser(userCh); // 创建人
 
         // 持久化到数据库
-        entity = thisService.merge(entity);
+        entity = thisService.doMerge(entity);
 
         // 返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -129,7 +129,7 @@ public class BaseAttachmentController extends FrameWorkController<BaseAttachment
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {
@@ -150,7 +150,7 @@ public class BaseAttachmentController extends FrameWorkController<BaseAttachment
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
             } else {
@@ -185,7 +185,7 @@ public class BaseAttachmentController extends FrameWorkController<BaseAttachment
 
         perEntity.setUpdateTime(new Date()); // 设置修改时间
         perEntity.setCreateUser(userCh); // 设置修改人的中文名
-        entity = thisService.merge(perEntity);// 执行修改方法
+        entity = thisService.doMerge(perEntity);// 执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
@@ -212,7 +212,7 @@ public class BaseAttachmentController extends FrameWorkController<BaseAttachment
     	}
     	
     	hql += " order by b.createTime asc";
-    	List<BaseAttachment> list = thisService.doQuery(hql);
+    	List<BaseAttachment> list = thisService.getQuery(hql);
     	
     	List<HashMap<String, Object>> lists=new ArrayList<>();
     	HashMap<String, Object> maps=null;
@@ -242,7 +242,7 @@ public class BaseAttachmentController extends FrameWorkController<BaseAttachment
 		Integer limit = super.limit(request);
 		String sort = super.sort(request);
 		String filter = super.filter(request);
-		QueryResult<BaseAttachment> qResult = thisService.doPaginationQuery(start, limit, sort, filter, true);
+		QueryResult<BaseAttachment> qResult = thisService.getPaginationQuery(start, limit, sort, filter, true);
 		strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
 	}
@@ -306,7 +306,7 @@ public class BaseAttachmentController extends FrameWorkController<BaseAttachment
                 saveEntity.setEntityName(entityName);
                 saveEntity.setCreateUser(currentUser.getXm());
 
-                thisService.merge(saveEntity);
+                thisService.doMerge(saveEntity);
             }
 
             writeAppJSON(response, "{ \"success\" : true, \"msg\":\"上传图片成功！\"}");
@@ -324,7 +324,7 @@ public class BaseAttachmentController extends FrameWorkController<BaseAttachment
             return;
         } else {
         	String hql="delete from BaseAttachment where uuid in ('"+delIds.replace(",", "','")+"')";
-            Integer flag = thisService.executeHql(hql);
+            Integer flag = thisService.doExecuteHql(hql);
             if (flag>0) {
             	for(int i=0;i<urls.length;i++){
             		//删除图片

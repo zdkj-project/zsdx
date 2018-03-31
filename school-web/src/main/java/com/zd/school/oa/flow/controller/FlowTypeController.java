@@ -49,7 +49,7 @@ public class FlowTypeController extends BaseController<FlowType> {
 	public void list(@ModelAttribute FlowType entity, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 
-		List<FlowType> lists=thisService.doQueryAll();
+		List<FlowType> lists=thisService.getQueryAll();
 
 		String strData = JsonBuilder.getInstance().buildList(lists, "");// 处理数据
 		writeJSON(response, strData);// 返回数据
@@ -87,7 +87,7 @@ public class FlowTypeController extends BaseController<FlowType> {
 		saveEntity.setCreateUser(userCh);
 		saveEntity.BuildNode(parEntity);
 
-		entity = thisService.merge(saveEntity);
+		entity = thisService.doMerge(saveEntity);
 
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
 	}
@@ -114,7 +114,7 @@ public class FlowTypeController extends BaseController<FlowType> {
 		saveEntity.setCreateUser(userCh);
 		// saveEntity.BuildBroNode(parentbro, parEntity);
 
-		entity = thisService.merge(saveEntity);
+		entity = thisService.doMerge(saveEntity);
 
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
 	}

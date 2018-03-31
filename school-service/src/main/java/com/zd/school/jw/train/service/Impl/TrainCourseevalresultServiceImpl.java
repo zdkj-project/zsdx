@@ -51,7 +51,7 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
 
     @Override
     public QueryResult<TrainCourseevalresult> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-        QueryResult<TrainCourseevalresult> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+        QueryResult<TrainCourseevalresult> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
         return qResult;
     }
 
@@ -69,7 +69,7 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
             Object[] conditionValue = ids.split(",");
             String[] propertyName = {"isDelete", "updateUser", "updateTime"};
             Object[] propertyValue = {1, currentUser.getXm(), new Date()};
-            this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+            this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
             delResult = true;
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -93,7 +93,7 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
             BeanUtils.copyProperties(saveEntity, entity);
             saveEntity.setUpdateTime(new Date()); // 设置修改时间
             saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-            entity = this.merge(saveEntity);// 执行修改方法
+            entity = this.doMerge(saveEntity);// 执行修改方法
 
             return entity;
         } catch (IllegalAccessException e) {
@@ -120,7 +120,7 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
             excludedProp.add("uuid");
             BeanUtils.copyProperties(saveEntity, entity, excludedProp);
             saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
-            entity = this.merge(saveEntity);// 执行修改方法
+            entity = this.doMerge(saveEntity);// 执行修改方法
 
             return entity;
         } catch (IllegalAccessException e) {
@@ -155,23 +155,23 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
             courseEvalStand.setVerySatisfaction(BigDecimal.valueOf(0));
             courseEvalStand.setSatisfaction(BigDecimal.valueOf(0));
 
-            this.merge(courseEvalStand);
+            this.doMerge(courseEvalStand);
         }
-        scheduleService.updateByProperties("uuid", ids, "evalState", 1);
+        scheduleService.doUpdateByProperties("uuid", ids, "evalState", 1);
         return true;
     }
 
     @Override
     public Boolean doSumCourseEval(String ids) {
         String sql = MessageFormat.format("EXECUTE TRAIN_P_SUMCLASSCOURSEEVAL ''{0}''", ids);
-        List<?> alist = this.doQuerySql(sql);
+        List<?> alist = this.getQuerySql(sql);
 
         return true;
     }
 
     @Override
     public Boolean doEndCourseEval(String ids, SysUser currentUser) {
-        scheduleService.updateByProperties("uuid", ids, "evalState", 2);
+        scheduleService.doUpdateByProperties("uuid", ids, "evalState", 2);
         return true;
 
     }
@@ -300,7 +300,7 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
             sb.append(MessageFormat.format("update TRAIN_T_CLASSSCHEDULE set ranking={0} where CLASS_SCHEDULE_ID=''{1}'';", i + 1, classCourse.get(i).getUuid()));
         }
         if (sb.length() > 0) {
-            this.executeSql(sb.toString());
+            this.doExecuteSql(sb.toString());
             return true;
         } else
             return true;
@@ -364,7 +364,7 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
                 + ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId," +
                 " teachTypeName,advise FROM TRAIN_V_CLASSCOURSEEVAL where classScheduleId=''{0}''";
         sql = MessageFormat.format(sql, courseId);
-        QueryResult<TrainClassCourseEval> qr = this.doQueryResultSqlObject(sql, 0, 200,TrainClassCourseEval.class);
+        QueryResult<TrainClassCourseEval> qr = this.getQueryResultSqlObject(sql, 0, 200,TrainClassCourseEval.class);
         TrainClassCourseEval classschedule = qr.getResultList().get(0);
 
         Map<String,Object> mapOneCourse = new HashMap<>();

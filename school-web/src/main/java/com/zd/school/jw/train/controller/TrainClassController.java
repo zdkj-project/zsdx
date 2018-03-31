@@ -284,7 +284,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 					trainClass.setEndDate(sdf.parse(String.valueOf(lo.get(7))));
 					trainClass.setBzrName(String.valueOf(lo.get(8)));
 
-					thisService.merge(trainClass);
+					thisService.doMerge(trainClass);
 
 				}
 			} else {
@@ -401,7 +401,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				trainClass.setIsuse(3);
 			trainClass.setUpdateTime(new Date());
 			trainClass.setUpdateUser(currentUser.getXm());
-			thisService.update(trainClass);
+			thisService.doUpdate(trainClass);
 			state = 1; // 执行到这里，表明设置班级启用状态成功
 
 			// 3.设置部门ID：Train20170505（Train+班级编号）【班级编号不可变化】
@@ -443,7 +443,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			// 当设置启用状态 和 同步到UP都执行成功后，再提交此更改。
 			if (state == 0 || result == -1) {
 				trainClass.setIsuse(0);
-				thisService.update(trainClass);
+				thisService.doUpdate(trainClass);
 			}
 		}
 	}
@@ -499,7 +499,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				String hql = "select new TrainClasstrainee(g.uuid,g.xm,g.xbm,g.breakfast,g.lunch,g.dinner,g.isDelete) from TrainClasstrainee g "
 						+ "where g.isDelete!=1 and g.classId='"
 						+ classId + "' order by g.breakfast desc,g.lunch desc,g.dinner desc";
-				List<TrainClasstrainee> traineeFoods = classTraineeService.doQuery(hql);
+				List<TrainClasstrainee> traineeFoods = classTraineeService.getQuery(hql);
 
 				if (traineeFoods.size() > 0) {
 					// 5.切换数据源
@@ -539,9 +539,9 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				// 将此班级的学员和课程isdelete状态为2的，设置回0；
 				String updateSql = "update TrainClasstrainee set isDelete=0 where isDelete=2 and classId='" + classId
 						+ "'";
-				classTraineeService.executeHql(updateSql);
+				classTraineeService.doExecuteHql(updateSql);
 				updateSql = "update TrainClassschedule set isDelete=0 where isDelete=2 and classId='" + classId + "'";
-				classScheduleSerive.executeHql(updateSql);
+				classScheduleSerive.doExecuteHql(updateSql);
 
 				// 当isuse为3的时候，执行后，设置回1；
 				if (trainClass.getIsuse() == 3)
@@ -551,7 +551,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				trainClass.setIsarrange(1);
 				trainClass.setUpdateTime(new Date());
 				trainClass.setUpdateUser(currentUser.getXm());
-				thisService.update(trainClass);
+				thisService.doUpdate(trainClass);
 			}
 		}
 	}
@@ -607,7 +607,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				Map<String, String> mapMzmCategory = new HashMap<>();
 				Map<String, String> mapTraineeCategory = new HashMap<>();
 				String hql1 = " from BaseDicitem where dicCode in ('HEADSHIPLEVEL','XBM','ZXXBJLX','TRAINEECATEGORY','MZM')";
-				List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
+				List<BaseDicitem> listBaseDicItems1 = dicitemService.getQuery(hql1);
 				for (BaseDicitem baseDicitem : listBaseDicItems1) {
 					if (baseDicitem.getDicCode().equals("XBM"))
 						mapXbm.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
@@ -628,7 +628,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				List<TrainClasstrainee> trainClasstraineeList = null;
 				// isDelete=0 and
 				String hql = " from TrainClasstrainee where classId = '" + classId + "' order by xm asc";
-				trainClasstraineeList = classTraineeService.doQuery(hql);
+				trainClasstraineeList = classTraineeService.getQuery(hql);
 				// 处理学员基本数据
 				List<Map<String, String>> traineeList = new ArrayList<>();
 				Map<String, String> traineeMap = null;
@@ -725,7 +725,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				List<TrainClassschedule> trainClassscheduleList = null;
 				// isDelete=0 and
 				hql = " from TrainClassschedule where  classId = '" + classId + "' order by beginTime asc";
-				trainClassscheduleList = classScheduleSerive.doQuery(hql);
+				trainClassscheduleList = classScheduleSerive.getQuery(hql);
 				// 处理课程基本数据
 				List<Map<String, String>> courseList = new ArrayList<>();
 				Map<String, String> courseMap = null;
@@ -862,7 +862,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		Map<String, String> mapXbm = new HashMap<>();
 		Map<String, String> mapClassCategory = new HashMap<>();
 		String hql1 = " from BaseDicitem where dicCode in ('HEADSHIPLEVEL','XBM','ZXXBJLX')";
-		List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
+		List<BaseDicitem> listBaseDicItems1 = dicitemService.getQuery(hql1);
 		for (BaseDicitem baseDicitem : listBaseDicItems1) {
 			if (baseDicitem.getDicCode().equals("XBM"))
 				mapXbm.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
@@ -886,7 +886,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			hql += " and classId = '" + ids + "'";
 		}
 		hql += " order by siesta desc,sleep desc,xbm asc,roomName desc ";
-		roomClasstraineeList = classTraineeService.doQuery(hql);
+		roomClasstraineeList = classTraineeService.getQuery(hql);
 		// 处理学员基本数据
 		List<Map<String, String>> roomList = new ArrayList<>();
 		Map<String, String> roomMap = null;
@@ -983,7 +983,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			hql += " and classId ='" + ids + "'";
 		}
 		hql += " order by beginTime asc";
-		trainClassscheduleList = classScheduleSerive.doQuery(hql);
+		trainClassscheduleList = classScheduleSerive.getQuery(hql);
 		// 处理课程基本数据
 		List<Map<String, String>> courseList = new ArrayList<>();
 		Map<String, String> courseMap = null;
@@ -1073,7 +1073,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 
 		Map<String, String> mapClassCategory = new HashMap<>();
 		String hql1 = " from BaseDicitem where dicCode in ('ZXXBJLX')";
-		List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
+		List<BaseDicitem> listBaseDicItems1 = dicitemService.getQuery(hql1);
 		for (BaseDicitem baseDicitem : listBaseDicItems1) {
 				mapClassCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
 		}
@@ -1092,7 +1092,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 					hql += " and classId in ('" + ids.replace(",", "','") + "')";
 				}
 				hql += " order by traineeNumber asc,xm asc";
-				trainClasstraineeList = classTraineeService.doQuery(hql);
+				trainClasstraineeList = classTraineeService.getQuery(hql);
 				// 处理学员基本数据
 				List<Map<String, String>> traineeList = new ArrayList<>();
 				Map<String, String> traineeMap = null;
@@ -1272,7 +1272,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		Map<String, String> mapMzmCategory = new HashMap<>();
 		Map<String, String> mapTraineeCategory = new HashMap<>();
 		String hql1 = " from BaseDicitem where dicCode in ('HEADSHIPLEVEL','XBM','ZXXBJLX','TRAINEECATEGORY','MZM')";
-		List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
+		List<BaseDicitem> listBaseDicItems1 = dicitemService.getQuery(hql1);
 		for (BaseDicitem baseDicitem : listBaseDicItems1) {
 			if (baseDicitem.getDicCode().equals("XBM"))
 				mapXbm.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
@@ -1298,7 +1298,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			hql += " and classId in ('" + ids.replace(",", "','") + "')";
 		}
 		hql += " order by xm asc";
-		trainClasstraineeList = classTraineeService.doQuery(hql);
+		trainClasstraineeList = classTraineeService.getQuery(hql);
 		// 处理学员基本数据
 		List<Map<String, String>> traineeList = new ArrayList<>();
 		Map<String, String> traineeMap = null;
@@ -1359,7 +1359,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			hql += " and classId in ('" + ids.replace(",", "','") + "')";
 		}
 		hql += " order by beginTime asc";
-		trainClassscheduleList = classScheduleSerive.doQuery(hql);
+		trainClassscheduleList = classScheduleSerive.getQuery(hql);
 		// 处理课程基本数据
 		List<Map<String, String>> courseList = new ArrayList<>();
 		Map<String, String> courseMap = null;
@@ -1544,7 +1544,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				hql += " and classId in ('" + ids.replace(",", "','") + "')";
 			}
 			hql += " order by breakfast desc,lunch desc,dinner desc";
-			foodClasstraineeList = classTraineeService.doQuery(hql);
+			foodClasstraineeList = classTraineeService.getQuery(hql);
 			// 处理学员基本数据
 			for (TrainClasstrainee classTrainee : foodClasstraineeList) {
 				foodMap2 = new LinkedHashMap<>();
@@ -1591,7 +1591,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			hql += " and classId in ('" + ids.replace(",", "','") + "')";
 		}
 		hql += " order by siesta desc,sleep desc,xbm asc";
-		roomClasstraineeList = classTraineeService.doQuery(hql);
+		roomClasstraineeList = classTraineeService.getQuery(hql);
 		// 处理学员基本数据
 		List<Map<String, String>> roomList = new ArrayList<>();
 		Map<String, String> roomMap = null;
@@ -1903,7 +1903,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		Map<String, String> mapMzmCategory = new HashMap<>();
 		Map<String, String> mapTraineeCategory = new HashMap<>();
 		String hql1 = " from BaseDicitem where dicCode in ('HEADSHIPLEVEL','XBM','ZXXBJLX','TRAINEECATEGORY','MZM')";
-		List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
+		List<BaseDicitem> listBaseDicItems1 = dicitemService.getQuery(hql1);
 		for (BaseDicitem baseDicitem : listBaseDicItems1) {
 			if (baseDicitem.getDicCode().equals("XBM"))
 				mapXbm.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
@@ -1945,7 +1945,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			hql += " and classId in ('" + ids.replace(",", "','") + "')";
 		}
 		hql += " order by breakfast desc,lunch desc,dinner desc";
-		foodClasstraineeList = classTraineeService.doQuery(hql);
+		foodClasstraineeList = classTraineeService.getQuery(hql);
 		
 		for (TrainClasstrainee classTrainee : foodClasstraineeList) {
 			

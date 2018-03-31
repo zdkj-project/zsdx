@@ -42,7 +42,7 @@ public class OaMeetingcheckruleServiceImpl extends BaseServiceImpl<OaMeetingchec
 	
 	@Override
 	public QueryResult<OaMeetingcheckrule> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-        QueryResult<OaMeetingcheckrule> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+        QueryResult<OaMeetingcheckrule> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
 		return qResult;
 	}
 	/**
@@ -61,7 +61,7 @@ public class OaMeetingcheckruleServiceImpl extends BaseServiceImpl<OaMeetingchec
 			Object[] conditionValue = ids.split(",");
 			String[] propertyName = { "isDelete", "updateUser", "updateTime" };
 			Object[] propertyValue = { 1, currentUser.getXm(), new Date() };
-			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 			delResult = true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -86,7 +86,7 @@ public class OaMeetingcheckruleServiceImpl extends BaseServiceImpl<OaMeetingchec
 			BeanUtils.copyProperties(saveEntity, entity);
 			saveEntity.setUpdateTime(new Date()); // 设置修改时间
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -116,7 +116,7 @@ public class OaMeetingcheckruleServiceImpl extends BaseServiceImpl<OaMeetingchec
 			BeanUtils.copyProperties(saveEntity, entity,excludedProp);
 			saveEntity.setCreateUser(currentUser.getUuid()); // 设置修改人的中文名
             saveEntity.setUpdateUser(currentUser.getUuid());
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -138,7 +138,7 @@ public class OaMeetingcheckruleServiceImpl extends BaseServiceImpl<OaMeetingchec
             whereSql += StringUtils.convertFilterToSql(filter);
         }
         String hql = " from OaMeetingcheckrule o where o.isDelete=0 " + whereSql + orderSql;
-        QueryResult<OaMeetingcheckrule> queryResult = this.doQueryResult(hql, start, limit);
+        QueryResult<OaMeetingcheckrule> queryResult = this.getQueryResult(hql, start, limit);
         if (queryResult.getResultList().size() > 0)
             return queryResult;
         else

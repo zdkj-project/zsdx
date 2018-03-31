@@ -95,12 +95,12 @@ public class BuildRoomareaController extends FrameWorkController<BuildRoomarea> 
         if (!parentNode.equals(TreeVeriable.ROOT)) {
             BuildRoomarea parEntity = thisService.get(parentNode);
             parEntity.setLeaf(false);
-            thisService.merge(parEntity);
+            thisService.doMerge(parEntity);
             entity.BuildNode(parEntity);
         } else
             entity.BuildNode(null);
 
-        entity = thisService.merge(entity);
+        entity = thisService.doMerge(entity);
         entity.setParentName(parentName);
         entity.setAreaType(parentType);
         entity.setParentNode(parentNode);
@@ -121,7 +121,7 @@ public class BuildRoomareaController extends FrameWorkController<BuildRoomarea> 
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {
@@ -142,7 +142,7 @@ public class BuildRoomareaController extends FrameWorkController<BuildRoomarea> 
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
             } else {
@@ -193,7 +193,7 @@ public class BuildRoomareaController extends FrameWorkController<BuildRoomarea> 
         perEntity.setUpdateTime(new Date()); //设置修改时间
         perEntity.setUpdateUser(userCh); //设置修改人的中文名
         perEntity.setLeaf(isLeaf);
-        entity = thisService.merge(perEntity);//执行修改方法
+        entity = thisService.doMerge(perEntity);//执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 

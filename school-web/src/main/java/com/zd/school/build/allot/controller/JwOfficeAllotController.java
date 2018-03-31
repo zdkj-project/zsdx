@@ -79,7 +79,7 @@ public class JwOfficeAllotController extends FrameWorkController<JwOfficeAllot> 
     public void list(@ModelAttribute JwOfficeAllot entity, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String strData = ""; // 返回给js的数据
-        QueryResult<JwOfficeAllot> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+        QueryResult<JwOfficeAllot> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
                 super.sort(request), super.filter(request), true);
 
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -141,7 +141,7 @@ public class JwOfficeAllotController extends FrameWorkController<JwOfficeAllot> 
              
              entity.setOrderIndex(orderIndex);//排序
 
-             thisService.merge(entity); // 执行添加方法
+             thisService.doMerge(entity); // 执行添加方法
          }
 		//返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson("'成功'"));
@@ -171,7 +171,7 @@ public class JwOfficeAllotController extends FrameWorkController<JwOfficeAllot> 
             roominfo = infoService.get(jwTOfficeAllot.getRoomId());
             pushInfo.setRegStatus(pushInfo.getEmplName() + "您好，你的办公室分配在" + roominfo.getAreaUpName() + "，" + roominfo.getAreaName() + "，"
                     + jwTOfficeAllot.getRoomName() + "房");
-            pushService.merge(pushInfo);
+            pushService.doMerge(pushInfo);
         }
         writeJSON(response, jsonBuilder.returnSuccessJson("'推送信息成功。'"));
     }
@@ -192,7 +192,7 @@ public class JwOfficeAllotController extends FrameWorkController<JwOfficeAllot> 
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {

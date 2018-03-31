@@ -137,7 +137,7 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 		// }
 		String hql = " from BaseOrg where isDelete = 0 order by parentNode,orderIndex";
 		List<BaseOrgTree> result = new ArrayList<BaseOrgTree>();
-		List<BaseOrg> lists = this.doQuery(hql);
+		List<BaseOrg> lists = this.getQuery(hql);
 		Map<String, BaseOrg> maps = new HashMap<String, BaseOrg>();
 		// for (BaseOrg baseOrg : rightDept) {
 		// maps.put(baseOrg.getUuid(), baseOrg);
@@ -191,11 +191,11 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 	@Override
 	public Boolean delOrg(String delIds, SysUser currentUser) {
 		// 删除班级
-		boolean flag = gradeService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+		boolean flag = gradeService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
 		// 删除年级
-		flag = classService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+		flag = classService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
 		// 删除部门
-		flag = this.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+		flag = this.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
 
 		// 检查删除的部门的上级部门是否还有子部门
 		// 如果没有子部门了要设置上级部门为叶节点
@@ -209,7 +209,7 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 				parentOrg.setLeaf(true);
 				parentOrg.setUpdateUser(currentUser.getXm());
 				parentOrg.setUpdateTime(new Date());
-				this.merge(parentOrg);
+				this.doMerge(parentOrg);
 			}
 		}
 		return flag;
@@ -252,13 +252,13 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 		if (!parentNode.equals(TreeVeriable.ROOT)) {
 			BaseOrg parEntity = this.get(parentNode);
 			parEntity.setLeaf(false);
-			this.merge(parEntity);
+			this.doMerge(parEntity);
 			entity.BuildNode(parEntity);
 		} else
 			entity.BuildNode(null);
 
 		// 持久化到数据库
-		entity = this.merge(entity);
+		entity = this.doMerge(entity);
 		entity.setParentName(parentName);
 		entity.setParentNode(parentNode);
 		entity.setParentType(parentType);
@@ -274,7 +274,7 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 			grade.setIsDelete(0);
 			grade.setSchoolId(currentUser.getSchoolId());
 
-			gradeService.merge(grade);
+			gradeService.doMerge(grade);
 			break;
 		case "05": // 班级
 			JwTGradeclass gradeclass = new JwTGradeclass(orgId);
@@ -284,7 +284,7 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 			gradeclass.setGraiId(parentNode);
 			gradeclass.setCreateUser(currentUser.getXm());
 
-			classService.merge(gradeclass);
+			classService.doMerge(gradeclass);
 			break;
 		default:
 			break;
@@ -299,7 +299,7 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 		StringBuffer hql = new StringBuffer(" from BaseOrg where 1=1 ");
 		hql.append(whereSql);
 		hql.append(orderSql);
-		List<BaseOrg> lists = this.doQuery(hql.toString());// 执行查询方法
+		List<BaseOrg> lists = this.getQuery(hql.toString());// 执行查询方法
 
 		// 当前登录人的部门信息
 		// String deptId = currentUser.getDeptId();
@@ -391,10 +391,10 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 					filterList.add(bg.getUuid());
 				}
 				sql += " and uuid in (:depts)";
-				reList = this.doQuery(sql, "depts", filterList.toArray());
+				reList = this.getQuery(sql, "depts", filterList.toArray());
 			}
 		} else {
-			reList = this.doQuery(sql);
+			reList = this.getQuery(sql);
 		}
 		// List<BaseOrg> reList = this.doQuerySql(sql);
 		return reList;
@@ -468,7 +468,7 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 		} else {
 			hql = " from BaseOrg WHERE isDelete=0 ";
 		}
-		List<BaseOrg> reList = this.doQuery(hql);
+		List<BaseOrg> reList = this.getQuery(hql);
 		if (!isSelf) {
 			reList.remove(selfDept);
 		}
@@ -497,7 +497,7 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 		} else {
 			hql = " from BaseOrg WHERE isDelete=0 ";
 		}
-		List<BaseOrg> reList = this.doQuery(hql);
+		List<BaseOrg> reList = this.getQuery(hql);
 		if (!isSelf) {
 			reList.remove(selfDept);
 		}
@@ -530,7 +530,7 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 							+ "'," + "'" + baseOrgToUP.getDepartmentName() + "',1,'" + baseOrgToUP.getLayer() + "','"
 							+ baseOrgToUP.getLayerorder() + "')";
 
-					row = this.executeSql(sqlInsert);
+					row = this.doExecuteSql(sqlInsert);
 				}
 			} else { // 若存在，则判断是修改还是删除
 				BaseOrgToUP upDeptInfo = upDeptInfos.get(0);
@@ -538,7 +538,7 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 				if (baseOrgToUP == null) { // 没有此部门数据，则删除
 					String sqlDelete = "update TC_Department set DepartmentStatus='0' where DepartmentID='"
 							+ smallDeptId + "'";// 逻辑删除
-					row = this.executeSql(sqlDelete);
+					row = this.doExecuteSql(sqlDelete);
 
 				} else { // 若数据都存在，则判断是否有修改
 					if (!baseOrgToUP.equals(upDeptInfo)) { // 对比部分数据是否一致
@@ -548,13 +548,13 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 								+ "layerorder='" + baseOrgToUP.getLayerorder() + "'" + " where DepartmentID='"
 								+ smallDeptId + "'";
 
-						row = this.executeSql(sqlUpdate);
+						row = this.doExecuteSql(sqlUpdate);
 						
 					} else if (upDeptInfo.getDepartmentStatus().equals("0")) { // 若状态为0，则置为1
 						String sqlUpdate = "update TC_Department set DepartmentStatus='1'" 
 								+ " where DepartmentID='" + smallDeptId + "'";
 
-						row = this.executeSql(sqlUpdate);
+						row = this.doExecuteSql(sqlUpdate);
 						
 					}
 				}
@@ -629,14 +629,14 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 
 				// 若积累的语句长度大于2000（大约50条语句左右），则执行
 				if (sqlSb.length() > 2000) {
-					row += this.executeSql(sqlSb.toString());
+					row += this.doExecuteSql(sqlSb.toString());
 					sqlSb.setLength(0); // 清空
 				}
 			}
 			
 			// 最后执行一次
 			if (sqlSb.length() > 0)
-				row += this.executeSql(sqlSb.toString());
+				row += this.doExecuteSql(sqlSb.toString());
 			
 		} catch (Exception e) {
 			// 捕获了异常后，要手动进行回滚； 还需要进行验证测试是否完全正确。

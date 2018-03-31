@@ -97,7 +97,7 @@ public class XcSalarybookitemController extends FrameWorkController<XcSalarybook
 		entity.setCreateUser(userCh); // 创建人
 
 		// 持久化到数据库
-		entity = thisService.merge(entity);
+		entity = thisService.doMerge(entity);
 
 		// 返回实体到前端界面
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -115,7 +115,7 @@ public class XcSalarybookitemController extends FrameWorkController<XcSalarybook
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
 			} else {
@@ -136,7 +136,7 @@ public class XcSalarybookitemController extends FrameWorkController<XcSalarybook
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
 			} else {
@@ -171,7 +171,7 @@ public class XcSalarybookitemController extends FrameWorkController<XcSalarybook
 
 		perEntity.setUpdateTime(new Date()); // 设置修改时间
 		perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-		entity = thisService.merge(perEntity);// 执行修改方法
+		entity = thisService.doMerge(perEntity);// 执行修改方法
 
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
@@ -185,7 +185,7 @@ public class XcSalarybookitemController extends FrameWorkController<XcSalarybook
 			@RequestParam("salarybookId") String salarybookId) {
 		String hql = "from XcSalarybookitem where userId='" + userId + "' and salarybookId='" + salarybookId
 				+ "' and isDelete=0";
-		List<XcSalarybookitem> items = thisService.doQuery(hql);
+		List<XcSalarybookitem> items = thisService.getQuery(hql);
 		return items;
 	}
 }

@@ -119,7 +119,7 @@ public class DocSendcheckController extends FrameWorkController<DocSendcheck> im
 		countHql.append(whereSql);
 		countHql.append(querySql);
 		countHql.append(parentSql);
-		List<DocSendcheck> lists = thisService.doQuery(hql.toString(), start, limit);// 执行查询方法
+		List<DocSendcheck> lists = thisService.getQuery(hql.toString(), start, limit);// 执行查询方法
 		Integer count = thisService.getCount(countHql.toString());// 查询总记录数
 		List<DocSendcheck> newLists = new ArrayList<DocSendcheck>();
 		for (DocSendcheck dd : lists) {

@@ -86,7 +86,7 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenu> implements SysM
         StringBuffer countHql = new StringBuffer("select count(*) from SysMenu where 1=1");
         countHql.append(whereSql);
 
-        List<SysMenu> typeList = super.doQuery(hql.toString());
+        List<SysMenu> typeList = super.getQuery(hql.toString());
         List<SysMenuTree> result = new ArrayList<SysMenuTree>();
         // 构建Tree数据
         recursion(new SysMenuTree(TreeVeriable.ROOT, new ArrayList<SysMenuTree>()), result, typeList);
@@ -142,7 +142,7 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenu> implements SysM
         if (!author.equals("8a8a8834533a065601533a065ae80000"))
             hql += " where isHidden='0'";
         hql += " order by parentNode,orderIndex asc ";
-        List<SysMenu> lists = this.doQuery(hql.toString());
+        List<SysMenu> lists = this.getQuery(hql.toString());
         //对于超级管理员的用户与角色，默认有所有菜单的权限
         if (authorType.equals(AuthorType.ROLE)) {
             SysRole thisRole = sysRoleService.get(author);
@@ -226,7 +226,7 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenu> implements SysM
         List<SysMenu> lists = new ArrayList<SysMenu>();
         List<SysMenuTree> result = new ArrayList<SysMenuTree>();
         if (rolePerimisson.size() > 0) {
-            lists = this.doQuery(hql.toString(), 0, 999, "roleRight", rolePerimisson.toArray());// 执行查询方法
+            lists = this.getQuery(hql.toString(), 0, 999, "roleRight", rolePerimisson.toArray());// 执行查询方法
             recursion(new SysMenuTree(TreeVeriable.ROOT, new ArrayList<SysMenuTree>()), result, lists);
         }
         return result;
@@ -250,14 +250,14 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenu> implements SysM
         String menuIds = "'" + cancelMenuId.replace(",", "','") + "'";
         String hql = " from SysPermission a where a.perCode in (" + menuIds + ") and a.perType='" + PermType.TYPE_MENU
                 + "'";
-        List<SysPermission> cancelPerimission = perimissonSevice.doQuery(hql);
+        List<SysPermission> cancelPerimission = perimissonSevice.getQuery(hql);
 
         SysRole cancelRole = sysRoleService.get(roleId);
         Set<SysPermission> rolePermission = cancelRole.getSysPermissions();
         rolePermission.removeAll(cancelPerimission);
 
         cancelRole.setSysPermissions(rolePermission);
-        sysRoleService.merge(cancelRole);
+        sysRoleService.doMerge(cancelRole);
 
         doResult = true;
 
@@ -303,7 +303,7 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenu> implements SysM
                 newPermisson.setPerCode(perCode);
                 newPermisson.setPerType(PermType.TYPE_MENU);
 
-                newPermisson = perimissonSevice.merge(newPermisson);
+                newPermisson = perimissonSevice.doMerge(newPermisson);
                 addPerimisson.add(newPermisson);
             }
         }
@@ -311,7 +311,7 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenu> implements SysM
         rolePermission.addAll(addPerimisson);
 
         addRoleEntity.setSysPermissions(rolePermission);
-        sysRoleService.merge(addRoleEntity);
+        sysRoleService.doMerge(addRoleEntity);
 
         doResult = true;
 
@@ -334,7 +334,7 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenu> implements SysM
         String hql = "from SysMenu where isHidden='0'";
 
         //查询出有效的菜单
-        List<SysMenu> lists = super.doQuery(hql.toString());
+        List<SysMenu> lists = super.getQuery(hql.toString());
 
         //对于超级管理员的用户与角色，默认有所有菜单的权限
         if (authorType.equals(AuthorType.ROLE)) {
@@ -455,12 +455,12 @@ public class SysMenuServiceImpl extends BaseServiceImpl<SysMenu> implements SysM
         if (!parentNode.equals(TreeVeriable.ROOT)) {
             SysMenu parEntity = this.get(parentNode);
             parEntity.setLeaf(false);
-            this.merge(parEntity);
+            this.doMerge(parEntity);
             menu.BuildNode(parEntity);
         } else
             menu.BuildNode(null);
 
-        menu = this.merge(menu);
+        menu = this.doMerge(menu);
         menu.setParentName(parentName);
         menu.setParentNode(parentNode);
 

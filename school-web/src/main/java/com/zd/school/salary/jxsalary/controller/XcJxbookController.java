@@ -77,7 +77,7 @@ public class XcJxbookController extends FrameWorkController<XcJxbook> implements
 		String jxbookId = request.getParameter("jxbookId");
 		// XcSalarybook book = thisService.get(jxplartId);
 		String hql = "from XcJxbooksalary where jxbookId='" + jxbookId + "' order by orderIndex";
-		List<XcJxbooksalary> list = booksalaryService.doQuery(hql);
+		List<XcJxbooksalary> list = booksalaryService.getQuery(hql);
 		List<XcJxbooksalary> list2 = new ArrayList<XcJxbooksalary>();
 		for (XcJxbooksalary temp : list) {
 			XcJxbooksalary entity = new XcJxbooksalary();
@@ -95,7 +95,7 @@ public class XcJxbookController extends FrameWorkController<XcJxbook> implements
 			String jxbookId = request.getParameter("jxbookId");
 			XcJxbook book = thisService.get(jxbookId);
 			String hql = "from XcJxbooksalary where jxbookId='" + jxbookId + "' order by orderIndex";
-			List<XcJxbooksalary> list = booksalaryService.doQuery(hql);
+			List<XcJxbooksalary> list = booksalaryService.getQuery(hql);
 			Map<String, Integer> map = new LinkedHashMap<String, Integer>();
 			// 储存每一项工资的序号 例 职务工资 1
 			for (XcJxbooksalary temp : list) {
@@ -117,7 +117,7 @@ public class XcJxbookController extends FrameWorkController<XcJxbook> implements
 				String xm = salaryList.get(0);
 				entity.setXm(xm);
 				hql = "from SysUser where xm='" + xm + "' and isDelete=0";	
-				List<SysUser> users = userService.doQuery(hql);
+				List<SysUser> users = userService.getQuery(hql);
 				String userId;
 				if (users != null && users.size() > 0) {
 					userId = users.get(0).getUuid();
@@ -148,7 +148,7 @@ public class XcJxbookController extends FrameWorkController<XcJxbook> implements
 					}
 					method.invoke(entity, gz);
 				}
-				bookitemService.merge(entity);
+				bookitemService.doMerge(entity);
 			}
 			writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson("'工资数据导入成功'")));
 		} else {
@@ -228,7 +228,7 @@ public class XcJxbookController extends FrameWorkController<XcJxbook> implements
         entity.setCreateUser(userCh); //创建人
         		
 		//持久化到数据库
-		entity = thisService.merge(entity);
+		entity = thisService.doMerge(entity);
 		
 		List<XcJxplartitem> list = plartitemService.queryByProerties("jxplartId", entity.getJxplartId());
 		for (XcJxplartitem xcSalaryplatitem : list) {
@@ -238,7 +238,7 @@ public class XcJxbookController extends FrameWorkController<XcJxbook> implements
 			temp.setSalaryitemId(xcSalaryplatitem.getUuid());
 			temp.setSalaryitemName(xcSalaryplatitem.getSalaryitemName());
 			temp.setOrderIndex(xcSalaryplatitem.getOrderIndex());
-			booksalaryService.merge(temp);
+			booksalaryService.doMerge(temp);
 		}
 		
 		//返回实体到前端界面
@@ -266,9 +266,9 @@ public class XcJxbookController extends FrameWorkController<XcJxbook> implements
 			if (entity.getIsPushed()==1) {
 				writeJSON(response, jsonBuilder.returnFailureJson("'当前台帐已有数据不能删除'"));
 			} else {
-				booksalaryService.deleteByProperties("jxbookId", delIds);
-				bookitemService.deleteByProperties("jxbookId", delIds);
-				boolean flag = thisService.deleteByPK(delIds);
+				booksalaryService.doDeleteByProperties("jxbookId", delIds);
+				bookitemService.doDeleteByProperties("jxbookId", delIds);
+				boolean flag = thisService.doDeleteByPK(delIds);
 				if (flag) {
 					writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
 				} else {
@@ -311,7 +311,7 @@ public class XcJxbookController extends FrameWorkController<XcJxbook> implements
        
         perEntity.setUpdateTime(new Date()); //设置修改时间
         perEntity.setUpdateUser(userCh); //设置修改人的中文名
-        entity = thisService.merge(perEntity);//执行修改方法
+        entity = thisService.doMerge(perEntity);//执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
@@ -339,7 +339,7 @@ public class XcJxbookController extends FrameWorkController<XcJxbook> implements
 
 		perEntity.setUpdateTime(new Date()); // 设置修改时间
 		perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-		perEntity = thisService.merge(perEntity);// 执行修改方法
+		perEntity = thisService.doMerge(perEntity);// 执行修改方法
 		writeJSON(response, jsonBuilder.returnSuccessJson("'发布成功'"));
 		
 

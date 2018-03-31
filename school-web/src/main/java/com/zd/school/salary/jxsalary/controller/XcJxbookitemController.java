@@ -119,7 +119,7 @@ public class XcJxbookitemController extends FrameWorkController<XcJxbookitem> im
         entity.setCreateUser(userCh); //创建人
         		
 		//持久化到数据库
-		entity = thisService.merge(entity);
+		entity = thisService.doMerge(entity);
 		
 		//返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -142,7 +142,7 @@ public class XcJxbookitemController extends FrameWorkController<XcJxbookitem> im
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {
@@ -168,7 +168,7 @@ public class XcJxbookitemController extends FrameWorkController<XcJxbookitem> im
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
             } else {
@@ -210,7 +210,7 @@ public class XcJxbookitemController extends FrameWorkController<XcJxbookitem> im
        
         perEntity.setUpdateTime(new Date()); //设置修改时间
         perEntity.setUpdateUser(userCh); //设置修改人的中文名
-        entity = thisService.merge(perEntity);//执行修改方法
+        entity = thisService.doMerge(perEntity);//执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
@@ -225,10 +225,10 @@ public class XcJxbookitemController extends FrameWorkController<XcJxbookitem> im
 		String jxbookId = request.getParameter("jxbookId");
 		String hql = "from XcJxbookitem where userId='" + userId + "' and xcYear=" + xcYear + " and xcMonth=" + xcMonth
 				+ " and isDelete=0 and jxbookId='" + jxbookId + "'";
-		XcJxbookitem item = thisService.doQuery(hql).get(0);
+		XcJxbookitem item = thisService.getQuery(hql).get(0);
 		XcJxbook book = bookService.getByProerties("uuid", item.getJxbookId());
 		hql = "from XcJxplartitem where jxplartId='" + book.getJxplartId() + "' order by orderIndex";
-		List<XcJxplartitem> list = plartitemService.doQuery(hql);
+		List<XcJxplartitem> list = plartitemService.getQuery(hql);
 		Map<String, Integer> map = new LinkedHashMap<String, Integer>();
 		for (XcJxplartitem temp : list) {
 			map.put(temp.getSalaryitemName(), temp.getOrderIndex() - 1);

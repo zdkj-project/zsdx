@@ -36,7 +36,7 @@ public class TrainEvalIndicatorServiceImpl extends BaseServiceImpl<TrainEvalIndi
 
     @Override
     public QueryResult<TrainEvalIndicator> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-        QueryResult<TrainEvalIndicator> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+        QueryResult<TrainEvalIndicator> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
         return qResult;
     }
 
@@ -54,8 +54,8 @@ public class TrainEvalIndicatorServiceImpl extends BaseServiceImpl<TrainEvalIndi
             Object[] conditionValue = ids.split(",");
             String[] propertyName = {"isDelete", "updateUser", "updateTime"};
             Object[] propertyValue = {1, currentUser.getXm(), new Date()};
-            this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
-            standService.deleteByProperties("indicatorId", conditionValue);
+            this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
+            standService.doDeleteByProperties("indicatorId", conditionValue);
             delResult = true;
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -80,7 +80,7 @@ public class TrainEvalIndicatorServiceImpl extends BaseServiceImpl<TrainEvalIndi
             saveEntity.setIndicatorObject(entity.getIndicatorObject());
             saveEntity.setUpdateTime(new Date()); // 设置修改时间
             saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-            entity = this.merge(saveEntity);// 执行修改方法
+            entity = this.doMerge(saveEntity);// 执行修改方法
 
             //处理指标对应的评估标准
             String indicatorId = entity.getUuid();
@@ -98,7 +98,7 @@ public class TrainEvalIndicatorServiceImpl extends BaseServiceImpl<TrainEvalIndi
                     saveStand.setIndicatorStand(stand.getIndicatorStand());
                     saveStand.setUpdateTime(new Date());
                     saveStand.setUpdateUser(currentUser.getXm());
-                    standService.merge(saveStand);
+                    standService.doMerge(saveStand);
 
                     //从已有列表中删除
                     hasList.remove(saveStand);
@@ -109,7 +109,7 @@ public class TrainEvalIndicatorServiceImpl extends BaseServiceImpl<TrainEvalIndi
             //要从数据库中清除的数据
             if (hasList.size() > 0) {
                 for (TrainIndicatorStand trainIndicatorStand : hasList) {
-                    standService.delete(trainIndicatorStand);
+                    standService.doDelete(trainIndicatorStand);
                 }
             }
             return entity;
@@ -126,7 +126,7 @@ public class TrainEvalIndicatorServiceImpl extends BaseServiceImpl<TrainEvalIndi
         saveStand.setIndicatorStand(stand.getIndicatorStand());
         saveStand.setCreateUser(currentUser.getXm());
 
-        standService.merge(saveStand);
+        standService.doMerge(saveStand);
     }
 
     /**
@@ -145,7 +145,7 @@ public class TrainEvalIndicatorServiceImpl extends BaseServiceImpl<TrainEvalIndi
             excludedProp.add("uuid");
             BeanUtils.copyPropertiesExceptNull(saveEntity, entity, excludedProp);
             saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
-            entity = this.merge(saveEntity);// 执行修改方法
+            entity = this.doMerge(saveEntity);// 执行修改方法
 
             //添加指标对应的评估标准
             String indicatorId = entity.getUuid();
@@ -168,10 +168,10 @@ public class TrainEvalIndicatorServiceImpl extends BaseServiceImpl<TrainEvalIndi
         try {
             String hql = "delete from TrainIndicatorStand where uuid in (''{0}'')";
             hql = MessageFormat.format(hql,ids);
-            this.executeHql(hql);
+            this.doExecuteHql(hql);
 
             String sql = "delete from TRAIN_T_EVALINDICATOR where (SELECT COUNT(*) FROM dbo.TRAIN_T_INDICATORSTAND WHERE INDICATOR_ID=TRAIN_T_EVALINDICATOR.INDICATOR_ID AND ISDELETE=0)=0";
-            this.executeSql(sql);
+            this.doExecuteSql(sql);
 
             return  true;
         } catch (Exception e) {

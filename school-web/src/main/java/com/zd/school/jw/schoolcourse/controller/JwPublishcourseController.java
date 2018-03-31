@@ -138,7 +138,7 @@ public class JwPublishcourseController extends FrameWorkController<JwPublishcour
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
 			} else {
@@ -159,7 +159,7 @@ public class JwPublishcourseController extends FrameWorkController<JwPublishcour
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
 			} else {
@@ -206,7 +206,7 @@ public class JwPublishcourseController extends FrameWorkController<JwPublishcour
 			HttpServletResponse response) throws IOException, IllegalAccessException, InvocationTargetException {
 
 		String hql = "from JwTSchoolcourse where state=3 and isDelete=0";
-		List<JwTSchoolcourse> list = courseService.doQuery(hql);
+		List<JwTSchoolcourse> list = courseService.getQuery(hql);
 
 		return list;
 
@@ -217,7 +217,7 @@ public class JwPublishcourseController extends FrameWorkController<JwPublishcour
 			HttpServletResponse response) throws IOException, IllegalAccessException, InvocationTargetException {
 
 		String hql = "from JwTGrade";
-		List<JwTGrade> list = gradeService.doQuery(hql);
+		List<JwTGrade> list = gradeService.getQuery(hql);
 
 		return list;
 

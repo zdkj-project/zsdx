@@ -62,7 +62,7 @@ public class CwFinancialbookitemServiceImpl extends BaseServiceImpl<CwFinancialb
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<CwFinancialbookitem> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<CwFinancialbookitem> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 	/**
@@ -81,7 +81,7 @@ public class CwFinancialbookitemServiceImpl extends BaseServiceImpl<CwFinancialb
 			Object[] conditionValue = ids.split(",");
 			String[] propertyName = { "isDelete", "updateUser", "updateTime" };
 			Object[] propertyValue = { 1, currentUser.getXm(), new Date() };
-			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 			delResult = true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -106,7 +106,7 @@ public class CwFinancialbookitemServiceImpl extends BaseServiceImpl<CwFinancialb
 			BeanUtils.copyProperties(saveEntity, entity);
 			saveEntity.setUpdateTime(new Date()); // 设置修改时间
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -135,7 +135,7 @@ public class CwFinancialbookitemServiceImpl extends BaseServiceImpl<CwFinancialb
 			excludedProp.add("uuid");
 			BeanUtils.copyProperties(saveEntity, entity,excludedProp);
 			saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {

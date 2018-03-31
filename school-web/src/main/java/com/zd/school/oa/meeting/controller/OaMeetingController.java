@@ -226,7 +226,7 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
 						m.setRoomId(roominfo.getUuid());
 					}
 					m.setRoomName(lo.get(7).toString());
-					thisService.merge(m);
+					thisService.doMerge(m);
 
 				}
 			} else {
@@ -248,7 +248,7 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
 		if (StringUtils.isNotEmpty(ids)) {
 			hql += " and uuid in ('" + ids.replace(",", "','") + "')";
 		}
-		list = thisService.doQuery(hql);
+		list = thisService.getQuery(hql);
 		List<OaMeeting> exportList = new ArrayList<>();
 
 		BaseDicitem dicitem = null;
@@ -302,7 +302,7 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
 		//导出涉及到的 数据字典
 		Map<String, String> mapMeetingCategory = new HashMap<>();
 		String hql1 = " from BaseDicitem where dicCode in ('MEETINGCATEGORY','XBM')";
-		List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
+		List<BaseDicitem> listBaseDicItems1 = dicitemService.getQuery(hql1);
 		for (BaseDicitem baseDicitem : listBaseDicItems1) {
 			mapMeetingCategory.put(baseDicitem.getDicCode() + baseDicitem.getItemCode(), baseDicitem.getItemName());
 		}
@@ -318,7 +318,7 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
 		if (StringUtils.isNotEmpty(ids)) {
 			hql += " and uuid in ('" + ids.replace(",", "','") + "')";
 		}
-		list = thisService.doQuery(hql);
+		list = thisService.getQuery(hql);
 
 		// 处理导出的基本数据
 		List<Map<String, Object>> mapList = new ArrayList<>();
@@ -401,7 +401,7 @@ public class OaMeetingController extends FrameWorkController<OaMeeting> implemen
             writeJSON(response,jsonBuilder.returnFailureJson("'没有传入会议参数'"));
             return;
         }
-        QueryResult<OaMeetingemp> qResult = meetingempService.doPaginationQuery(0, 0, sort, filter, true);
+        QueryResult<OaMeetingemp> qResult = meetingempService.getPaginationQuery(0, 0, sort, filter, true);
         strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
         writeJSON(response, strData);// 返回数据
     }

@@ -66,7 +66,7 @@ public class InquirecourseAppController extends FrameWorkController<JwCourseArra
             throws IOException {
         // hql语句
     	String hql="select TEACHER_NAME0"+place+",COURSE_NAME0"+place+",TEACH_TIME,CLASS_NAME from  dbo.JW_T_COURSE_ARRANGE where TEACHER_NAME0"+place+"='"+tname+"' and EXT_FIELD05=1";
-        List<JwCourseArrange> list = thisService.doQuerySql(hql);// 执行查询方法
+        List<JwCourseArrange> list = thisService.getQuerySql(hql);// 执行查询方法
         return list;
     }
     
@@ -76,11 +76,11 @@ public class InquirecourseAppController extends FrameWorkController<JwCourseArra
     public @ResponseBody List<JwTGradeclass> getclass(String tid,HttpServletRequest request, HttpServletResponse response)
             throws IOException {
     	String hql="from JwCourseteacher where tteacId='"+tid+"'";
-    	List<JwCourseteacher> list =courseteacherService.doQuery(hql);
+    	List<JwCourseteacher> list =courseteacherService.getQuery(hql);
     	List<JwTGradeclass> classlist = new ArrayList<JwTGradeclass>();
     	for (JwCourseteacher courseTeacher : list) {
 			String classhql="from JwTGradeclass where uuid='"+courseTeacher.getClaiId()+"'";
-			List<JwTGradeclass> listtwo=classService.doQuery(classhql);
+			List<JwTGradeclass> listtwo=classService.getQuery(classhql);
 			classlist.add(listtwo.get(0));
 		}
     	
@@ -98,7 +98,7 @@ public class InquirecourseAppController extends FrameWorkController<JwCourseArra
             throws IOException {
         // hql语句
         StringBuffer hql = new StringBuffer("from " + entity.getClass().getSimpleName() + " where className='"+cname+"' and extField05=1 order by className,teachTime asc");
-        List<JwCourseArrange> lists = thisService.doQuery(hql.toString());// 执行查询方法
+        List<JwCourseArrange> lists = thisService.getQuery(hql.toString());// 执行查询方法
         List<JwCourseArrange> newlists=new ArrayList<JwCourseArrange>();
         for(JwCourseArrange jca:lists){
         	jca.setWeekOne(jca.getCourseName01()+"("+jca.getTeacherName01()+")");

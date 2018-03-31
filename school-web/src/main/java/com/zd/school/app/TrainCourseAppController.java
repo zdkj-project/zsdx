@@ -99,15 +99,15 @@ public class TrainCourseAppController {
 					// where scheduleAddress='" + roomTerm.getRoomName() + "'
 					// and beginTime Between '" + s + " 06:00:00' And '" +
 					// sdf.format(date2) + "' order by beginTime asc");
-					course = courseService.doQuery("from TrainClassschedule where (isDelete=0 or isDelete=2) and roomId like '%"
+					course = courseService.getQuery("from TrainClassschedule where (isDelete=0 or isDelete=2) and roomId like '%"
 							+ roomTerm.getRoomId() + "%' and beginTime Between '" + s + " 06:00:00" + "' And '"
 							+ sdf.format(date2) + "' order by beginTime asc",0,3);
 				} else if (date.getTime() < date3.getTime()) {
-					course = courseService.doQuery("from TrainClassschedule where (isDelete=0 or isDelete=2)  and roomId like '%"
+					course = courseService.getQuery("from TrainClassschedule where (isDelete=0 or isDelete=2)  and roomId like '%"
 							+ roomTerm.getRoomId() + "%' and beginTime Between '" + s + " 12:00:00" + "' And '"
 							+ sdf.format(date3) + "' order by beginTime asc",0,3);
 				} else {
-					course = courseService.doQuery("from TrainClassschedule where (isDelete=0 or isDelete=2)  and roomId like '%"
+					course = courseService.getQuery("from TrainClassschedule where (isDelete=0 or isDelete=2)  and roomId like '%"
 							+ roomTerm.getRoomId() + "%' and beginTime Between '" + s + " 18:00:00" +  "' And '"
 							+ sdf.format(date4) + "' order by beginTime asc",0,3);
 				}
@@ -347,7 +347,7 @@ public class TrainCourseAppController {
 						
 						
 						attend.setUpdateTime(currentDate);
-						attendService.merge(attend);
+						attendService.doMerge(attend);
 					}
 
 					/*
@@ -825,7 +825,7 @@ public class TrainCourseAppController {
 				attend.setAttendResult("1");	 // 设为已签到状态
 				
 				attend.setUpdateTime(currentDate);
-				attendService.merge(attend); // 保存入库
+				attendService.doMerge(attend); // 保存入库
 
 			} else {
 				//判断考勤规则，是否为节次刷卡
@@ -873,7 +873,7 @@ public class TrainCourseAppController {
 					attend.setIncardTime(currentDate);	// 设置签到时间
 					
 					attend.setUpdateTime(currentDate);
-					attendService.merge(attend); // 保存入库		
+					attendService.doMerge(attend); // 保存入库		
 					
 				}else{	//C.若为按半天考勤，则一节节课程进行签到
 					//获取这个半天的所有符合的课程
@@ -971,7 +971,7 @@ public class TrainCourseAppController {
 						attend.setIncardTime(currentDate);	// 设置签到时间
 						
 						attend.setUpdateTime(currentDate);
-						attendService.merge(attend); // 保存入库	
+						attendService.doMerge(attend); // 保存入库	
 					}																		
 				}
 			}

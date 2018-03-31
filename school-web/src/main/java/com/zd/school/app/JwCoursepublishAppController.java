@@ -52,7 +52,7 @@ public class JwCoursepublishAppController {
 		String today = DateUtil.formatDateTime(new Date());
 		String hql = "from JwCoursepublish where beginDate<='" + today + "' and endDate>='" + today
 				+ "' and isDelete=0";
-		List<JwCoursepublish> list = thisService.doQuery(hql);
+		List<JwCoursepublish> list = thisService.getQuery(hql);
 		return list;
 	}
 
@@ -68,7 +68,7 @@ public class JwCoursepublishAppController {
 				+ stu.getClaiId() + "') and p.publishId in (select uuid from JwCoursepublish where beginDate<='" + today
 				+ "' and endDate>='" + today + "' and isDelete=0) and p.isDelete=0 ";
 
-		List<JwPublishcourse> qResult = publishService.doQuery(hql);
+		List<JwPublishcourse> qResult = publishService.getQuery(hql);
 		List<JwPublishcourse> list = new ArrayList<JwPublishcourse>();
 		/*
 		 * for (JwPublishcourse jpc : qResult) { String coursehql =
@@ -105,7 +105,7 @@ public class JwCoursepublishAppController {
 		JwStuEnteredCourse enteredCourse = new JwStuEnteredCourse();
 		enteredCourse.setStudentId(userId);
 		enteredCourse.setPcourseId(pcourseId);
-		stuCourseService.merge(enteredCourse);
+		stuCourseService.doMerge(enteredCourse);
 		return "ok";
 	}
 
@@ -119,7 +119,7 @@ public class JwCoursepublishAppController {
 		String pcourseId = request.getParameter("pcourseId");
 		String[] params = { "pcourseId", "studentId" };
 		String[] values = { pcourseId, userId };
-		stuCourseService.deleteByProperties(params, values);
+		stuCourseService.doDeleteByProperties(params, values);
 		return "ok";
 	}
 
@@ -159,7 +159,7 @@ public class JwCoursepublishAppController {
 		String userId = request.getParameter("userId");
 		String hql = "from JwPublishcourse where beginDate<='" + today + "' and endDate>='" + today
 				+ "'and isDelete=0 and courseId in(select uuid from JwTSchoolcourse where teachID='" + userId + "')";
-		List<JwPublishcourse> jwTSchoolcourses = publishService.doQuery(hql);
+		List<JwPublishcourse> jwTSchoolcourses = publishService.getQuery(hql);
 		return jwTSchoolcourses;
 	}
 
@@ -174,7 +174,7 @@ public class JwCoursepublishAppController {
 		String hql = "from JwStuEnteredCourse where pcourseId in(";
 		hql += "select uuid from JwPublishcourse where beginDate<='" + today + "' and endDate>='" + today
 				+ "'and isDelete=0 and courseId='" + courseId + "')";
-		List<JwStuEnteredCourse> list = stuCourseService.doQuery(hql);
+		List<JwStuEnteredCourse> list = stuCourseService.getQuery(hql);
 		return list;
 	}
 
@@ -185,7 +185,7 @@ public class JwCoursepublishAppController {
 		String userId = request.getParameter("userId");
 		String hql="from JwStuEnteredCourse where studentId='"+userId+"' order by createTime";
 
-		List<JwStuEnteredCourse> qResult = stuCourseService.doQuery(hql);
+		List<JwStuEnteredCourse> qResult = stuCourseService.getQuery(hql);
 		return qResult;
 	}
 

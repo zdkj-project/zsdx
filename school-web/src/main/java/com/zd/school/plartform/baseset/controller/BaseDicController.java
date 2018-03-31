@@ -110,14 +110,14 @@ public class BaseDicController extends FrameWorkController<BaseDic> implements C
         if (!parentNode.equals(TreeVeriable.ROOT)) {
             BaseDic parEntity = thisService.get(parentNode);
             parEntity.setLeaf(false);
-            thisService.merge(parEntity);
+            thisService.doMerge(parEntity);
 
             entity.BuildNode(parEntity);
         } else
             entity.BuildNode(null);
 
         // 持久化到数据库
-        entity = thisService.merge(entity);
+        entity = thisService.doMerge(entity);
         entity.setParentName(parentName);
         entity.setParentNode(parentNode);
 
@@ -137,7 +137,7 @@ public class BaseDicController extends FrameWorkController<BaseDic> implements C
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {
@@ -158,7 +158,7 @@ public class BaseDicController extends FrameWorkController<BaseDic> implements C
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
             } else {
@@ -213,7 +213,7 @@ public class BaseDicController extends FrameWorkController<BaseDic> implements C
         perEntity.setUpdateUser(userCh); // 设置修改人的中文名
         perEntity.setLeaf(isLeaf);
 
-        entity = thisService.merge(perEntity);// 执行修改方法
+        entity = thisService.doMerge(perEntity);// 执行修改方法
 
         entity.setParentName(parentName);
         entity.setParentNode(parentNode);

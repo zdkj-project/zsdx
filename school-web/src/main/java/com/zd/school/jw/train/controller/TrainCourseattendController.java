@@ -201,7 +201,7 @@ public class TrainCourseattendController extends FrameWorkController<TrainCourse
 			attend.setUpdateTime(new Date());
 			attend.setUpdateUser(currentUser.getXm());
 
-			thisService.merge(attend);
+			thisService.doMerge(attend);
 
 			writeJSON(response, jsonBuilder.returnSuccessJson("\"设置成功！\""));
 
@@ -251,7 +251,7 @@ public class TrainCourseattendController extends FrameWorkController<TrainCourse
 			attend.setUpdateTime(new Date());
 			attend.setUpdateUser(currentUser.getXm());
 
-			thisService.merge(attend);
+			thisService.doMerge(attend);
 
 			writeJSON(response, jsonBuilder.returnSuccessJson("\"设置成功！\""));
 

@@ -76,7 +76,7 @@ public class XcSalarybookController extends FrameWorkController<XcSalarybook> im
 		String salarybookId = request.getParameter("salarybookId");
 		// XcSalarybook book = thisService.get(salarybookId);
 		String hql = "from XcSalarybooksalary where salarybookId='" + salarybookId + "' order by orderIndex";
-		List<XcSalarybooksalary> list = booksalaryService.doQuery(hql);
+		List<XcSalarybooksalary> list = booksalaryService.getQuery(hql);
 		List<XcSalarybooksalary> list2 = new ArrayList<XcSalarybooksalary>();
 		for (XcSalarybooksalary temp : list) {
 			XcSalarybooksalary entity = new XcSalarybooksalary();
@@ -94,7 +94,7 @@ public class XcSalarybookController extends FrameWorkController<XcSalarybook> im
 			String salarybookId = request.getParameter("salarybookId");
 			XcSalarybook book = thisService.get(salarybookId);
 			String hql = "from XcSalarybooksalary where salarybookId='" + book.getUuid() + "' order by orderIndex";
-			List<XcSalarybooksalary> list = booksalaryService.doQuery(hql);
+			List<XcSalarybooksalary> list = booksalaryService.getQuery(hql);
 			Map<String, Integer> map = new LinkedHashMap<String, Integer>();
 			// 储存每一项工资的序号 例 职务工资 1
 			for (XcSalarybooksalary temp : list) {
@@ -116,7 +116,7 @@ public class XcSalarybookController extends FrameWorkController<XcSalarybook> im
 				String xm = salaryList.get(0);
 				entity.setXm(xm);
 				hql = "from SysUser where xm='" + xm + "' and isDelete=0";
-				List<SysUser> users = userService.doQuery(hql);
+				List<SysUser> users = userService.getQuery(hql);
 				String userId;
 				if (users != null && users.size() > 0) {
 					userId = users.get(0).getUuid();
@@ -146,7 +146,7 @@ public class XcSalarybookController extends FrameWorkController<XcSalarybook> im
 					}
 					method.invoke(entity, gz);
 				}
-				bookitemService.merge(entity);
+				bookitemService.doMerge(entity);
 			}
 			writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson("'工资数据导入成功'")));
 		} else {
@@ -216,7 +216,7 @@ public class XcSalarybookController extends FrameWorkController<XcSalarybook> im
 		entity.setCreateUser(userCh); // 创建人
 
 		// 持久化到数据库
-		entity = thisService.merge(entity);
+		entity = thisService.doMerge(entity);
 
 		List<XcSalaryplatitem> list = plartitemService.queryByProerties("salaryplatId", entity.getSalaryplatId());
 		for (XcSalaryplatitem xcSalaryplatitem : list) {
@@ -226,7 +226,7 @@ public class XcSalarybookController extends FrameWorkController<XcSalarybook> im
 			temp.setSalaryitemId(xcSalaryplatitem.getUuid());
 			temp.setSalaryitemName(xcSalaryplatitem.getSalaryitemName());
 			temp.setOrderIndex(xcSalaryplatitem.getOrderIndex());
-			booksalaryService.merge(temp);
+			booksalaryService.doMerge(temp);
 		}
 
 		// 返回实体到前端界面
@@ -249,9 +249,9 @@ public class XcSalarybookController extends FrameWorkController<XcSalarybook> im
 			if (entity.getIsPushed()==1) {
 				writeJSON(response, jsonBuilder.returnFailureJson("'当前台帐已经发布不能删除'"));
 			}else {
-				booksalaryService.deleteByProperties("salarybookId", delIds);
-				bookitemService.deleteByProperties("salarybookId", delIds);
-				boolean flag = thisService.deleteByPK(delIds);
+				booksalaryService.doDeleteByProperties("salarybookId", delIds);
+				bookitemService.doDeleteByProperties("salarybookId", delIds);
+				boolean flag = thisService.doDeleteByPK(delIds);
 				if (flag) {
 					writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
 				} else {
@@ -274,7 +274,7 @@ public class XcSalarybookController extends FrameWorkController<XcSalarybook> im
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
 			} else {
@@ -309,7 +309,7 @@ public class XcSalarybookController extends FrameWorkController<XcSalarybook> im
 
 		perEntity.setUpdateTime(new Date()); // 设置修改时间
 		perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-		entity = thisService.merge(perEntity);// 执行修改方法
+		entity = thisService.doMerge(perEntity);// 执行修改方法
 
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
@@ -337,7 +337,7 @@ public class XcSalarybookController extends FrameWorkController<XcSalarybook> im
 
 		perEntity.setUpdateTime(new Date()); // 设置修改时间
 		perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-		perEntity = thisService.merge(perEntity);// 执行修改方法
+		perEntity = thisService.doMerge(perEntity);// 执行修改方法
 		writeJSON(response, jsonBuilder.returnSuccessJson("'发布成功'"));
 		
 

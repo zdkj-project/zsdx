@@ -187,7 +187,7 @@ public class BaseOrgController extends FrameWorkController<BaseOrg> implements C
 		perEntity.setUpdateUser(userCh); // 设置修改人的中文名
 		perEntity.setLeaf(isLeaf);
 
-		entity = thisService.merge(perEntity);// 执行修改方法
+		entity = thisService.doMerge(perEntity);// 执行修改方法
 
 		entity.setParentName(parentName);
 		entity.setParentNode(parentNode);
@@ -197,7 +197,7 @@ public class BaseOrgController extends FrameWorkController<BaseOrg> implements C
 		parentOrg.setUpdateTime(new Date()); // 设置修改时间
 		parentOrg.setUpdateUser(userCh); // 设置修改人的中文名
 		parentOrg.setLeaf(false);
-		thisService.merge(parentOrg);// 执行修改方法
+		thisService.doMerge(parentOrg);// 执行修改方法
 
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 	}

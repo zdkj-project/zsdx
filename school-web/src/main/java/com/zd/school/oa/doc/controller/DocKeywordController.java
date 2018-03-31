@@ -49,7 +49,7 @@ public class DocKeywordController extends FrameWorkController<DocKeyword> implem
     public void list(@ModelAttribute DocKeyword entity, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String strData = ""; // 返回给js的数据
-        QueryResult<DocKeyword> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+        QueryResult<DocKeyword> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
                 super.sort(request), super.filter(request), true);
 
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -85,7 +85,7 @@ public class DocKeywordController extends FrameWorkController<DocKeyword> implem
                 saveEntity.setOrderIndex(orderIndex);// 排序
                 saveEntity.setCreateUser(userCh); // 创建人
                 // 持久化到数据库
-                saveEntity = thisService.merge(saveEntity);
+                saveEntity = thisService.doMerge(saveEntity);
             }
         }
         // 返回实体到前端界面
@@ -104,7 +104,7 @@ public class DocKeywordController extends FrameWorkController<DocKeyword> implem
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {
@@ -125,7 +125,7 @@ public class DocKeywordController extends FrameWorkController<DocKeyword> implem
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
             } else {
@@ -168,7 +168,7 @@ public class DocKeywordController extends FrameWorkController<DocKeyword> implem
 
         perEntity.setUpdateTime(new Date()); // 设置修改时间
         perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-        entity = thisService.merge(perEntity);// 执行修改方法
+        entity = thisService.doMerge(perEntity);// 执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 

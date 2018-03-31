@@ -53,7 +53,7 @@ public class JwTBaseCourseController extends FrameWorkController<JwTBasecourse> 
     public void getList(@ModelAttribute JwTBasecourse entity, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String strData = ""; // 返回给js的数据
-        QueryResult<JwTBasecourse> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+        QueryResult<JwTBasecourse> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
                 super.sort(request), super.filter(request), true);
 
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -94,7 +94,7 @@ public class JwTBaseCourseController extends FrameWorkController<JwTBasecourse> 
         // 增加时要设置创建人
         entity.setCreateUser(userCh); // 创建人
         // 持久化到数据库
-        entity = thisService.merge(entity);
+        entity = thisService.doMerge(entity);
 
         // 返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -112,7 +112,7 @@ public class JwTBaseCourseController extends FrameWorkController<JwTBasecourse> 
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {
@@ -153,7 +153,7 @@ public class JwTBaseCourseController extends FrameWorkController<JwTBasecourse> 
 
         perEntity.setUpdateTime(new Date()); // 设置修改时间
         perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-        entity = thisService.merge(perEntity);// 执行修改方法
+        entity = thisService.doMerge(perEntity);// 执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
     }

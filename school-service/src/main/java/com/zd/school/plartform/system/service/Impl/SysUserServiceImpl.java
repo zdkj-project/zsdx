@@ -105,7 +105,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		entity.setIsHidden("0");
 		entity.setCreateUser(currentUser.getXm()); // 创建人
 		// 持久化到数据库
-		entity = this.merge(entity);
+		entity = this.doMerge(entity);
 
 		return entity;
 	}
@@ -138,7 +138,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		 * perEntity.setSysRoles(isUserRoles); }
 		 */
 		// 持久化到数据库
-		entity = this.merge(perEntity);
+		entity = this.doMerge(perEntity);
 
 		return entity;
 	}
@@ -157,7 +157,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 		theUser.setSysRoles(theUserRole);
 
-		this.merge(theUser);
+		this.doMerge(theUser);
 
 		delReurn = true;
 		// TODO Auto-generated method stub
@@ -179,7 +179,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 		theUser.setSysRoles(theUserRole);
 
-		this.merge(theUser);
+		this.doMerge(theUser);
 
 		addResult = true;
 
@@ -215,7 +215,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			if (isDelete)
 				hql.append(" and isDelete=0 ");
 			hql.append(filterSql);
-			QueryResult<SysUser> qr = this.doQueryResult(hql.toString(), start, limit);
+			QueryResult<SysUser> qr = this.getQueryResult(hql.toString(), start, limit);
 
 			return qr;
 		}
@@ -225,7 +225,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 	public List<SysUser> getUserByRoleName(String roleName) {
 		String hql = "from SysUser as u inner join fetch u.sysRoles as r where r.roleName='" + roleName
 				+ "' and r.isDelete=0 and u.isDelete=0";
-		return this.doQuery(hql);
+		return this.getQuery(hql);
 	}
 
 	@Override
@@ -253,7 +253,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		QueryResult<SysUser> qr = new QueryResult<SysUser>();
 		String hql = "from SysUser as u inner join fetch u.sysRoles as r where r.uuid='" + roleId
 				+ "' and r.isDelete=0 and u.isDelete=0 ";
-		List<SysUser> list = this.doQuery(hql);
+		List<SysUser> list = this.getQuery(hql);
 
 		SortListUtil<SysUser> sortJob = new SortListUtil<SysUser>();
 		sortJob.Sort(list, "jobCode", "String");
@@ -268,7 +268,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			String filter) {
 		String hql = "from SysUser as u inner join fetch u.sysRoles as r where r.uuid='" + roleId
 				+ "' and r.isDelete=0 and u.isDelete=0 ";
-		QueryResult<SysUser> qr = this.doQueryResult(hql, start, limit);
+		QueryResult<SysUser> qr = this.getQueryResult(hql, start, limit);
 		return qr;
 	}
 
@@ -279,7 +279,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 		if (StringUtils.isNotEmpty(roleId)) {
 			String hql1 = " from SysUser as u inner join fetch u.sysRoles as k where k.uuid='" + roleId
 					+ "' and k.isDelete=0 and u.isDelete=0 ";
-			List<SysUser> tempList = this.doQuery(hql1);
+			List<SysUser> tempList = this.getQuery(hql1);
 			if (tempList.size() > 0) {
 				StringBuilder sb = new StringBuilder();
 				for (SysUser sysUser : tempList) {
@@ -298,7 +298,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			hql += " order by ";
 			hql += sort;
 		}
-		QueryResult<SysUser> qr = this.doQueryResult(hql, start, limit);
+		QueryResult<SysUser> qr = this.getQueryResult(hql, start, limit);
 		return qr;
 	}
 
@@ -324,7 +324,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 							+ sysUserInfo.getSid() + "','" + sysUserInfo.getEmployeePwd() + "','"
 							+ sysUserInfo.getSexId() + "','" + sysUserInfo.getIdentifier() + "',0,1,24)";
 
-					row = this.executeSql(sqlInsert);
+					row = this.doExecuteSql(sqlInsert);
 				}
 			} else { // 若存在，则判断是修改还是删除
 				SysUserToUP upUserInfo = upUserInfos.get(0);
@@ -336,7 +336,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 					sqlDelete += " update TC_Card set CardStatusIDXF='2' where EmployeeID='"
 							+ upUserInfo.getEmployeeId() + "';";// 逻辑删除
 
-					row = this.executeSql(sqlDelete);
+					row = this.doExecuteSql(sqlDelete);
 
 				} else { // 若数据都存在，则判断是否有修改
 					/*
@@ -365,7 +365,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 								+ sysUserInfo.getEmployeeStrId() + "'," + "SexID='" + sysUserInfo.getSexId()
 								+ "',identifier='" + sysUserInfo.getIdentifier() + "' where UserId='" + userId + "'";
 
-						row = this.executeSql(sqlUpdate);
+						row = this.doExecuteSql(sqlUpdate);
 					}
 				}
 			}
@@ -532,14 +532,14 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 				// 若积累的语句长度大于2000（大约50条语句左右），则执行
 				if (sqlSb.length() > 2000) {
-					row += this.executeSql(sqlSb.toString());
+					row += this.doExecuteSql(sqlSb.toString());
 					sqlSb.setLength(0); // 清空
 				}
 			}
 
 			// 最后执行一次
 			if (sqlSb.length() > 0)
-				row += this.executeSql(sqlSb.toString());
+				row += this.doExecuteSql(sqlSb.toString());
 
 			// 剩下的，表明不存在平台的库中，进行删除
 			/*
@@ -596,7 +596,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			// 当参数为null或内容为空，则直接删除发卡信息
 			if (upCardUserInfos == null || upCardUserInfos.size() == 0) {
 				sqlStr = "	delete from CARD_T_USEINFO ";
-				this.executeSql(sqlSb.toString());
+				this.doExecuteSql(sqlSb.toString());
 			} else {
 				for (int i = 0; i < upCardUserInfos.size(); i++) {
 					upCardUser = upCardUserInfos.get(i);
@@ -605,7 +605,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 					// 【new：放在前面，因为下面的一个if会continue】若积累的语句长度大于3000（大约50条语句左右），则执行
 					if (sqlSb.length() > 3000) {
-						row += this.executeSql(sqlSb.toString());
+						row += this.doExecuteSql(sqlSb.toString());
 						sqlSb.setLength(0); // 清空
 					}
 
@@ -716,7 +716,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 				// 最后执行一次
 				if (sqlSb.length() > 0)
-					row += this.executeSql(sqlSb.toString());
+					row += this.doExecuteSql(sqlSb.toString());
 
 				// 如果还有没执行到的发卡数据，则进行循环删除(2017-10-10不再删除未绑定的卡,置为空卡)
 				if (webCardUserInfos.size() > 0) {
@@ -729,7 +729,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 						// webCardUser.getUuid() + "';";
 						sqlSb.append(sqlStr + "  ");
 					}
-					this.executeSql(sqlSb.toString());
+					this.doExecuteSql(sqlSb.toString());
 					// 若web库中存在此发卡信息
 				}
 			}
@@ -771,7 +771,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			if (upCardUserInfos == null || upCardUserInfos.size() == 0) {
 				sqlStr = "	delete from CARD_T_USEINFO where USER_ID in "
 						+ "(	select CLASS_TRAINEE_ID from TRAIN_T_CLASSTRAINEE where CLASS_ID='" + classId + "')";
-				this.executeSql(sqlSb.toString());
+				this.doExecuteSql(sqlSb.toString());
 
 			} else {// 否则循环判断。
 				for (int i = 0; i < upCardUserInfos.size(); i++) {
@@ -781,7 +781,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 					// 【new：放在前面，因为下面的一个if会continue】若积累的语句长度大于3000（大约50条语句左右），则执行
 					if (sqlSb.length() > 3000) {
-						row += this.executeSql(sqlSb.toString());
+						row += this.doExecuteSql(sqlSb.toString());
 						sqlSb.setLength(0); // 清空
 					}
 
@@ -850,14 +850,14 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 					// 若积累的语句长度大于3000（大约50条语句左右），则执行
 					if (sqlSb.length() > 3000) {
-						row += this.executeSql(sqlSb.toString());
+						row += this.doExecuteSql(sqlSb.toString());
 						sqlSb.setLength(0); // 清空
 					}
 				}
 
 				// 最后执行一次
 				if (sqlSb.length() > 0)
-					row += this.executeSql(sqlSb.toString());
+					row += this.doExecuteSql(sqlSb.toString());
 			}
 
 		} catch (Exception e) {
@@ -904,7 +904,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			 * 1：处理部门数据
 			 */
 			String sql = "update BASE_T_ORG set isdelete=1 where parent_node!='ROOT'";
-			orgService.executeSql(sql);
+			orgService.doExecuteSql(sql);
 			BaseOrg org = null;
 			for(int i=0;i<deptList.size();i++){
 				map=deptList.get(i);
@@ -933,7 +933,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				org.setOrderIndex(Integer.parseInt(String.valueOf(map.get("ORDERBY"))));
 				org.setExtField01(parentId);
 
-				orgService.merge(org);
+				orgService.doMerge(org);
 			}
 			logger.info("处理部门数据");
 			
@@ -941,13 +941,13 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			String rootId = "2851655E-3390-4B80-B00C-52C7CA62CB39";
 			String rootCode = "001";
 			sql = MessageFormat.format("EXECUTE [ORG_P_UPDATESYNC] ''{0}'',''{1}'',''{2}''", rootId, rootId, rootCode);
-			orgService.doQuerySql(sql);
+			orgService.getQuerySql(sql);
 			
 			/**
 			 * 2：处理岗位数据
 			 */
 			sql = "update BASE_T_JOB set isdelete=1";
-			jobservice.executeSql(sql);
+			jobservice.doExecuteSql(sql);
 			BaseJob b = null;
 			for (int i=0;i<jobList.size();i++) {
 				map=jobList.get(i);
@@ -966,7 +966,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				b.setJobName((String) map.get("NAMES"));
 				b.setRemark((String) map.get("DUTY"));
 
-				jobservice.merge(b);
+				jobservice.doMerge(b);
 			}		
 			logger.info("处理岗位数据");
 			
@@ -974,7 +974,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			 * 3：处理部门岗位数据
 			 */
 			sql = "delete from BASE_T_DEPTJOB";
-	        deptjobService.executeSql(sql);
+	        deptjobService.doExecuteSql(sql);
 	        BaseDeptjob dj = null;
 	        for (int i=0;i<deptJobList.size();i++) {
 	        	map=deptJobList.get(i);
@@ -994,7 +994,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 	            dj.setUpdateTime((Date) map.get("UPDATE_DATE"));
 	            dj.setIsDelete(0);
 	            dj.setJobType(2);
-	            deptjobService.merge(dj);
+	            deptjobService.doMerge(dj);
 	        }	      
 	        logger.info("处理部门岗位数据");
 	        
@@ -1010,7 +1010,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
             mapDicItme.put("女", "2");
             String defaultPwd = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
            
-            this.executeSql("delete BASE_T_USERDEPTJOB where user_id!='8a8a8834533a065601533a065ae80000' and user_id!='f111ebab-933b-4e48-b328-c731ae792ca0'");
+            this.doExecuteSql("delete BASE_T_USERDEPTJOB where user_id!='8a8a8834533a065601533a065ae80000' and user_id!='f111ebab-933b-4e48-b328-c731ae792ca0'");
             
             Date justDate = new Date();
             String justYear = DateUtil.formatDate(justDate,"yyyy");
@@ -1050,7 +1050,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
                     theUserRole.add(defaultRole);
                     u.setSysRoles(theUserRole);
                     integer++;
-                    this.merge(u);
+                    this.doMerge(u);
                 }else {
                 	 u.setXm((String) map.get("USER_NAME"));
                      u.setUserName((String) map.get("ACCOUNTS"));
@@ -1076,7 +1076,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
                 mapKdy = "";
             }
             sql = "delete from BASE_T_USERDEPTJOB";
-            userdeptjobService.executeSql(sql);
+            userdeptjobService.doExecuteSql(sql);
             BaseUserdeptjob udj = null;
             for (int i=0;i<userDeptList.size();i++) {
             	map=userDeptList.get(i);
@@ -1104,7 +1104,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
                 String deptJobId=mapDeptJob.get(mapKdy);
                 udj.setDeptjobId(deptJobId==null?"":deptJobId);
                 
-                userdeptjobService.merge(udj);
+                userdeptjobService.doMerge(udj);
                 mapKdy = "";
             }                   
             logger.info("处理用户部门岗位数据");

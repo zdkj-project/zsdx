@@ -77,7 +77,7 @@ public class JwClassDormAllotController extends FrameWorkController<JwClassDormA
 	public void list(@ModelAttribute JwClassDormAllot entity, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		String strData = ""; // 返回给js的数据
-		QueryResult<JwClassDormAllot> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+		QueryResult<JwClassDormAllot> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
 				super.sort(request), super.filter(request), true);
 
 		strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -143,8 +143,8 @@ public class JwClassDormAllotController extends FrameWorkController<JwClassDormA
 			// 增加时要设置创建人
 			entity.setCreateUser(userCh); // 创建人
 			// 持久化到数据库
-			thisService.merge(entity);
-			dormService.merge(jwTDormDefin);// 修改
+			thisService.doMerge(entity);
+			dormService.doMerge(jwTDormDefin);// 修改
 		}
 		writeJSON(response, jsonBuilder.returnSuccessJson("'分配成功。'"));
 	}
@@ -176,9 +176,9 @@ public class JwClassDormAllotController extends FrameWorkController<JwClassDormA
 				if (count == 0) {
 					defin = dormService.get(jwTClassdorm.getDormId());
 					defin.setRoomStatus("0"); // 设置成未分配
-					dormService.merge(defin); // 持久化
+					dormService.doMerge(defin); // 持久化
 					jwTClassdorm.setIsDelete(1); // 设置删除状态
-					thisService.merge(jwTClassdorm); // 持久化
+					thisService.doMerge(jwTClassdorm); // 持久化
 					++fs;
 				}
 				count = 0;
@@ -204,7 +204,7 @@ public class JwClassDormAllotController extends FrameWorkController<JwClassDormA
 	public void doDeletes(JwClassDormAllot entity, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		String hql = "from " + entity.getClass().getSimpleName() + " where 1=1 and isdelete=0";
-		List<JwClassDormAllot> list = thisService.doQuery(hql);// 将班级下的宿舍全部查询出来
+		List<JwClassDormAllot> list = thisService.getQuery(hql);// 将班级下的宿舍全部查询出来
 		boolean flag = false;
 		if (list != null)
 			for (int i = 0; i < list.size(); i++) {
@@ -216,17 +216,17 @@ public class JwClassDormAllotController extends FrameWorkController<JwClassDormA
 						if (lists.get(j).getIsDelete() == 0) {
 							dormTStudentdorm = lists.get(j);
 							dormTStudentdorm.setIsDelete(1);
-							dormStudentDormService.merge(dormTStudentdorm);
+							dormStudentDormService.doMerge(dormTStudentdorm);
 						}
 					}
 				entity = list.get(i);
 				entity.setIsDelete(1);
 				entity.setIsmixed("0");
-				thisService.merge(entity);
+				thisService.doMerge(entity);
 				dormDefin = dormService.get(list.get(i).getDormId());
 				dormDefin.setRoomStatus("0");
 				dormDefin.setIsMixed("0");
-				dormService.merge(dormDefin);
+				dormService.doMerge(dormDefin);
 				flag = true;
 			}
 		if (flag) {
@@ -271,7 +271,7 @@ public class JwClassDormAllotController extends FrameWorkController<JwClassDormA
 			pushInfo.setPushWay(1);
 			pushInfo.setRegStatus(
 					pushInfo.getEmplName() + "您好，你所在的班级已分配宿舍如下：" + roomName.substring(0, roomName.length() - 1));
-			pushService.merge(pushInfo);
+			pushService.doMerge(pushInfo);
 		}
 		writeJSON(response, jsonBuilder.returnSuccessJson("'推送信息成功。'"));
 	}

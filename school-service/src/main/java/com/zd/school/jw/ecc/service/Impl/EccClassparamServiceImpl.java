@@ -55,7 +55,7 @@ public class EccClassparamServiceImpl extends BaseServiceImpl<EccClassparam> imp
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<EccClassparam> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<EccClassparam> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 }

@@ -42,7 +42,7 @@ public class TrainTeacherServiceImpl extends BaseServiceImpl<TrainTeacher> imple
 	
 	@Override
 	public QueryResult<TrainTeacher> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-        QueryResult<TrainTeacher> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+        QueryResult<TrainTeacher> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
 		return qResult;
 	}
 	/**
@@ -61,7 +61,7 @@ public class TrainTeacherServiceImpl extends BaseServiceImpl<TrainTeacher> imple
 			Object[] conditionValue = ids.split(",");
 			String[] propertyName = { "isDelete", "updateUser", "updateTime" };
 			Object[] propertyValue = { 1, currentUser.getXm(), new Date() };
-			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 			delResult = true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -86,7 +86,7 @@ public class TrainTeacherServiceImpl extends BaseServiceImpl<TrainTeacher> imple
 			BeanUtils.copyProperties(saveEntity, entity);
 			saveEntity.setUpdateTime(new Date()); // 设置修改时间
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -115,7 +115,7 @@ public class TrainTeacherServiceImpl extends BaseServiceImpl<TrainTeacher> imple
 			excludedProp.add("uuid");
 			BeanUtils.copyProperties(saveEntity, entity,excludedProp);
 			saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {

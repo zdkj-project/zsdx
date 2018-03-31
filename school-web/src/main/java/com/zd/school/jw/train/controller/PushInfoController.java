@@ -75,7 +75,7 @@ public class PushInfoController extends FrameWorkController<PushInfo> implements
 			}
 		}
         
-        QueryResult<PushInfo> qResult = thisService.doPaginationQuery(start, limit, sort, filter, false);
+        QueryResult<PushInfo> qResult = thisService.getPaginationQuery(start, limit, sort, filter, false);
         strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
         writeJSON(response, strData);// 返回数据
     }
@@ -127,7 +127,7 @@ public class PushInfoController extends FrameWorkController<PushInfo> implements
 			}        				
 		}
         
-        QueryResult<PushInfoHistory> qResult = pushInfoHistoryService.doPaginationQuery(start, limit, sort, filter, false);
+        QueryResult<PushInfoHistory> qResult = pushInfoHistoryService.getPaginationQuery(start, limit, sort, filter, false);
         strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
         writeJSON(response, strData);// 返回数据
     }
@@ -153,7 +153,7 @@ public class PushInfoController extends FrameWorkController<PushInfo> implements
 							+ "\",\"field\":\"emplId\"}]";					   
 			}
 	        
-	        QueryResult<PushInfo> qResult = thisService.doPaginationQuery(0, 0, "", filter, true);
+	        QueryResult<PushInfo> qResult = thisService.getPaginationQuery(0, 0, "", filter, true);
 	        
 	        //strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
 	        writeJSON(response, jsonBuilder.returnSuccessJson("\""+qResult.getTotalCount()+"\""));

@@ -55,7 +55,7 @@ public class JwCalenderController extends FrameWorkController<JwCalender> implem
     	pageJson.append("[");
     	
 		String hql="from JwTCander j where 1=1 and j.isDelete=0";
-    	List<JwCalender> list = thisService.doQuery(hql);
+    	List<JwCalender> list = thisService.getQuery(hql);
 		for(JwCalender jwTCander : list){
 			pageJson.append("{");
 			pageJson.append("\"text\":\""+jwTCander.getCanderName()+"\",");
@@ -113,7 +113,7 @@ public class JwCalenderController extends FrameWorkController<JwCalender> implem
         countHql.append(whereSql);
         countHql.append(querySql);
         countHql.append(parentSql);
-        List<JwCalender> lists = thisService.doQuery(hql.toString(), start, limit);// 执行查询方法
+        List<JwCalender> lists = thisService.getQuery(hql.toString(), start, limit);// 执行查询方法
         Integer count = thisService.getCount(countHql.toString());// 查询总记录数
         strData = jsonBuilder.buildObjListToJson(new Long(count), lists, true);// 处理数据
         writeJSON(response, strData);// 返回数据
@@ -159,7 +159,7 @@ public class JwCalenderController extends FrameWorkController<JwCalender> implem
         entity.setActivityState(0);
         
 		//持久化到数据库
-		entity = thisService.merge(entity);
+		entity = thisService.doMerge(entity);
 		
 		//返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -198,10 +198,10 @@ public class JwCalenderController extends FrameWorkController<JwCalender> implem
         try{
 	        String doIds = "'" + delIds.replace(",", "','") + "'";
 	        String hql="DELETE FROM JwCalenderdetail j  WHERE j.canderId IN (" + doIds + ")";
-	        thisService.executeHql(hql);
+	        thisService.doExecuteHql(hql);
 	        
 	        hql="DELETE FROM JwCalender j  WHERE j.uuid IN (" + doIds + ")";
-	        int flag = thisService.executeHql(hql);
+	        int flag = thisService.doExecuteHql(hql);
 	        
 	        if (flag>0) {
 	            writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
@@ -230,7 +230,7 @@ public class JwCalenderController extends FrameWorkController<JwCalender> implem
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
             } else {
@@ -272,7 +272,7 @@ public class JwCalenderController extends FrameWorkController<JwCalender> implem
        
         perEntity.setUpdateTime(new Date()); //设置修改时间
         perEntity.setUpdateUser(userCh); //设置修改人的中文名
-        entity = thisService.merge(perEntity);//执行修改方法
+        entity = thisService.doMerge(perEntity);//执行修改方法
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
     }

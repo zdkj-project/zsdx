@@ -74,7 +74,7 @@ public class DynamicFormController extends FrameWorkController<DynamicForm> impl
 		formModel.setForm(string);
 		formModel.setExtField01(extField01);
 		formModel.setExtField02(extField02);
-		thisService.merge(formModel);
+		thisService.doMerge(formModel);
 	}
 
 	@RequestMapping("/getFormList")
@@ -86,8 +86,8 @@ public class DynamicFormController extends FrameWorkController<DynamicForm> impl
 		if (StringUtils.isNotEmpty(whereSql)) {
 			hql += whereSql;
 		}
-		List<DynamicForm> list = thisService.doQuery(hql, start, limit);
-		int count = thisService.doQuery(hql).size();
+		List<DynamicForm> list = thisService.getQuery(hql, start, limit);
+		int count = thisService.getQuery(hql).size();
 
 		String strData = jsonBuilder.buildObjListToJson(new Long(count), list, true);
 		writeJSON(response, strData);
@@ -111,7 +111,7 @@ public class DynamicFormController extends FrameWorkController<DynamicForm> impl
 
 	@RequestMapping("/deleteForm")
 	public void deleteForm(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		boolean flag = thisService.deleteByPK(request.getParameter("formId"));
+		boolean flag = thisService.doDeleteByPK(request.getParameter("formId"));
 		if (flag)
 			writeJSON(response, JsonBuilder.getInstance().returnSuccessJson("'删除成功'"));
 		else
@@ -125,7 +125,7 @@ public class DynamicFormController extends FrameWorkController<DynamicForm> impl
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
 			return;
 		} else {
-			boolean flag = thisService.deleteByPK(delIds);
+			boolean flag = thisService.doDeleteByPK(delIds);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
 			} else {

@@ -158,7 +158,7 @@ public class StuBaseinfoController extends FrameWorkController<StuBaseinfo> impl
 		entity.setCreateUser(userCh); // 创建人
 
 		// 持久化到数据库
-		entity = thisService.merge(entity);
+		entity = thisService.doMerge(entity);
 
 		// 返回实体到前端界面
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -241,7 +241,7 @@ public class StuBaseinfoController extends FrameWorkController<StuBaseinfo> impl
 
 		// 增加时要设置创建人
 		student.setCreateUser(userCh); // 创建人
-		student = thisService.merge(student);
+		student = thisService.doMerge(student);
 
 		return new ModelAndView("redirect:/static/core/coreApp/student/studentinfo/view/readSfz.jsp?message=1");
 	}
@@ -270,7 +270,7 @@ public class StuBaseinfoController extends FrameWorkController<StuBaseinfo> impl
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
 			} else {
@@ -291,7 +291,7 @@ public class StuBaseinfoController extends FrameWorkController<StuBaseinfo> impl
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
 			} else {
@@ -332,7 +332,7 @@ public class StuBaseinfoController extends FrameWorkController<StuBaseinfo> impl
 
 		perEntity.setUpdateTime(new Date()); // 设置修改时间
 		perEntity.setUpdateUser(userCh);
-		entity = thisService.merge(perEntity);// 执行修改方法
+		entity = thisService.doMerge(perEntity);// 执行修改方法
 
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
@@ -350,7 +350,7 @@ public class StuBaseinfoController extends FrameWorkController<StuBaseinfo> impl
 		if (name != null && "" != name) {
 			hql.append(" where nodeText='" + name + "'");
 
-			dictionaryList = dictionaryService.doQuery(hql.toString());
+			dictionaryList = dictionaryService.getQuery(hql.toString());
 		}
 
 		if (dictionaryList != null && dictionaryList.size() > 0) {
@@ -364,7 +364,7 @@ public class StuBaseinfoController extends FrameWorkController<StuBaseinfo> impl
 
 			hqls.append(" where dicId='" + dicId + "' and isDelete='0' order by itemCode asc ");
 
-			dictionaryItemsList = dictionartItemService.doQuery(hqls.toString());
+			dictionaryItemsList = dictionartItemService.getQuery(hqls.toString());
 		}
 		return dictionaryItemsList;
 	}
@@ -466,7 +466,7 @@ public class StuBaseinfoController extends FrameWorkController<StuBaseinfo> impl
 				}
 				String andIsDelete = " and isDelete=0 ";
 				String hql = "from JwTGradeclass where className='" + gcName + "'" + andIsDelete;
-				JwTGradeclass gc = gcService.doQuery(hql).get(0);
+				JwTGradeclass gc = gcService.getQuery(hql).get(0);
 
 				entity.setSchoolId("2851655E-3390-4B80-B00C-52C7CA62CB39");
 				entity.setSchoolName("深大附中");
@@ -501,7 +501,7 @@ public class StuBaseinfoController extends FrameWorkController<StuBaseinfo> impl
 				entity.setIssystem(0);
 
 				// 7、存入数据库
-				userService.merge(entity);
+				userService.doMerge(entity);
 				userService.addUserRole(entity.getUuid(), "0309D5D0-2BD8-454B-9A24-46A8E5AAF655", currentUser);
 				
 				JwClassstudent cStu=new JwClassstudent();
@@ -510,7 +510,7 @@ public class StuBaseinfoController extends FrameWorkController<StuBaseinfo> impl
 				cStu.setStudyYeah("2016");
 				cStu.setSemester("2");
 				cStu.setStudentId(entity.getUuid());
-				classStudentService.merge(cStu);
+				classStudentService.doMerge(cStu);
 			}
 
 		} catch (Exception e) {

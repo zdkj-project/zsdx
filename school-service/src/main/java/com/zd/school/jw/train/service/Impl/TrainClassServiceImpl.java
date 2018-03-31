@@ -80,7 +80,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 
 	@Override
 	public QueryResult<TrainClass> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-		QueryResult<TrainClass> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+		QueryResult<TrainClass> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
 		return qResult;
 	}
 
@@ -100,7 +100,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 			Object[] conditionValue = ids.split(",");
 			String[] propertyName = { "isDelete", "updateUser", "updateTime" };
 			Object[] propertyValue = { 1, currentUser.getXm(), new Date() };
-			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 			delResult = true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -171,7 +171,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 				}
 			}
 
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -215,7 +215,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 			saveEntity.setClassNumb(temp[0]);
 			saveEntity.setOrderIndex(Integer.valueOf(temp[1]));
 
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			// if(traineeId != null ){
 			// String[] traineeIds = traineeId.split(",");
@@ -331,7 +331,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 
 		saveEntity.setUpdateTime(currentDate); // 设置修改时间
 		saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-		this.update(saveEntity);
+		this.doUpdate(saveEntity);
 
 		if (saveEntity.getDinnerType() == 3) {
 			// 把班级学员的数据，还原为json对象
@@ -381,7 +381,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 			// 清除班级学员的早 中 晚餐的数据
 			String hql = "update TrainClasstrainee set breakfast=0,lunch=0,dinner=0 where classId='"
 					+ saveEntity.getUuid() + "'";
-			this.executeHql(hql);
+			this.doExecuteHql(hql);
 		}
 		result = 1;
 		
@@ -407,7 +407,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 
 		saveEntity.setUpdateTime(currentDate); // 设置修改时间
 		saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-		this.update(saveEntity);
+		this.doUpdate(saveEntity);
 
 		@SuppressWarnings("unchecked")
 		List<TrainClasstrainee> classTraineeRoomInfos = (List<TrainClasstrainee>) JsonBuilder.getInstance()
@@ -798,7 +798,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 
 				// 每10个运行执行一次插入
 				if ((i + 1) % 10 == 0) {				
-					result += this.executeSql(executeSb.toString());
+					result += this.doExecuteSql(executeSb.toString());
 					executeSb.setLength(0); // 清空
 				}
 
@@ -806,7 +806,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 
 			// 最后执行一次
 			if (executeSb.length() > 0)
-				result += this.executeSql(executeSb.toString());
+				result += this.doExecuteSql(executeSb.toString());
 		
 			// 提交数据
 			// TransactionAspectSupport.currentTransactionStatus().flush();
@@ -815,13 +815,13 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 			updateSql = "update XF_MealCouponSet set MealCouponTypeID =" + " isnull((select top 1 MealCouponTypeID from"
 					+ "	XF_MealCouponType where MealId=XF_MealCouponSet.MealId),0) "
 					+ " where MealCouponTypeID=0 and MealId is not null";
-			this.executeSql(updateSql);
+			this.doExecuteSql(updateSql);
 			
 			//生成餐券详细表中的餐券类型ID，原因同上
 			updateSql = "update XF_MealCouponDetail set MealCouponTypeID =" + " isnull((select top 1 MealCouponTypeID from"
 					+ "	XF_MealCouponSet where EmployeeID=XF_MealCouponDetail.EmployeeID),0) "
 					+ " where MealCouponTypeID=0 and EmployeeID is not null";
-			this.executeSql(updateSql);
+			this.doExecuteSql(updateSql);
 			
 		} catch (Exception e) {
 			result = -1;
@@ -942,7 +942,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 		}
 		
 		if(sb.length()>0)
-			this.executeSql(sb.toString());
+			this.doExecuteSql(sb.toString());
 	
 		return new String[] { uuid1, uuid2, uuid3, uuid4, uuid5, uuid6, uuid7 };
 	}
@@ -973,7 +973,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 
     public Boolean doSumCredit(String classId){
         String sql = MessageFormat.format("EXECUTE TRAIN_P_SUMTRAINEECREDIT ''{0}''", classId);
-        this.doQuerySql(sql);
+        this.getQuerySql(sql);
 
 	    return true;
     }

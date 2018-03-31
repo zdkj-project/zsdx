@@ -217,7 +217,7 @@ public class SysMenuController extends FrameWorkController<SysMenu> implements C
         perEntity.setUpdateTime(new Date()); //设置修改时间
         perEntity.setUpdateUser(userCh); //设置修改人的中文名
         perEntity.setLeaf(isLeaf);
-        entity = thisService.merge(perEntity);//执行修改方法
+        entity = thisService.doMerge(perEntity);//执行修改方法
         entity.setParentName(parentName);
         entity.setParentNode(parentNode);
         //更新父节点的是否叶节点的标记
@@ -226,7 +226,7 @@ public class SysMenuController extends FrameWorkController<SysMenu> implements C
         	parentMenu.setUpdateTime(new Date()); //设置修改时间
         	parentMenu.setUpdateUser(userCh); //设置修改人的中文名
         	parentMenu.setLeaf(false);
-        	thisService.merge(parentMenu);//执行修改方法
+        	thisService.doMerge(parentMenu);//执行修改方法
         }
      
 
@@ -259,7 +259,7 @@ public class SysMenuController extends FrameWorkController<SysMenu> implements C
         } else {
             delIds = "'" + delIds.replace(",", "','") + "'";
             String hql = " update SysMenu set isHidden='" + lockFlag + "'  where uuid in (" + delIds + ") ";
-            thisService.executeHql(hql);
+            thisService.doExecuteHql(hql);
 
             writeJSON(response, jsonBuilder.returnSuccessJson("'处理成功'"));
         }

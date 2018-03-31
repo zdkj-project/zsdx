@@ -316,7 +316,7 @@ public class TrainCourseevalresultController extends FrameWorkController<TrainCo
 		Map<String, String> mapXbm = new HashMap<>();
 		Map<String, String> mapClassCategory = new HashMap<>();
 		String hql1 = " from BaseDicitem where dicCode in ('HEADSHIPLEVEL','XBM','ZXXBJLX')";
-		List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
+		List<BaseDicitem> listBaseDicItems1 = dicitemService.getQuery(hql1);
 		for (BaseDicitem baseDicitem : listBaseDicItems1) {
 			if (baseDicitem.getDicCode().equals("XBM"))
 				mapXbm.put(baseDicitem.getItemCode(), baseDicitem.getItemName());

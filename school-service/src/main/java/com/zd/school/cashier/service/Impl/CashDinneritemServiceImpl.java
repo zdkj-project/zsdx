@@ -45,7 +45,7 @@ public class CashDinneritemServiceImpl extends BaseServiceImpl<CashDinneritem> i
 	
 	@Override
 	public QueryResult<CashDinneritem> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-        QueryResult<CashDinneritem> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+        QueryResult<CashDinneritem> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
 		return qResult;
 	}
 	/**
@@ -64,7 +64,7 @@ public class CashDinneritemServiceImpl extends BaseServiceImpl<CashDinneritem> i
 			Object[] conditionValue = ids.split(",");
 			String[] propertyName = { "isDelete", "updateUser", "updateTime" };
 			Object[] propertyValue = { 1, currentUser.getXm(), new Date() };
-			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 			delResult = true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -89,7 +89,7 @@ public class CashDinneritemServiceImpl extends BaseServiceImpl<CashDinneritem> i
 			BeanUtils.copyProperties(saveEntity, entity);
 			saveEntity.setUpdateTime(new Date()); // 设置修改时间
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -119,7 +119,7 @@ public class CashDinneritemServiceImpl extends BaseServiceImpl<CashDinneritem> i
 				excludedProp.add("uuid");
 				BeanUtils.copyProperties(saveEntity, stand.get(i),excludedProp);
 				saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
-				CashDinneritem entity = this.merge(saveEntity);// 执行修改方法
+				CashDinneritem entity = this.doMerge(saveEntity);// 执行修改方法
 			}
 		} catch (IllegalAccessException e) {
 			logger.error(e.getMessage());

@@ -79,7 +79,7 @@ public class SwapAppController {
 						t.setWorkUnit(tt.getWorkUnit());
 						t.setMobilePhone(tt.getMobilePhone());
 						t.setIsDelete(tt.getIsDelete());
-						trainService.merge(t);
+						trainService.doMerge(t);
 					}else{
 						t=new TrainTrainee();
 						t.setExtField01(tt.getUuid());
@@ -90,7 +90,7 @@ public class SwapAppController {
 						t.setWorkUnit(tt.getWorkUnit());
 						t.setMobilePhone(tt.getMobilePhone());
 						t.setIsDelete(tt.getIsDelete());
-						trainService.merge(t);
+						trainService.doMerge(t);
 						
 					}
 				}
@@ -135,7 +135,7 @@ public class SwapAppController {
 				tc.setClassNumb(tclass.getUuid());
 				tc.setNeedChecking((short) 1);
 				tc.setNeedSynctrainee((short) 1);	
-				classService.merge(tc);
+				classService.doMerge(tc);
 			}else{
 				tc=new TrainClass(tclass.getUuid());
 				tc.setClassName(tclass.getClassName());
@@ -145,7 +145,7 @@ public class SwapAppController {
 				tc.setClassNumb(tclass.getUuid());
 				tc.setNeedChecking((short) 1);
 				tc.setNeedSynctrainee((short) 1);
-				classService.merge(tc);
+				classService.doMerge(tc);
 			}
 			
 			//保存班级学员
@@ -176,7 +176,7 @@ public class SwapAppController {
 					ct.setXbm(t.getXbm());
 				}
 				try {
-					classtraineeService.merge(ct);
+					classtraineeService.doMerge(ct);
 				} catch (Exception e) {
 					sa.setSuccess(false);
 					sa.setMessage("异常，班级学员数据错误。"+e.getMessage());
@@ -187,7 +187,7 @@ public class SwapAppController {
 			//先删除课程安排表，避免重复。
 			if(courselist!=null){
 				for(TrainClassschedule course:courselist){
-					courseService.executeSql("delete TRAIN_T_CLASSSCHEDULE where CLASS_ID='"+course.getClassId()+"'");
+					courseService.doExecuteSql("delete TRAIN_T_CLASSSCHEDULE where CLASS_ID='"+course.getClassId()+"'");
 				}
 				//保存班级课程
 				TrainClassschedule cc=null;
@@ -208,7 +208,7 @@ public class SwapAppController {
 					cc.setScheduleAddress(course.getScheduleAddress());
 					cc.setCourseMode(Integer.valueOf(1));
 					try {
-						courseService.merge(cc);
+						courseService.doMerge(cc);
 					} catch (Exception e) {
 						sa.setSuccess(false);
 						sa.setMessage("异常，课程安排数据错误"+e.getMessage());
@@ -238,7 +238,7 @@ public class SwapAppController {
 				List<TrainClassschedule> chedulelist=courseService.queryByProerties(param, values);
 				List<TrainCourseattend> attendlist=new ArrayList<TrainCourseattend>();
 				for(TrainClassschedule cc:chedulelist){
-					attendlist.addAll(attendService.doQuery("from TrainCourseattend where classId='"+cc.getClassId()+"' and classScheduleId='"+cc.getUuid()+"' order by beginTime asc"));
+					attendlist.addAll(attendService.getQuery("from TrainCourseattend where classId='"+cc.getClassId()+"' and classScheduleId='"+cc.getUuid()+"' order by beginTime asc"));
 				}
 				List<SchoolAttend> schoolAttends = new ArrayList<>();
 				SchoolAttend satd = null;

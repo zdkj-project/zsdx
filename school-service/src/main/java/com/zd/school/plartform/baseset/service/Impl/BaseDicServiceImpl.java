@@ -35,7 +35,7 @@ public class BaseDicServiceImpl extends BaseServiceImpl<BaseDic> implements Base
     public List<BaseDicTree> getDicTreeList(String whereSql) {
 
         String hql = "from BaseDic where 1=1 " + whereSql + " order by orderIndex asc ";
-        List<BaseDic> lists = this.doQuery(hql);// 执行查询方法
+        List<BaseDic> lists = this.getQuery(hql);// 执行查询方法
         List<BaseDicTree> result = new ArrayList<BaseDicTree>();
 
         // 构建Tree数据

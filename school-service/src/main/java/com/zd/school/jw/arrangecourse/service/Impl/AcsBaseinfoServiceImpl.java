@@ -55,7 +55,7 @@ public class AcsBaseinfoServiceImpl extends BaseServiceImpl<AcsBaseinfo> impleme
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<AcsBaseinfo> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<AcsBaseinfo> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 }

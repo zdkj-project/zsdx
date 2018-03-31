@@ -55,7 +55,7 @@ public class XcJxbookitemServiceImpl extends BaseServiceImpl<XcJxbookitem> imple
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<XcJxbookitem> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<XcJxbookitem> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 }

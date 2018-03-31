@@ -60,7 +60,7 @@ public class XcJxbookServiceImpl extends BaseServiceImpl<XcJxbook> implements Xc
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<XcJxbook> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<XcJxbook> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 
@@ -102,7 +102,7 @@ public class XcJxbookServiceImpl extends BaseServiceImpl<XcJxbook> implements Xc
 	public Boolean doDelete(String ids, SysUser currentUser) {
 		Boolean doResult = false;
 		bookItemService.deleteByProperties("jxbookId", ids);
-		this.deleteByPK(ids);
+		this.doDeleteByPK(ids);
 		
 		doResult = true;
 		

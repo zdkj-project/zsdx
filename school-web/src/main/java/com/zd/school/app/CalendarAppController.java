@@ -43,7 +43,7 @@ public class CalendarAppController extends FrameWorkController<JwCalender> imple
 			throws IllegalAccessException, InvocationTargetException {
 
 		String hql = " from JwCalender where  activityState='1' and isDelete=0";
-		List<JwCalender> list = calendarService.doQuery(hql);
+		List<JwCalender> list = calendarService.getQuery(hql);
 //		String [] propName = {"activityState","isDelete"};
 //		Object[] propValue = new Object[]{"1",Integer.getInteger("0")};
 //		List<JwCalender> list = calendarService.queryByProerties(propName, propValue);
@@ -57,7 +57,7 @@ public class CalendarAppController extends FrameWorkController<JwCalender> imple
 			throws IllegalAccessException, InvocationTargetException {
 		
 		String hql = " from JwCalenderdetail where canderId='" + canderId + "' and isDelete=0 order by isafgernoon asc,beginTime asc ";
-		List<JwCalenderdetail> list = calendarDetailService.doQuery(hql);
+		List<JwCalenderdetail> list = calendarDetailService.getQuery(hql);
 		return list;
 	}	
 }

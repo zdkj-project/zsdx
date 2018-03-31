@@ -30,7 +30,7 @@ public class JwSchoolCalenderAppController {
 		String xcMonth = request.getParameter("xcMonth");
 		String str="'"+xcYear+"-"+xcMonth;
 		String hql="from JwSchoolCalender where start>="+str+"'"+" and start<="+str+"-31' order by start";
-		List<JwSchoolCalender> lists = thisService.doQuery(hql);// 执行查询方法
+		List<JwSchoolCalender> lists = thisService.getQuery(hql);// 执行查询方法
 		return lists;
 	}
 	
@@ -43,7 +43,7 @@ public class JwSchoolCalenderAppController {
 		String day= request.getParameter("day");
 		String str=xcYear+"-"+xcMonth+"-"+day;
 		String hql="from JwSchoolCalender where start like '%"+str+"%' order by start";
-		List<JwSchoolCalender> lists = thisService.doQuery(hql);// 执行查询方法
+		List<JwSchoolCalender> lists = thisService.getQuery(hql);// 执行查询方法
 		return lists;
 	}
 	

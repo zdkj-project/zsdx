@@ -219,7 +219,7 @@ public class JwClassteacherServiceImpl extends BaseServiceImpl<JwClassteacher> i
             queryFilter = "[{\"type\":\"string\",\"comparison\":\"in\",\"value\":\"" + qrClassId
                     + "\",\"field\":\"claiId\"}]";
         }
-        QueryResult<JwClassteacher> qrReturn = this.doPaginationQuery(start, limit, sort, queryFilter, true);
+        QueryResult<JwClassteacher> qrReturn = this.getPaginationQuery(start, limit, sort, queryFilter, true);
         return qrReturn;
     }
 

@@ -80,7 +80,7 @@ public class JKCourseArrangeController extends FrameWorkController<JwCourseArran
 		// hql语句
 		StringBuffer hql = new StringBuffer(
 				"from JwCourseArrange where claiId='" + claiId + "' and extField05=1 order by className,teachTime asc");
-		List<JwCourseArrange> lists = thisService.doQuery(hql.toString());// 执行查询方法
+		List<JwCourseArrange> lists = thisService.getQuery(hql.toString());// 执行查询方法
 		List<JwCourseArrange> newlists = new ArrayList<JwCourseArrange>();
 
 		if (lists != null && lists.size() > 0) {
@@ -201,7 +201,7 @@ public class JKCourseArrangeController extends FrameWorkController<JwCourseArran
 			}
 			StringBuffer hql = new StringBuffer("from JwCourseArrange where claiId='");
 			hql.append(claiId).append("' and extField05=1  order by className,teachTime asc");
-			List<JwCourseArrange> jtaList = thisService.doQuery(hql.toString());// 执行查询方法得到班级课程表
+			List<JwCourseArrange> jtaList = thisService.getQuery(hql.toString());// 执行查询方法得到班级课程表
 			if (jtaList == null || jtaList.size() <= 0) {
 				jctd.setMessage(false);
 				jctd.setMessageInfo("查询班级课表无信息");

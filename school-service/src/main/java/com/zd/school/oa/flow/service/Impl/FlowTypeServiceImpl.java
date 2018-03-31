@@ -53,7 +53,7 @@ public class FlowTypeServiceImpl extends BaseServiceImpl<FlowType> implements Fl
 		countHql.append(querySql);
 		countHql.append(parentSql);
 
-		List<FlowType> typeList = super.doQuery(hql.toString());
+		List<FlowType> typeList = super.getQuery(hql.toString());
 		List<FlowTypeTree> result = new ArrayList<FlowTypeTree>();
 		// 构建Tree数据
 		recursion(new FlowTypeTree("0", new ArrayList<FlowTypeTree>()), result, typeList);

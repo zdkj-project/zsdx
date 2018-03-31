@@ -269,7 +269,7 @@ public class OaNoticeController extends FrameWorkController<OaNotice> implements
 					bt.setAttachType(type);
 					bt.setAttachSize(file.getSize());
 					bt.setAttachIsMain(attachIsMain);
-					baseTAttachmentService.merge(bt);
+					baseTAttachmentService.doMerge(bt);
 
 					writeJSON(response, "{ \"success\" : true,\"obj\":\"" + url + fileName + "\"}");
 				}
@@ -291,7 +291,7 @@ public class OaNoticeController extends FrameWorkController<OaNotice> implements
 		}		
 		String hql = "from BaseAttachment b where b.recordId='" + setRecordId + "' and b.entityName='OaNotice' order by b.createTime asc";
 	
-		List<BaseAttachment> list = baseTAttachmentService.doQuery(hql);
+		List<BaseAttachment> list = baseTAttachmentService.getQuery(hql);
 
 		List<HashMap<String, Object>> lists = new ArrayList<>();
 		HashMap<String, Object> maps = null;
@@ -320,7 +320,7 @@ public class OaNoticeController extends FrameWorkController<OaNotice> implements
 
 			String hql = "DELETE FROM BaseAttachment b  WHERE b.uuid IN (" + doIds + ")";
 
-			int flag = baseTAttachmentService.executeHql(hql);
+			int flag = baseTAttachmentService.doExecuteHql(hql);
 
 			if (flag > 0) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("\"删除成功\""));

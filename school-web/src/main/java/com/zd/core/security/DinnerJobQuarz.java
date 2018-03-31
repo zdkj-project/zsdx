@@ -60,7 +60,7 @@ public class DinnerJobQuarz {
 		//最多重试执行3次
 		for(int i=0;i<3;i++){
 			try{			
-				thisService.executeSql(sql2);			
+				thisService.doExecuteSql(sql2);			
 				break;
 				
 			}catch(Exception e){
@@ -107,7 +107,7 @@ public class DinnerJobQuarz {
 		//最多重试执行3次
 		for(int i=0;i<3;i++){
 			try{			
-				thisService.executeSql(sql2);			
+				thisService.doExecuteSql(sql2);			
 				break;
 				
 			}catch(Exception e){

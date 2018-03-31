@@ -62,7 +62,7 @@ public class XcSalaryplatitemServiceImpl extends BaseServiceImpl<XcSalaryplatite
 				hql.append(" order by  " + sortSql);
 		}
 
-		QueryResult<XcSalaryplatitem> qResult = this.doQueryResult(hql.toString(), start, limit);
+		QueryResult<XcSalaryplatitem> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 
@@ -78,20 +78,20 @@ public class XcSalaryplatitemServiceImpl extends BaseServiceImpl<XcSalaryplatite
 			List<XcSalaryplatitem> list;
 			Serializable id = ids[0];
 			String salaryplatId = this.get(id).getSalaryplatId();
-			list = this.doQuery("from XcSalaryplatitem where salaryplatId='" + salaryplatId + "' order by orderIndex");
+			list = this.getQuery("from XcSalaryplatitem where salaryplatId='" + salaryplatId + "' order by orderIndex");
 			if (list.size()==ids.length) {
 				return -2;
 			}
 			for (int i = 0; i < ids.length; i++) {
 				id = ids[i];
-				this.deleteByPK(id);
+				this.doDeleteByPK(id);
 			}
 			// 对删除后的数据进行重新排序
-			list = this.doQuery("from XcSalaryplatitem where salaryplatId='" + salaryplatId + "' order by orderIndex");
+			list = this.getQuery("from XcSalaryplatitem where salaryplatId='" + salaryplatId + "' order by orderIndex");
 			for (int i = 0; i < list.size(); i++) {
 				XcSalaryplatitem item = list.get(i);
 				item.setOrderIndex(i + 1);
-				this.merge(item);
+				this.doMerge(item);
 			}
 			return 1;
 		} catch (Exception e) {
@@ -110,7 +110,7 @@ public class XcSalaryplatitemServiceImpl extends BaseServiceImpl<XcSalaryplatite
 	@Override
 	public boolean doBatchAdd(String idstr, String salaryplatId, String userCh) {
 		try {
-			this.deleteByProperties("salaryplatId", salaryplatId);
+			this.doDeleteByProperties("salaryplatId", salaryplatId);
 			if (StringUtils.isNotEmpty(idstr)) {
 				String[] ids = idstr.split(",");
 				for (int i = 0; i < ids.length; i++) {
@@ -123,7 +123,7 @@ public class XcSalaryplatitemServiceImpl extends BaseServiceImpl<XcSalaryplatite
 					perEntity.setOrderIndex(i + 1);
 					perEntity.setUpdateTime(new Date()); // 设置修改时间
 					perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-					perEntity = this.merge(perEntity);// 执行修改方法
+					perEntity = this.doMerge(perEntity);// 执行修改方法
 				}
 			}
 			return true;
@@ -151,7 +151,7 @@ public class XcSalaryplatitemServiceImpl extends BaseServiceImpl<XcSalaryplatite
 				perEntity.setOrderIndex(i + 1);
 				perEntity.setUpdateTime(new Date()); // 设置修改时间
 				perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-				perEntity = this.merge(perEntity);// 执行修改方法
+				perEntity = this.doMerge(perEntity);// 执行修改方法
 			}
 			return true;
 		} catch (Exception e) {

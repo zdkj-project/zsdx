@@ -51,7 +51,7 @@ public class SalaryBookAppController extends FrameWorkController<XcSalarybook> i
 		XcSalarybookitem item = thisService.get(uuid);
 		XcSalarybook book = bookService.getByProerties("uuid", item.getSalarybookId());
 		String hql = "from XcSalarybooksalary where salarybookId='" + book.getUuid() + "' order by orderIndex";
-		List<XcSalarybooksalary> list = booksalaryService.doQuery(hql);
+		List<XcSalarybooksalary> list = booksalaryService.getQuery(hql);
 		Map<String, Integer> map = new LinkedHashMap<String, Integer>();
 		for (XcSalarybooksalary temp : list) {
 			map.put(temp.getSalaryitemName(), temp.getOrderIndex() - 1);
@@ -100,7 +100,7 @@ public class SalaryBookAppController extends FrameWorkController<XcSalarybook> i
 			@RequestParam("xcMonth") Integer xcMonth) {
 		String hql;
 		hql = "from XcSalarybook where xcYear=" + xcYear + " and xcMonth=" + xcMonth + " and isDelete=0 and isPushed=1";
-		List<XcSalarybook> list = bookService.doQuery(hql);
+		List<XcSalarybook> list = bookService.getQuery(hql);
 		String bookIds = "";
 		for (XcSalarybook xcSalarybook : list) {
 			bookIds += "'" + xcSalarybook.getUuid() + "',";
@@ -108,7 +108,7 @@ public class SalaryBookAppController extends FrameWorkController<XcSalarybook> i
 		bookIds = bookIds.substring(0, bookIds.length() - 1);
 		hql = "from XcSalarybookitem where userId='" + userId + "' and xcYear=" + xcYear + " and xcMonth=" + xcMonth
 				+ " and isDelete=0 and salarybookId in("+bookIds+")";
-		List<XcSalarybookitem> items = thisService.doQuery(hql);
+		List<XcSalarybookitem> items = thisService.getQuery(hql);
 		return items;
 	}
 

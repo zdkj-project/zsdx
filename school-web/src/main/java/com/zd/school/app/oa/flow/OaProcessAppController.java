@@ -126,7 +126,7 @@ public class OaProcessAppController {
 		String hql = "from SysUser as u inner join fetch u.userDepts as d where u.uuid='" + userId
 				+ "' and d.isDelete=0";
 
-		List<SysUser> list = userService.doQuery(hql);
+		List<SysUser> list = userService.getQuery(hql);
 		SysUser u = list.get(0);
 /*		List<BaseOrg> listTemp = new ArrayList<BaseOrg>();
 		listTemp.addAll(u.getUserDepts());
@@ -225,14 +225,14 @@ public class OaProcessAppController {
 			approveUser = userService.get(classTeacherId);
 		} else if (nextTaskAssignee.equals("年级组长")) {
 			String hql = "from JwTGrade where gradeName='" + org.getNodeText() + "' and isDelete=0";
-			List<JwTGrade> grades = gradeService.doQuery(hql);
+			List<JwTGrade> grades = gradeService.getQuery(hql);
 			JwTGrade grade = grades != null && grades.size() > 0 ? grades.get(0) : null;
 			hql = "from JwTGradeclass where className='" + org.getNodeText() + "' and isDelete=0";
-			List<JwTGradeclass> gradeclasses = gClassService.doQuery(hql);
+			List<JwTGradeclass> gradeclasses = gClassService.getQuery(hql);
 			JwTGradeclass gradeClass = gradeclasses != null && gradeclasses.size() > 0 ? gradeclasses.get(0) : null;
 			String gradeId = grade != null ? grade.getUuid() : gradeClass.getGraiId();
 			hql = "from JwGradeteacher where graiId='" + gradeId + "' and category=0 and isDelete=0";
-			JwGradeteacher t = gTeacherService.doQuery(hql).get(0);
+			JwGradeteacher t = gTeacherService.getQuery(hql).get(0);
 			// 设置年级组长为代理人
 			nextTask.setAssignee(t.getTteacId());
 			approveUser = userService.get(t.getTteacId());
@@ -373,14 +373,14 @@ public class OaProcessAppController {
 			} else if (nextTask.getAssignee().equals("年级组长")) {
 				BaseOrg org = baseOrgService.get(deptId);
 				String hql = "from JwTGrade where gradeName='" + org.getNodeText() + "' and isDelete=0";
-				List<JwTGrade> grades = gradeService.doQuery(hql);
+				List<JwTGrade> grades = gradeService.getQuery(hql);
 				JwTGrade grade = grades != null && grades.size() > 0 ? grades.get(0) : null;
 				hql = "from JwTGradeclass where className='" + org.getNodeText() + "' and isDelete=0";
-				List<JwTGradeclass> gradeclasses = gClassService.doQuery(hql);
+				List<JwTGradeclass> gradeclasses = gClassService.getQuery(hql);
 				JwTGradeclass gradeClass = gradeclasses != null && gradeclasses.size() > 0 ? gradeclasses.get(0) : null;
 				String gradeId = grade != null ? grade.getUuid() : gradeClass.getGraiId();
 				hql = "from JwGradeteacher where graiId='" + gradeId + "' and category=0 and isDelete=0";
-				JwGradeteacher t = gTeacherService.doQuery(hql).get(0);
+				JwGradeteacher t = gTeacherService.getQuery(hql).get(0);
 				nextTask.setAssignee(t.getTteacId());
 				approveUser = userService.get(t.getTteacId());
 			} else if (nextTask.getAssignee().equals("部门负责人")) {
@@ -433,7 +433,7 @@ public class OaProcessAppController {
 			pushInfo.setPushWay(1);
 			pushInfo.setRegStatus("您好,您提交的申请通过了!");
 			pushInfo.setPushUrl(url.toString());
-			pushInfoService.persist(pushInfo);
+			pushInfoService.doPersist(pushInfo);
 		}
 		infoApp.setMessageInfo("办理成功");
 		return infoApp;
@@ -480,7 +480,7 @@ public class OaProcessAppController {
 		pushInfo.setPushWay(1);
 		pushInfo.setRegStatus("您好,您提交的申请被驳回了!");
 		pushInfo.setPushUrl(url.toString());
-		pushInfoService.persist(pushInfo);
+		pushInfoService.doPersist(pushInfo);
 		
 		return infoApp;
 	}
@@ -750,7 +750,7 @@ public class OaProcessAppController {
 			userIdS = userIdS.substring(0, userIdS.length() - 1);
 			String hql = "from SysUser as u inner join fetch u.userDepts as d where u.uuid in(" + userIdS
 					+ ") and d.nodeText='" + deptName + "' and d.isDelete=0 and u.isDelete=0";
-			List<SysUser> list2 = userService.doQuery(hql); // 在按部门名称
+			List<SysUser> list2 = userService.getQuery(hql); // 在按部门名称
 															// 和角色名称相同查找
 			if (list2 != null && list2.size() == 1) {
 				list2.get(0).setExtField01(roleName);
@@ -808,7 +808,7 @@ public class OaProcessAppController {
 	private SysUser getUserByJob(BaseJob job) {
 		String hql = "from SysUser as u inner join fetch u.userJobs as j where j.uuid='" + job.getUuid()
 				+ "'and j.isDelete=0 and u.isDelete=0";
-		return userService.doQuery(hql).get(0);
+		return userService.getQuery(hql).get(0);
 	}
 
 	private Set<BaseOrg> getUserDepts(SysUser user) {
@@ -835,7 +835,7 @@ public class OaProcessAppController {
 	private Set<SysRole> getUserRoles(SysUser user) {
 		String hql = "from SysUser as u inner join fetch u.sysRoles as r where u.uuid='" + user.getUuid()
 				+ "' and r.isDelete=0";
-		SysUser u = userService.doQuery(hql).get(0);
+		SysUser u = userService.getQuery(hql).get(0);
 		return u.getSysRoles();
 	}
 
@@ -857,7 +857,7 @@ public class OaProcessAppController {
 		pushInfo.setPushWay(1);
 		pushInfo.setPushUrl(url.toString());
 		pushInfo.setRegStatus("您好," + approveUser.getXm() + "老师,有申请需要您尽快审批!");
-		pushInfoService.persist(pushInfo);
+		pushInfoService.doPersist(pushInfo);
 	}
 
 	// 抄送消息
@@ -926,7 +926,7 @@ public class OaProcessAppController {
 			pushInfo.setExtField01(url);
 			pushInfo.setRegStatus("您好," + sysUser.getXm() + roleName + "," + applayUserName + "提交的" + applayName
 					+ "审批通过了!" + task.getDescription());
-			pushInfoService.persist(pushInfo);
+			pushInfoService.doPersist(pushInfo);
 		}
 	}
 }

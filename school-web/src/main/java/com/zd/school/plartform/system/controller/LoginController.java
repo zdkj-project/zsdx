@@ -74,7 +74,7 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 			return;
 		}
 		sysUser.setLoginTime(new Date());
-		sysUserService.merge(sysUser);
+		sysUserService.doMerge(sysUser);
 		Subject subject = SecurityUtils.getSubject();
 		Session session = subject.getSession();
 		// SecurityUtils.getSubject().getSession().setTimeout(-1000l); //永不过期
@@ -94,7 +94,7 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 			String updateHql = "update SysUserLoginLog o set o.offlineDate=CONVERT(datetime,'" + updateTime
 					+ "'),o.offlineIntro='切换账户退出' where o.offlineDate is null and o.isDelete=0 and o.sessionId='"
 					+ sessionId + "' and o.userId!='"+userId+"'";
-			sysUserLoginLogService.executeHql(updateHql);
+			sysUserLoginLogService.doExecuteHql(updateHql);
 			
 			if (!sysUserLoginLogService.IsFieldExist("userId", userId, "-1", " o.sessionId='" + sessionId + "'")) {
 				SysUserLoginLog loginLog = new SysUserLoginLog();
@@ -104,7 +104,7 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 				loginLog.setIpHost(session.getHost());
 				loginLog.setLoginDate(session.getLastAccessTime());
 				loginLog.setLastAccessDate(session.getLastAccessTime());
-				sysUserLoginLogService.merge(loginLog);
+				sysUserLoginLogService.doMerge(loginLog);
 			}
 			/*
 			 * 不处理重复登录 else{ String hql=
@@ -234,7 +234,7 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 		SysUser sysUser = sysUserService.getByProerties(propName, propValue);
 		if (ModelUtil.isNotNull(sysUser)) {
 			// 更新到数据库
-			sysUserService.updateByProperties(propName, propValue, "userPwd", new Sha256Hash(newUserPwd).toHex());
+			sysUserService.doUpdateByProperties(propName, propValue, "userPwd", new Sha256Hash(newUserPwd).toHex());
 			// 返回处理结果
 			writeJSON(response, jsonBuilder.returnSuccessJson("1"));
 		} else {

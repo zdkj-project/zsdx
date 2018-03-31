@@ -33,7 +33,7 @@ public class JwSchoolCalenderController extends FrameWorkController<JwSchoolCale
 			org.springframework.web.bind.annotation.RequestMethod.POST })
 	public @ResponseBody List<JwSchoolCalender> list(HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
-		List<JwSchoolCalender> lists = thisService.doQueryAll();// 执行查询方法
+		List<JwSchoolCalender> lists = thisService.getQueryAll();// 执行查询方法
 		return lists;
 	}
 
@@ -59,7 +59,7 @@ public class JwSchoolCalenderController extends FrameWorkController<JwSchoolCale
 		calForm.setCreateUser(userCh); // 创建人
 
 		// 持久化到数据库
-		calForm = thisService.merge(calForm);
+		calForm = thisService.doMerge(calForm);
 
 		// 返回实体到前端界面
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(calForm)));
@@ -86,7 +86,7 @@ public class JwSchoolCalenderController extends FrameWorkController<JwSchoolCale
 		entity.setUpdateTime(new Date());
 		entity.setUuid(entity.getId());
 		// 更新到数据库
-		thisService.update(entity);
+		thisService.doUpdate(entity);
 
 		// 返回实体到前端界面
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -96,7 +96,7 @@ public class JwSchoolCalenderController extends FrameWorkController<JwSchoolCale
 	public void doDelete(@ModelAttribute JwSchoolCalender calForm, HttpServletRequest request,
 			HttpServletResponse response) throws IOException, IllegalAccessException, InvocationTargetException {
 		String id = request.getParameter("id");
-		boolean flag = thisService.deleteByPK(id);
+		boolean flag = thisService.doDeleteByPK(id);
 		if (flag) {
 			writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
 		} else {

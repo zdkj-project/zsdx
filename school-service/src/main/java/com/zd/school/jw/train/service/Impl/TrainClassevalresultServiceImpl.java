@@ -53,7 +53,7 @@ public class TrainClassevalresultServiceImpl extends BaseServiceImpl<TrainClasse
     private TrainCourseevalresultService courseevalresultService;
 
     public QueryResult<TrainClassevalresult> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-        QueryResult<TrainClassevalresult> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+        QueryResult<TrainClassevalresult> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
         return qResult;
     }
 
@@ -71,7 +71,7 @@ public class TrainClassevalresultServiceImpl extends BaseServiceImpl<TrainClasse
             Object[] conditionValue = ids.split(",");
             String[] propertyName = {"isDelete", "updateUser", "updateTime"};
             Object[] propertyValue = {1, currentUser.getXm(), new Date()};
-            this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+            this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
             delResult = true;
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -95,7 +95,7 @@ public class TrainClassevalresultServiceImpl extends BaseServiceImpl<TrainClasse
             BeanUtils.copyProperties(saveEntity, entity);
             saveEntity.setUpdateTime(new Date()); // 设置修改时间
             saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-            entity = this.merge(saveEntity);// 执行修改方法
+            entity = this.doMerge(saveEntity);// 执行修改方法
 
             return entity;
         } catch (IllegalAccessException e) {
@@ -122,7 +122,7 @@ public class TrainClassevalresultServiceImpl extends BaseServiceImpl<TrainClasse
             excludedProp.add("uuid");
             BeanUtils.copyProperties(saveEntity, entity, excludedProp);
             saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
-            entity = this.merge(saveEntity);// 执行修改方法
+            entity = this.doMerge(saveEntity);// 执行修改方法
 
             return entity;
         } catch (IllegalAccessException e) {
@@ -137,7 +137,7 @@ public class TrainClassevalresultServiceImpl extends BaseServiceImpl<TrainClasse
     public Boolean doSumClassEval(String ids) {
         //汇总班级评价
         String sql = MessageFormat.format("EXECUTE TRAIN_P_SUMCLASSEVAL ''{0}''",ids);
-        List<?> alist = this.doQuerySql(sql);
+        List<?> alist = this.getQuerySql(sql);
 
         //同步汇总班级下的需要评价课程
         String[] propName ={"classId","isEval"};
@@ -173,11 +173,11 @@ public class TrainClassevalresultServiceImpl extends BaseServiceImpl<TrainClasse
                 classEvalStand.setVerySatisfaction(BigDecimal.valueOf(0));
                 classEvalStand.setSatisfaction(BigDecimal.valueOf(0));
 
-                this.merge(classEvalStand);
+                this.doMerge(classEvalStand);
             }
     	}
         
-        classService.updateByProperties("uuid",ids,"isEval",1);
+        classService.doUpdateByProperties("uuid",ids,"isEval",1);
 
         //同步启动班级下的需要评价课程(开启未评价的)
         String[] propName ={"classId","isEval","evalState"};
@@ -191,7 +191,7 @@ public class TrainClassevalresultServiceImpl extends BaseServiceImpl<TrainClasse
 
     @Override
     public Boolean doEndStartClassEval(String ids,SysUser currentUser) {
-        classService.updateByProperties("uuid",ids,"isEval",2);
+        classService.doUpdateByProperties("uuid",ids,"isEval",2);
         return true;
     }
 

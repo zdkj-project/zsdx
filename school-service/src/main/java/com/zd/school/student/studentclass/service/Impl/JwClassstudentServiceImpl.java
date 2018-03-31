@@ -78,7 +78,7 @@ public class JwClassstudentServiceImpl extends BaseServiceImpl<JwClassstudent> i
             queryFilter = "[{\"type\":\"string\",\"comparison\":\"in\",\"value\":\"" + qrClassId
                     + "\",\"field\":\"claiId\"}]";
         }
-        QueryResult<JwClassstudent> qrReturn = this.doPaginationQuery(start, limit, sort, queryFilter, true);
+        QueryResult<JwClassstudent> qrReturn = this.getPaginationQuery(start, limit, sort, queryFilter, true);
         return qrReturn;
     }
 }

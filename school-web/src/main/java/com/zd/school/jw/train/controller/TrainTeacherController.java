@@ -338,7 +338,7 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
                     teacher.setUpdateTime(new Date());
                     teacher.setUpdateUser(currentUser.getXm());
         			
-                    thisService.merge(teacher);
+                    thisService.doMerge(teacher);
 
                 }
             } else {
@@ -369,7 +369,7 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
             hql += " and uuid in ('" + ids.replace(",", "','") + "')";
         }
         hql += " order by sfzjh";
-        list = thisService.doQuery(hql);
+        list = thisService.getQuery(hql);
         List<TrainTeacher> exportList = new ArrayList<>();
 
         //职称数据字典

@@ -119,7 +119,7 @@ public class DocTSenddocController extends FrameWorkController<DocSenddoc> imple
         entity.setCreateUser(userCh); // 创建人
 
         // 持久化到数据库
-        entity = thisService.merge(entity);
+        entity = thisService.doMerge(entity);
 
         // 2.DocTSendCheck类插入数据
         String sendId = entity.getUuid();
@@ -142,12 +142,12 @@ public class DocTSenddocController extends FrameWorkController<DocSenddoc> imple
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 // 移除文件信息
                 String doIds = "'" + delIds.replace(",", "','") + "'";
                 String hql = "DELETE FROM BaseTAttachment b  WHERE b.recordId IN (" + doIds + ")";
-                baseTAttachmentService.executeHql(hql);
+                baseTAttachmentService.doExecuteHql(hql);
 
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {
@@ -168,7 +168,7 @@ public class DocTSenddocController extends FrameWorkController<DocSenddoc> imple
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
             } else {
@@ -204,7 +204,7 @@ public class DocTSenddocController extends FrameWorkController<DocSenddoc> imple
 
         perEntity.setUpdateTime(new Date()); // 设置修改时间
         //perEntity.setModifyUser(userCh); // 设置修改人的中文名
-        entity = thisService.merge(perEntity);// 执行修改方法
+        entity = thisService.doMerge(perEntity);// 执行修改方法
 
         if (!newDistribId.equals(oldDistribId))
             thisService.doSendCheckEmp(entity.getUuid(), newDistribId, userCh,sendState);
@@ -259,14 +259,14 @@ public class DocTSenddocController extends FrameWorkController<DocSenddoc> imple
                     
                     if(attachIsMain==1){	//如果插入的是正文数据，则进行数据判断
                     	String hql="from BaseTAttachment b where b.recordId='"+recordId+"' and b.attachIsMain=1";
-                    	List<BaseAttachment> list=baseTAttachmentService.doQuery(hql,0,1);
+                    	List<BaseAttachment> list=baseTAttachmentService.getQuery(hql,0,1);
                     	if(list.size()>0){
                     		//执行更新数据
                     		BaseAttachment baseTAttachment=list.get(0);
                     		baseTAttachment.setAttachUrl(url + fileName);
                     		baseTAttachment.setAttachType(type);
                     		baseTAttachment.setAttachSize(file.getSize());
-                    		baseTAttachmentService.merge(baseTAttachment);
+                    		baseTAttachmentService.doMerge(baseTAttachment);
                     		
                     		writeJSON(response, "{ \"success\" : true,\"obj\":\""+url + fileName+"\"}");
                     		return;
@@ -283,7 +283,7 @@ public class DocTSenddocController extends FrameWorkController<DocSenddoc> imple
                     bt.setAttachType(type);
                     bt.setAttachSize(file.getSize());
                     bt.setAttachIsMain(attachIsMain);
-                    baseTAttachmentService.merge(bt);
+                    baseTAttachmentService.doMerge(bt);
                     
                     writeJSON(response, "{ \"success\" : true,\"obj\":\""+url + fileName+"\"}");
                 }
@@ -313,7 +313,7 @@ public class DocTSenddocController extends FrameWorkController<DocSenddoc> imple
         }else{
         	hql = "from BaseTAttachment b where b.recordId='" + setRecordId + "' order by b.createTime asc";
         }
-        List<BaseAttachment> list = baseTAttachmentService.doQuery(hql);
+        List<BaseAttachment> list = baseTAttachmentService.getQuery(hql);
 
         List<HashMap<String, Object>> lists = new ArrayList<>();
         HashMap<String, Object> maps = null;
@@ -342,7 +342,7 @@ public class DocTSenddocController extends FrameWorkController<DocSenddoc> imple
 
             String hql = "DELETE FROM BaseTAttachment b  WHERE b.attachId IN (" + doIds + ")";
 
-            int flag = baseTAttachmentService.executeHql(hql);
+            int flag = baseTAttachmentService.doExecuteHql(hql);
 
             if (flag > 0) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("\"删除成功\""));
@@ -375,7 +375,7 @@ public class DocTSenddocController extends FrameWorkController<DocSenddoc> imple
         perEntity.setUpdateTime(new Date()); // 设置修改时间
         //perEntity.setModifyUser(userCh); // 设置修改人的中文名
         perEntity.setDocsendState("3");
-        entity = thisService.merge(perEntity);// 执行修改方法
+        entity = thisService.doMerge(perEntity);// 执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
     }

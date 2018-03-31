@@ -80,7 +80,7 @@ public class ExcelFactoryController extends FrameWorkController<BaseEntity> {
 			titleMap.put(i, exportFields[i]);
 		}
 
-		List<?> exportList = baseService.doQuery("from " + c.getSimpleName());
+		List<?> exportList = baseService.getQuery("from " + c.getSimpleName());
 		if (StringUtils.isNotEmpty(exportField)) {
 			FastExcel.exportExcel(response, fileName, titleMap, exportList);
 		} else {
@@ -116,7 +116,7 @@ public class ExcelFactoryController extends FrameWorkController<BaseEntity> {
 		for (T obj : importList) {
 			// 增加时要设置创建人
 			obj.setCreateUser(userCh);
-			baseService.merge(obj);
+			baseService.doMerge(obj);
 		}
 		writeJSON(response, JsonBuilder.getInstance().returnSuccessJson("'上传成功'"));
 	}

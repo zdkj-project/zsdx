@@ -51,7 +51,7 @@ public class JwCoursepublishServiceImpl extends BaseServiceImpl<JwCoursepublish>
                 hql.append(" order by  " + sortSql);
         }
 
-        QueryResult<JwCoursepublish> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<JwCoursepublish> qResult = this.getQueryResult(hql.toString(), start, limit);
         return qResult;
     }
 }

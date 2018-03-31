@@ -39,10 +39,10 @@ public class XcJxbookitemAppController {
 		String jxbookId = request.getParameter("jxbookId");
 		String hql = "from XcJxbookitem where userId='" + userId + "' and xcYear=" + xcYear + " and xcMonth=" + xcMonth
 				+ " and isDelete=0 and jxbookId='" + jxbookId + "'";
-		XcJxbookitem item = thisService.doQuery(hql).get(0);
+		XcJxbookitem item = thisService.getQuery(hql).get(0);
 		XcJxbook book = bookService.getByProerties("uuid", item.getJxbookId());
 		hql = "from XcJxplartitem where jxplartId='" + book.getJxplartId() + "' order by orderIndex";
-		List<XcJxplartitem> list = plartitemService.doQuery(hql);
+		List<XcJxplartitem> list = plartitemService.getQuery(hql);
 		Map<String, Integer> map = new LinkedHashMap<String, Integer>();
 		for (XcJxplartitem temp : list) {
 			map.put(temp.getSalaryitemName(), temp.getOrderIndex() - 1);

@@ -221,7 +221,7 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 				+ sdf.format(calendar2.getTime()) + "') order by createTime asc";
 		// List<TrainTeacherOrder> list = thisService.getForValues(hql,
 		// calendar1.getTime(), calendar2.getTime());
-		QueryResult<TrainTeacherOrder> result = thisService.doQueryResult(hql, start, limit);
+		QueryResult<TrainTeacherOrder> result = thisService.getQueryResult(hql, start, limit);
 
 		String strData = jsonBuilder.buildObjListToJson(result.getTotalCount(), result.getResultList(), true);
 		writeJSON(response, strData);
@@ -287,7 +287,7 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 			// 增加时要设置创建人
 			entity.setCreateUser(userCh); // 创建人
 			// 持久化到数据库
-			saveEntity = thisService.merge(saveEntity);
+			saveEntity = thisService.doMerge(saveEntity);
 
 			// 返回实体到前端界面
 			writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(saveEntity)));
@@ -347,7 +347,7 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 
 			perEntity.setUpdateTime(new Date()); // 设置修改时间
 			perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-			entity = thisService.merge(perEntity);// 执行修改方法
+			entity = thisService.doMerge(perEntity);// 执行修改方法
 
 			writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 		} catch (Exception e) {
@@ -388,7 +388,7 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 				}
 			}
 
-			thisService.delete(perEntity);
+			thisService.doDelete(perEntity);
 			writeJSON(response, jsonBuilder.returnSuccessJson("\"处理成功！\""));
 		} catch (Exception e) {
 			// 返回实体到前端界面

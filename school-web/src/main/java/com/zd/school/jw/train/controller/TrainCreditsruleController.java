@@ -180,7 +180,7 @@ public class TrainCreditsruleController extends FrameWorkController<TrainCredits
 				Object[] conditionValue = Ids.split(",");
 				String[] propertyName = { "startUsing", "updateUser", "updateTime" };
 				Object[] propertyValue = { Short.parseShort("1"), currentUser.getXm(), new Date() };
-				thisService.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+				thisService.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 							
 				writeJSON(response, jsonBuilder.returnSuccessJson("'启用学分计算规则成功'"));
 				

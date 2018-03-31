@@ -59,7 +59,7 @@ public class JwTGradeController extends FrameWorkController<JwTGrade> implements
         perEntity.setUpdateTime(new Date()); //设置修改时间
         perEntity.setUpdateUser(currentUser.getXm());
 
-        entity = thisService.merge(perEntity);//执行修改方法
+        entity = thisService.doMerge(perEntity);//执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
     }

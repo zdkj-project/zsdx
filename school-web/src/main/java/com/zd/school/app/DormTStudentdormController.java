@@ -103,7 +103,7 @@ public class DormTStudentdormController extends FrameWorkController<DormStudentD
         if (StringUtils.isNotEmpty(whereSql)) {
             sBuffer.append(whereSql);
         }
-        List<?> list = thisService.doQuerySql(sBuffer.toString());
+        List<?> list = thisService.getQuerySql(sBuffer.toString());
         //循环添加数据
         for (int i = 0; i < list.size(); i++) {
             Object[] obj = (Object[]) list.get(i);
@@ -137,7 +137,7 @@ public class DormTStudentdormController extends FrameWorkController<DormStudentD
         if (StringUtils.isNotEmpty(whereSql)) {
             sBuffer.append(whereSql);
         }
-        List<?> list = thisService.doQuerySql(sBuffer.toString());
+        List<?> list = thisService.getQuerySql(sBuffer.toString());
         //循环添加数据
         for (int i = 0; i < list.size(); i++) {
             Object[] obj = (Object[]) list.get(i);
@@ -183,7 +183,7 @@ public class DormTStudentdormController extends FrameWorkController<DormStudentD
         countHql.append(whereSql);
         countHql.append(querySql);
         countHql.append(parentSql);
-        List<DormStudentDorm> lists = thisService.doQuery(hql.toString(), start, limit);// 执行查询方法
+        List<DormStudentDorm> lists = thisService.getQuery(hql.toString(), start, limit);// 执行查询方法
         List<DormStudentDorm> newLists = new ArrayList<>();
         StuBaseinfo jwTStudent = null;
         for (DormStudentDorm dormTStudentdorm : lists) {
@@ -226,7 +226,7 @@ public class DormTStudentdormController extends FrameWorkController<DormStudentD
         countHql.append(whereSql);
         countHql.append(querySql);
         countHql.append(parentSql);
-        List<JwClassDormAllot> lists = jwTClassdormService.doQuery(hql.toString(), start, limit);// 执行查询方法
+        List<JwClassDormAllot> lists = jwTClassdormService.getQuery(hql.toString(), start, limit);// 执行查询方法
         List<JwClassDormAllot> newLists = new ArrayList<>();
         BuildDormDefine jwTDormDefin = null;
         for (JwClassDormAllot jwTClassdorm : lists) {
@@ -273,7 +273,7 @@ public class DormTStudentdormController extends FrameWorkController<DormStudentD
         countHql.append(whereSql);
         countHql.append(querySql);
         countHql.append(parentSql);
-        List<JwClassstudent> lists = jwTClassstudentService.doQuery(hql.toString(), start, limit);// 执行查询方法
+        List<JwClassstudent> lists = jwTClassstudentService.getQuery(hql.toString(), start, limit);// 执行查询方法
         List<JwClassstudent> newLists = new ArrayList<>();
         for (JwClassstudent jwTClassstudent : lists) {
             jwTClassstudent.setStudentId(jwTClassstudent.getStudentId());
@@ -334,7 +334,7 @@ public class DormTStudentdormController extends FrameWorkController<DormStudentD
             entity.setCreateTime(new Date());//创建时间
             entity.setInTime(new Date());//入住时间
             // 持久化到数据库
-            thisService.merge(entity);
+            thisService.doMerge(entity);
         }
         // 返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson("'分配成功。'"));
@@ -355,7 +355,7 @@ public class DormTStudentdormController extends FrameWorkController<DormStudentD
         } else {
             String[] delIds = entity.getUuid().split(",");
             for (int i = 0; i < delIds.length; i++) {
-                flag = thisService.logicDelOrRestore(delIds[i], StatuVeriable.ISDELETE);
+                flag = thisService.doLogicDelOrRestore(delIds[i], StatuVeriable.ISDELETE);
             }
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
@@ -377,7 +377,7 @@ public class DormTStudentdormController extends FrameWorkController<DormStudentD
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
             } else {
@@ -417,7 +417,7 @@ public class DormTStudentdormController extends FrameWorkController<DormStudentD
                 }
                 perEntity.setUpdateTime(new Date()); // 设置修改时间
                 //perEntity.setModifyUser(userCh); // 设置修改人的中文名
-                thisService.merge(perEntity);// 执行修改方法
+                thisService.doMerge(perEntity);// 执行修改方法
                 ++count;
             }
         }
@@ -465,7 +465,7 @@ public class DormTStudentdormController extends FrameWorkController<DormStudentD
             pushInfo.setPushWay(1);
             pushInfo.setRegStatus("学生：" + pushInfo.getEmplName() + "，你的宿舍分配在" + areaName + "，" + areaLc + "，" + roomName
                     + "房间，床号为：" + dormTStudentdorm.getBedNum());
-            pushService.merge(pushInfo);
+            pushService.doMerge(pushInfo);
         }
         writeJSON(response, jsonBuilder.returnSuccessJson("'推送信息成功。'"));
     }
@@ -524,7 +524,7 @@ public class DormTStudentdormController extends FrameWorkController<DormStudentD
         countHql.append(whereSql);
         countHql.append(querySql);
         countHql.append(parentSql);
-        List<StuDividescore> lists = studentTDividescoreService.doQuery(hql.toString(), start, limit);// 执行查询方法
+        List<StuDividescore> lists = studentTDividescoreService.getQuery(hql.toString(), start, limit);// 执行查询方法
         Integer count = thisService.getCount(countHql.toString());// 查询总记录数
         strData = jsonBuilder.buildObjListToJson(new Long(count), lists, true);// 处理数据
         writeJSON(response, strData);// 返回数据

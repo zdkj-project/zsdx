@@ -58,7 +58,7 @@ public class DocSenddocServiceImpl extends BaseServiceImpl<DocSenddoc> implement
         sql.append("'" + operName + "', ");
         sql.append("'" + sendState + "'");
 
-        Integer executeCount = super.executeSql(sql.toString());
+        Integer executeCount = super.doExecuteSql(sql.toString());
         
         String eventType = "公文核稿提醒";
         String ids[] = userIds.split(",");
@@ -98,7 +98,7 @@ public class DocSenddocServiceImpl extends BaseServiceImpl<DocSenddoc> implement
         sql.append("'" + deptIds + "', ");
         sql.append("'" + operName + "'");
 
-        Integer executeCount = super.executeSql(sql.toString());
+        Integer executeCount = super.doExecuteSql(sql.toString());
 
         return executeCount;
     }
@@ -133,7 +133,7 @@ public class DocSenddocServiceImpl extends BaseServiceImpl<DocSenddoc> implement
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<DocSenddoc> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<DocSenddoc> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 

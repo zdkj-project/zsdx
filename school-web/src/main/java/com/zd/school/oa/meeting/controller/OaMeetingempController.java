@@ -197,7 +197,7 @@ public class OaMeetingempController extends FrameWorkController<OaMeetingemp> im
 			emp.setUpdateTime(new Date());
 			emp.setUpdateUser(currentUser.getXm());
 
-			thisService.merge(emp);
+			thisService.doMerge(emp);
 
 			writeJSON(response, jsonBuilder.returnSuccessJson("\"设置成功！\""));
 

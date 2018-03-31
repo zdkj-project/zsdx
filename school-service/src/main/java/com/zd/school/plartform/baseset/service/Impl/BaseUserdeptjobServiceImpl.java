@@ -107,7 +107,7 @@ public class BaseUserdeptjobServiceImpl extends BaseServiceImpl<BaseUserdeptjob>
 			Object[] conditionValue = ids.split(",");
 			String[] propertyName = { "isDelete", "updateUser", "updateTime" };
 			Object[] propertyValue = { 1, currentUser.getUuid(), new Date() };
-			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 			delResult = true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -126,7 +126,7 @@ public class BaseUserdeptjobServiceImpl extends BaseServiceImpl<BaseUserdeptjob>
 			
 			String hql = " select a from BaseDeptjob a  where a.uuid in ('" + deptJobId.replace(",", "','")
 					+ "') order by a.jobLevel asc ";
-			List<BaseDeptjob> deptjobs = baseDeptjobService.doQuery(hql);
+			List<BaseDeptjob> deptjobs = baseDeptjobService.getQuery(hql);
 			
 			for (SysUser user : users) {
 				// 查询当前用户已有的部门岗位
@@ -149,14 +149,14 @@ public class BaseUserdeptjobServiceImpl extends BaseServiceImpl<BaseUserdeptjob>
 						} else
 							userDeptJob.setMasterDept(0);
 
-						this.merge(userDeptJob);
+						this.doMerge(userDeptJob);
 					}
 				}
 				// 将老师从临时部门删除
 				user.setDeptId("");
 				user.setUpdateTime(new Date());
 				user.setUpdateUser(currentUser.getUuid());
-				userService.merge(user);
+				userService.doMerge(user);
 			}
 
 			return true;
@@ -189,13 +189,13 @@ public class BaseUserdeptjobServiceImpl extends BaseServiceImpl<BaseUserdeptjob>
 				oldMaster.setMasterDept(0);
 				oldMaster.setUpdateTime(new Date());
 				oldMaster.setUpdateUser(currentUser.getUuid());
-				this.merge(oldMaster);
+				this.doMerge(oldMaster);
 			}
 			
 			// 将新的部门岗位设置为主部门岗位
 			String[] propertyName = { "masterDept", "updateTime", "updateUser" };
 			Object[] propertyValue = { 1, new Date(), currentUser.getUuid() };
-			this.updateByProperties("uuid", delIds, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", delIds, propertyName, propertyValue);
 			return true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());

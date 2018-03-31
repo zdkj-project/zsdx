@@ -39,7 +39,7 @@ public class BuildRoomareaServiceImpl extends BaseServiceImpl<BuildRoomarea> imp
         if (StringUtils.isNotEmpty(whereSql))
             hql += whereSql;
         hql += " order by orderIndex asc ";
-        List<BuildRoomarea> lists = this.doQuery(hql);// 执行查询方法
+        List<BuildRoomarea> lists = this.getQuery(hql);// 执行查询方法
         List<BuildRoomAreaTree> result = new ArrayList<BuildRoomAreaTree>();
 
         // 构建Tree数据

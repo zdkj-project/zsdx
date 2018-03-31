@@ -80,7 +80,7 @@ public class JwCourseteacherController extends FrameWorkController<JwCourseteach
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {
@@ -110,7 +110,7 @@ public class JwCourseteacherController extends FrameWorkController<JwCourseteach
 
         String hql = " from JwCourseteacher where studyYeah=" + studyYeah + " and semester='" + semester
                 + "' and isDelete='0' ";
-        List<JwCourseteacher> lists = thisService.doQuery(hql);
+        List<JwCourseteacher> lists = thisService.getQuery(hql);
         String strData = JsonBuilder.getInstance().buildList(lists, "");// 处理数据
         writeJSON(response, strData);// 返回数据
     }
@@ -157,7 +157,7 @@ public class JwCourseteacherController extends FrameWorkController<JwCourseteach
     	if(batch!=null){
     		thisService.updateZjsByClassId(claiId, courseId, zjs);
     	}else{
-			thisService.updateByProperties(new String[]{"claiId","courseId"}, new Object[]{claiId,courseId},new String[]{"acszjs"}, new Object[]{zjs});
+			thisService.doUpdateByProperties(new String[]{"claiId","courseId"}, new Object[]{claiId,courseId},new String[]{"acszjs"}, new Object[]{zjs});
     	}
     	writeJSON(response, jsonBuilder.returnSuccessJson("'成功'"));
     }

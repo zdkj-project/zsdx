@@ -172,7 +172,7 @@ public class DocReceiveController extends FrameWorkController<DocReceive> implem
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
 			} else {
@@ -196,7 +196,7 @@ public class DocReceiveController extends FrameWorkController<DocReceive> implem
 		String doIds = "'" + idString.replace(",", "','") + "'";
 		hql.append(userCh + "', updateTime=CONVERT(datetime,'");
 		hql.append(DateUtil.formatDateTime(new Date()) + "'),docrecState='4'  WHERE uuid IN (" + doIds + ")");
-		Integer isExecute = thisService.executeHql(hql.toString());
+		Integer isExecute = thisService.doExecuteHql(hql.toString());
 		// if (isExecute > 0) {
 		// writeJSON(response, jsonBuilder.returnSuccessJson("'分发传阅成功'"));
 		// } else {
@@ -210,7 +210,7 @@ public class DocReceiveController extends FrameWorkController<DocReceive> implem
 				recExamine.setRecexamType("1");
 				recExamine.setCreateUser(userCh);
 				recExamine.setState(StatuVeriable.ISNOTDELETE);
-				recExamineService.persist(recExamine);
+				recExamineService.doPersist(recExamine);
 			}
 
 			TeaTeacherbase j = jwTTeacherService.get(userId);
@@ -223,7 +223,7 @@ public class DocReceiveController extends FrameWorkController<DocReceive> implem
 				pushInfo.setPushStatus(0);
 				pushInfo.setPushWay(1);
 				pushInfo.setRegStatus("您有一封未阅读的文件，请及时阅读！");
-				pushInfoService.merge(pushInfo);
+				pushInfoService.doMerge(pushInfo);
 			}
 		}
 
@@ -299,7 +299,7 @@ public class DocReceiveController extends FrameWorkController<DocReceive> implem
 					bt.setAttachName(myFileName);
 					bt.setAttachType(type);
 					bt.setAttachSize(file.getSize());
-					baseTAttachmentService.merge(bt);
+					baseTAttachmentService.doMerge(bt);
 				}
 			}
 
@@ -320,7 +320,7 @@ public class DocReceiveController extends FrameWorkController<DocReceive> implem
 		}
 
 		String hql = "from BaseAttachment b where b.recordId='" + setRecordId + "'  and b.entityName='DocReceive' order by b.createTime asc";
-		List<BaseAttachment> list = baseTAttachmentService.doQuery(hql);
+		List<BaseAttachment> list = baseTAttachmentService.getQuery(hql);
 
 		List<HashMap<String, Object>> lists = new ArrayList<>();
 		HashMap<String, Object> maps = null;
@@ -349,7 +349,7 @@ public class DocReceiveController extends FrameWorkController<DocReceive> implem
 
 			String hql = "DELETE FROM BaseAttachment b  WHERE b.uuid IN (" + doIds + ")";
 
-			int flag = baseTAttachmentService.executeHql(hql);
+			int flag = baseTAttachmentService.doExecuteHql(hql);
 
 			if (flag > 0) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("\"删除成功\""));

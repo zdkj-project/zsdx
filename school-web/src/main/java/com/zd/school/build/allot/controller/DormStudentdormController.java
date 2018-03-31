@@ -92,7 +92,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
     public void list(@ModelAttribute DormStudentDorm entity, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String strData = ""; // 返回给js的数据
-        QueryResult<DormStudentDorm> qr = thisService.doPaginationQuery(super.start(request), Integer.MAX_VALUE,
+        QueryResult<DormStudentDorm> qr = thisService.getPaginationQuery(super.start(request), Integer.MAX_VALUE,
                 super.sort(request), super.filter(request), true);
 
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -111,7 +111,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
             org.springframework.web.bind.annotation.RequestMethod.POST })
     public void hunDormList(@ModelAttribute JwClassDormAllot entity, HttpServletRequest request,
             HttpServletResponse response) throws IOException {
-        List list = thisService.doQuerySql(
+        List list = thisService.getQuerySql(
                 "SELECT A.CDORM_ID,D.ROOM_NAME,F.CLASS_NAME,C.DORM_TYPE,C.DORM_BEDCOUNT,COUNT(*) counts,F.CLAI_ID FROM DORM_T_STUDENTDORM A "
                         + "JOIN JW_T_CLASSDORMALLOT B ON A.CDORM_ID=B.CDORM_ID "
                         + "JOIN BUILD_T_DORMDEFINE C ON B.DORM_ID=C.DORM_ID "
@@ -150,7 +150,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
     public void hunDormListL(@ModelAttribute JwClassDormAllot entity, HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         List list = thisService
-                .doQuerySql("SELECT A.CDORM_ID,D.ROOM_NAME,F.CLASS_NAME,C.DORM_TYPE,C.DORM_BEDCOUNT,F.CLAI_ID FROM "
+                .getQuerySql("SELECT A.CDORM_ID,D.ROOM_NAME,F.CLASS_NAME,C.DORM_TYPE,C.DORM_BEDCOUNT,F.CLAI_ID FROM "
                         + " JW_T_CLASSDORMALLOT A JOIN dbo.JW_T_CLASSDORMALLOT B ON A.CDORM_ID=B.CDORM_ID "
                         + " JOIN dbo.BUILD_T_DORMDEFINE C ON B.DORM_ID=C.DORM_ID "
                         + " JOIN dbo.BUILD_T_ROOMINFO D ON c.ROOM_ID=d.ROOM_ID "
@@ -201,9 +201,9 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
                 if (count == 0) {
                     defin = dormDefineService.get(jwTClassdorm.getDormId());
                     defin.setRoomStatus("0"); // 设置成未分配
-                    dormDefineService.merge(defin); // 持久化
+                    dormDefineService.doMerge(defin); // 持久化
                     jwTClassdorm.setIsDelete(1); // 设置删除状态
-                    classDormService.merge(jwTClassdorm); // 持久化
+                    classDormService.doMerge(jwTClassdorm); // 持久化
                     ++fs;
                 }
                 count = 0;
@@ -222,7 +222,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
     public void countList(@ModelAttribute DormStudentDorm entity, HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         String strData = ""; // 返回给js的数据
-        QueryResult<DormStudentDorm> qr = thisService.doPaginationQuery(super.start(request), Integer.MAX_VALUE,
+        QueryResult<DormStudentDorm> qr = thisService.getPaginationQuery(super.start(request), Integer.MAX_VALUE,
                 super.sort(request), super.filter(request), true);
 
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -242,7 +242,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
     public void classDormlist(@ModelAttribute JwClassDormAllot entity, HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         String strData = ""; // 返回给js的数据
-        QueryResult<JwClassDormAllot> qr = classDormService.doPaginationQuery(super.start(request), Integer.MAX_VALUE,
+        QueryResult<JwClassDormAllot> qr = classDormService.getPaginationQuery(super.start(request), Integer.MAX_VALUE,
                 super.sort(request), super.filter(request), true);
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
         writeJSON(response, strData);// 返回数据
@@ -277,7 +277,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
         countHql.append(whereSql);
         countHql.append(querySql);
         countHql.append(parentSql);
-        List<JwClassstudent> lists = classStuService.doQuery(hql.toString(), 0, 0);// 执行查询方法
+        List<JwClassstudent> lists = classStuService.getQuery(hql.toString(), 0, 0);// 执行查询方法
         Integer count = thisService.getCount(countHql.toString());// 查询总记录数
         strData = jsonBuilder.buildObjListToJson(new Long(count), lists, true);// 处理数据
         writeJSON(response, strData);// 返回数据
@@ -329,14 +329,14 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
     public void onKeyList(@ModelAttribute DormStudentDorm entity, HttpServletRequest request,
             HttpServletResponse response) throws IOException, IllegalAccessException, InvocationTargetException {
         // 查询出该年级下所有的有效宿舍
-        List<DormStudentDorm> lists = thisService.doQuerySql("EXEC JW_P_DORMCOUNT '" + entity.getWhereSql() + "'");
+        List<DormStudentDorm> lists = thisService.getQuerySql("EXEC JW_P_DORMCOUNT '" + entity.getWhereSql() + "'");
         String whereSql = " where claiId in(select uuid from JwTGradeclass  where graiId='" + entity.getWhereSql()
                 + "') and isDelete=0 and studentId not in(select stuId from DormStudentDorm where isdelete=0) order by className,xbm";
         // 先获取到该年级下全部学生
-        List<JwClassstudent> list = classStuService.doQuery("from JwClassstudent " + whereSql);
+        List<JwClassstudent> list = classStuService.getQuery("from JwClassstudent " + whereSql);
         // 获取到现有年级下的所有班级
         List<JwTGradeclass> gradeClassList = gradeClassService
-                .doQuery("from JwTGradeclass where graiId='" + entity.getWhereSql() + "'");
+                .getQuery("from JwTGradeclass where graiId='" + entity.getWhereSql() + "'");
         List<JwClassstudent> nanList = new ArrayList<>(); // 男生
         List<JwClassstudent> nvList = new ArrayList<>(); // 女生
         // 将男生分出来
@@ -471,10 +471,10 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
         String whereSql = " where claiId in(select uuid from JwTGradeclass  where graiId='" + gradId
                 + "') and isDelete=0 and studentId not in(select stuId from DormStudentDorm where isdelete=0) order by className,xbm";
         // 先获取到该年级下全部学生
-        List<JwClassstudent> list = classStuService.doQuery("from JwClassstudent " + whereSql);
+        List<JwClassstudent> list = classStuService.getQuery("from JwClassstudent " + whereSql);
         // 获取到现有年级下的所有班级
         List<JwTGradeclass> gradeClassList = gradeClassService
-                .doQuery("from JwTGradeclass where graiId='" + gradId + "'");
+                .getQuery("from JwTGradeclass where graiId='" + gradId + "'");
         String nanDormId[] = nanId.split(","); // 男宿舍id
         String nvDormId[] = nvId.split(","); // 男宿舍id
         List<JwClassstudent> nanList = new ArrayList<>(); // 男生
@@ -555,8 +555,8 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
                 jwClassDormAllot.setCreateUser(userCh); // 创建人
                 jwTDormDefin = dormDefineService.get(dormList.get(0)); // 获取到宿舍
                 jwTDormDefin.setRoomStatus("1");// 将宿舍状态设置为已分配
-                jwClassDormAllot = classDormService.merge(jwClassDormAllot);// 将宿舍分配到班级
-                dormDefineService.merge(jwTDormDefin); // 修改
+                jwClassDormAllot = classDormService.doMerge(jwClassDormAllot);// 将宿舍分配到班级
+                dormDefineService.doMerge(jwTDormDefin); // 修改
                 // 此处循环作为插入学生到宿舍
                 for (int k = 0; k < 6; k++) {
                     dormStudentDorm = new DormStudentDorm();
@@ -569,7 +569,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
                     dormStudentDorm.setClaiId(jwClassDormAllot.getClaiId());// 班级id
                     dormStudentDorm.setCreateUser(userCh); // 创建人
                     dormStudentDorm.setInTime(new Date());// 设置入住时间
-                    dormStudentDorm = thisService.merge(dormStudentDorm);// 持久化到数据库
+                    dormStudentDorm = thisService.doMerge(dormStudentDorm);// 持久化到数据库
                     tempList.remove(0); // 每次使用完一个学生就将其移除
                 }
                 dormList.remove(0); // 将使用完的宿舍移除
@@ -606,11 +606,11 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
                         jwClassDormAllot.setClaiId(claiId); // 设置班级id
                         jwClassDormAllot.setCreateUser(userCh); // 创建人
                         jwClassDormAllot.setIsmixed("1");// 混合宿舍
-                        jwClassDormAllot = classDormService.merge(jwClassDormAllot);// 将宿舍分配到班级
+                        jwClassDormAllot = classDormService.doMerge(jwClassDormAllot);// 将宿舍分配到班级
                         jwTDormDefin = dormDefineService.get(dormList.get(0)); // 获取到宿舍
                         jwTDormDefin.setRoomStatus("1");// 将宿舍状态设置为已分配
                         jwTDormDefin.setIsMixed("1");// 设置为混合宿舍
-                        dormDefineService.merge(jwTDormDefin); // 修改
+                        dormDefineService.doMerge(jwTDormDefin); // 修改
                         // 直接开始新一轮分配宿舍
                         for (int k = 0; k < ys; k++) {
                             dormStudentDorm = new DormStudentDorm();
@@ -623,7 +623,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
                             dormStudentDorm.setClaiId(jwClassDormAllot.getClaiId());// 班级id
                             dormStudentDorm.setCreateUser(userCh); // 创建人
                             dormStudentDorm.setInTime(new Date());// 设置入住时间
-                            dormStudentDorm = thisService.merge(dormStudentDorm);// 持久化到数据库
+                            dormStudentDorm = thisService.doMerge(dormStudentDorm);// 持久化到数据库
                             tempList.remove(0);
                         }
                         dormList.remove(0);
@@ -643,7 +643,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
                             dormStudentDorm.setClaiId(jwClassDormAllot.getClaiId());// 班级id
                             dormStudentDorm.setCreateUser(userCh); // 创建人
                             dormStudentDorm.setInTime(new Date());// 设置入住时间
-                            dormStudentDorm = thisService.merge(dormStudentDorm);// 持久化到数据库
+                            dormStudentDorm = thisService.doMerge(dormStudentDorm);// 持久化到数据库
                             tempList.remove(0);
                         }
                     }
@@ -669,7 +669,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
                                 dormStudentDorms.setClaiId(jwClassDormAllot.getClaiId());// 班级id
                                 dormStudentDorms.setCreateUser(userCh); // 创建人
                                 dormStudentDorms.setInTime(new Date());// 设置入住时间
-                                dormStudentDorms = thisService.merge(dormStudentDorms);// 持久化到数据库
+                                dormStudentDorms = thisService.doMerge(dormStudentDorms);// 持久化到数据库
                                 tempList.remove(0);
                             }
                             // 如果有一个宿舍被分配完了，那么从第一个宿舍开始寻找合适宿舍给学生入住
@@ -688,11 +688,11 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
                     jwClassDormAllot.setClaiId(claiId); // 设置班级id
                     jwClassDormAllot.setCreateUser(userCh); // 创建人
                     jwClassDormAllot.setIsmixed("1");// 混合宿舍
-                    jwClassDormAllot = classDormService.merge(jwClassDormAllot);// 将宿舍分配到班级
+                    jwClassDormAllot = classDormService.doMerge(jwClassDormAllot);// 将宿舍分配到班级
                     jwTDormDefin = dormDefineService.get(dormList.get(0)); // 获取到宿舍
                     jwTDormDefin.setRoomStatus("1");// 将宿舍状态设置为已分配
                     jwTDormDefin.setIsMixed("1");// 设置为混合宿舍
-                    dormDefineService.merge(jwTDormDefin); // 修改
+                    dormDefineService.doMerge(jwTDormDefin); // 修改
                     dormList.remove(0);
                     // 直接开始新一轮分配宿舍
                     for (int k = 0; k < ys; k++) {
@@ -706,7 +706,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
                         dormStudentDorm.setClaiId(jwClassDormAllot.getClaiId());// 班级id
                         dormStudentDorm.setCreateUser(userCh); // 创建人
                         dormStudentDorm.setInTime(new Date());// 设置入住时间
-                        dormStudentDorm = thisService.merge(dormStudentDorm);// 持久化到数据库
+                        dormStudentDorm = thisService.doMerge(dormStudentDorm);// 持久化到数据库
                         tempList.remove(0);
                     }
                     // 此时宿舍肯定无法全部使用完那么将此宿舍加入到混合宿舍列表，并且将其最大床位数记录下来
@@ -766,7 +766,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
             entity.setCreateUser(userCh); // 创建人
             entity.setInTime(new Date());// 设置入住时间
             // 持久化到数据库
-            thisService.merge(entity);
+            thisService.doMerge(entity);
         }
         // 返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson("'分配成功。'"));
@@ -787,7 +787,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
         } else {
             String[] delIds = entity.getUuid().split(",");
             for (int i = 0; i < delIds.length; i++) {
-                flag = thisService.logicDelOrRestore(delIds[i], StatuVeriable.ISDELETE);
+                flag = thisService.doLogicDelOrRestore(delIds[i], StatuVeriable.ISDELETE);
             }
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
@@ -833,7 +833,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
         }
         List<JwClassstudent> nanList = new ArrayList<>(); // 有效男学生
         List<JwClassstudent> nvList = new ArrayList<>(); // 有效女学生
-        List<JwClassstudent> classStulist = classStuService.doQuery(
+        List<JwClassstudent> classStulist = classStuService.getQuery(
                 "from JwClassstudent WHERE ISDELETE=0" + " AND studentId NOT IN(SELECT stuId FROM DormStudentDorm "
                         + "WHERE ISDELETE=0) AND claiId='" + claiId + "'");// 获取该班级下所有有效学生且未分配宿舍的
         for (JwClassstudent jwClassstudent : classStulist) {
@@ -871,7 +871,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
             }
             roomCount = roomCount.substring(0, roomCount.length() - 1);
             // 直接获取宿舍下面的可入住人数
-            List list = thisService.doQuerySql("SELECT * FROM dbo.Split('" + roomCount + "',',')  A"
+            List list = thisService.getQuerySql("SELECT * FROM dbo.Split('" + roomCount + "',',')  A"
                     + "	WHERE A NOT IN(SELECT BED_NUM FROM dbo.DORM_T_STUDENTDORM" + " WHERE ISDELETE=0 and CDORM_ID "
                     + "IN(SELECT CDORM_ID FROM dbo.JW_T_CLASSDORMALLOT WHERE CDORM_ID='" + dormList.get(i).getUuid()
                     + "'))");
@@ -887,7 +887,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
                     dormStudentDorm.setInTime(new Date());
                     dormStudentDorm.setStuId(stuList.get(0).getStudentId());
                     stuList.remove(0);
-                    thisService.merge(dormStudentDorm);
+                    thisService.doMerge(dormStudentDorm);
                 }
             }
             ++bs;
@@ -899,7 +899,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
                         rmCount = rmCount + k + ",";
                     }
                     rmCount = rmCount.substring(0, rmCount.length() - 1);
-                    List hunList = thisService.doQuerySql("SELECT * FROM dbo.Split('" + rmCount + "',',')  A"
+                    List hunList = thisService.getQuerySql("SELECT * FROM dbo.Split('" + rmCount + "',',')  A"
                             + "	WHERE A NOT IN(SELECT BED_NUM FROM dbo.DORM_T_STUDENTDORM"
                             + " WHERE ISDELETE=0 and CDORM_ID "
                             + "IN(SELECT CDORM_ID FROM dbo.JW_T_CLASSDORMALLOT WHERE CDORM_ID='"
@@ -915,7 +915,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
                             dormStudentDorm.setInTime(new Date());
                             dormStudentDorm.setStuId(stuList.get(0).getStudentId());
                             stuList.remove(0);
-                            thisService.merge(dormStudentDorm);
+                            thisService.doMerge(dormStudentDorm);
                         }
                     }
                 }
@@ -961,7 +961,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
             pushInfo.setPushWay(1);
             pushInfo.setRegStatus("学生：" + pushInfo.getEmplName() + "，你的宿舍分配在" + areaName + "，" + areaLc + "，" + roomName
                     + "房间，床号为：" + dormTStudentdorm.getBedNum());
-            pushService.merge(pushInfo);
+            pushService.doMerge(pushInfo);
         }
         writeJSON(response, jsonBuilder.returnSuccessJson("'推送信息成功。'"));
     }
@@ -996,7 +996,7 @@ public class DormStudentdormController extends FrameWorkController<DormStudentDo
                 }
                 perEntity.setUpdateTime(new Date()); // 设置修改时间
                 perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-                thisService.merge(perEntity);// 执行修改方法
+                thisService.doMerge(perEntity);// 执行修改方法
                 ++count;
             }
         }

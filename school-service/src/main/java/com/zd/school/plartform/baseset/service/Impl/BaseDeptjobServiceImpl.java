@@ -66,7 +66,7 @@ public class BaseDeptjobServiceImpl extends BaseServiceImpl<BaseDeptjob> impleme
 
 	@Override
 	public QueryResult<BaseDeptjob> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-		QueryResult<BaseDeptjob> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+		QueryResult<BaseDeptjob> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
 		return qResult;
 	}
 
@@ -86,7 +86,7 @@ public class BaseDeptjobServiceImpl extends BaseServiceImpl<BaseDeptjob> impleme
 			Object[] conditionValue = ids.split(",");
 			String[] propertyName = { "isDelete", "updateUser", "updateTime" };
 			Object[] propertyValue = { 1, currentUser.getXm(), new Date() };
-			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 			delResult = true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -157,7 +157,7 @@ public class BaseDeptjobServiceImpl extends BaseServiceImpl<BaseDeptjob> impleme
 						else
 							deptjob.setJobType(2);
 
-						this.merge(deptjob);
+						this.doMerge(deptjob);
 					}
 					key = "";
 				}
@@ -183,7 +183,7 @@ public class BaseDeptjobServiceImpl extends BaseServiceImpl<BaseDeptjob> impleme
 	@Override
 	public Boolean delDeptJob(String deptJobId, SysUser currentUser) {
 		try {
-			this.deleteByPK(deptJobId);
+			this.doDeleteByPK(deptJobId);
 			return true;
 			/*
 			 * String[] ids = deptJobId.split(","); StringBuffer canDelId = new
@@ -247,13 +247,13 @@ public class BaseDeptjobServiceImpl extends BaseServiceImpl<BaseDeptjob> impleme
 			Object[] propertyValue = { 2, currentUser.getUuid(), new Date() };
 
 			// 将该部门原来的负责岗位设置为不是负责岗位
-			this.updateByProperties(conditionName, conditionValue, propertyName, propertyValue);
+			this.doUpdateByProperties(conditionName, conditionValue, propertyName, propertyValue);
 
 			// 将将当前的岗位设置为部门负责岗位
 			propertyValue[0] = 0;
 			propertyValue[1] = currentUser.getUuid();
 			propertyValue[2] = new Date();
-			this.updateByProperties("uuid", deptJobId, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", deptJobId, propertyName, propertyValue);
 			return true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -298,7 +298,7 @@ public class BaseDeptjobServiceImpl extends BaseServiceImpl<BaseDeptjob> impleme
 		// sbSql.append(" ON a.parent=b.id) SELECT * FROM ctr_child ");
 		String sbSql = " EXEC BASE_P_GETDEPTJOBTREE";
 		List<BaseDpetJobTree> chilrens = new ArrayList<BaseDpetJobTree>();
-		List<?> alist = this.doQuerySql(sbSql);
+		List<?> alist = this.getQuerySql(sbSql);
 		for (int i = 0; i < alist.size(); i++) {
 			Object[] obj = (Object[]) alist.get(i);
 			BaseDpetJobTree node = new BaseDpetJobTree();
@@ -356,7 +356,7 @@ public class BaseDeptjobServiceImpl extends BaseServiceImpl<BaseDeptjob> impleme
 					baseOrg.setUpdateUser(currentUser.getUuid());
 					baseOrg.setUpdateTime(new Date());
 
-					deptService.merge(baseOrg);
+					deptService.doMerge(baseOrg);
 				}
 			} else {
 				List<BaseDeptjob> setDeptJob = this.queryByProerties("uuid", setId);
@@ -368,7 +368,7 @@ public class BaseDeptjobServiceImpl extends BaseServiceImpl<BaseDeptjob> impleme
 					baseDeptjob.setUpdateUser(currentUser.getUuid());
 					baseDeptjob.setUpdateTime(new Date());
 
-					this.merge(baseDeptjob);
+					this.doMerge(baseDeptjob);
 				}
 			}
 			return true;

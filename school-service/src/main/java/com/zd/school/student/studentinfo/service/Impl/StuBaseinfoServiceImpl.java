@@ -74,7 +74,7 @@ public class StuBaseinfoServiceImpl extends BaseServiceImpl<StuBaseinfo> impleme
             queryFilter = "[{\"type\":\"string\",\"comparison\":\"in\",\"value\":\"" + qrClassId
                     + "\",\"field\":\"classId\"}]";
         }
-        QueryResult<StuBaseinfo> qrReturn = this.doPaginationQuery(start, limit, sort, queryFilter, true);
+        QueryResult<StuBaseinfo> qrReturn = this.getPaginationQuery(start, limit, sort, queryFilter, true);
         return qrReturn;
     }
 }

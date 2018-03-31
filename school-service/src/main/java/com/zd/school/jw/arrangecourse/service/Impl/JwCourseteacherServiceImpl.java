@@ -203,7 +203,7 @@ public class JwCourseteacherServiceImpl extends BaseServiceImpl<JwCourseteacher>
                         + "\",\"field\":\"claiId\"}]";
             }
         }
-        QueryResult<JwCourseteacher> qr = this.doPaginationQuery(start, limit, sort, queryFilter, true);
+        QueryResult<JwCourseteacher> qr = this.getPaginationQuery(start, limit, sort, queryFilter, true);
 //        QueryResult<JwCourseteacher> teacherList = new QueryResult<TeaTeacherbase>();
 //        List<TeaTeacherbase> newList = new ArrayList<TeaTeacherbase>();
 //        for (JwCourseteacher t : qr.getResultList()) {
@@ -229,7 +229,7 @@ public class JwCourseteacherServiceImpl extends BaseServiceImpl<JwCourseteacher>
 		String hql ="update JwCourseteacher ct set ct.acszjs="+zjs+" where "
 				+ " ct.claiId in( select gc.uuid from JwTGradeclass gc where gc.graiId"
 				+ " in (select uuid from JwTGrade  where sectionCode='"+grade.getSectionCode()+"' )) and  ct.courseId='"+courseid+"' ";
-		executeHql(hql);
+		doExecuteHql(hql);
 		return null;
 	}
 }

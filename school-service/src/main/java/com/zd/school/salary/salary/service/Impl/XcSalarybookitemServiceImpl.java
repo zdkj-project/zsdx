@@ -55,7 +55,7 @@ public class XcSalarybookitemServiceImpl extends BaseServiceImpl<XcSalarybookite
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<XcSalarybookitem> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<XcSalarybookitem> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 }

@@ -76,7 +76,7 @@ public class JwTGradeClassController extends FrameWorkController<JwTGradeclass> 
         countHql.append(whereSql);
         countHql.append(querySql);
         countHql.append(parentSql);
-        List<JwTGradeclass> lists = thisService.doQuery(hql.toString(), super.start(request), entity.getLimit());// 执行查询方法
+        List<JwTGradeclass> lists = thisService.getQuery(hql.toString(), super.start(request), entity.getLimit());// 执行查询方法
         Integer count = thisService.getCount(countHql.toString());// 查询总记录数
         strData = jsonBuilder.buildObjListToJson(new Long(count), lists, true);// 处理数据
         writeJSON(response, strData);// 返回数据
@@ -95,7 +95,7 @@ public class JwTGradeClassController extends FrameWorkController<JwTGradeclass> 
         perEntity.setUpdateTime(new Date()); //设置修改时间
         perEntity.setUpdateUser(currentUser.getXm());
 
-        entity = thisService.merge(perEntity);//执行修改方法
+        entity = thisService.doMerge(perEntity);//执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
     }
@@ -146,7 +146,7 @@ public class JwTGradeClassController extends FrameWorkController<JwTGradeclass> 
                 entity.setOrderIndex(i);
                 entity.setClassName(sName + "（" + i + "）班");
                 entity.setCreateUser(userCh);
-                thisService.merge(entity);
+                thisService.doMerge(entity);
             }
         }
 

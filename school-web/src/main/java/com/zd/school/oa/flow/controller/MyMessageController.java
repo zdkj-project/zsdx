@@ -30,7 +30,7 @@ public class MyMessageController extends FrameWorkController<PushInfo> implement
 		String hql="from PushInfo where emplNo='"+userNum+"' and eventType='消息提醒'";
 		
 		String countHql="select count(*) from PushInfo where emplNo='"+userNum+"' and eventType='消息提醒'";
-		List<PushInfo> list = pushInfoService.doQuery(hql.toString(), super.start(request), entity.getLimit());
+		List<PushInfo> list = pushInfoService.getQuery(hql.toString(), super.start(request), entity.getLimit());
 		Integer count = pushInfoService.getCount(countHql.toString());// 查询总记录数
 		String strData = jsonBuilder.buildObjListToJson(new Long(count), list, true);// 处理数据
         writeJSON(response, strData);// 返回数据

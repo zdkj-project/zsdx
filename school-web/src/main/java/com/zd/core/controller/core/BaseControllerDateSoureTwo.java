@@ -114,7 +114,7 @@ public class BaseControllerDateSoureTwo implements Constant{
     
     protected  Long  getMaxId(BaseService<?> thisService,Class<?> thisClass){
     	System.out.println(thisClass.getSimpleName());
-    	List<?> temp = thisService.doQuery(" select max(uuid) from "+thisClass.getSimpleName());
+    	List<?> temp = thisService.getQuery(" select max(uuid) from "+thisClass.getSimpleName());
 		return (temp == null?0L:Long.parseLong(temp.get(0).toString()))+1;
     }
 }

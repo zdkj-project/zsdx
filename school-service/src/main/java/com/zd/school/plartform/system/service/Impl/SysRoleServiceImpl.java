@@ -55,7 +55,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRole> implements SysR
         saveEntity.setIsHidden("0");
         saveEntity.setCreateUser(currentUser.getUuid());
         saveEntity.setUpdateTime(new Date());
-        entity = this.merge(saveEntity);// 执行修改方法
+        entity = this.doMerge(saveEntity);// 执行修改方法
 
         return entity;
     }
@@ -70,7 +70,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRole> implements SysR
         BeanUtils.copyPropertiesExceptNull(saveEntity, entity, excludedProp);
         saveEntity.setUpdateUser(currentUser.getUuid());
         saveEntity.setUpdateTime(new Date());
-        entity = this.merge(saveEntity);
+        entity = this.doMerge(saveEntity);
 
         return entity;
     }
@@ -88,7 +88,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRole> implements SysR
             String temp = userId.replace(",","','");
             String sql = " delete from SYS_T_ROLEUSER where role_id=''{0}'' and user_id in (''{1}'')";
             sql = MessageFormat.format(sql,ids,temp);
-            Integer executeCount = this.executeSql(sql);
+            Integer executeCount = this.doExecuteSql(sql);
             if(executeCount>0)
                 return true;
             else
@@ -109,7 +109,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRole> implements SysR
             sb.append(MessageFormat.format(sql, ids, userIds[i]));
         }
         try {
-            Integer executeCount = this.executeSql(sb.toString());
+            Integer executeCount = this.doExecuteSql(sb.toString());
             if(executeCount>0)
                 return true;
             else

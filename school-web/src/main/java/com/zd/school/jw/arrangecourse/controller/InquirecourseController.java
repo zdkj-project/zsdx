@@ -34,7 +34,7 @@ public class InquirecourseController extends FrameWorkController<JwCourseArrange
             throws IOException {
         // hql语句
     	String hql="from TeaTeacherbase where isdelete=0 and xm like '%"+tname+"%'";
-        List<TeaTeacherbase> list = teacherService.doQuery(hql);// 执行查询方法
+        List<TeaTeacherbase> list = teacherService.getQuery(hql);// 执行查询方法
         return list;
     }
     
@@ -45,7 +45,7 @@ public class InquirecourseController extends FrameWorkController<JwCourseArrange
             throws IOException {
         // hql语句
     	String hql="select TEACHER_NAME0"+place+",COURSE_NAME0"+place+",TEACH_TIME,CLASS_NAME from  dbo.JW_T_COURSE_ARRANGE where TEACHER_NAME0"+place+"='"+tname+"' and EXT_FIELD05=1";
-        List<JwCourseArrange> list = thisService.doQuerySql(hql);// 执行查询方法
+        List<JwCourseArrange> list = thisService.getQuerySql(hql);// 执行查询方法
         return list;
     }
 

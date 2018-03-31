@@ -155,7 +155,7 @@ public class DocRecexaminesController extends FrameWorkController<DocRecexamines
         String conditionValue=entity.getDocrecId();
         String propertyName="progress";
         int propertyValue=Integer.parseInt(progress);
-        docReceiveService.updateByProperties(conditionName, conditionValue, propertyName, propertyValue);
+        docReceiveService.doUpdateByProperties(conditionName, conditionValue, propertyName, propertyValue);
 //        String docrecId = entity.getDocrecId();
 //        String hql = "select count(*) from DocRecexamines where docrecId='" + docrecId
 //                + "' and recexamType=0 and state=0";
@@ -194,7 +194,7 @@ public class DocRecexaminesController extends FrameWorkController<DocRecexamines
             String doIds = "'" + delIds.replace(",", "','") + "'";
             String hql = " UPDATE " + DocRecexamines.class.getSimpleName() + " SET state='1' WHERE uuid IN (" + doIds
                     + ")";
-            Integer iExecute = thisService.executeHql(hql);
+            Integer iExecute = thisService.doExecuteHql(hql);
 
             String[] list = delIds.split(",");
             for (int i = 0; i < list.length; i++) {
@@ -205,10 +205,10 @@ public class DocRecexaminesController extends FrameWorkController<DocRecexamines
                 Integer count = thisService.getCount(hql1);
                 if (count == 0) {
                     String hql2 = "update DocReceive set docrecState=3 where uuid='" + docrecId + "'";
-                    thisService.executeHql(hql2);
+                    thisService.doExecuteHql(hql2);
                 } else {
                     String hql2 = "update DocReceive set docrecState=2 where uuid='" + docrecId + "'";
-                    thisService.executeHql(hql2);
+                    thisService.doExecuteHql(hql2);
                 }
             }
 
@@ -263,13 +263,13 @@ public class DocRecexaminesController extends FrameWorkController<DocRecexamines
         perEntity.setUpdateTime(new Date()); // 设置修改时间
         perEntity.setUpdateUser(userCh); // 设置修改人的中文名
         perEntity.setState("1");
-        entity = thisService.merge(perEntity);// 执行修改方法
+        entity = thisService.doMerge(perEntity);// 执行修改方法
         
         String conditionName="uuid";
         String conditionValue=entity.getDocrecId();
         String propertyName="progress";
         int propertyValue=1;
-        docReceiveService.updateByProperties(conditionName, conditionValue, propertyName, propertyValue);
+        docReceiveService.doUpdateByProperties(conditionName, conditionValue, propertyName, propertyValue);
 
         String docrecId = entity.getDocrecId();
         String hql = "select count(*) from DocRecexamines where docrecId='" + docrecId
@@ -277,7 +277,7 @@ public class DocRecexaminesController extends FrameWorkController<DocRecexamines
         Integer count = thisService.getCount(hql);
         if (count == 0) {
             String hql2 = "update DocReceive set docrecState=5 where uuid='" + docrecId + "'";
-            thisService.executeHql(hql2);
+            thisService.doExecuteHql(hql2);
         }
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
@@ -306,13 +306,13 @@ public class DocRecexaminesController extends FrameWorkController<DocRecexamines
         String conditionValue=entity.getDocrecId();
         String propertyName="progress";
         int propertyValue=entity.getProgress();
-        docReceiveService.updateByProperties(conditionName, conditionValue, propertyName, propertyValue);
+        docReceiveService.doUpdateByProperties(conditionName, conditionValue, propertyName, propertyValue);
 
         String conditionName1="uuid";
         String conditionValue1=entity.getDocrecId();
         String propertyName1="progress";
         int propertyValue1=entity.getProgress();
-        thisService.updateByProperties(conditionName1, conditionValue1, propertyName1, propertyValue1);
+        thisService.doUpdateByProperties(conditionName1, conditionValue1, propertyName1, propertyValue1);
         
 
 

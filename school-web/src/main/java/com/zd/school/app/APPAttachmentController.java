@@ -97,7 +97,7 @@ public class APPAttachmentController extends FrameWorkController<BaseAttachment>
                 saveEntity.setEntityName(entityName);
                 saveEntity.setCreateUser("APP考勤");
 
-                attachmentService.merge(saveEntity);
+                attachmentService.doMerge(saveEntity);
             }
 
             writeAppJSON(response, "{ \"success\" : true, \"msg\":\"上传图片成功！\"}");
@@ -183,7 +183,7 @@ public class APPAttachmentController extends FrameWorkController<BaseAttachment>
             saveEntity.setEntityName(entityName);
             saveEntity.setCreateUser("APP考勤");
 
-            attachmentService.merge(saveEntity);
+            attachmentService.doMerge(saveEntity);
             //}
 
             writeAppJSON(response, "{ \"success\" : true, \"msg\":\"上传图片成功！\"}");

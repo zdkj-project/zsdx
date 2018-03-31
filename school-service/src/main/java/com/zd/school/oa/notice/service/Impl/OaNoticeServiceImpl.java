@@ -70,7 +70,7 @@ public class OaNoticeServiceImpl extends BaseServiceImpl<OaNotice> implements Oa
 
 	@Override
 	public QueryResult<OaNotice> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-		QueryResult<OaNotice> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+		QueryResult<OaNotice> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
 		return qResult;
 	}
 
@@ -90,7 +90,7 @@ public class OaNoticeServiceImpl extends BaseServiceImpl<OaNotice> implements Oa
 			Object[] conditionValue = ids.split(",");
 			String[] propertyName = { "isDelete", "updateUser", "updateTime" };
 			Object[] propertyValue = { 1, currentUser.getXm(), new Date() };
-			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 			delResult = true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -116,7 +116,7 @@ public class OaNoticeServiceImpl extends BaseServiceImpl<OaNotice> implements Oa
 			BeanUtils.copyProperties(saveEntity, entity);
 			saveEntity.setUpdateTime(new Date()); // 设置修改时间
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (Exception e) {
@@ -173,7 +173,7 @@ public class OaNoticeServiceImpl extends BaseServiceImpl<OaNotice> implements Oa
 				users.addAll(setUsers);
 				saveEntity.setNoticeUsers(users);
 			}
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (Exception e) {
@@ -199,7 +199,7 @@ public class OaNoticeServiceImpl extends BaseServiceImpl<OaNotice> implements Oa
 			excludedProp.add("uuid");
 			BeanUtils.copyProperties(saveEntity, entity, excludedProp);
 			saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (Exception e) {
@@ -260,19 +260,19 @@ public class OaNoticeServiceImpl extends BaseServiceImpl<OaNotice> implements Oa
 
 			SysUser approveUser = rightService.getApproveUser(currentUser);
 			if (approveUser != null) {
-				entity = this.merge(saveEntity);// 执行修改方法
+				entity = this.doMerge(saveEntity);// 执行修改方法
 				saveEntity.setIsCheck("1");
 				OaNoticeauditor auditor = new OaNoticeauditor();
 				auditor.setXm(approveUser.getXm());
 				auditor.setUserId(approveUser.getUuid());
 				auditor.setAuditState(0);
 				auditor.setOaNotice(saveEntity);
-				auditorService.merge(auditor);
+				auditorService.doMerge(auditor);
 				String regStatus = "您好," + approveUser.getXm() + "老师,有通知公告需要您尽快处理!";
 				pushService.pushInfo(approveUser.getXm(), approveUser.getUserNumb(), "通知公告审批", regStatus, InfoPushWay.WX.getCode());
 				return entity;
 			}
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 			return entity;
 		} catch (Exception e) {
 			logger.error(e.toString());
@@ -387,13 +387,13 @@ public class OaNoticeServiceImpl extends BaseServiceImpl<OaNotice> implements Oa
 		hql.append(" where o.isDelete=0 ");
 		hql.append(" and o.beginDate<='" + today + "' ");
 		hql.append(" and o.endDate>='" + today + "' ");
-		List<OaNotice> list = this.doQuery(hql.toString());
+		List<OaNotice> list = this.getQuery(hql.toString());
 		String userId = currentUser.getUuid();
 		StringBuffer hql2 = new StringBuffer("from SysUser as u ");
 		hql2.append(" inner join fetch u.sysRoles as r ");
 		hql2.append(" inner join fetch u.userDepts as d ");
 		hql2.append(" where u.uuid='" + userId + "' ");
-		currentUser = userService.doQuery(hql2.toString()).get(0);
+		currentUser = userService.getQuery(hql2.toString()).get(0);
 /*		Set<SysRole> userRoles = currentUser.getSysRoles();
 		Set<BaseOrg> userDepts = currentUser.getUserDepts();*/
 		// Set<OaNotice> set = new HashSet<OaNotice>();

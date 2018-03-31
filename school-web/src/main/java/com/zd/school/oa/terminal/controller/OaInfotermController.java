@@ -206,7 +206,7 @@ public class OaInfotermController extends FrameWorkController<OaInfoterm> implem
                 hql += " and uuid in ('" + ids.replace(",", "','") + "')";
             }
             hql += " order by termCode";
-            list = thisService.doQuery(hql);
+            list = thisService.getQuery(hql);
             FastExcel.exportExcel(response, "终端分配信息", list);
             request.getSession().setAttribute("exportTerinfoIsEnd", "1");
         } catch (Exception e) {

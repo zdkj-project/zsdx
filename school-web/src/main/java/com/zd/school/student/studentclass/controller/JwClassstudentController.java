@@ -160,7 +160,7 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
         countHql.append(whereSql);
         countHql.append(querySql);
         countHql.append(parentSql);
-        List<StuBaseinfo> lists = stuBaseinfoService.doQuery(hql.toString(), start, limit);// 执行查询方法
+        List<StuBaseinfo> lists = stuBaseinfoService.getQuery(hql.toString(), start, limit);// 执行查询方法
         Integer count = thisService.getCount(countHql.toString());// 查询总记录数
         strData = jsonBuilder.buildObjListToJson(new Long(count), lists, true);// 处理数据
         writeJSON(response, strData);// 返回数据
@@ -209,8 +209,8 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
             // 增加时要设置创建人
             entity.setCreateUser(userCh); // 创建人
             // 持久化到数据库
-            thisService.merge(entity);
-            stuBaseinfoService.merge(stuBaseinfo);
+            thisService.doMerge(entity);
+            stuBaseinfoService.doMerge(stuBaseinfo);
         }
         // 返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -228,7 +228,7 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {
@@ -249,7 +249,7 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
             } else {
@@ -284,7 +284,7 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
 
         perEntity.setUpdateTime(new Date()); // 设置修改时间
         perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-        entity = thisService.merge(perEntity);// 执行修改方法
+        entity = thisService.doMerge(perEntity);// 执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
@@ -320,7 +320,7 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
                 String sql = "EXEC JW_T_CLASSSTUDENT_YI '" + divideId + "','" + userCh + "','" + divideLevel + "','"
                         + divideType + "', '" + countrs + "'";
                 List retuValue = new ArrayList<>();
-                retuValue = thisService.doQuerySql(sql);
+                retuValue = thisService.getQuerySql(sql);
                 countrs = 0;
                 countrs = countrs + Integer.valueOf(retuValue.get(0).toString());
                 if (j == 3) {
@@ -330,7 +330,7 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
         }
         cord = stuDividerecordService.get(divideId);
         cord.setIsDelete(1);
-        stuDividerecordService.merge(cord);
+        stuDividerecordService.doMerge(cord);
         String[] str = { "divideId", "isDelete" };
         Object[] obj = { divideId, 0 };
 
@@ -338,9 +338,9 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
         if (aram != null)
             for (int i = 0; i < aram.size(); i++) {
                 aram.get(i).setIsDelete(1);
-                stuDivideparamService.merge(aram.get(i));
+                stuDivideparamService.doMerge(aram.get(i));
             }
-        thisService.executeSql("EXEC JW_T_CLASSSCORE_VIEW");
+        thisService.doExecuteSql("EXEC JW_T_CLASSSCORE_VIEW");
         writeJSON(response, jsonBuilder.returnSuccessJson("'分班成功。'"));
 
     }
@@ -374,7 +374,7 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
         SysUser currentUser = getCurrentSysUser();
 
         String sql = "EXECUTE JW_P_UPGRADESTUDENT 3,3,'" + currentUser.getXm() + "'";
-        List lists = thisService.doQuerySql(sql);
+        List lists = thisService.getQuerySql(sql);
         strData = lists.get(0).toString();
 
         writeJSON(response, jsonBuilder.returnSuccessJson("'" + strData + "'"));
@@ -434,7 +434,7 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
         stucode.setCreateUser(userCh);
         stucode.setCreateTime(new Date());
         stucode.setDivideTitle("1");
-        stucode = stuDividerecordService.merge(stucode);
+        stucode = stuDividerecordService.doMerge(stucode);
         for (int i = 0; i < str.length; i++) {
             s = claiIds[i].split(",");// 多个班级
             clbs = bjbs[i].split(",");// 处理后的班级标识
@@ -449,7 +449,7 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
                     divideparam.setOrderIndex(j + 1);// 班级的班序
                     divideparam.setCreateUser(userCh);// 创建人
                     divideparam.setCreateTime(new Date());// 创建时间
-                    stuDivideparamService.merge(divideparam);
+                    stuDivideparamService.doMerge(divideparam);
                 }
             } else {
                 divideparam = new StuDivideparam();
@@ -461,7 +461,7 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
                 divideparam.setOrderIndex(1);// 班级的班序
                 divideparam.setCreateUser(userCh);// 创建人
                 divideparam.setCreateTime(new Date());// 创建时间
-                stuDivideparamService.merge(divideparam);
+                stuDivideparamService.doMerge(divideparam);
             }
         }
         writeJSON(response, jsonBuilder.returnSuccessJson("'保存本页内容成功'"));
@@ -477,7 +477,7 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
     @RequestMapping("/catchDispose")
     public void catchDispose(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String sql = "exec CLASSSTUCATCHDISPOSE";
-        stuScoreService.executeSql(sql);
+        stuScoreService.doExecuteSql(sql);
         writeJSON(response, jsonBuilder.returnSuccessJson("'处理成功'"));
     }
 
@@ -526,8 +526,8 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
             // 增加时要设置创建人
             entity.setCreateUser(userCh); // 创建人
             // 持久化到数据库
-            thisService.merge(entity);
-            thisService.logicDelOrRestore(cStrings[i], StatuVeriable.ISDELETE);// 删除之前所在班级数据
+            thisService.doMerge(entity);
+            thisService.doLogicDelOrRestore(cStrings[i], StatuVeriable.ISDELETE);// 删除之前所在班级数据
         }
         // 返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -575,7 +575,7 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
             pushInfo.setPushWay(1);
             pushInfo.setRegStatus("学生：" + pushInfo.getEmplName() + "，你分配在" + jwTGradeclass.getClassName() + "，上课教室为："
                     + roomName + "，班主任是：" + stchName);
-            pushService.merge(pushInfo);
+            pushService.doMerge(pushInfo);
         }
         StringBuffer stuName = new StringBuffer();
         for (JwClassstudent jwTClassstudent : newLists) {
@@ -593,7 +593,7 @@ public class JwClassstudentController extends FrameWorkController<JwClassstudent
             pushInfo.setPushWay(1);
             pushInfo.setRegStatus(
                     pushInfo.getEmplName() + "您好，您所带班级的学生有如下：" + stuName.substring(0, stuName.length() - 1));
-            pushService.merge(pushInfo);
+            pushService.doMerge(pushInfo);
         }
         writeJSON(response, jsonBuilder.returnSuccessJson("'推送信息成功。'"));
     }
