@@ -46,7 +46,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @param entity 对象实体
      */
     @Override
-    public void persist(E entity) {
+    public void doPersist(E entity) {
         this.dao.persist(entity);
     }
 
@@ -57,7 +57,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @return 返回true或者false
      */
     @Override
-    public boolean deleteByPK(Serializable... id) {
+    public boolean doDeleteByPK(Serializable... id) {
         return this.dao.deleteByPK(id);
     }
 
@@ -67,7 +67,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @param entity 对象实体
      */
     @Override
-    public void delete(E entity) {
+    public void doDelete(E entity) {
         this.dao.delete(entity);
     }
 
@@ -78,7 +78,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @param propValue 属性值
      */
     @Override
-    public void deleteByProperties(String propName, Object propValue) {
+    public void doDeleteByProperties(String propName, Object propValue) {
         this.dao.deleteByProperties(propName, propValue);
     }
 
@@ -89,7 +89,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @param propValue 属性值
      */
     @Override
-    public void deleteByProperties(String[] propName, Object[] propValue) {
+    public void doDeleteByProperties(String[] propName, Object[] propValue) {
         this.dao.deleteByProperties(propName, propValue);
     }
 
@@ -99,7 +99,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @param entity 对象实体
      */
     @Override
-    public void update(E entity) {
+    public void doUpdate(E entity) {
         this.dao.update(entity);
     }
 
@@ -112,7 +112,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @param propertyValue  UPDATE子句属性数组值
      */
     @Override
-    public void updateByProperties(String[] conditionName, Object[] conditionValue, String[] propertyName,
+    public void doUpdateByProperties(String[] conditionName, Object[] conditionValue, String[] propertyName,
                                    Object[] propertyValue) {
         this.dao.updateByProperties(conditionName, conditionValue, propertyName, propertyValue);
     }
@@ -126,7 +126,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @param propertyValue  UPDATE子句属性值
      */
     @Override
-    public void updateByProperties(String[] conditionName, Object[] conditionValue, String propertyName,
+    public void doUpdateByProperties(String[] conditionName, Object[] conditionValue, String propertyName,
                                    Object propertyValue) {
         this.dao.updateByProperties(conditionName, conditionValue, propertyName, propertyValue);
     }
@@ -140,7 +140,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @param propertyValue  UPDATE子句属性数组值
      */
     @Override
-    public void updateByProperties(String conditionName, Object conditionValue, String[] propertyName,
+    public void doUpdateByProperties(String conditionName, Object conditionValue, String[] propertyName,
                                    Object[] propertyValue) {
         this.dao.updateByProperties(conditionName, conditionValue, propertyName, propertyValue);
     }
@@ -154,7 +154,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @param propertyValue  UPDATE子句属性值
      */
     @Override
-    public void updateByProperties(String conditionName, Object conditionValue, String propertyName,
+    public void doUpdateByProperties(String conditionName, Object conditionValue, String propertyName,
                                    Object propertyValue) {
         this.dao.updateByProperties(conditionName, conditionValue, propertyName, propertyValue);
     }
@@ -166,7 +166,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @param oldId  已存在的对象实体主键
      */
     @Override
-    public void update(E entity, Serializable oldId) {
+    public void doUpdate(E entity, Serializable oldId) {
         this.dao.update(entity, oldId);
     }
 
@@ -177,7 +177,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @return 返回对象实体
      */
     @Override
-    public E merge(E entity) {
+    public E doMerge(E entity) {
         return this.dao.merge(entity);
     }
 
@@ -393,7 +393,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @return 返回对象实体列表
      */
     @Override
-    public List<E> doQueryAll() {
+    public List<E> getQueryAll() {
         return this.dao.doQueryAll();
     }
 
@@ -405,7 +405,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @return 返回对象实体列表
      */
     @Override
-    public List<E> doQueryAll(Map<String, String> sortedCondition, Integer top) {
+    public List<E> getQueryAll(Map<String, String> sortedCondition, Integer top) {
         return this.dao.doQueryAll(sortedCondition, top);
     }
 
@@ -416,7 +416,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @return 返回对象实体列表
      */
     @Override
-    public List<E> doQueryAll(Integer top) {
+    public List<E> getQueryAll(Integer top) {
         return this.dao.doQueryAll(top);
     }
 
@@ -427,7 +427,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @return the list
      */
     @Override
-    public List<E> doQuery(String hql) {
+    public List<E> getQuery(String hql) {
         return this.dao.doQuery(hql);
     }
 
@@ -440,12 +440,12 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @return the list
      */
     @Override
-    public List<E> doQuery(String hql, Integer start, Integer limit) {
+    public List<E> getQuery(String hql, Integer start, Integer limit) {
         return this.dao.doQuery(hql, start, limit);
     }
 
     @Override
-    public List<E> doQuery(String hql, Integer start, Integer limit, String propName, Object[] objs) {
+    public List<E> getQuery(String hql, Integer start, Integer limit, String propName, Object[] objs) {
         return this.dao.doQuery(hql, start, limit, propName, objs);
     }
 
@@ -472,7 +472,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @return 受影响的记录数
      */
     @Override
-    public Integer executeHql(String hql) {
+    public Integer doExecuteHql(String hql) {
         return this.dao.executeHql(hql);
     }
 
@@ -511,7 +511,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @return true, if successful
      */
     @Override
-    public boolean logicDelOrRestore(String ids, String isDelete) {
+    public boolean doLogicDelOrRestore(String ids, String isDelete) {
         return this.dao.logicDelOrRestore(ids, isDelete);
     }
 
@@ -526,7 +526,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
         Integer defaultOrderIndex = Integer.valueOf(0);
         String className = entity.getClass().getSimpleName();
         String hql = " from  " + className + " where orderIndex=(select max(orderIndex) from " + className + ")";
-        List<E> list = doQuery(hql);
+        List<E> list = getQuery(hql);
         if (list.size() > 0) {
             defaultOrderIndex = (Integer) EntityUtil.getPropertyValue(list.get(0), "orderIndex") + 1;
         } else
@@ -640,7 +640,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @return
      */
     @Override
-    public List<E> doQuerySql(String sql) {
+    public List<E> getQuerySql(String sql) {
         return this.dao.doQuerySql(sql);
     }
 
@@ -656,7 +656,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
     }
 
     @Override
-    public QueryResult<E> doPaginationQuery(Integer start, Integer limit, String sort, String filter,
+    public QueryResult<E> getPaginationQuery(Integer start, Integer limit, String sort, String filter,
                                             boolean isDelete) {
 
         // TODO Auto-generated method stub
@@ -665,13 +665,13 @@ public class BaseServiceImpl<E> implements BaseService<E> {
 
 
     @Override
-    public <T> QueryResult<T> doQueryCountToHql(Integer start, Integer limit, String sort, String filter, String hql,
+    public <T> QueryResult<T> getQueryCountToHql(Integer start, Integer limit, String sort, String filter, String hql,
                                                 String groupBy, String orderBy) {
         return this.dao.doQueryCountToHql(start, limit, sort, filter, hql, groupBy, orderBy);
     }
 
     @Override
-    public <T> QueryResult<T> doQueryCountToHql(Integer start, Integer limit, String sort, String filter, String hql,
+    public <T> QueryResult<T> getQueryCountToHql(Integer start, Integer limit, String sort, String filter, String hql,
                                                 String groupBy, String orderBy, String where) {
         return this.dao.doQueryCountToHql(start, limit, sort, filter, hql, groupBy, orderBy, where);
     }
@@ -694,7 +694,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
     }
 
     @Override
-    public Integer executeSql(String sql) {
+    public Integer doExecuteSql(String sql) {
 
         // TODO Auto-generated method stub
         return this.dao.executeSql(sql);
@@ -706,12 +706,12 @@ public class BaseServiceImpl<E> implements BaseService<E> {
     }
 
     @Override
-    public List<E> doQuery(String hql, String propName, Object[] objs) {
+    public List<E> getQuery(String hql, String propName, Object[] objs) {
         return this.dao.doQuery(hql, propName, objs);
     }
 
     @Override
-    public QueryResult<E> doQueryResult(String hql, Integer start, Integer limit) {
+    public QueryResult<E> getQueryResult(String hql, Integer start, Integer limit) {
         // TODO Auto-generated method stub
         return this.dao.doQueryResult(hql, start, limit);
     }
@@ -740,7 +740,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
      * @return 返回转换后的结果
      */
     @Override
-    public <T> QueryResult<T> doQueryResultSqlObject(String sql, Integer start, Integer limit, Class<T> clz) {
+    public <T> QueryResult<T> getQueryResultSqlObject(String sql, Integer start, Integer limit, Class<T> clz) {
         return this.dao.doQueryResultSqlObject(sql, start, limit, clz);
     }
 

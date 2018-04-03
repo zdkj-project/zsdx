@@ -118,7 +118,7 @@ public class XcJxplartitemController extends FrameWorkController<XcJxplartitem> 
         entity.setCreateUser(userCh); //创建人
         		
 		//持久化到数据库
-		entity = thisService.merge(entity);
+		entity = thisService.doMerge(entity);
 		
 		//返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -170,7 +170,7 @@ public class XcJxplartitemController extends FrameWorkController<XcJxplartitem> 
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
             } else {
@@ -212,7 +212,7 @@ public class XcJxplartitemController extends FrameWorkController<XcJxplartitem> 
        
         perEntity.setUpdateTime(new Date()); //设置修改时间
         perEntity.setUpdateUser(userCh); //设置修改人的中文名
-        entity = thisService.merge(perEntity);//执行修改方法
+        entity = thisService.doMerge(perEntity);//执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
@@ -243,8 +243,8 @@ public class XcJxplartitemController extends FrameWorkController<XcJxplartitem> 
 		String hql = "from XcSalaryitem where isDelete=0 ";
 		hql += " and uuid in(select salaryitemId from XcJxplartitem where jxplartId='" + jxplartId + "')";
 		hql += " order by orderIndex";
-		List<XcSalaryitem> list = salaryitemService.doQuery(hql);// 执行查询方法
-		List<XcJxplartitem> list2=thisService.doQuery("from XcJxplartitem where jxplartId='" + jxplartId + "'");
+		List<XcSalaryitem> list = salaryitemService.getQuery(hql);// 执行查询方法
+		List<XcJxplartitem> list2=thisService.getQuery("from XcJxplartitem where jxplartId='" + jxplartId + "'");
 		for (XcSalaryitem xcSalaryitem : list) {
 			for (XcJxplartitem xcSalaryplatitem : list2) {
 				if (xcSalaryitem.getUuid().equals(xcSalaryplatitem.getSalaryitemId())) {

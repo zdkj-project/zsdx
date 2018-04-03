@@ -313,7 +313,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			}
 			hql += " order by g.breakfast desc,g.lunch desc,g.dinner desc";
 
-			QueryResult<TrainClasstrainee> result = thisService.doQueryResult(hql, start, limit);
+			QueryResult<TrainClasstrainee> result = thisService.getQueryResult(hql, start, limit);
 
 			strData = jsonBuilder.buildObjListToJson(result.getTotalCount(), result.getResultList(), true);
 			writeJSON(response, strData);// 返回数据
@@ -346,7 +346,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			}
 			hql += "  order by g.siesta desc,g.sleep desc,g.xbm asc,g.workUnit asc";
 
-			QueryResult<TrainClasstrainee> result = thisService.doQueryResult(hql, start, limit);
+			QueryResult<TrainClasstrainee> result = thisService.getQueryResult(hql, start, limit);
 
 			strData = jsonBuilder.buildObjListToJson(result.getTotalCount(), result.getResultList(), true);
 			writeJSON(response, strData);// 返回数据
@@ -503,7 +503,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			hql += " and classId ='" + classId + "'";
 		}
 		hql += " order by createTime desc";
-		trainClasstraineeList = thisService.doQuery(hql);
+		trainClasstraineeList = thisService.getQuery(hql);
 
 		// 处理班级基本数据
 		List<Map<String, String>> traineeList = new ArrayList<>();
@@ -864,7 +864,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			hql += " and classId ='" + classId + "'";
 		}
 		hql += " order by createTime desc";
-		trainClasstraineeList = thisService.doQuery(hql);
+		trainClasstraineeList = thisService.getQuery(hql);
 
 		// 处理班级基本数据
 		List<Map<String, String>> traineeList = new ArrayList<>();
@@ -952,7 +952,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 				hql += " and classId ='" + classId + "'";
 			}
 			hql += " order by createTime desc";
-			trainClasstraineeList = thisService.doQuery(hql);
+			trainClasstraineeList = thisService.getQuery(hql);
 			int trainClasstraineeListCount = trainClasstraineeList.size();
 
 			for (int i = 0; i < trainClasstraineeListCount; i++) {
@@ -1037,7 +1037,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 				hql += " and classId ='" + classId + "'";
 			}
 			hql += " order by createTime desc";
-			trainClasstraineeList = thisService.doQuery(hql);
+			trainClasstraineeList = thisService.getQuery(hql);
 			int trainClasstraineeListCount = trainClasstraineeList.size();
 
 			for (int i = 0; i < trainClasstraineeListCount; i++) {				
@@ -1053,7 +1053,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			sql = "update CARD_T_USEINFO SET USE_STATE=4  WHERE USE_STATE=1 and USER_ID in ('"
 					+ ids.replace(",", "','") + "');";
 			
-			thisService.executeSql(sql);
+			thisService.doExecuteSql(sql);
 		} catch (Exception e) {
 			writeJSON(response, jsonBuilder.returnFailureJson("\"解除绑定失败！\""));
 			return;
@@ -1069,7 +1069,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			DBContextHolder.clearDBType();
 			sql = "update CARD_T_USEINFO SET USE_STATE=1 WHERE USE_STATE=4 and USER_ID in ('"
 					+ ids.replace(",", "','") + "')";
-			thisService.executeSql(sql);
+			thisService.doExecuteSql(sql);
 
 			writeJSON(response, jsonBuilder.returnFailureJson("\"解除绑定失败！\""));
 			return;
@@ -1080,7 +1080,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		// 当没有报错的时候，再把用户id清空(分别把正常解绑 和 挂失解绑 的数据处理)
 		sql = "update CARD_T_USEINFO SET USER_ID=NULL  WHERE USE_STATE=4 and USER_ID in ('" + ids.replace(",", "','") + "');";
 		sql += "update CARD_T_USEINFO SET USER_ID=NULL  WHERE USE_STATE=2 and USER_ID in ('" + ids.replace(",", "','") + "')";
-		thisService.executeSql(sql);
+		thisService.doExecuteSql(sql);
 					
 		writeJSON(response, jsonBuilder.returnSuccessJson("\"解除绑定成功！\""));
 	}
@@ -1115,7 +1115,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 				// sql = "update CARD_T_USEINFO SET USE_STATE='2' ,USER_ID=NULL
 				// WHERE USER_ID='" + ids + "'";
 				sql = "update CARD_T_USEINFO SET USE_STATE='2' WHERE USER_ID='" + ids + "'";
-				thisService.executeSql(sql);
+				thisService.doExecuteSql(sql);
 			} catch (Exception e) {
 				writeJSON(response, jsonBuilder.returnFailureJson("\"挂失失败！\""));
 				return;
@@ -1124,13 +1124,13 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			try {
 				DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 				sql = "UPDATE tc_card SET CardStatusIDXF=2,CardStatusIDJS=2 WHERE CARDID =" + cardId;
-				thisService.executeSql(sql);
+				thisService.doExecuteSql(sql);
 
 			} catch (Exception e) {
 				// 恢复web数据
 				DBContextHolder.clearDBType();
 				sql = "update CARD_T_USEINFO SET USE_STATE='" + oldUseState + "' WHERE USER_ID='" + ids + "'";
-				thisService.executeSql(sql);
+				thisService.doExecuteSql(sql);
 
 				writeJSON(response, jsonBuilder.returnFailureJson("\"挂失失败！\""));
 				return;

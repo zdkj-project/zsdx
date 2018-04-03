@@ -75,7 +75,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 	@Override
 	public QueryResult<TrainClasstrainee> list(Integer start, Integer limit, String sort, String filter,
 			Boolean isDelete) {
-		QueryResult<TrainClasstrainee> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+		QueryResult<TrainClasstrainee> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
 		return qResult;
 	}
 
@@ -95,7 +95,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			Object[] conditionValue = ids.split(",");
 			String[] propertyName = { "isDelete", "updateUser", "updateTime" };
 			Object[] propertyValue = { 1, currentUser.getXm(), new Date() };
-			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 			delResult = true;
 
 			// 设置班级的状态
@@ -105,7 +105,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 				trainClass.setIsuse(2);
 				trainClass.setUpdateTime(new Date()); // 设置修改时间
 				trainClass.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-				trainClassService.update(trainClass);
+				trainClassService.doUpdate(trainClass);
 			}
 
 		} catch (Exception e) {
@@ -132,7 +132,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			BeanUtils.copyProperties(saveEntity, entity);
 			saveEntity.setUpdateTime(new Date()); // 设置修改时间
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -161,7 +161,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			excludedProp.add("uuid");
 			BeanUtils.copyProperties(saveEntity, entity, excludedProp);
 			saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -205,7 +205,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 							+ roomName + "'," + "	t.updateUser='" + currentUser.getXm() + "',t.updateTime='"
 							+ sdf.format(new Date()) + "' " + "where t.isDelete!=1 and t.uuid in ('"
 							+ ids.replace(",", "','") + "')";
-					this.executeHql(hqlUpdate);
+					this.doExecuteHql(hqlUpdate);
 					result = 1;
 				}
 			}
@@ -229,7 +229,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			String hqlUpdate = "update TrainClasstrainee t set t.roomId=NULL,t.roomName=NULL," + "	t.updateUser='"
 					+ currentUser.getXm() + "',t.updateTime='" + sdf.format(new Date()) + "' " + "where t.uuid in ('"
 					+ ids.replace(",", "','") + "')";
-			this.executeHql(hqlUpdate);
+			this.doExecuteHql(hqlUpdate);
 			result = 1;
 
 		} catch (Exception e) {
@@ -257,7 +257,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 		Map<String, String> mapXbm = new HashMap<>();
 		Map<String, String> mapClassGroup = new HashMap<>();
 		String hql1 = " from BaseDicitem where dicCode in ('HEADSHIPLEVEL','XBM','CLASSGROUP')";
-		List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
+		List<BaseDicitem> listBaseDicItems1 = dicitemService.getQuery(hql1);
 		for (BaseDicitem baseDicitem : listBaseDicItems1) {
 			if (baseDicitem.getDicCode().equals("XBM"))
 				mapXbm.put(baseDicitem.getItemName(), baseDicitem.getItemCode());
@@ -275,7 +275,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 		Map<String, String> mapMzm = new HashMap<>();
 		if (needSync.equals("1")) {
 			String hql2 = " from BaseDicitem where dicCode in ('TRAINEECATEGORY','XWM','XLM','ZZMMM','MZM')";
-			List<BaseDicitem> listBaseDicItems2 = dicitemService.doQuery(hql2);
+			List<BaseDicitem> listBaseDicItems2 = dicitemService.getQuery(hql2);
 			for (BaseDicitem baseDicitem : listBaseDicItems2) {
 				switch (baseDicitem.getDicCode()) {
 				case "TRAINEECATEGORY":
@@ -390,13 +390,13 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 					trainTrainee.setUpdateTime(new Date()); // 设置修改时间
 					trainTrainee.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 
-					trainTraineeServie.merge(trainTrainee);
+					trainTraineeServie.doMerge(trainTrainee);
 				}
 
 				if (trainTrainee != null) {
 					trainee.setTraineeId(trainTrainee.getUuid());
 				}
-				this.merge(trainee);
+				this.doMerge(trainee);
 
 			} catch (Exception e) {
 				// return null;
@@ -419,7 +419,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 
 		// 如果两个容器的大小一样，表明没有导入数据,否则导入了
 		if (listObject.size() != listNotExit.size()) {
-			trainClassService.update(trainClass);
+			trainClassService.doUpdate(trainClass);
 		}
 
 		return listNotExit;
@@ -431,7 +431,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 		// TODO Auto-generated method stub
 		// 查询班级学员
 		String hql = "from TrainClasstrainee where classId='" + classId + "' and isDelete=0 ";
-		List<TrainClasstrainee> trainees = this.doQuery(hql);
+		List<TrainClasstrainee> trainees = this.getQuery(hql);
 
 		for (TrainClasstrainee trainee : trainees) {
 
@@ -457,7 +457,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			// trainTrainee.setZp("/static/upload/traineePhoto/"
 			// +trainee.getSfzjh() + ".jpg");
 
-			trainTraineeServie.merge(trainTrainee);
+			trainTraineeServie.doMerge(trainTrainee);
 		}
 	}
 
@@ -491,7 +491,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 		
 		sql+=" order by traineeNumber asc,xm asc";
 		
-		QueryResult<VoTrainClassCheck> qr = this.doQueryResultSqlObject(sql, start, limit, VoTrainClassCheck.class);
+		QueryResult<VoTrainClassCheck> qr = this.getQueryResultSqlObject(sql, start, limit, VoTrainClassCheck.class);
 
 		return qr;
 	}
@@ -520,7 +520,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 
 			for (int i = 0; i < upCardUserInfos.size(); i++) {
 				if (sqlSb.length() > 3000) {
-					this.executeSql(sqlSb.toString());
+					this.doExecuteSql(sqlSb.toString());
 					sqlSb.setLength(0); // 清空
 				}
 
@@ -546,7 +546,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			}
 			// 最后执行一次
 			if (sqlSb.length() > 0)
-				this.executeSql(sqlSb.toString());
+				this.doExecuteSql(sqlSb.toString());
 
 		} catch (Exception e) {
 			// 捕获了异常后，要手动进行回滚；
@@ -593,7 +593,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 				// 通过卡ID绑定学员更新卡状态
 				sql = "update CARD_T_USEINFO SET USE_STATE=1 ,USER_ID='" + idsArray[i] + "' WHERE CARD_ID='" + cardId
 						+ "'";
-				this.executeSql(sql);
+				this.doExecuteSql(sql);
 
 				cardUnBinds.get(i).put("USER_ID", idsArray[i]);
 			}
@@ -622,7 +622,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			Map<String, Object> map = null;
 			for (int i = 0; i < cardInfoToUp.size(); i++) {
 				if (sqlSb.length() > 3000) {
-					this.executeSql(sqlSb.toString());
+					this.doExecuteSql(sqlSb.toString());
 					sqlSb.setLength(0); // 清空
 				}
 
@@ -641,7 +641,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			}
 			// 最后执行一次
 			if (sqlSb.length() > 0)
-				this.executeSql(sqlSb.toString());
+				this.doExecuteSql(sqlSb.toString());
 
 		} catch (Exception e) {
 			// 捕获了异常后，要手动进行回滚；
@@ -662,7 +662,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 				// cardIds +=
 				// String.valueOf(cardInfoToUp.get(i).get("CARD_ID"))+",";
 				if (sqlSb.length() > 3000) {
-					this.executeSql(sqlSb.toString());
+					this.doExecuteSql(sqlSb.toString());
 					sqlSb.setLength(0); // 清空
 				}
 
@@ -672,7 +672,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			}
 			// 最后执行一次
 			if (sqlSb.length() > 0)
-				this.executeSql(sqlSb.toString());
+				this.doExecuteSql(sqlSb.toString());
 
 		} catch (Exception e) {
 			// 捕获了异常后，要手动进行回滚；

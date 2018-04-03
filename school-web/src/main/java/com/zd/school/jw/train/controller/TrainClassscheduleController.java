@@ -387,7 +387,7 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 			trainClassschedule.setUpdateTime(new Date());
 			trainClassschedule.setUpdateUser(currentUser.getXm());
 
-			thisService.merge(trainClassschedule);
+			thisService.doMerge(trainClassschedule);
 
 			writeJSON(response, jsonBuilder.returnSuccessJson("\"设置成功！\""));
 
@@ -436,7 +436,7 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 		if (whereSql.length() > 0) {
 			sql += whereSql;
 		}
-		QueryResult<TrainClassCourseEval> list = thisService.doQueryResultSqlObject(sql, start, limit,
+		QueryResult<TrainClassCourseEval> list = thisService.getQueryResultSqlObject(sql, start, limit,
 				TrainClassCourseEval.class);
 		strData = jsonBuilder.buildObjListToJson(list.getTotalCount(), list.getResultList(), true);
 
@@ -460,7 +460,7 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 		}else{
 			sql += " ORDER BY evalState desc,courseDate asc,courseTime asc";
 		}
-		QueryResult<TrainClassCourseEval> list = thisService.doQueryResultSqlObject(sql, start, limit,
+		QueryResult<TrainClassCourseEval> list = thisService.getQueryResultSqlObject(sql, start, limit,
 				TrainClassCourseEval.class);
 		strData = jsonBuilder.buildObjListToJson(list.getTotalCount(), list.getResultList(), true);
 
@@ -487,7 +487,7 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 
 		Map<String, String> mapClassCategory = new HashMap<>();
 		String hql1 = " from BaseDicitem where dicCode in ('ZXXBJLX')";
-		List<BaseDicitem> listBaseDicItems1 = dicitemService.doQuery(hql1);
+		List<BaseDicitem> listBaseDicItems1 = dicitemService.getQuery(hql1);
 		for (BaseDicitem baseDicitem : listBaseDicItems1) {
 			mapClassCategory.put(baseDicitem.getItemCode(), baseDicitem.getItemName());
 		}
@@ -505,7 +505,7 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 			hql += " and classId in ('" + classId + "')";
 		}
 		hql += " order by traineeNumber asc,xm asc";
-		trainClasstraineeList = classTraineeService.doQuery(hql);
+		trainClasstraineeList = classTraineeService.getQuery(hql);
 
 		// 处理学员基本数据
 		List<Map<String, String>> traineeList = new ArrayList<>();

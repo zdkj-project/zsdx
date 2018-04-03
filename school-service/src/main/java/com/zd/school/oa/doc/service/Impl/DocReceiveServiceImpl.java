@@ -76,7 +76,7 @@ public class DocReceiveServiceImpl extends BaseServiceImpl<DocReceive> implement
         sql.append("'" + distribType + "', ");
         sql.append("'" + operName + "'");
 
-        Integer executeCount = super.executeSql(sql.toString());
+        Integer executeCount = super.doExecuteSql(sql.toString());
         String eventType="公文批阅提醒";
         if (distribType.equals("1")){
         	eventType="公文传阅提醒";
@@ -164,7 +164,7 @@ public class DocReceiveServiceImpl extends BaseServiceImpl<DocReceive> implement
 			break;
 		}
         // 持久化到数据库
-        this.persist(entity);
+        this.doPersist(entity);
 
         //当处理类型不为完成 批阅时处理传阅人员或批阅人员
         String docrecId = entity.getUuid();
@@ -190,7 +190,7 @@ public class DocReceiveServiceImpl extends BaseServiceImpl<DocReceive> implement
         }
         perEntity.setUpdateTime(new Date()); // 设置修改时间
         perEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-        entity = this.merge(perEntity);// 执行修改方法
+        entity = this.doMerge(perEntity);// 执行修改方法
 
       //当处理类型不为完成 批阅时处理传阅人员或批阅人员
         if (!newDistribId.equals(oldDistribId))
@@ -229,7 +229,7 @@ public class DocReceiveServiceImpl extends BaseServiceImpl<DocReceive> implement
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<DocReceive> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<DocReceive> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 	@Override
@@ -251,7 +251,7 @@ public class DocReceiveServiceImpl extends BaseServiceImpl<DocReceive> implement
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<DocReceive> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<DocReceive> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 

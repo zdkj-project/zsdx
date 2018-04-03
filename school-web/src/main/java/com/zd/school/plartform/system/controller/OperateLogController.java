@@ -32,7 +32,7 @@ public class OperateLogController extends FrameWorkController<SysOperateLog> imp
     public void list(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String strData = ""; // 返回给js的数据
-        QueryResult<SysOperateLog> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+        QueryResult<SysOperateLog> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
                 super.sort(request), super.filter(request), true);
 
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据

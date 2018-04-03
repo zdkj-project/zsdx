@@ -62,7 +62,7 @@ public class OaNoticeauditorController extends FrameWorkController<OaNoticeaudit
 			String hql = "from OaNoticeauditor as o inner join fetch o.oaNotice as n where n.beginDate<='" + today
 					+ "' and n.endDate>='" + today + "' and o.userId='" + currentUser.getUuid()
 					+ "' and o.auditState=0";
-			List<OaNoticeauditor> list = thisService.doQuery(hql);
+			List<OaNoticeauditor> list = thisService.getQuery(hql);
 			String ids = "";
 			for (OaNoticeauditor oaNoticeauditor : list) {
 				ids += "'" + oaNoticeauditor.getOaNotice().getUuid() + "',";
@@ -164,9 +164,9 @@ public class OaNoticeauditorController extends FrameWorkController<OaNoticeaudit
 
 			entity.setUpdateTime(new Date());
 			entity.setUpdateUser(currentUser.getUserName());
-			entity = thisService.merge(entity);
+			entity = thisService.doMerge(entity);
 			oaNotice.setIsCheck((state + 1) + "");
-			noticeService.merge(oaNotice);
+			noticeService.doMerge(oaNotice);
 			if (ModelUtil.isNotNull(entity))
 				writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
 			else

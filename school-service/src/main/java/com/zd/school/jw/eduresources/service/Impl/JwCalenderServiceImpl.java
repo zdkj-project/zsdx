@@ -51,8 +51,8 @@ public class JwCalenderServiceImpl extends BaseServiceImpl<JwCalender> implement
 		try{
 			String hql1="update JwCalender set activityState=0 ";
 			String hql2="update JwCalender set activityState=1 where uuid='"+uuid+"'";
-			this.executeHql(hql1);
-			this.executeHql(hql2);
+			this.doExecuteHql(hql1);
+			this.doExecuteHql(hql2);
 			return 1;
 		}catch(Exception e){
 			return 0;

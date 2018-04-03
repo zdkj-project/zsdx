@@ -55,7 +55,7 @@ public class AcsPublicclassServiceImpl extends BaseServiceImpl<AcsPublicclass> i
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<AcsPublicclass> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<AcsPublicclass> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 }

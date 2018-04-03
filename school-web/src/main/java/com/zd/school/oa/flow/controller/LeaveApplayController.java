@@ -178,7 +178,7 @@ public class LeaveApplayController extends FrameWorkController<LeaveApplay> impl
         entity.setCreateUser(userCh); // 创建人
 
         // 持久化到数据库
-        entity = thisService.merge(entity);
+        entity = thisService.doMerge(entity);
 
         // 返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -208,7 +208,7 @@ public class LeaveApplayController extends FrameWorkController<LeaveApplay> impl
         BeanUtils.copyPropertiesExceptNull(perEntity, entity);
 
         perEntity.setUpdateTime(new Date()); // 设置修改时间
-        entity = thisService.merge(perEntity);// 执行修改方法
+        entity = thisService.doMerge(perEntity);// 执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
     }
@@ -255,7 +255,7 @@ public class LeaveApplayController extends FrameWorkController<LeaveApplay> impl
 
         // 返回实体到前端界面
         if (flag) {
-            entity = thisService.merge(entity);
+            entity = thisService.doMerge(entity);
             writeJSON(response, jsonBuilder.returnSuccessJson("'提交并启动流程成功'"));
         } else
             writeJSON(response, jsonBuilder.returnFailureJson("'启动流程失败'"));
@@ -285,7 +285,7 @@ public class LeaveApplayController extends FrameWorkController<LeaveApplay> impl
         BeanUtils.copyPropertiesExceptNull(perEntity, entity);
 
         perEntity.setUpdateTime(new Date()); // 设置修改时间
-        entity = thisService.merge(perEntity);// 执行修改方法
+        entity = thisService.doMerge(perEntity);// 执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
     }
@@ -302,7 +302,7 @@ public class LeaveApplayController extends FrameWorkController<LeaveApplay> impl
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {

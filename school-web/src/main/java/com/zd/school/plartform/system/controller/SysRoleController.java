@@ -77,7 +77,7 @@ public class SysRoleController extends FrameWorkController<SysRole> implements C
         if (!currentUser.getUserName().equals("administrator"))
             listFilters.add(hideDataFilter);
         String newFilter = jsonBuilder.buildObjListToJson(Long.valueOf(listFilters.size()), listFilters, false);
-        QueryResult<SysRole> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+        QueryResult<SysRole> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
                 super.sort(request), newFilter, true);
 
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -133,7 +133,7 @@ public class SysRoleController extends FrameWorkController<SysRole> implements C
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {
@@ -212,10 +212,10 @@ public class SysRoleController extends FrameWorkController<SysRole> implements C
         if (userRole.size() > 0) {
             hql.append("and e not in(:roles)");
             countHql.append("and e not in(:roles)");
-            lists = thisService.doQuery(hql.toString(), start, limit, "roles", userRole.toArray());// 执行查询方法
+            lists = thisService.getQuery(hql.toString(), start, limit, "roles", userRole.toArray());// 执行查询方法
             count = thisService.getCount(countHql.toString(), "roles", userRole.toArray());// 查询总记录数
         } else {
-            lists = thisService.doQuery(hql.toString(), start, limit);// 执行查询方法
+            lists = thisService.getQuery(hql.toString(), start, limit);// 执行查询方法
             count = thisService.getCount(countHql.toString());// 查询总记录数
         }
 
@@ -305,7 +305,7 @@ public class SysRoleController extends FrameWorkController<SysRole> implements C
 		 
 		//List<SysUser> list = userSerive.doQuery(hql);
 
-		QueryResult<SysUser> qr = userSerive.doQueryResult(hql, start, limit);
+		QueryResult<SysUser> qr = userSerive.getQueryResult(hql, start, limit);
 		  
 		
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据

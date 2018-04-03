@@ -43,7 +43,7 @@ public class TrainTraineeServiceImpl extends BaseServiceImpl<TrainTrainee> imple
 
 	@Override
 	public QueryResult<TrainTrainee> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-		QueryResult<TrainTrainee> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+		QueryResult<TrainTrainee> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
 		return qResult;
 	}
 
@@ -63,7 +63,7 @@ public class TrainTraineeServiceImpl extends BaseServiceImpl<TrainTrainee> imple
 			Object[] conditionValue = ids.split(",");
 			String[] propertyName = { "isDelete", "updateUser", "updateTime" };
 			Object[] propertyValue = { 1, currentUser.getXm(), new Date() };
-			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 			delResult = true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -89,7 +89,7 @@ public class TrainTraineeServiceImpl extends BaseServiceImpl<TrainTrainee> imple
 			BeanUtils.copyProperties(saveEntity, entity);
 			saveEntity.setUpdateTime(new Date()); // 设置修改时间
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -118,7 +118,7 @@ public class TrainTraineeServiceImpl extends BaseServiceImpl<TrainTrainee> imple
 			excludedProp.add("uuid");
 			BeanUtils.copyProperties(saveEntity, entity, excludedProp);
 			saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -193,7 +193,7 @@ public class TrainTraineeServiceImpl extends BaseServiceImpl<TrainTrainee> imple
 
 			trainee.setUpdateTime(new Date());
 			trainee.setUpdateUser(currentUser.getXm());
-			this.merge(trainee);
+			this.doMerge(trainee);
 		}
 		// </editor-fold>
 	}
@@ -208,7 +208,7 @@ public class TrainTraineeServiceImpl extends BaseServiceImpl<TrainTrainee> imple
 			hql += " order by traineeCategory,sfzjh";
 		else
 			hql += orderSql;
-		List<TrainTrainee> list = this.doQuery(hql);
+		List<TrainTrainee> list = this.getQuery(hql);
 		List<TrainTrainee> exportList = new ArrayList<>();
 
 		// 导出时要转换字典项

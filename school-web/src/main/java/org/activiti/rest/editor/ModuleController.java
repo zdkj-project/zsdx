@@ -240,7 +240,7 @@ public class ModuleController extends FrameWorkController<BaseEntity> implements
 	@ResponseBody
 	public List<DynamicForm> formlist(HttpServletRequest req) {
 		String hql = "from DynamicForm";
-		List<DynamicForm> list = dynamicFormService.doQuery(hql);// 执行查询方法
+		List<DynamicForm> list = dynamicFormService.getQuery(hql);// 执行查询方法
 		return list;
 
 	}
@@ -273,10 +273,10 @@ public class ModuleController extends FrameWorkController<BaseEntity> implements
 		 */
 		TaskBoundForm t = new TaskBoundForm();
 		String sql = "delete FLOW_T_TASKBOUNDFORM where taskid='" + taskid + "'";
-		taskBoundFormService.executeSql(sql);
+		taskBoundFormService.doExecuteSql(sql);
 		t.setFormId(formid);
 		t.setTaskId(taskid);
-		taskBoundFormService.merge(t);
+		taskBoundFormService.doMerge(t);
 		writeJSON(response, jsonBuilder.returnSuccessJson("'绑定成功'"));
 
 	}
@@ -299,7 +299,7 @@ public class ModuleController extends FrameWorkController<BaseEntity> implements
 		 * result.put("type", "success"); return result.toString();
 		 */
 		String hql = "from FlowType";
-		List<FlowType> list = thisService.doQuery(hql);
+		List<FlowType> list = thisService.getQuery(hql);
 		return list;
 
 	}
@@ -308,7 +308,7 @@ public class ModuleController extends FrameWorkController<BaseEntity> implements
 	@ResponseBody
 	public List<BaseJob> joblist(HttpServletRequest req) {
 		String hql = "from BaseJob where isDelete=0";
-		List<BaseJob> list = jobService.doQuery(hql);// 执行查询方法
+		List<BaseJob> list = jobService.getQuery(hql);// 执行查询方法
 		return list;
 
 	}
@@ -317,7 +317,7 @@ public class ModuleController extends FrameWorkController<BaseEntity> implements
 	@ResponseBody
 	public List<SysRole> rolelist(HttpServletRequest req) {
 		String hql = "from SysRole where isDelete=0";
-		List<SysRole> list = roleService.doQuery(hql);// 执行查询方法
+		List<SysRole> list = roleService.getQuery(hql);// 执行查询方法
 		return list;
 
 	}

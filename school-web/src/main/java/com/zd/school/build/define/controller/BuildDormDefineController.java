@@ -60,7 +60,7 @@ public class BuildDormDefineController extends FrameWorkController<BuildDormDefi
 	public void list(@ModelAttribute BuildDormDefine entity, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		String strData = ""; // 返回给js的数据
-		QueryResult<BuildDormDefine> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+		QueryResult<BuildDormDefine> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
 				super.sort(request), super.filter(request), true);
 		strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
@@ -78,7 +78,7 @@ public class BuildDormDefineController extends FrameWorkController<BuildDormDefi
 	public void onKeylist(@ModelAttribute BuildDormDefine entity, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		String strData = ""; // 返回给js的数据
-		QueryResult<BuildDormDefine> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+		QueryResult<BuildDormDefine> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
 				super.sort(request), super.filter(request), true);
 		strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
@@ -111,7 +111,7 @@ public class BuildDormDefineController extends FrameWorkController<BuildDormDefi
                 info.setRoomType("1");//设置房间类型为教室--1.宿舍，2.办公室，3.教室，4、实验室，5、功能室，9、其它，0、未分配
                 info.setAreaStatu(1);//设置为已分配
                 //执行更新方法
-                infoService.merge(info);
+                infoService.doMerge(info);
                 BuildDormDefine perEntity = new BuildDormDefine();
         		BeanUtils.copyPropertiesExceptNull(entity, perEntity);
                 //生成默认的orderindex
@@ -120,7 +120,7 @@ public class BuildDormDefineController extends FrameWorkController<BuildDormDefi
                 entity.setCreateUser(userCh); //创建人
                 entity.setUpdateUser(userCh); //创建人的中文名
                 entity.setOrderIndex(orderIndex);//排序
-                thisService.merge(entity); // 执行添加方法
+                thisService.doMerge(entity); // 执行添加方法
             }
         entity.setUuid(null);
         writeJSON(response, jsonBuilder.returnSuccessJson("'定义成功。'"));
@@ -155,9 +155,9 @@ public class BuildDormDefineController extends FrameWorkController<BuildDormDefi
 					roominfo.setRoomType("0");// 设置房间类型为空
 					roominfo.setAreaStatu(0);// 设置房间状态为未分配
 					// 执行更新方法
-					infoService.merge(roominfo);
+					infoService.doMerge(roominfo);
 					define.setIsDelete(1);
-					thisService.merge(define);
+					thisService.doMerge(define);
 					++fs;
 				}
 				count = 0;
@@ -191,7 +191,7 @@ public class BuildDormDefineController extends FrameWorkController<BuildDormDefi
             perEntity.setDormAdmin(entity.getTteacId()); //设置教师id
         perEntity.setUpdateTime(new Date()); //设置修改时间
         perEntity.setUpdateUser(userCh); //设置修改人的中文名
-        entity = thisService.merge(perEntity);//执行修改方法
+        entity = thisService.doMerge(perEntity);//执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
 

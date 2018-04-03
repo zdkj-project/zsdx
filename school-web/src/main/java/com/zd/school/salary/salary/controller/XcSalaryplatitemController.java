@@ -83,7 +83,7 @@ public class XcSalaryplatitemController extends FrameWorkController<XcSalaryplat
 	@ResponseBody
 	public List<XcSalaryitem> xcSalaryitemlist(HttpServletRequest req) {
 		String hql = "from XcSalaryitem where isDelete=0 order by salaryitemType";
-		List<XcSalaryitem> list = salaryitemService.doQuery(hql);// 执行查询方法
+		List<XcSalaryitem> list = salaryitemService.getQuery(hql);// 执行查询方法
 		return list;
 	}
 
@@ -112,8 +112,8 @@ public class XcSalaryplatitemController extends FrameWorkController<XcSalaryplat
 		String hql = "from XcSalaryitem where isDelete=0 ";
 		hql += " and uuid in(select salaryitemId from XcSalaryplatitem where salaryplatId='" + salaryplatId + "')";
 		hql += " order by salaryitemType";
-		List<XcSalaryitem> list = salaryitemService.doQuery(hql);// 执行查询方法
-		List<XcSalaryplatitem> list2=thisService.doQuery("from XcSalaryplatitem where salaryplatId='" + salaryplatId + "'");
+		List<XcSalaryitem> list = salaryitemService.getQuery(hql);// 执行查询方法
+		List<XcSalaryplatitem> list2=thisService.getQuery("from XcSalaryplatitem where salaryplatId='" + salaryplatId + "'");
 		for (XcSalaryitem xcSalaryitem : list) {
 			for (XcSalaryplatitem xcSalaryplatitem : list2) {
 				if (xcSalaryitem.getUuid().equals(xcSalaryplatitem.getSalaryitemId())) {
@@ -163,7 +163,7 @@ public class XcSalaryplatitemController extends FrameWorkController<XcSalaryplat
 		entity.setSalaryitemName(salaryitemName);
 
 		// 持久化到数据库
-		entity = thisService.merge(entity);
+		entity = thisService.doMerge(entity);
 
 		// 返回实体到前端界面
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -205,7 +205,7 @@ public class XcSalaryplatitemController extends FrameWorkController<XcSalaryplat
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
 			} else {
@@ -243,7 +243,7 @@ public class XcSalaryplatitemController extends FrameWorkController<XcSalaryplat
 
 		perEntity.setUpdateTime(new Date()); // 设置修改时间
 		perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-		entity = thisService.merge(perEntity);// 执行修改方法
+		entity = thisService.doMerge(perEntity);// 执行修改方法
 
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 

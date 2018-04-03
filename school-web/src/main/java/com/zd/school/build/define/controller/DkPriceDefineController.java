@@ -43,7 +43,7 @@ public class DkPriceDefineController extends  FrameWorkController<DkPriceDefine>
 	public void list(@ModelAttribute DkPriceDefine entity, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		  String strData = ""; // 返回给js的数据
-	        QueryResult<DkPriceDefine> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+	        QueryResult<DkPriceDefine> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
 	                super.sort(request), super.filter(request), true);
 
 	        strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -77,7 +77,7 @@ public class DkPriceDefineController extends  FrameWorkController<DkPriceDefine>
 		BeanUtils.copyPropertiesExceptNull(entity, perEntity);
 
 		// 持久化到数据库
-		entity = thisService.merge(entity);
+		entity = thisService.doMerge(entity);
 
 		// 返回实体到前端界面
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -95,7 +95,7 @@ public class DkPriceDefineController extends  FrameWorkController<DkPriceDefine>
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
 			} else {
@@ -116,7 +116,7 @@ public class DkPriceDefineController extends  FrameWorkController<DkPriceDefine>
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
 			} else {
@@ -149,7 +149,7 @@ public class DkPriceDefineController extends  FrameWorkController<DkPriceDefine>
 		// 将entity中不为空的字段动态加入到perEntity中去。
 		BeanUtils.copyPropertiesExceptNull(perEntity, entity);
 
-		entity = thisService.merge(perEntity);// 执行修改方法
+		entity = thisService.doMerge(perEntity);// 执行修改方法
 
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 

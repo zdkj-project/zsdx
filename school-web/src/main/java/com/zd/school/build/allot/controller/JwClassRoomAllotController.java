@@ -66,7 +66,7 @@ public class JwClassRoomAllotController extends FrameWorkController<JwClassRoomA
     public void list(@ModelAttribute JwClassRoomAllot entity, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String strData = ""; // 返回给js的数据
-        QueryResult<JwClassRoomAllot> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+        QueryResult<JwClassRoomAllot> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
                 super.sort(request), super.filter(request), true);
 
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -122,7 +122,7 @@ public class JwClassRoomAllotController extends FrameWorkController<JwClassRoomA
           BeanUtils.copyPropertiesExceptNull(entity, perEntity);
           entity.setCreateUser(userCh); //创建人的中文名
           entity.setOrderIndex(orderIndex);//排序
-          thisService.merge(entity); // 执行添加方法
+          thisService.doMerge(entity); // 执行添加方法
           writeJSON(response, jsonBuilder.returnSuccessJson("'成功'"));// 返回数据到js
     }
 
@@ -143,7 +143,7 @@ public class JwClassRoomAllotController extends FrameWorkController<JwClassRoomA
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {

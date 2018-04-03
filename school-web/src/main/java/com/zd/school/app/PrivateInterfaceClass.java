@@ -47,7 +47,7 @@ public class PrivateInterfaceClass extends FrameWorkController<DormStudentDorm> 
 		try {
 			//DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_Three);
 			List list = thisService
-					.doQuerySql("SELECT EmployeeID FROM TC_Card " + "WHERE FactoryFixID='" + fixID + "' AND CardStatusIDXF=1 Order By CreateDate DESC");
+					.getQuerySql("SELECT EmployeeID FROM TC_Card " + "WHERE FactoryFixID='" + fixID + "' AND CardStatusIDXF=1 Order By CreateDate DESC");
 			if (list.size() <= 0) {
 				status = "1";
 				returnData.append("{\"status\" : " + "\""+status+"\", \"msg\":" + "\"卡无效\"" + "}");
@@ -55,7 +55,7 @@ public class PrivateInterfaceClass extends FrameWorkController<DormStudentDorm> 
 			}else{
 				String employeeID = list.get(0).toString();
 				List stuId = thisService
-						.doQuerySql("SELECT Student_id FROM TC_Employee " + "WHERE EmployeeID='" + employeeID + "'");
+						.getQuerySql("SELECT Student_id FROM TC_Employee " + "WHERE EmployeeID='" + employeeID + "'");
 				if (stuId.size() <= 0) {
 					if (stuId.get(0) == null)
 						status = "1";

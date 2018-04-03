@@ -66,7 +66,7 @@ public class PtTermController extends FrameWorkController<PtTerm> implements Con
 			hql.append(entity.getQuerySql());
 			countHql.append(entity.getQuerySql());
 		}
-		List<PtTerm> lists = thisService.doQuery(hql.toString(), super.start(request), entity.getLimit());// 执行查询方法
+		List<PtTerm> lists = thisService.getQuery(hql.toString(), super.start(request), entity.getLimit());// 执行查询方法
 		Integer count = thisService.getCount(countHql.toString());// 查询总记录数
 		strData = jsonBuilder.buildObjListToJson(new Long(count), lists, true);// 处理数据
 		writeJSON(response, strData);// 返回数据
@@ -102,7 +102,7 @@ public class PtTermController extends FrameWorkController<PtTerm> implements Con
 		for (int i = 0; i < uuids.length; i++) {
 			entity = thisService.get(uuids[i]);
 			entity.setRoomId(roomIds[i]);
-			thisService.merge(entity);
+			thisService.doMerge(entity);
 		}
 		// 返回实体到前端界面
 		writeJSON(response, jsonBuilder.returnSuccessJson("'成功。'"));
@@ -119,7 +119,7 @@ public class PtTermController extends FrameWorkController<PtTerm> implements Con
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(uuid, StatuVeriable.ISDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(uuid, StatuVeriable.ISDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
 			} else {
@@ -140,7 +140,7 @@ public class PtTermController extends FrameWorkController<PtTerm> implements Con
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
 			} else {
@@ -170,7 +170,7 @@ public class PtTermController extends FrameWorkController<PtTerm> implements Con
 		// 将entity中不为空的字段动态加入到perEntity中去。
 		BeanUtils.copyPropertiesExceptNull(perEntity, entity);
 		perEntity.setCreateUser(userCh);
-		entity = thisService.merge(perEntity);// 执行修改方法
+		entity = thisService.doMerge(perEntity);// 执行修改方法
 
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
@@ -190,7 +190,7 @@ public class PtTermController extends FrameWorkController<PtTerm> implements Con
 	public void batchHighParam(TLVModel tlvs,@RequestParam("termTypeID") String termTypeID, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, IllegalAccessException, InvocationTargetException {
 		byte[] result=TLVUtils.encode(tlvs.getTlvs());
-		thisService.updateByProperties("termTypeID",termTypeID ,new String[]{"advParam","updateTime"},new Object[]{ result,new Date()} );
+		thisService.doUpdateByProperties("termTypeID",termTypeID ,new String[]{"advParam","updateTime"},new Object[]{ result,new Date()} );
 		writeJSON(response, jsonBuilder.returnSuccessJson("'批量设置成功。'"));
 
 	}
@@ -211,9 +211,9 @@ public class PtTermController extends FrameWorkController<PtTerm> implements Con
 			byte[] result=TLVUtils.encode(tlvs.getTlvs());
 			if(termTypeID.equals("11")||termTypeID.equals("17") ){//（红外控制器）（开关）
 				String notes=request.getParameter("notes");
-				thisService.updateByProperties( "termTypeID",termTypeID,new String[]{"baseParam","notes","updateTime"},new Object[]{ result,notes,new Date()});
+				thisService.doUpdateByProperties( "termTypeID",termTypeID,new String[]{"baseParam","notes","updateTime"},new Object[]{ result,notes,new Date()});
 			}else{
-				thisService.updateByProperties( "termTypeID",termTypeID,new String[]{"baseParam","updateTime"},new Object[]{ result,new Date()} );
+				thisService.doUpdateByProperties( "termTypeID",termTypeID,new String[]{"baseParam","updateTime"},new Object[]{ result,new Date()} );
 			}
 			writeJSON(response, jsonBuilder.returnSuccessJson("'批量设置成功。'"));
 	}
@@ -246,7 +246,7 @@ public class PtTermController extends FrameWorkController<PtTerm> implements Con
 			String notes=request.getParameter("notes");
 			perEntity.setNotes(notes);
 		}
-		thisService.merge(perEntity);// 执行修改方法
+		thisService.doMerge(perEntity);// 执行修改方法
 		writeJSON(response, jsonBuilder.returnSuccessJson("'设置成功。'"));
 
 	}
@@ -287,7 +287,7 @@ public class PtTermController extends FrameWorkController<PtTerm> implements Con
 		perEntity.setAdvParam(result);
 		perEntity.setUpdateUser(currentUser.getXm());
 		perEntity.setUpdateTime(new Date());
-		thisService.merge(perEntity);// 执行修改方法
+		thisService.doMerge(perEntity);// 执行修改方法
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
 	}

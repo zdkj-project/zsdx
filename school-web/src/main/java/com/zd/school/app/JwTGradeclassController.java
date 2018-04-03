@@ -136,14 +136,14 @@ public class JwTGradeclassController extends BaseController<JwTGradeclass> {
 		String today = DateUtil.formatDate(date);
 		String hql = "from EccClassstar where isDelete=0 and claiId='" + classInfo.getUuid() + "' and beginDate<='"
 				+ today + "' and endDate>='" + today + "'";
-		List<EccClassstar> classstarList = starService.doQuery(hql);
+		List<EccClassstar> classstarList = starService.getQuery(hql);
 		if (classstarList != null && classstarList.size() > 0) {
 			EccClassstar starInfo = classstarList.get(0);
 			info.setClassstarInfo(starInfo);
 		}
 		hql = "from EccClassredflag where isDelete=0 and claiId='" + classInfo.getUuid() + "' and beginDate<='" + today
 				+ "' and endDate>='" + today + "'";
-		List<EccClassredflag> classflagList = flagService.doQuery(hql);
+		List<EccClassredflag> classflagList = flagService.getQuery(hql);
 		if (classflagList != null && classflagList.size() > 0) {
 			if (classflagList.size() > 1) {
 				for (int i = 1; i < classflagList.size(); i++) {
@@ -342,12 +342,12 @@ public class JwTGradeclassController extends BaseController<JwTGradeclass> {
 		}
 		types = types.deleteCharAt(types.length() - 1);
 		String hql = "from EccClasselegant where claiId='" + claiId + "' order by createTime desc";
-		List<EccClasselegant> eleganeList = elegantService.doQuery(hql);
+		List<EccClasselegant> eleganeList = elegantService.getQuery(hql);
 		int size = 0;
 		for (EccClasselegant eccClasselegant : eleganeList) {
 			hql = "from BaseAttachment where recordId='" + eccClasselegant.getUuid() + "' and attachType in(" + types
 					+ ") order by createTime desc";
-			List<BaseAttachment> attList = baseTAttachmentService.doQuery(hql);
+			List<BaseAttachment> attList = baseTAttachmentService.getQuery(hql);
 			for (BaseAttachment baseAttachment : attList) {
 				if (size + baseAttachment.getAttachSize() <= maxSize) {
 					returnList.add(baseAttachment);

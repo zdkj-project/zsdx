@@ -87,7 +87,7 @@ public class CwFinancialbooksController extends FrameWorkController<CwFinancialb
 	public void importSalary(@RequestParam MultipartFile file, HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String hql="delete CwFinancialbooks";
-		thisService.executeHql(hql);
+		thisService.doExecuteHql(hql);
 		
 		if (!file.isEmpty()) {
 			SysUser currentUser = getCurrentSysUser();
@@ -248,7 +248,7 @@ public class CwFinancialbooksController extends FrameWorkController<CwFinancialb
 					}
 					method.invoke(entity, gz);
 				}*/
-				thisService.merge(entity);
+				thisService.doMerge(entity);
 			}
 			writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson("'工资数据导入成功'")));
 		} else {
@@ -291,7 +291,7 @@ public class CwFinancialbooksController extends FrameWorkController<CwFinancialb
 			}else{
 				hql="from CwFinancialbooks order by createTime asc";
 			}
-			List<CwFinancialbooks> lists=thisService.doQuery(hql);
+			List<CwFinancialbooks> lists=thisService.getQuery(hql);
 			for(int i=0;i<lists.size();i++){
 				 lastyear=lastyear.add(lists.get(i).getLastYear());
 				 thisyear=thisyear.add(lists.get(i).getThisYear());

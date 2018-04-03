@@ -92,7 +92,7 @@ public class BuildRoominfoController extends FrameWorkController<BuildRoominfo> 
 		
 		String strData = ""; // 返回给js的数据
 		
-		QueryResult<BuildRoominfo> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+		QueryResult<BuildRoominfo> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
 				super.sort(request), filter, true);
 
 		strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -131,7 +131,7 @@ public class BuildRoominfoController extends FrameWorkController<BuildRoominfo> 
 			entity.setCreateUser(userCh); // 创建人
 			// 持久化到数据库
 			entity.setRoomType(rommType);
-			entity = thisService.merge(entity);
+			entity = thisService.doMerge(entity);
 			// 返回实体到前端界面
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
 	}
@@ -206,7 +206,7 @@ public class BuildRoominfoController extends FrameWorkController<BuildRoominfo> 
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
 			} else {
@@ -247,7 +247,7 @@ public class BuildRoominfoController extends FrameWorkController<BuildRoominfo> 
 
 		perEntity.setUpdateTime(new Date()); // 设置修改时间
 		perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-		entity = thisService.merge(perEntity);// 执行修改方法
+		entity = thisService.doMerge(perEntity);// 执行修改方法
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
 
 	}

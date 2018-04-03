@@ -64,7 +64,7 @@ public class MjUserrightController extends BaseControllerDateSoureTwo {
 		hql.append(querySql);
 		countHql.append(whereSql);
 		countHql.append(querySql);
-		List<MjUserright> lists = thisService.doQuery(hql.toString(), super.start(request), entity.getLimit());// 执行查询方法
+		List<MjUserright> lists = thisService.getQuery(hql.toString(), super.start(request), entity.getLimit());// 执行查询方法
 		Integer count = thisService.getCount(countHql.toString());// 查询总记录数
 		strData = jsonBuilder.buildObjListToJson(new Long(count), lists, true);// 处理数据
 		writeJSON(response, strData);// 返回数据
@@ -101,7 +101,7 @@ public class MjUserrightController extends BaseControllerDateSoureTwo {
 				entity = new MjUserright();
 				entity.setTermId(termId[i]);
 				entity.setStuId(stuId[i]);
-				thisService.merge(entity);
+				thisService.doMerge(entity);
 			}
 		writeJSON(response, jsonBuilder.returnSuccessJson("'成功'"));
 	}
@@ -139,7 +139,7 @@ public class MjUserrightController extends BaseControllerDateSoureTwo {
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
 			} else {
@@ -172,7 +172,7 @@ public class MjUserrightController extends BaseControllerDateSoureTwo {
 		// 将entity中不为空的字段动态加入到perEntity中去。
 		BeanUtils.copyPropertiesExceptNull(perEntity, entity);
 
-		entity = thisService.merge(perEntity);// 执行修改方法
+		entity = thisService.doMerge(perEntity);// 执行修改方法
 
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 

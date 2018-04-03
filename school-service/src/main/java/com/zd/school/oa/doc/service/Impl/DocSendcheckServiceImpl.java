@@ -56,7 +56,7 @@ public class DocSendcheckServiceImpl extends BaseServiceImpl<DocSendcheck> imple
 			hql.append(userCh + "', updateTime=CONVERT(datetime,'");
 			hql.append(DateUtil.formatDateTime(new Date()) + "'),state='1',opininon='");
 			hql.append(opininon + "' WHERE uuid IN (" + doIds + ")");
-			Integer isExecute = this.executeHql(hql.toString());
+			Integer isExecute = this.doExecuteHql(hql.toString());
 
 			// 判断这个核稿人是否是最后一个核稿人，是的话就设置发文的状态为2.
 			String[] list = ids.split(",");
@@ -67,10 +67,10 @@ public class DocSendcheckServiceImpl extends BaseServiceImpl<DocSendcheck> imple
 				Integer count = this.getCount(hql1);
 				if (count == 0) {
 					String hql2 = "update DocSenddoc set docsendState=2 where uuid='" + sendId + "'";
-					this.executeHql(hql2);
+					this.doExecuteHql(hql2);
 				} else {
 					String hql3 = "update DocSenddoc set docsendState=1 where uuid='" + sendId + "'";
-					this.executeHql(hql3);
+					this.doExecuteHql(hql3);
 				}
 			}
 			return 1;
@@ -104,7 +104,7 @@ public class DocSendcheckServiceImpl extends BaseServiceImpl<DocSendcheck> imple
 		perEntity.setUpdateTime(new Date()); // 设置修改时间
 		perEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 		perEntity.setState(myState);
-		entity = this.merge(perEntity);// 执行修改方法
+		entity = this.doMerge(perEntity);// 执行修改方法
 
 		String sendId = entity.getSendId();
 		DocSenddoc doc = docSendService.get(sendId);
@@ -123,7 +123,7 @@ public class DocSendcheckServiceImpl extends BaseServiceImpl<DocSendcheck> imple
 				saveEntity.setCreateUser(currentUser.getXm());
 				saveEntity.setUserId(st);
 				saveEntity.setState("0");
-				this.persist(saveEntity);
+				this.doPersist(saveEntity);
 	        	user = userService.get(st);
 	    		url.append("app/DocSendcheck/detailed?");
 	    		url.append("id=" + saveEntity.getUuid());
@@ -165,7 +165,7 @@ public class DocSendcheckServiceImpl extends BaseServiceImpl<DocSendcheck> imple
 			break;
 		}
 		
-		this.executeHql(hql);
+		this.doExecuteHql(hql);
 
 		return entity;
 	}

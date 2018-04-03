@@ -149,7 +149,7 @@ public class DocSendcheckAppController extends FrameWorkController<DocSendcheck>
 		countHql.append(whereSql);
 		countHql.append(querySql);
 		countHql.append(parentSql);
-		List<DocSendcheck> lists = thisService.doQuery(hql.toString(), start, limit);// 执行查询方法
+		List<DocSendcheck> lists = thisService.getQuery(hql.toString(), start, limit);// 执行查询方法
 		Integer count = thisService.getCount(countHql.toString());// 查询总记录数
 		List<DocSendcheck> newLists = new ArrayList<DocSendcheck>();
 		for (DocSendcheck dd : lists) {
@@ -302,7 +302,7 @@ public class DocSendcheckAppController extends FrameWorkController<DocSendcheck>
     	String hql="from BaseAttachment b where b.recordId='"+docId+"' ";
 
     	hql += " order by b.createTime asc";
-    	List<BaseAttachment> list = BaseService.doQuery(hql);
+    	List<BaseAttachment> list = BaseService.getQuery(hql);
     	
     	List<HashMap<String, Object>> lists=new ArrayList<>();
     	HashMap<String, Object> maps=null;
@@ -340,7 +340,7 @@ public class DocSendcheckAppController extends FrameWorkController<DocSendcheck>
         perEntity.setUpdateTime(new Date()); // 设置修改时间
         perEntity.setUpdateUser(userCh); // 设置修改人的中文名
         perEntity.setState("1");
-        docService.merge(perEntity);// 执行修改方法
+        docService.doMerge(perEntity);// 执行修改方法
 
         String docrecId = perEntity.getDocrecId();
         String hql = "select count(*) from DocRecexamines where docrecId='" + docrecId
@@ -348,7 +348,7 @@ public class DocSendcheckAppController extends FrameWorkController<DocSendcheck>
         Integer count = thisService.getCount(hql);
         if (count == 0) {
             String hql2 = "update DocReceive set docrecState=5 where uuid='" + docrecId + "'";
-            thisService.executeHql(hql2);
+            thisService.doExecuteHql(hql2);
             return "success";
         }
 		return "success";
@@ -361,7 +361,7 @@ public class DocSendcheckAppController extends FrameWorkController<DocSendcheck>
 
             BaseDic dictionary = dictionaryService.getByProerties("dicCode", dicCode);
             String hql = " from BaseDicitem where isDelete=0 and dicId='" + dictionary.getUuid()+"' and itemCode='"+itemCode+"' order by orderIndex asc, itemCode asc ";
-            List<BaseDicitem> lists = DicitemService.doQuery(hql);
+            List<BaseDicitem> lists = DicitemService.getQuery(hql);
 			return lists;
         
     }

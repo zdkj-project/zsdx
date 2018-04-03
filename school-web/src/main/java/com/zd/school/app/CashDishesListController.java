@@ -49,7 +49,7 @@ public class CashDishesListController extends FrameWorkController<CashDishes> im
     	
 		List<CashDishes> dishesList = new ArrayList<CashDishes>();
     	String hql = "from  CashDishes WHERE isDelete=0";
-    	dishesList =thisService.doQuery(hql);
+    	dishesList =thisService.getQuery(hql);
     	
     	String mapKey = null;
 		String[] propValue = {"DISHESTYPE"};

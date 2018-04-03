@@ -130,7 +130,7 @@ public class JwGradeteacherServiceImpl extends BaseServiceImpl<JwGradeteacher> i
             queryFilter = "[{\"type\":\"string\",\"comparison\":\"in\",\"value\":\"" + qrClassId
                     + "\",\"field\":\"graiId\"}]";
         }
-        QueryResult<JwGradeteacher> qrReturn = this.doPaginationQuery(start, limit, sort, queryFilter, true);
+        QueryResult<JwGradeteacher> qrReturn = this.getPaginationQuery(start, limit, sort, queryFilter, true);
         return qrReturn;
     }
 

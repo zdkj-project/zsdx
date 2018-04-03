@@ -172,7 +172,7 @@ public class MonitorController extends FrameWorkController<LeaveApplay> implemen
         Task task = taskService.createTaskQuery().taskId(taskId).singleResult();
         String hql = "from SysUser where jobName='" + task.getAssignee() + "' or uuid like '%" + task.getAssignee()
                 + "%'";
-        List<SysUser> userList = sysUserService.doQuery(hql);
+        List<SysUser> userList = sysUserService.getQuery(hql);
         for (SysUser sysUser : userList) {
             TeaTeacherbase teacher = new TeaTeacherbase();
             teacher = teacherService.get(sysUser.getUuid());
@@ -184,7 +184,7 @@ public class MonitorController extends FrameWorkController<LeaveApplay> implemen
             pushInfo.setPushStatus(0);
             pushInfo.setPushWay(1);
             pushInfo.setRegStatus("您好," + sysUser.getXm() + "老师,有申请需要您尽快审批!");
-            pushInfoService.persist(pushInfo);
+            pushInfoService.doPersist(pushInfo);
         }
         writeJSON(response, JsonBuilder.getInstance().returnSuccessJson("'消息提醒成功'"));
     }

@@ -53,7 +53,7 @@ public class BuildRoominfoServiceImpl extends BaseServiceImpl<BuildRoominfo> imp
                 saveRoom.setRoomType(roomType);
                 saveRoom.setCreateUser(createUser);
 
-                this.merge(saveRoom);
+                this.doMerge(saveRoom);
             }
             return true;
         } catch (Exception e) {

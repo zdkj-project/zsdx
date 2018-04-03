@@ -82,7 +82,7 @@ public class JwTGradeServiceImpl extends BaseServiceImpl<JwTGrade> implements Jw
         }*/
         if (currentUser.getUserName().equals("schooladmin"))
             queryFilter = "";
-        QueryResult<JwTGrade> qr = this.doPaginationQuery(start, limit, sort, queryFilter, true);
+        QueryResult<JwTGrade> qr = this.getPaginationQuery(start, limit, sort, queryFilter, true);
         return qr;
     }
 

@@ -103,7 +103,7 @@ public class JwInvigilateController extends FrameWorkController<JwInvigilate> im
 			JwInvigilate invigilate = null;
 			
 			String sql="delete dbo.JW_T_INVIGILATE";
-			this.thisService.executeSql(sql);
+			this.thisService.doExecuteSql(sql);
 			// 6、通过循环将数据放入教师集合中，从集合中获取教师对象，一一设置属性
 			for (int i = 0; i < InvigilateData.size(); i++) {
 				InvigilateList = InvigilateData.get(i);
@@ -114,7 +114,7 @@ public class JwInvigilateController extends FrameWorkController<JwInvigilate> im
 
 				// 7、存入数据库
 
-				this.thisService.merge(invigilate);
+				this.thisService.doMerge(invigilate);
 			}
 		    
 		} catch (Exception e) {
@@ -128,7 +128,7 @@ public class JwInvigilateController extends FrameWorkController<JwInvigilate> im
 	public @ResponseBody List<JwInvigilate> list(HttpServletRequest request, HttpServletResponse response)
 			throws Exception {
 		String hql="from JwInvigilate";
-		List<JwInvigilate> list=thisService.doQuery(hql);
+		List<JwInvigilate> list=thisService.getQuery(hql);
 		return list;
 	}
     //根据分页查询
@@ -138,7 +138,7 @@ public class JwInvigilateController extends FrameWorkController<JwInvigilate> im
 		int page = Integer.parseInt(number);
 		int page1=4*(page-1);
 		String sql="select top 4 * from dbo.JW_T_INVIGILATE where TTEAC_ID not in(select top "+page1+" TTEAC_ID from dbo.JW_T_INVIGILATE order by TTEAC_ID) order by TTEAC_ID";
-		List<JwInvigilate> list=thisService.doQuerySql(sql);
+		List<JwInvigilate> list=thisService.getQuerySql(sql);
 		return list;
 	}
 	
@@ -187,7 +187,7 @@ public class JwInvigilateController extends FrameWorkController<JwInvigilate> im
                 	zp="/static/upload/"+ file.getOriginalFilename();
                 }
                 String hql="update JwInvigilate set zp='"+zp+"' where uuid='"+teacherid+"'";
-                thisService.executeHql(hql);
+                thisService.doExecuteHql(hql);
             }  
         }
         return new ModelAndView("redirect:/static/core/coreApp/arrangecourse/Invigilate/iframe/certificate.jsp");

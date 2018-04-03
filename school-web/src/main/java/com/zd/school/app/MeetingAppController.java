@@ -88,15 +88,15 @@ public class MeetingAppController {
 					// Convert(varchar,beginTime,120) like'" + time + "%' order
 					// by beginTime asc");
 					// 注：我们正式使用时需要将可能作为会议室的房间名称发给OA，所以要将房间查询方式换为id
-					meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomId like '%"
+					meeting = meetingService.getQuery("from OaMeeting where isDelete=0 and roomId like '%"
 							+ roomTerm.getRoomId() + "%'  and beginTime Between '" + s + " 06:00:00" + "' And '"
 							+ sdf.format(date2) + "' order by beginTime asc");
 				} else if (date.getTime() < date3.getTime()) {
-					meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomId like '%"
+					meeting = meetingService.getQuery("from OaMeeting where isDelete=0 and roomId like '%"
 							+ roomTerm.getRoomId() + "%'  and beginTime Between '" + s + " 12:00:00" + "' And '"
 							+ sdf.format(date3) + "' order by beginTime asc");
 				} else {
-					meeting = meetingService.doQuery("from OaMeeting where isDelete=0 and roomId like '%"
+					meeting = meetingService.getQuery("from OaMeeting where isDelete=0 and roomId like '%"
 							+ roomTerm.getRoomId() + "%'  and beginTime Between '" + s + " 18:00:00" + "' And '"
 							+ sdf.format(date4) + "' order by beginTime asc");
 				}
@@ -224,7 +224,7 @@ public class MeetingAppController {
 						}
 					}
 					emp.setUpdateTime(currentDate);
-					empService.merge(emp);
+					empService.doMerge(emp);
 				}
 				/*
 				 * else { mca.setCode(false);
@@ -276,17 +276,17 @@ public class MeetingAppController {
 
 			if (date.getTime() < date2.getTime()) {
 				// 注：我们正式使用时需要将可能作为会议室的房间名称发给OA，所以要将房间查询方式换为id
-				meeting = meetingService.doQuery("from OaMeeting o where o.isDelete=0 and o.beginTime Between '" + s
+				meeting = meetingService.getQuery("from OaMeeting o where o.isDelete=0 and o.beginTime Between '" + s
 						+ " 06:00:00" + "' And '" + sdf.format(date2) + "' "
 						+ " and (o.roomId is null or o.roomId not in("
 						+ " select roomId from OaInfoterm where roomId is not null" + ")) order by o.beginTime asc");
 			} else if (date.getTime() < date3.getTime()) {
-				meeting = meetingService.doQuery("from OaMeeting o where o.isDelete=0 and o.beginTime Between '" + s
+				meeting = meetingService.getQuery("from OaMeeting o where o.isDelete=0 and o.beginTime Between '" + s
 						+ " 12:30:00" + "' And '" + sdf.format(date3) + "' "
 						+ " and (o.roomId is null or o.roomId not in("
 						+ " select roomId from OaInfoterm where roomId is not null" + ")) order by o.beginTime asc");
 			} else {
-				meeting = meetingService.doQuery("from OaMeeting o where o.isDelete=0 and o.beginTime Between '" + s
+				meeting = meetingService.getQuery("from OaMeeting o where o.isDelete=0 and o.beginTime Between '" + s
 						+ " 18:30:00" + "' And '" + sdf.format(date4) + "' "
 						+ " and (o.roomId is null or o.roomId not in("
 						+ " select roomId from OaInfoterm where roomId is not null" + ")) order by o.beginTime asc");
@@ -564,7 +564,7 @@ public class MeetingAppController {
 				emp.setInResult("1"); // 设为已签到状态
 				emp.setAttendResult("1"); // 没有规则，只要签到成功，即算做正常考勤
 				emp.setUpdateTime(currentDate);
-				empService.merge(emp); // 保存入库
+				empService.doMerge(emp); // 保存入库
 
 			} else {
 
@@ -602,7 +602,7 @@ public class MeetingAppController {
 				emp.setIncardTime(currentDate); // 设置签到时间
 				emp.setInResult("1"); // 设为已签到状态
 				emp.setUpdateTime(currentDate);
-				empService.merge(emp); // 保存入库
+				empService.doMerge(emp); // 保存入库
 
 			}
 

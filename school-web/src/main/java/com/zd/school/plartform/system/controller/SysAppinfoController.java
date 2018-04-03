@@ -57,7 +57,7 @@ public class SysAppinfoController extends FrameWorkController<SysAppinfo> implem
     public void list(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String strData = ""; // 返回给js的数据
-        QueryResult<SysAppinfo> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+        QueryResult<SysAppinfo> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
                 super.sort(request), super.filter(request), true);
 
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -123,7 +123,7 @@ public class SysAppinfoController extends FrameWorkController<SysAppinfo> implem
 	            entity.setAppUrl(url + fileName);	           
 	            entity.setAppIsuse(0);
 	            // 持久化到数据库
-	            entity = thisService.merge(entity);
+	            entity = thisService.doMerge(entity);
 
 	            // 返回实体到前端界面
 	            //writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));	          
@@ -181,8 +181,8 @@ public class SysAppinfoController extends FrameWorkController<SysAppinfo> implem
  	    		
 	    		String hql1="update SysAppinfo g  set g.appIsuse=0,g.updateUser='"+userCh+"' where g.isDelete=0 and g.appIsuse=1 and g.appType='"+appType+"' ";
 	    		String hql2="update SysAppinfo g  set g.appIsuse=1,g.updateUser='"+userCh+"' where g.isDelete=0 and g.uuid='"+id+"' ";
-	    		thisService.executeHql(hql1);
-	    		thisService.executeHql(hql2);
+	    		thisService.doExecuteHql(hql1);
+	    		thisService.doExecuteHql(hql2);
     		}else{    		    		
     			//指定文件夹中的的apk文件删除，防止再次下载    	
     			File file = new File(loadUrlPath);
@@ -194,7 +194,7 @@ public class SysAppinfoController extends FrameWorkController<SysAppinfo> implem
     			}
     			
 	    		String hql1="update SysAppinfo g  set g.appIsuse=0,g.updateUser='"+userCh+"' where g.isDelete=0 and g.uuid='"+id+"' ";
-	    		thisService.executeHql(hql1);
+	    		thisService.doExecuteHql(hql1);
     		}
     		    	
     		writeJSON(response, jsonBuilder.returnSuccessJson("\"操作成功！\""));
@@ -261,7 +261,7 @@ public class SysAppinfoController extends FrameWorkController<SysAppinfo> implem
      */
     @RequestMapping("/up/{type}")
     public void getUp(HttpServletResponse response,HttpServletRequest request,@PathVariable("type") Integer type) throws IOException{
-    	SysAppinfo appinfo = this.thisService.doQuery("FROM SysAppinfo WHERE appIsuse = "+1+" and appType ="+type).get(0);
+    	SysAppinfo appinfo = this.thisService.getQuery("FROM SysAppinfo WHERE appIsuse = "+1+" and appType ="+type).get(0);
     	String requestURL = request.getRequestURL()+"";
 		String [] strs= requestURL.split("/");
     	//String url =strs[0]+strs[1]+"//"+strs[2]+appinfo.getAppUrl();

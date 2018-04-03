@@ -45,7 +45,7 @@ public class EccClassredflagServiceImpl extends BaseServiceImpl<EccClassredflag>
 	
 	@Override
 	public QueryResult<EccClassredflag> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-        QueryResult<EccClassredflag> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+        QueryResult<EccClassredflag> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
 		return qResult;
 	}
 	/**
@@ -64,7 +64,7 @@ public class EccClassredflagServiceImpl extends BaseServiceImpl<EccClassredflag>
 			Object[] conditionValue = ids.split(",");
 			String[] propertyName = { "isDelete", "updateUser", "updateTime" };
 			Object[] propertyValue = { 1, currentUser.getXm(), new Date() };
-			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 			delResult = true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -89,7 +89,7 @@ public class EccClassredflagServiceImpl extends BaseServiceImpl<EccClassredflag>
 			BeanUtils.copyProperties(saveEntity, entity);
 			saveEntity.setUpdateTime(new Date()); // 设置修改时间
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -126,7 +126,7 @@ public class EccClassredflagServiceImpl extends BaseServiceImpl<EccClassredflag>
 				saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
 				saveEntity.setClaiId(claiIds[i]);
 				saveEntity.setClassName(classNames[i]);
-				entity = this.merge(saveEntity);// 执行修改方法
+				entity = this.doMerge(saveEntity);// 执行修改方法
 			}
 
 			return entity;

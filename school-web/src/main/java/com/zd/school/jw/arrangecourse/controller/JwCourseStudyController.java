@@ -65,7 +65,7 @@ public class JwCourseStudyController extends FrameWorkController<JwCourseStudy> 
         String classid = "";
         String classcode = "";
         String classhql = "from JwTGradeclass where className='" + cname + "'";
-        List<JwTGradeclass> list = classService.doQuery(classhql);
+        List<JwTGradeclass> list = classService.getQuery(classhql);
         for (JwTGradeclass jclass : list) {
             classid = jclass.getUuid();
             classcode = jclass.getClassCode();
@@ -104,7 +104,7 @@ public class JwCourseStudyController extends FrameWorkController<JwCourseStudy> 
                 entity.setClassName(cname);
                 entity.setStudyCategory("早自习" + i);
                 entity.setOrderIndex(i);
-                thisService.merge(entity);
+                thisService.doMerge(entity);
             }
             for (int i = 6; i <= (5 + nightnumber); i++) {
                 entity = new JwCourseStudy();
@@ -131,10 +131,10 @@ public class JwCourseStudyController extends FrameWorkController<JwCourseStudy> 
                 entity.setClassName(cname);
                 entity.setStudyCategory("晚自习" + (i - 5));
                 entity.setOrderIndex(i);
-                thisService.merge(entity);
+                thisService.doMerge(entity);
             }
             String hql1 = "from JwCourseStudy where className='" + cname + "' order by className,orderIndex asc";
-            List<JwCourseStudy> list1 = thisService.doQuery(hql1);
+            List<JwCourseStudy> list1 = thisService.getQuery(hql1);
             return list1;
         } else {
             //查询早自习晚自习节数
@@ -169,7 +169,7 @@ public class JwCourseStudyController extends FrameWorkController<JwCourseStudy> 
                     entity.setClassName(cname);
                     entity.setStudyCategory("早自习" + i);
                     entity.setOrderIndex(i);
-                    thisService.merge(entity);
+                    thisService.doMerge(entity);
                 }
             }
             if (countnight <= nightnumber) {
@@ -198,25 +198,25 @@ public class JwCourseStudyController extends FrameWorkController<JwCourseStudy> 
                     entity.setClassName(cname);
                     entity.setStudyCategory("晚自习" + (i - 5));
                     entity.setOrderIndex(i);
-                    thisService.merge(entity);
+                    thisService.doMerge(entity);
                 }
             }
             if (countmorning > morningnumber) {
                 for (int i = countmorning; i > morningnumber; i--) {
                     String deletemorning = "delete JwCourseStudy where className='" + cname + "' and orderIndex='" + i
                             + "'";
-                    thisService.executeHql(deletemorning);
+                    thisService.doExecuteHql(deletemorning);
                 }
             }
             if (countnight > nightnumber) {
                 for (int i = (5 + countnight); i > (5 + nightnumber); i--) {
                     String deletenight = "delete JwCourseStudy where className='" + cname + "' and orderIndex='" + i
                             + "'";
-                    thisService.executeHql(deletenight);
+                    thisService.doExecuteHql(deletenight);
                 }
             }
             String hql1 = "from JwCourseStudy where className='" + cname + "' order by className,orderIndex asc";
-            List<JwCourseStudy> list1 = thisService.doQuery(hql1);
+            List<JwCourseStudy> list1 = thisService.getQuery(hql1);
             return list1;
 
         }
@@ -230,7 +230,7 @@ public class JwCourseStudyController extends FrameWorkController<JwCourseStudy> 
             throws IOException {
         // hql语句
         String hql = "from JwTGradeclass where isdelete=0";
-        List<JwTGradeclass> list = classService.doQuery(hql);// 执行查询方法
+        List<JwTGradeclass> list = classService.getQuery(hql);// 执行查询方法
         return list;
     }
 
@@ -241,7 +241,7 @@ public class JwCourseStudyController extends FrameWorkController<JwCourseStudy> 
             throws IOException {
         // hql语句
         String hql = "from TeaTeacherbase where isdelete=0";
-        List<TeaTeacherbase> list = teacherService.doQuery(hql);// 执行查询方法
+        List<TeaTeacherbase> list = teacherService.getQuery(hql);// 执行查询方法
         return list;
     }
 
@@ -252,7 +252,7 @@ public class JwCourseStudyController extends FrameWorkController<JwCourseStudy> 
             throws IOException {
         // hql语句
         String hql = "from JwTBasecourse where isdelete=0";
-        List<JwTBasecourse> list = courseService.doQuery(hql);// 执行查询方法
+        List<JwTBasecourse> list = courseService.getQuery(hql);// 执行查询方法
         return list;
     }
 
@@ -263,7 +263,7 @@ public class JwCourseStudyController extends FrameWorkController<JwCourseStudy> 
             HttpServletResponse response) throws IOException {
         // hql语句
         String hql = "from JwCourseStudy where className='" + cname + "' order by className,orderIndex asc";
-        List<JwCourseStudy> list = thisService.doQuery(hql);// 执行查询方法
+        List<JwCourseStudy> list = thisService.getQuery(hql);// 执行查询方法
         return list;
     }
 
@@ -287,13 +287,13 @@ public class JwCourseStudyController extends FrameWorkController<JwCourseStudy> 
             HttpServletResponse response) throws IOException {
         // hql语句
         String sql = "delete dbo.JW_T_COURSE_STUDY where class_name='" + cname2 + "'";
-        thisService.executeSql(sql);
+        thisService.doExecuteSql(sql);
 
         String copysql = "insert into  dbo.JW_T_COURSE_STUDY select NEWID(), SCHOOL_ID, SCHOOL_NAME, SCHOOL_YEAR, SCHOOL_TERM, '"
                 + classid + "', '', '" + cname2
                 + "', STUDY_CATEGORY, COURSE_ID01, COURSE_NAME01, TTEAC_ID01, TEACHER_GH01, TEACHER_NAME01, COURSE_ID02, COURSE_NAME02, TTEAC_ID02, TEACHER_GH02, TEACHER_NAME02, COURSE_ID03, COURSE_NAME03, TTEAC_ID03, TEACHER_GH03, TEACHER_NAME03, COURSE_ID04, COURSE_NAME04, TTEAC_ID04, TEACHER_GH04, TEACHER_NAME04, COURSE_ID05, COURSE_NAME05, TTEAC_ID05, TEACHER_GH05, TEACHER_NAME05, COURSE_ID06, COURSE_NAME06, TTEAC_ID06, TEACHER_GH06, TEACHER_NAME06, COURSE_ID07, COURSE_NAME07, TTEAC_ID07, TEACHER_GH07, TEACHER_NAME07, EXT_FIELD01, EXT_FIELD02, EXT_FIELD03, EXT_FIELD04, EXT_FIELD05, ORDER_INDEX, CREATE_TIME, CREATE_USER, UPDATE_TIME, UPDATE_USER, ISDELETE, VERSION from dbo.JW_T_COURSE_STUDY where  CLASS_NAME='"
                 + cname + "'";
-        thisService.executeSql(copysql);
+        thisService.doExecuteSql(copysql);
         return "true";
     }
 
@@ -318,6 +318,6 @@ public class JwCourseStudyController extends FrameWorkController<JwCourseStudy> 
         String hql = "update JwCourseStudy set courseId" + place + "='" + cid + "',courseName" + place + "='" + cname
                 + "',tteacId" + place + "='" + tid + "',teacherGh" + place + "='" + tgh + "',teacherName" + place + "='"
                 + tname + "' where zxid='" + id + "'";
-        thisService.executeHql(hql);
+        thisService.doExecuteHql(hql);
     }
 }

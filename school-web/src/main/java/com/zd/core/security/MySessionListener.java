@@ -37,7 +37,7 @@ public class MySessionListener implements SessionListener {
     		loginLog.setLastAccessDate(session.getLastAccessTime());
     		loginLog.setOfflineDate(new Date());
     		loginLog.setOfflineIntro("超时退出");
-    		sysUserLoginLogService.merge(loginLog);
+    		sysUserLoginLogService.doMerge(loginLog);
     	}    	  
     }  
     @Override  
@@ -60,7 +60,7 @@ public class MySessionListener implements SessionListener {
     		else 
     			loginLog.setOfflineIntro("手动退出");
 
-    		sysUserLoginLogService.merge(loginLog);
+    		sysUserLoginLogService.doMerge(loginLog);
     	}   
     }    
 }  

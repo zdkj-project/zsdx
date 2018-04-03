@@ -55,7 +55,7 @@ public class XcJxplartServiceImpl extends BaseServiceImpl<XcJxplart> implements 
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<XcJxplart> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<XcJxplart> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 }

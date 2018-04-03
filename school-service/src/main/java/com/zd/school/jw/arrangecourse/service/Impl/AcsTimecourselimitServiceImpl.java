@@ -55,7 +55,7 @@ public class AcsTimecourselimitServiceImpl extends BaseServiceImpl<AcsTimecourse
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<AcsTimecourselimit> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<AcsTimecourselimit> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 }

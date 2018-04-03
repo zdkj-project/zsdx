@@ -47,7 +47,7 @@ public class TrainTeacherOrderDescController extends FrameWorkController<TrainTe
     	
         //当前节点
     	String hql="from TrainTeacherOrderDesc order by updateTime desc";
-    	QueryResult<TrainTeacherOrderDesc>  result = thisService.doQueryResult(hql, 0, 1);
+    	QueryResult<TrainTeacherOrderDesc>  result = thisService.getQueryResult(hql, 0, 1);
     	
         if(result.getTotalCount()>0)
             writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(result.getResultList().get(0))));
@@ -84,7 +84,7 @@ public class TrainTeacherOrderDescController extends FrameWorkController<TrainTe
         // 增加时要设置创建人
         entity.setCreateUser(userCh); // 创建人
         // 持久化到数据库
-        entity = thisService.merge(entity);
+        entity = thisService.doMerge(entity);
 
         // 返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -116,7 +116,7 @@ public class TrainTeacherOrderDescController extends FrameWorkController<TrainTe
 
         perEntity.setUpdateTime(new Date()); // 设置修改时间
         perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-        entity = thisService.merge(perEntity);// 执行修改方法
+        entity = thisService.doMerge(perEntity);// 执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 

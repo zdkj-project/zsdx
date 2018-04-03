@@ -67,7 +67,7 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
     
 	@Override
 	public QueryResult<OaMeeting> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-        QueryResult<OaMeeting> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+        QueryResult<OaMeeting> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
 		return qResult;
 	}
 	/**
@@ -86,7 +86,7 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 			Object[] conditionValue = ids.split(",");
 			String[] propertyName = { "isDelete", "updateUser", "updateTime" };
 			Object[] propertyValue = { 1, currentUser.getXm(), new Date() };
-			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 			delResult = true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -98,7 +98,7 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
     @Override
     public Boolean doDeleteMeetingUser(String ids, String userId, SysUser currentUser) {
 	    String[] userIds = userId.split(",");
-        meetingempService.deleteByPK(userIds);
+        meetingempService.doDeleteByPK(userIds);
         return true;
     }
 
@@ -121,7 +121,7 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
             meetingemp.setCreateUser(currentUser.getUuid());
             meetingemp.setUpdateUser(currentUser.getUuid());
             meetingemp.setIsDelete(0);
-            meetingempService.merge(meetingemp);
+            meetingempService.doMerge(meetingemp);
         }
         return true;
     }
@@ -150,7 +150,7 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 			
 			saveEntity.setUpdateTime(new Date()); // 设置修改时间
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -179,7 +179,7 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 			excludedProp.add("uuid");
 			BeanUtils.copyProperties(saveEntity, entity,excludedProp);
 			saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -211,7 +211,7 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 	        //2: 获取房间实体，拿到roomid
 	        BuildRoominfo build = null;
 	        Map<String, String> mapRoomInfo = new HashMap<>();
-	        List<BuildRoominfo> roominfoList = buildService.doQueryAll();
+	        List<BuildRoominfo> roominfoList = buildService.getQueryAll();
 	        for (BuildRoominfo buildRoominfo : roominfoList) {
 	            mapRoomInfo.put(buildRoominfo.getRoomName(), buildRoominfo.getUuid());
 	        }
@@ -260,7 +260,7 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 	            m.setCreateUser(o[7].toString());
 	            
 	            
-	            this.merge(m);	
+	            this.doMerge(m);	
 	            
 	            
 	            //5. 处理会议人员（从MEETING_USER_IDS、MEETING_USER_NAMES字段获取，逗号隔开）
@@ -284,7 +284,7 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 						emp.setBeginTime(m.getBeginTime());
 						emp.setEndTime(m.getEndTime());
 
-						meetingempService.merge(emp);
+						meetingempService.doMerge(emp);
 	            	}
 	            }	           
 	        }

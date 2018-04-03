@@ -56,7 +56,7 @@ public class BaseDicitemController extends FrameWorkController<BaseDicitem> impl
     public void list(@ModelAttribute BaseDicitem entity, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String strData = ""; // 返回给js的数据
-        QueryResult<BaseDicitem> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+        QueryResult<BaseDicitem> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
                 super.sort(request), super.filter(request), true);
 
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -100,7 +100,7 @@ public class BaseDicitemController extends FrameWorkController<BaseDicitem> impl
         entity.setCreateUser(userCh); // 创建人
 
         // 持久化到数据库
-        entity = thisService.merge(entity);
+        entity = thisService.doMerge(entity);
 
         // 重新将字典ID和字典名称返回至前端
         entity.setDicId(dicId);
@@ -122,7 +122,7 @@ public class BaseDicitemController extends FrameWorkController<BaseDicitem> impl
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {
@@ -143,7 +143,7 @@ public class BaseDicitemController extends FrameWorkController<BaseDicitem> impl
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
             } else {
@@ -190,7 +190,7 @@ public class BaseDicitemController extends FrameWorkController<BaseDicitem> impl
 
         perEntity.setUpdateTime(new Date()); // 设置修改时间
         perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-        entity = thisService.merge(perEntity);// 执行修改方法
+        entity = thisService.doMerge(perEntity);// 执行修改方法
         // 重新将字典ID和字典名称返回至前端
         entity.setDicId(dicId);
         entity.setDicName(dicName);
@@ -210,7 +210,7 @@ public class BaseDicitemController extends FrameWorkController<BaseDicitem> impl
             BaseDic dictionary = dictionaryService.getByProerties("dicCode", dicCode);
             String hql = " from BaseDicitem where isDelete=0 and dicId='" + dictionary.getUuid()
                     + "' order by orderIndex asc, itemCode asc ";
-            List<BaseDicitem> lists = thisService.doQuery(hql);
+            List<BaseDicitem> lists = thisService.getQuery(hql);
             strData = jsonBuilder.buildObjListToJson(new Long(lists.size()), lists, false);
             DictionaryItemCache.push(dicCode, strData);
             writeJSON(response, strData);

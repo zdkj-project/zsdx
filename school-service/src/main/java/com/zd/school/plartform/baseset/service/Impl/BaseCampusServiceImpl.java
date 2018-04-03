@@ -54,7 +54,7 @@ public class BaseCampusServiceImpl extends BaseServiceImpl<BaseCampus> implement
         BeanUtils.copyPropertiesExceptNull(entity, saveEntity);
         //entity.setOrderIndex(0);//排序
         entity.setCreateUser(currentUser.getXm());
-        entity = this.merge(entity);
+        entity = this.doMerge(entity);
 
         //增加到建筑物的区域
         BuildRoomarea roomarea = new BuildRoomarea(entity.getUuid());
@@ -66,7 +66,7 @@ public class BaseCampusServiceImpl extends BaseServiceImpl<BaseCampus> implement
         roomarea.setLeaf(true);
         roomarea.setNodeLevel(2);
         roomarea.setTreeIds(currentUser.getSchoolId() + "," + entity.getUuid());
-        areaService.merge(roomarea);
+        areaService.doMerge(roomarea);
 
         //增加到部门的第二级
         BaseOrg orgSave = new BaseOrg(entity.getUuid());
@@ -80,9 +80,9 @@ public class BaseCampusServiceImpl extends BaseServiceImpl<BaseCampus> implement
 
         BaseOrg parEntity = orgService.get(entity.getSchoolId());
         parEntity.setLeaf(false);
-        orgService.merge(parEntity);
+        orgService.doMerge(parEntity);
         orgSave.BuildNode(parEntity);
-        orgService.merge(orgSave);
+        orgService.doMerge(orgSave);
 
         return entity;
     }
@@ -99,14 +99,14 @@ public class BaseCampusServiceImpl extends BaseServiceImpl<BaseCampus> implement
 
         perEntity.setUpdateTime(new Date()); //设置修改时间
         perEntity.setUpdateUser(currentUser.getXm()); //设置修改人的中文名
-        entity = this.merge(perEntity);//执行修改方法
+        entity = this.doMerge(perEntity);//执行修改方法
 
         //更新建筑物区域中对应的名称
         BuildRoomarea roomarea = areaService.get(entity.getUuid());
         roomarea.setNodeText(entity.getCampusName());
         roomarea.setUpdateTime(new Date());
         roomarea.setUpdateUser(currentUser.getXm());
-        areaService.merge(roomarea);
+        areaService.doMerge(roomarea);
 
         //更新部门名称
         BaseOrg orgSave = orgService.get(entity.getUuid());
@@ -114,7 +114,7 @@ public class BaseCampusServiceImpl extends BaseServiceImpl<BaseCampus> implement
         orgSave.setOrderIndex(entity.getOrderIndex());
         orgSave.setUpdateTime(new Date());
         orgSave.setUpdateUser(currentUser.getXm());
-        orgService.merge(orgSave);
+        orgService.doMerge(orgSave);
         // TODO Auto-generated method stub
         return entity;
     }
@@ -141,9 +141,9 @@ public class BaseCampusServiceImpl extends BaseServiceImpl<BaseCampus> implement
         }
         if (canSb.length() > 0) {
             String s = StringUtils.trimLast(canSb.toString());
-            rs = orgService.logicDelOrRestore(s, StatuVeriable.ISDELETE);
-            rs = areaService.logicDelOrRestore(s, StatuVeriable.ISDELETE);
-            rs = this.logicDelOrRestore(s, StatuVeriable.ISDELETE);
+            rs = orgService.doLogicDelOrRestore(s, StatuVeriable.ISDELETE);
+            rs = areaService.doLogicDelOrRestore(s, StatuVeriable.ISDELETE);
+            rs = this.doLogicDelOrRestore(s, StatuVeriable.ISDELETE);
         } else {
             rs = false;
         }

@@ -52,7 +52,7 @@ public class BaseCampusController extends FrameWorkController<BaseCampus> implem
     public void list(@ModelAttribute BaseCampus entity, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String strData = ""; // 返回给js的数据
-        QueryResult<BaseCampus> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+        QueryResult<BaseCampus> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
                 super.sort(request), super.filter(request), true);
 
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -144,7 +144,7 @@ public class BaseCampusController extends FrameWorkController<BaseCampus> implem
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
             } else {

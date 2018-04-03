@@ -55,7 +55,7 @@ public class AcsTeacherfeatureServiceImpl extends BaseServiceImpl<AcsTeacherfeat
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<AcsTeacherfeature> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<AcsTeacherfeature> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 }

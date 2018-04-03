@@ -97,7 +97,7 @@ public class JwGradeclassteacherServiceImpl extends BaseServiceImpl<JwGradeclass
                         + "\",\"field\":\"graiId\"}]";
             }
         }
-        QueryResult<JwGradeclassteacher> qr = this.doPaginationQuery(start, limit, sort, queryFilter, true);
+        QueryResult<JwGradeclassteacher> qr = this.getPaginationQuery(start, limit, sort, queryFilter, true);
         QueryResult<TeaTeacherbase> teacherList = new QueryResult<TeaTeacherbase>();
         List<TeaTeacherbase> newList = new ArrayList<TeaTeacherbase>();
 /*        for (JwGradeclassteacher t : qr.getResultList()) {

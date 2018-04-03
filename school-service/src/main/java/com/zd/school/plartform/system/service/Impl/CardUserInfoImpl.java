@@ -30,7 +30,7 @@ public class CardUserInfoImpl extends BaseServiceImpl<CardUserInfo> implements C
     
     @Override
 	public QueryResult<CardUserInfo> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-        QueryResult<CardUserInfo> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+        QueryResult<CardUserInfo> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
 		return qResult;
 	}
     

@@ -61,7 +61,7 @@ public class BuildLaboratoryDefineController extends FrameWorkController<BuildLa
     public void list(@ModelAttribute BuildLaboratoryDefine entity, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String strData = ""; // 返回给js的数据
-        QueryResult<BuildLaboratoryDefine> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+        QueryResult<BuildLaboratoryDefine> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
                 super.sort(request), super.filter(request), true);
 
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -102,7 +102,7 @@ public class BuildLaboratoryDefineController extends FrameWorkController<BuildLa
                 entity.setCreateUser(userCh); //创建人
                 entity.setUpdateUser(userCh); //创建人的中文名
                 entity.setOrderIndex(orderIndex);//排序
-                thisService.merge(entity); // 执行添加方法
+                thisService.doMerge(entity); // 执行添加方法
                 
                 BuildRoominfo info = infoService.get(ids[i]);
                 info.setUpdateTime(new Date());
@@ -110,7 +110,7 @@ public class BuildLaboratoryDefineController extends FrameWorkController<BuildLa
                 info.setRoomType("4");//设置房间类型为教室--1.宿舍，2.办公室，3.教室，4、实验室，5、功能室，9、其它，0、未分配
                 info.setAreaStatu(1);//设置为已分配
                 //执行更新方法
-                infoService.merge(info);
+                infoService.doMerge(info);
             }
         //返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson("'成功'"));
@@ -144,9 +144,9 @@ public class BuildLaboratoryDefineController extends FrameWorkController<BuildLa
                     roominfo.setRoomType("0");//设置房间类型为空
                     roominfo.setAreaStatu(0);//设置房间状态为未分配
                     //执行更新方法
-                    infoService.merge(roominfo);
+                    infoService.doMerge(roominfo);
                     defin.setIsDelete(1);
-                    thisService.merge(defin);
+                    thisService.doMerge(defin);
                     ++fs;
             }
             if (fs > 0) {

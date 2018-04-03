@@ -60,7 +60,7 @@ public class JwPublishcourseServiceImpl extends BaseServiceImpl<JwPublishcourse>
                 hql.append(" order by  " + sortSql);
         }
 
-        QueryResult<JwPublishcourse> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<JwPublishcourse> qResult = this.getQueryResult(hql.toString(), start, limit);
         return qResult;
     }
 
@@ -86,7 +86,7 @@ public class JwPublishcourseServiceImpl extends BaseServiceImpl<JwPublishcourse>
                 hasGrade.addAll(grades);
                 saveEntity.setPcourseGrade(hasGrade);
                 
-                this.merge(saveEntity);
+                this.doMerge(saveEntity);
             }
             result = true;
 		} catch (Exception e) {
@@ -110,7 +110,7 @@ public class JwPublishcourseServiceImpl extends BaseServiceImpl<JwPublishcourse>
                 hasGrade.addAll(grades);
                 course.setPcourseGrade(hasGrade);
                 
-                this.merge(course);
+                this.doMerge(course);
             }
             result = true;
 		} catch (Exception e) {

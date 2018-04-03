@@ -53,7 +53,7 @@ public class DocRecexaminesServiceImpl extends BaseServiceImpl<DocRecexamines> i
 		perEntity.setUpdateTime(new Date()); // 设置修改时间
 		perEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 		perEntity.setState("1");
-		entity = this.merge(perEntity);// 执行修改方法
+		entity = this.doMerge(perEntity);// 执行修改方法
 
 		String docrecId = entity.getDocrecId();
 		// 插入当前操作人设置的下一步操作人
@@ -67,7 +67,7 @@ public class DocRecexaminesServiceImpl extends BaseServiceImpl<DocRecexamines> i
 				saveEntity.setUserId(st);
 				saveEntity.setState("0");
 				saveEntity.setRecexamType(distribType);
-				this.persist(saveEntity);
+				this.doPersist(saveEntity);
 				
 	        	SysUser user = userService.get(st);
 	        	String regStatus="您好," + user.getXm() + "老师,有公文需要您尽快批阅!";
@@ -80,10 +80,10 @@ public class DocRecexaminesServiceImpl extends BaseServiceImpl<DocRecexamines> i
 		Integer count = this.getCount(hql);
 		if (count == 0) {
 			String hql2 = "update DocReceive set docrecState=3 where uuid='" + docrecId + "'";
-			this.executeHql(hql2);
+			this.doExecuteHql(hql2);
 		} else {
 			String hql2 = "update DocReceive set docrecState=2 where uuid='" + docrecId + "'";
-			this.executeHql(hql2);
+			this.doExecuteHql(hql2);
 		}
 		// TODO Auto-generated method stub
 		return perEntity;
@@ -119,7 +119,7 @@ public class DocRecexaminesServiceImpl extends BaseServiceImpl<DocRecexamines> i
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<DocRecexamines> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<DocRecexamines> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 

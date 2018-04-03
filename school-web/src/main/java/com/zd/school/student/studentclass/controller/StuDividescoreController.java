@@ -73,7 +73,7 @@ public class StuDividescoreController extends FrameWorkController<StuDividescore
     public void list(@ModelAttribute StuDividescore entity, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         String strData = ""; // 返回给js的数据
-        QueryResult<StuDividescore> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+        QueryResult<StuDividescore> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
                 super.sort(request), super.filter(request), true);
 
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -151,7 +151,7 @@ public class StuDividescoreController extends FrameWorkController<StuDividescore
 						student.setScore(new BigDecimal(studentList.get(5))); // 设置分数
 						student.setCreateTime(new Date());// 设置创建时间
 						student.setCreateUser(userCh);// 创建人
-						thisService.merge(student);
+						thisService.doMerge(student);
 						++count;
 					}
 
@@ -245,7 +245,7 @@ public class StuDividescoreController extends FrameWorkController<StuDividescore
 						student.setScore(new BigDecimal(studentList.get(5))); // 设置分数
 						student.setCreateTime(new Date());// 设置创建时间
 						student.setCreateUser(userCh);// 创建人
-						thisService.merge(student);
+						thisService.doMerge(student);
 						++count;
 					}
 

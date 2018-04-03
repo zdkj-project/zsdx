@@ -49,7 +49,7 @@ public class CashExpenseserialServiceImpl extends BaseServiceImpl<CashExpenseser
     private CashExpensedetailService billDetailService;
     @Override
     public QueryResult<CashExpenseserial> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-        QueryResult<CashExpenseserial> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+        QueryResult<CashExpenseserial> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
         return qResult;
     }
 
@@ -67,7 +67,7 @@ public class CashExpenseserialServiceImpl extends BaseServiceImpl<CashExpenseser
             Object[] conditionValue = ids.split(",");
             String[] propertyName = {"isDelete", "updateUser", "updateTime"};
             Object[] propertyValue = {1, currentUser.getXm(), new Date()};
-            this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+            this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
             delResult = true;
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -91,7 +91,7 @@ public class CashExpenseserialServiceImpl extends BaseServiceImpl<CashExpenseser
             copyProperties(saveEntity, entity);
             saveEntity.setUpdateTime(new Date()); // 设置修改时间
             saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-            entity = this.merge(saveEntity);// 执行修改方法
+            entity = this.doMerge(saveEntity);// 执行修改方法
 
             return entity;
         } catch (IllegalAccessException e) {
@@ -118,7 +118,7 @@ public class CashExpenseserialServiceImpl extends BaseServiceImpl<CashExpenseser
             excludedProp.add("uuid");
             copyProperties(saveEntity, entity, excludedProp);
             saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
-            entity = this.merge(saveEntity);// 执行修改方法
+            entity = this.doMerge(saveEntity);// 执行修改方法
 
             return entity;
         } catch (IllegalAccessException e) {
@@ -142,7 +142,7 @@ public class CashExpenseserialServiceImpl extends BaseServiceImpl<CashExpenseser
         saveEntity.setConsumeDate(DateUtil.getDate(bill.getTestDate(),"yyyy-MM-dd HH:mm:ss"));
         saveEntity.setCreateUser(oper);
         saveEntity.setUpdateUser(oper);
-        bill = this.merge(saveEntity);// 执行修改方法
+        bill = this.doMerge(saveEntity);// 执行修改方法
 
         String expenseserialId = bill.getUuid();
         for (CashExpensedetail  bi : billDetails) {
@@ -152,7 +152,7 @@ public class CashExpenseserialServiceImpl extends BaseServiceImpl<CashExpenseser
             saveBillItem.setCreateUser(oper);
             saveBillItem.setUpdateUser(oper);
 
-            billDetailService.merge(saveBillItem);
+            billDetailService.doMerge(saveBillItem);
         }
 
         return true;
@@ -167,7 +167,7 @@ public class CashExpenseserialServiceImpl extends BaseServiceImpl<CashExpenseser
         saveEntity.setConsumeState("销单");
         saveEntity.setUpdateTime(new Date()); // 设置修改时间
         saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-        this.merge(saveEntity);// 执行修改方法
+        this.doMerge(saveEntity);// 执行修改方法
         
         return 1;
         
@@ -182,7 +182,7 @@ public class CashExpenseserialServiceImpl extends BaseServiceImpl<CashExpenseser
         saveEntity.setExtField05(remark);
         saveEntity.setUpdateTime(new Date()); // 设置修改时间
         saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-        this.merge(saveEntity);// 执行修改方法
+        this.doMerge(saveEntity);// 执行修改方法
         
         return 1;
         

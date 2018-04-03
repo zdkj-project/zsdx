@@ -77,7 +77,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 		// 若为学校部门，则查询出所有的用户
 		if (deptId.equals("2851655E-3390-4B80-B00C-52C7CA62CB39")) {
 			
-			QueryResult<SysUser> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+			QueryResult<SysUser> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
 					super.sort(request), super.filter(request), true);
 			strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
 		
@@ -330,7 +330,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			return;
 		} else {
 			String[] delId = delIds.split(",");
-			thisService.updateByProperties("uuid", delId, "state", "1");
+			thisService.doUpdateByProperties("uuid", delId, "state", "1");
 			writeJSON(response, jsonBuilder.returnSuccessJson("'锁定成功'"));
 		}
 	}
@@ -343,7 +343,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			return;
 		} else {
 			String[] delId = delIds.split(",");
-			thisService.updateByProperties("uuid", delId, "state", "0");
+			thisService.doUpdateByProperties("uuid", delId, "state", "0");
 			writeJSON(response, jsonBuilder.returnSuccessJson("'解锁成功'"));
 		}
 	}
@@ -357,7 +357,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 		} else {
 			String[] delId = delIds.split(",");
 			String userPwd = new Sha256Hash("123456").toHex();
-			thisService.updateByProperties("uuid", delId, "userPwd", userPwd);
+			thisService.doUpdateByProperties("uuid", delId, "userPwd", userPwd);
 			writeJSON(response, jsonBuilder.returnSuccessJson("'重置密码成功'"));
 		}
 	}
@@ -399,7 +399,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 	public void getTeacherlist(@ModelAttribute SysDatapermission entity, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		String strData = ""; // 返回给js的数据
-		QueryResult<SysUser> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+		QueryResult<SysUser> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
 				super.sort(request), super.filter(request), true);
 
 		strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -414,7 +414,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 		String strData = ""; // 返回给js的数据
 		String ids = request.getParameter("ids");
 		String hql = "from SysUser a where uuid in ('" + ids.replace(",", "','") + "')";
-		List<SysUser> userList = thisService.doQuery(hql);
+		List<SysUser> userList = thisService.getQuery(hql);
 
 		strData = jsonBuilder.buildObjListToJson((long) userList.size(), userList, true);// 处理数据
 		writeJSON(response, strData);// 返回数据
@@ -745,7 +745,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			hql += " and deptId ='" + deptId + "'";
 		}
 		hql += " order by jobId asc";
-		sysUserList = thisService.doQuery(hql);
+		sysUserList = thisService.getQuery(hql);
 
 		// 处理班级基本数据
 		List<Map<String, String>> traineeList = new ArrayList<>();

@@ -109,13 +109,13 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
     	String versionsSql="select max(ISDELETE) from dbo.JW_T_COURSE_ARRANGE where CLASS_NAME='"+cname+"'";
     	Integer isdelete=thisService.getCountSql(versionsSql);
     	String copySql="insert into JW_T_COURSE_ARRANGE select NEWID(), SCHOOL_ID, SCHOOL_NAME, SCHOOL_YEAR, SCHOOL_TERM, CLAI_ID, CLASS_CODE, CLASS_NAME, TEACH_TIME, COURSE_ID01, COURSE_NAME01, TTEAC_ID01, TEACHER_GH01, TEACHER_NAME01, COURSE_ID02, COURSE_NAME02, TTEAC_ID02, TEACHER_GH02, TEACHER_NAME02, COURSE_ID03, COURSE_NAME03, TTEAC_ID03, TEACHER_GH03, TEACHER_NAME03, COURSE_ID04, COURSE_NAME04, TTEAC_ID04, TEACHER_GH04, TEACHER_NAME04, COURSE_ID05, COURSE_NAME05, TTEAC_ID05, TEACHER_GH05, TEACHER_NAME05, COURSE_ID06, COURSE_NAME06, TTEAC_ID06, TEACHER_GH06, TEACHER_NAME06, COURSE_ID07, COURSE_NAME07, TTEAC_ID07, TEACHER_GH07, TEACHER_NAME07, EXT_FIELD01, EXT_FIELD02, EXT_FIELD03, EXT_FIELD04, 0, ORDER_INDEX, CREATE_TIME, CREATE_USER, UPDATE_TIME, UPDATE_USER, "+(isdelete+1)+", VERSION, '"+startime+"', '"+endtime+"' from dbo.JW_T_COURSE_ARRANGE where CLASS_NAME='"+cname+"' and EXT_FIELD05=1";
-    	thisService.executeSql(copySql);
+    	thisService.doExecuteSql(copySql);
     	String updateSql="update JW_T_COURSE_ARRANGE set EXT_FIELD05=case when ISDELETE="+(isdelete+1)+" then 1 else 0 end where CLASS_NAME='"+cname+"'";
-    	thisService.executeSql(updateSql);
+    	thisService.doExecuteSql(updateSql);
 
         // hql语句
         StringBuffer hql = new StringBuffer("from " + entity.getClass().getSimpleName() + " where className='"+cname+"' and extField05=1 order by className,teachTime asc");
-        List<JwCourseArrange> lists = thisService.doQuery(hql.toString());// 执行查询方法
+        List<JwCourseArrange> lists = thisService.getQuery(hql.toString());// 执行查询方法
         List<JwCourseArrange> newlists=new ArrayList<JwCourseArrange>();
         for(JwCourseArrange jca:lists){
         	jca.setWeekOne(jca.getCourseName01()+"("+jca.getTeacherName01()+")");
@@ -140,7 +140,7 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
             throws IOException {
         // hql语句
     	String hql="from TeaTeacherbase where isdelete=0 and xm like '%"+tname+"%'";
-        List<TeaTeacherbase> list = teacherService.doQuery(hql);// 执行查询方法
+        List<TeaTeacherbase> list = teacherService.getQuery(hql);// 执行查询方法
         return list;
     }
     //更新代课数据
@@ -150,7 +150,7 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
             throws IOException {
     	String[] str=updateteacher.split(",");
     	String sql="update JW_T_COURSE_ARRANGE set COURSE_ID"+weekX+"='"+str[0]+"',COURSE_NAME"+weekX+"='"+str[1]+"',TTEAC_ID"+weekX+"='"+str[2]+"',TEACHER_GH"+weekX+"='"+str[3]+"',TEACHER_NAME"+weekX+"='"+str[4]+"' where CLASS_NAME='"+cname+"' and TEACH_TIME="+(Integer.parseInt(timeY)+1)+" and ISDELETE="+isdelete+"";
-    	thisService.executeSql(sql);
+    	thisService.doExecuteSql(sql);
     }
     
     
@@ -160,7 +160,7 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
             throws IOException {
         // hql语句
     	String hql="from JwTGradeclass where isDelete=0 order by graiId,nj,orderIndex";
-        List<JwTGradeclass> list = classService.doQuery(hql);// 执行查询方法
+        List<JwTGradeclass> list = classService.getQuery(hql);// 执行查询方法
         return list;
     }
 
@@ -199,7 +199,7 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
         entity.setCreateUser(userCh); //创建人
         		
 		//持久化到数据库
-		entity = thisService.merge(entity);
+		entity = thisService.doMerge(entity);
 		
 		//返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -222,7 +222,7 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {
@@ -248,7 +248,7 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
             } else {
@@ -405,8 +405,8 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
     		String week1=zh(place1);
     		String week2=zh(place2);
     		
-    		thisService.executeHql(hql1);
-    		thisService.executeHql(hql2);
+    		thisService.doExecuteHql(hql1);
+    		thisService.doExecuteHql(hql2);
     		String push1=tname1+",由于课程临时调整，你在"+classname+""+week2+"第"+time2+"节的"+cname1+"课,调换到"+week1+"第"+time1+"节。特此通知！";
     		String push2=tname2+",由于课程临时调整，你在"+classname+""+week1+"第"+time1+"节的"+cname2+"课,调换到"+week2+"第"+time2+"节。特此通知！";
     		PushInfo push=new PushInfo();
@@ -418,7 +418,7 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
     		push.setPushWay(1);
     		push.setRegTime(new Date());
     		push.setEventType("调课通知");
-    		pushService.merge(push);
+    		pushService.doMerge(push);
     		
     		pushtwo.setEmplNo(tgh2);
     		pushtwo.setEmplName(tname2);
@@ -427,7 +427,7 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
     		pushtwo.setPushWay(1);
     		pushtwo.setRegTime(new Date());
     		pushtwo.setEventType("调课通知");
-    		pushService.merge(pushtwo);	
+    		pushService.doMerge(pushtwo);	
         	return "true";
     	}else if(count1>0){
     		return "false1";
@@ -450,7 +450,7 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
     public @ResponseBody String copylist(String startime,String endtime,String cname,String isdelete,HttpServletRequest request, HttpServletResponse response) throws IOException {
 		Integer copycount=previewlist(cname, request, response);
     	String sql="insert into  dbo.JW_T_COURSE_ARRANGE select NEWID(),SCHOOL_ID, SCHOOL_NAME, SCHOOL_YEAR, SCHOOL_TERM, CLAI_ID, CLASS_CODE, CLASS_NAME, TEACH_TIME, COURSE_ID01, COURSE_NAME01, TTEAC_ID01, TEACHER_GH01, TEACHER_NAME01, COURSE_ID02, COURSE_NAME02, TTEAC_ID02, TEACHER_GH02, TEACHER_NAME02, COURSE_ID03, COURSE_NAME03, TTEAC_ID03, TEACHER_GH03, TEACHER_NAME03, COURSE_ID04, COURSE_NAME04, TTEAC_ID04, TEACHER_GH04, TEACHER_NAME04, COURSE_ID05, COURSE_NAME05, TTEAC_ID05, TEACHER_GH05, TEACHER_NAME05, COURSE_ID06, COURSE_NAME06, TTEAC_ID06, TEACHER_GH06, TEACHER_NAME06, COURSE_ID07, COURSE_NAME07, TTEAC_ID07, TEACHER_GH07, TEACHER_NAME07, EXT_FIELD01, EXT_FIELD02, EXT_FIELD03, EXT_FIELD04, 0, ORDER_INDEX, CREATE_TIME, CREATE_USER, UPDATE_TIME, UPDATE_USER, "+copycount+", VERSION, '"+startime+"', '"+endtime+"' from dbo.JW_T_COURSE_ARRANGE where isdelete="+Integer.parseInt(isdelete)+" and CLASS_NAME='"+cname+"';";
-		Integer count=thisService.executeSql(sql);
+		Integer count=thisService.doExecuteSql(sql);
     	if(count>0){
     		return "true";
     	}else
@@ -479,7 +479,7 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
     @RequestMapping("/start")
     public @ResponseBody String start(String cname,String isdelete,HttpServletRequest request, HttpServletResponse response) throws IOException {		
     	String sql="update dbo.JW_T_COURSE_ARRANGE set EXT_FIELD05=case when ISDELETE='"+isdelete+"' then 1 else 0 end where CLASS_NAME='"+cname+"'";
-    	Integer count=thisService.executeSql(sql);
+    	Integer count=thisService.doExecuteSql(sql);
     	if(count>0){
     		return "true";
     	}else
@@ -552,7 +552,7 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
 						List<JwCourseteacher> courseTeacherList = null;
 						try{
 							courseTeacherList = courseTeacherService
-							.doQuery(courseTeacherHQL.toString());
+							.getQuery(courseTeacherHQL.toString());
 						}catch(Exception e){
 							e.printStackTrace();
 						}
@@ -632,7 +632,7 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
 					entity.setSchoolId("2851655E-3390-4B80-B00C-52C7CA62CB39");
 					entity.setSchoolName("深大附中");
 					entity.setExtField05("1");
-					thisService.merge(entity);
+					thisService.doMerge(entity);
 				}
 			}
 		}catch (Exception e){
@@ -650,7 +650,7 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
 	public  @ResponseBody List<JwXyz> getTname(String cname,String tname,String isdelete,String weekX,String timeY,HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
     	String hql="from JwTGradeclass where className='"+cname+"'";
-    	List<JwTGradeclass> list=jwClassService.doQuery(hql);
+    	List<JwTGradeclass> list=jwClassService.getQuery(hql);
     	String sql=" select user_id,xm from SYS_T_USER where USER_ID in (select tteac_id from JW_T_COURSETEACHER where CLAI_ID='"+list.get(0).getUuid()+"')";
     	List<Object[]> listo=userService.ObjectQuerySql(sql);
     	for (Object[] objects : listo) {
@@ -666,7 +666,7 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
     	JwXyz xyz=null;
     	for(int i=1;i<=7;i++){
     		String hql1="from JwCourseArrange where teacherName0"+i+"='"+tname+"' and isDelete="+isdelete+"";
-    		List<JwCourseArrange> list1=thisService.doQuery(hql1);
+    		List<JwCourseArrange> list1=thisService.getQuery(hql1);
     		for(int j=0;j<list1.size();j++){
     			xyz=new JwXyz();
     			list1.get(j).getTeachTime();
@@ -685,7 +685,7 @@ public class JwTProbationController extends FrameWorkController<JwCourseArrange>
 	public @ResponseBody List<String> getTnametwo(String cname,String tname,String isdelete,String weekX,String timeY,HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
     	String hql="from JwTGradeclass where className='"+cname+"'";
-    	List<JwTGradeclass> list=jwClassService.doQuery(hql);
+    	List<JwTGradeclass> list=jwClassService.getQuery(hql);
     	String sql=" select user_id,xm from SYS_T_USER where USER_ID in (select tteac_id from JW_T_COURSETEACHER where CLAI_ID='"+list.get(0).getUuid()+"')";
     	List<Object[]> listo=userService.ObjectQuerySql(sql);
     	for (Object[] objects : listo) {

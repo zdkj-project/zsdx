@@ -128,7 +128,7 @@ public class AjaxRequestAuthorizationFilter extends PassThruAuthenticationFilter
 			        
 			        //模拟登录
 			        sysUser.setLoginTime(new Date());
-			        sysUserService.merge(sysUser);
+			        sysUserService.doMerge(sysUser);
 			        			    		
 			    	session.setTimeout(1000 * 60 * 30 * 8);
 			        
@@ -146,7 +146,7 @@ public class AjaxRequestAuthorizationFilter extends PassThruAuthenticationFilter
 					String updateHql = "update SysUserLoginLog o set o.offlineDate=CONVERT(datetime,'" + updateTime
 							+ "'),o.offlineIntro='切换账户退出' where o.offlineDate is null and o.isDelete=0 and o.sessionId='"
 							+ sessionId + "' and o.userId!='"+userId+"'";
-					sysUserLoginLogService.executeHql(updateHql);
+					sysUserLoginLogService.doExecuteHql(updateHql);
 					
 					if (!sysUserLoginLogService.IsFieldExist("userId", userId, "-1", " o.sessionId='" + sessionId + "'")) {
 						SysUserLoginLog loginLog = new SysUserLoginLog();
@@ -156,7 +156,7 @@ public class AjaxRequestAuthorizationFilter extends PassThruAuthenticationFilter
 						loginLog.setIpHost(session.getHost());
 						loginLog.setLoginDate(session.getLastAccessTime());
 						loginLog.setLastAccessDate(session.getLastAccessTime());
-						sysUserLoginLogService.merge(loginLog);
+						sysUserLoginLogService.doMerge(loginLog);
 					}
 					
 					Calendar a = Calendar.getInstance();

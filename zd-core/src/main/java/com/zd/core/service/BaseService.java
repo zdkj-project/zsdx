@@ -17,7 +17,7 @@ public interface BaseService<E> {
      *
      * @param entity 对象实体
      */
-    public void persist(E entity);
+    public void doPersist(E entity);
 
     /**
      * 根据多个id参数删除对象
@@ -25,14 +25,14 @@ public interface BaseService<E> {
      * @param id 多个id，以英文逗号隔开
      * @return 返回true或者false
      */
-    public boolean deleteByPK(Serializable... id);
+    public boolean doDeleteByPK(Serializable... id);
 
     /**
      * 删除对象实体
      *
      * @param entity 对象实体
      */
-    public void delete(E entity);
+    public void doDelete(E entity);
 
     /**
      * 以HQL的方式，根据单个属性删除对象实体
@@ -40,7 +40,7 @@ public interface BaseService<E> {
      * @param propName  属性名称
      * @param propValue 属性值
      */
-    public void deleteByProperties(String propName, Object propValue);
+    public void doDeleteByProperties(String propName, Object propValue);
 
     /**
      * 以HQL的方式，根据多个属性删除对象实体
@@ -48,14 +48,14 @@ public interface BaseService<E> {
      * @param propName  属性名称
      * @param propValue 属性值
      */
-    public void deleteByProperties(String[] propName, Object[] propValue);
+    public void doDeleteByProperties(String[] propName, Object[] propValue);
 
     /**
      * 根据给定的Detached对象标识符更新对象实体
      *
      * @param entity 对象实体
      */
-    public void update(E entity);
+    public void doUpdate(E entity);
 
     /**
      * 根据多个属性条件更新对象实体多个属性
@@ -65,7 +65,7 @@ public interface BaseService<E> {
      * @param propertyName   UPDATE子句属性数组名称
      * @param propertyValue  UPDATE子句属性数组值
      */
-    public void updateByProperties(String[] conditionName, Object[] conditionValue, String[] propertyName,
+    public void doUpdateByProperties(String[] conditionName, Object[] conditionValue, String[] propertyName,
                                    Object[] propertyValue);
 
     /**
@@ -76,7 +76,7 @@ public interface BaseService<E> {
      * @param propertyName   UPDATE子句属性名称
      * @param propertyValue  UPDATE子句属性值
      */
-    public void updateByProperties(String[] conditionName, Object[] conditionValue, String propertyName,
+    public void doUpdateByProperties(String[] conditionName, Object[] conditionValue, String propertyName,
                                    Object propertyValue);
 
     /**
@@ -87,7 +87,7 @@ public interface BaseService<E> {
      * @param propertyName   UPDATE子句属性数组名称
      * @param propertyValue  UPDATE子句属性数组值
      */
-    public void updateByProperties(String conditionName, Object conditionValue, String[] propertyName,
+    public void doUpdateByProperties(String conditionName, Object conditionValue, String[] propertyName,
                                    Object[] propertyValue);
 
     /**
@@ -98,7 +98,7 @@ public interface BaseService<E> {
      * @param propertyName   UPDATE子句属性名称
      * @param propertyValue  UPDATE子句属性值
      */
-    public void updateByProperties(String conditionName, Object conditionValue, String propertyName,
+    public void doUpdateByProperties(String conditionName, Object conditionValue, String propertyName,
                                    Object propertyValue);
 
     /**
@@ -107,7 +107,7 @@ public interface BaseService<E> {
      * @param entity 待更新的对象实体
      * @param oldId  已存在的对象实体主键
      */
-    public void update(E entity, Serializable oldId);
+    public void doUpdate(E entity, Serializable oldId);
 
     /**
      * 合并给定的对象实体状态到当前的持久化上下文
@@ -115,7 +115,7 @@ public interface BaseService<E> {
      * @param entity 给定的对象实体
      * @return 返回对象实体
      */
-    public E merge(E entity);
+    public E doMerge(E entity);
 
     /**
      * 根据ID立即加载持久化对象实体
@@ -277,7 +277,7 @@ public interface BaseService<E> {
      *
      * @return 返回对象实体列表
      */
-    public List<E> doQueryAll();
+    public List<E> getQueryAll();
 
     /**
      * 根据排序条件和要返回的记录数目查询出对象实体列表
@@ -286,7 +286,7 @@ public interface BaseService<E> {
      * @param top             要返回的记录数目
      * @return 返回对象实体列表
      */
-    public List<E> doQueryAll(Map<String, String> sortedCondition, Integer top);
+    public List<E> getQueryAll(Map<String, String> sortedCondition, Integer top);
 
     /**
      * 根据要返回的记录数目查询出对象实体列表
@@ -294,7 +294,7 @@ public interface BaseService<E> {
      * @param top 要返回的记录数目
      * @return 返回对象实体列表
      */
-    public List<E> doQueryAll(Integer top);
+    public List<E> getQueryAll(Integer top);
 
     /**
      * 根据HQL查询实体列表
@@ -302,7 +302,7 @@ public interface BaseService<E> {
      * @param hql 查询语句
      * @return
      */
-    public List<E> doQuery(String hql);
+    public List<E> getQuery(String hql);
 
     /**
      * 根据HQL查询实体列表
@@ -312,9 +312,9 @@ public interface BaseService<E> {
      * @param limit 返回最大记录数
      * @return
      */
-    public List<E> doQuery(String hql, Integer start, Integer limit);
+    public List<E> getQuery(String hql, Integer start, Integer limit);
 
-    public List<E> doQuery(String hql, Integer start, Integer limit, String propName, Object[] objs);
+    public List<E> getQuery(String hql, Integer start, Integer limit, String propName, Object[] objs);
 
     /**
      * 根据HQL语句返回对象实体数目
@@ -332,7 +332,7 @@ public interface BaseService<E> {
      * @param hql 要执行的HQL语句
      * @return 受影响的记录数
      */
-    public Integer executeHql(String hql);
+    public Integer doExecuteHql(String hql);
 
     /**
      * 判断字段的值是否存在 如果是插入id赋值-1或者new Guid,如果是修改id赋值 要修改项的值
@@ -362,7 +362,7 @@ public interface BaseService<E> {
      * @param isDelete 处理标记
      * @return
      */
-    public boolean logicDelOrRestore(String ids, String isDelete);
+    public boolean doLogicDelOrRestore(String ids, String isDelete);
 
     /**
      * 生成指定实体的默认排序号
@@ -395,7 +395,7 @@ public interface BaseService<E> {
      * @param sql 查询语句
      * @return
      */
-    public List<E> doQuerySql(String sql);
+    public List<E> getQuerySql(String sql);
 
     /**
      * 根据SQL查询对象集合
@@ -405,12 +405,12 @@ public interface BaseService<E> {
      */
     public List<Object[]> ObjectQuerySql(String sql);
 
-    public QueryResult<E> doPaginationQuery(Integer start, Integer limit, String sort, String filter, boolean isDelete);
+    public QueryResult<E> getPaginationQuery(Integer start, Integer limit, String sort, String filter, boolean isDelete);
 
-    public <T> QueryResult<T> doQueryCountToHql(Integer start, Integer limit, String sort, String filter, String hql,
+    public <T> QueryResult<T> getQueryCountToHql(Integer start, Integer limit, String sort, String filter, String hql,
                                                 String groupBy, String orderBy);
 
-    public <T> QueryResult<T> doQueryCountToHql(Integer start, Integer limit, String sort, String filter, String hql,
+    public <T> QueryResult<T> getQueryCountToHql(Integer start, Integer limit, String sort, String filter, String hql,
                                                 String groupBy, String orderBy, String where);
 
     public <T> T getForValue(String hql, Object... args);
@@ -419,13 +419,13 @@ public interface BaseService<E> {
 
     public <T> List<T> doQuerySqlObject(String sql, Class<T> clz);
 
-    public Integer executeSql(String sql);
+    public Integer doExecuteSql(String sql);
 
     public Integer getCountSql(String sql);
 
-    public List<E> doQuery(String hql, String propName, Object[] objs);
+    public List<E> getQuery(String hql, String propName, Object[] objs);
 
-    public QueryResult<E> doQueryResult(String hql, Integer start, Integer limit);
+    public QueryResult<E> getQueryResult(String hql, Integer start, Integer limit);
 
 
     public <T> T getForValueToSql(String sql);
@@ -442,6 +442,6 @@ public interface BaseService<E> {
      * @param <T>   实体类的泛型参数
      * @return 返回转换后的结果
      */
-    public <T> QueryResult<T> doQueryResultSqlObject(String sql, Integer start, Integer limit, Class<T> clz);
+    public <T> QueryResult<T> getQueryResultSqlObject(String sql, Integer start, Integer limit, Class<T> clz);
 
 }

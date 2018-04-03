@@ -49,7 +49,7 @@ public class JwStuEnteredCourseController extends FrameWorkController<JwStuEnter
 		String hql = "from JwStuEnteredCourse where 1=1 ";
 		String whereSql = super.whereSql(request);
 		hql += whereSql;
-		QueryResult<JwStuEnteredCourse> qResult = thisService.doQueryResult(hql, start, limit);
+		QueryResult<JwStuEnteredCourse> qResult = thisService.getQueryResult(hql, start, limit);
 		strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
 	}
@@ -86,7 +86,7 @@ public class JwStuEnteredCourseController extends FrameWorkController<JwStuEnter
 			String hql = "from JwStuEnteredCourse  where 1=1 and publishId='" + publishId + "' and courseName='"
 					+ courseName + "'";
 
-			List<JwStuEnteredCourse> list = thisService.doQuery(hql);
+			List<JwStuEnteredCourse> list = thisService.getQuery(hql);
 			if (list.size() > 0) {
 				Row titleRow = sheet.createRow(rowIndex);
 				Cell titleCell = titleRow.createCell(0);

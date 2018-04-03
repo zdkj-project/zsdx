@@ -58,7 +58,7 @@ public class JwTAutoMonitor extends FrameWorkController<TeaTeacherbase> implemen
             throws IOException {
         // hql语句
     	String hql="from TeaTeacherbase";
-        List<TeaTeacherbase> list = teacherService.doQuery(hql);// 执行查询方法
+        List<TeaTeacherbase> list = teacherService.getQuery(hql);// 执行查询方法
         StringBuffer result=new StringBuffer();
         for(int i=0;i<list.size();i++){
         	if(i==(list.size()-1)){
@@ -79,11 +79,11 @@ public class JwTAutoMonitor extends FrameWorkController<TeaTeacherbase> implemen
         // 获得页面所有表单
         Map<String, String[]> paramMap = request.getParameterMap();
         String deletesql="truncate table JW_T_EXAM_SAVE";
-        teacherService.executeSql(deletesql);
+        teacherService.doExecuteSql(deletesql);
         for (String key : paramMap.keySet()) {
             String[] value = paramMap.get(key);
             String sql="insert into JW_T_EXAM_SAVE (exam_name,exam_value) values ('"+key+"','"+value[0]+"')";
-            teacherService.executeSql(sql);
+            teacherService.doExecuteSql(sql);
         }
     }
     
@@ -106,7 +106,7 @@ public class JwTAutoMonitor extends FrameWorkController<TeaTeacherbase> implemen
             throws IOException {
         // hql语句
     	String hql="from JwTGrade where isdelete=0";
-        List<JwTGrade> list = gradeService.doQuery(hql);// 执行查询方法
+        List<JwTGrade> list = gradeService.getQuery(hql);// 执行查询方法
         String strData = jsonBuilder.buildList(list,"");// 处理数据
         writeJSON(response, strData);// 返回数据
     }
@@ -151,7 +151,7 @@ public class JwTAutoMonitor extends FrameWorkController<TeaTeacherbase> implemen
         if (StringUtils.isNotEmpty(whereSql)) {
             sBuffer.append(whereSql);
         }
-        List<?> list = teacherService.doQuerySql(sBuffer.toString());
+        List<?> list = teacherService.getQuerySql(sBuffer.toString());
         //循环添加数据
         for (int i = 0; i < list.size(); i++) {
             Object[] obj = (Object[]) list.get(i);
@@ -256,7 +256,7 @@ public class JwTAutoMonitor extends FrameWorkController<TeaTeacherbase> implemen
                hql.append(str);
 		}
      
-        List<TeaTeacherbase> lists = teacherService.doQuery(hql.toString(), start, limit);// 执行查询方法
+        List<TeaTeacherbase> lists = teacherService.getQuery(hql.toString(), start, limit);// 执行查询方法
         List<TeaTeacherbase> newLists=new ArrayList<>();
         for (TeaTeacherbase jwtteacher : lists) {
         	jwtteacher.setUserNumb(jwtteacher.getUserNumb());    //得到的是教师的姓名

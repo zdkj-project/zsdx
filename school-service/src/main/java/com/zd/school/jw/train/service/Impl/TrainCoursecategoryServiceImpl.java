@@ -60,7 +60,7 @@ public class TrainCoursecategoryServiceImpl extends BaseServiceImpl<TrainCoursec
 
     @Override
     public QueryResult<TrainCoursecategory> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-        QueryResult<TrainCoursecategory> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+        QueryResult<TrainCoursecategory> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
         return qResult;
     }
 
@@ -78,11 +78,11 @@ public class TrainCoursecategoryServiceImpl extends BaseServiceImpl<TrainCoursec
             Object[] conditionValue = ids.split(",");
             String[] propertyName = {"isDelete", "updateUser", "updateTime"};
             Object[] propertyValue = {1, currentUser.getXm(), new Date()};
-            this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+            this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 
             //把课程分类下的课程也逻辑删除
             String hql = MessageFormat.format("update TrainCourseinfo set isDelete=1 where categoryId in (''{0}'')", ids.replace(",", "','"));
-            courseinfoService.executeHql(hql);
+            courseinfoService.doExecuteHql(hql);
 /*            for (int i = 0; i < conditionValue.length; i++) {
                 String hql = "update TrainCourseinfo set isDelete=1 where categoryId='" + conditionValue[i].toString() + "' ";
                 courseinfoService.executeHql(hql);
@@ -148,7 +148,7 @@ public class TrainCoursecategoryServiceImpl extends BaseServiceImpl<TrainCoursec
             saveEntity.setUpdateTime(new Date()); // 设置修改时间
             saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 
-            entity = this.merge(saveEntity);// 执行修改方法
+            entity = this.doMerge(saveEntity);// 执行修改方法
             if (!oldNodeText.equals(newNodeText) || !oldParentNode.equals(newParentNode)) {
                 //更新所有子分类及分类下的课程的编码
                 UpdateCode(newNodeCode, oldNodeCode);
@@ -187,7 +187,7 @@ public class TrainCoursecategoryServiceImpl extends BaseServiceImpl<TrainCoursec
                     saveEntity.setOrderIndex(newOrder);
                     saveEntity.setUpdateTime(new Date());
                     saveEntity.setUpdateUser(currentUser.getXm());
-                    this.merge(saveEntity);
+                    this.doMerge(saveEntity);
                 } else {
                     oldNodeCode = saveEntity.getNodeCode();
                     newNodeCode = oldNodeCode.substring(0, oldNodeCode.length() - 2) + StringUtils.addString(newOrder.toString(), "0", 2, "L");
@@ -195,11 +195,11 @@ public class TrainCoursecategoryServiceImpl extends BaseServiceImpl<TrainCoursec
                     saveEntity.setOrderIndex(newOrder);
                     saveEntity.setUpdateTime(new Date());
                     saveEntity.setUpdateUser(currentUser.getXm());
-                    this.merge(saveEntity);
+                    this.doMerge(saveEntity);
 
                     sql = "EXECUTE TRAIN_P_CHANGECOURSECATEGORYORDER ''{0}'',''{1}'',''{2}''";
                     sql = MessageFormat.format(sql, saveEntity.getUuid(), oldNodeCode, newNodeCode);
-                    this.doQuerySql(sql);
+                    this.getQuerySql(sql);
                     //this.UpdateCode(oldNodeCode, newNodeCode);
                 }
             }
@@ -218,7 +218,7 @@ public class TrainCoursecategoryServiceImpl extends BaseServiceImpl<TrainCoursec
 
         String sql1 = " update TRAIN_T_COURSEINFO set COURSE_CODE = replace(COURSE_CODE,''{0}'',''{1}'') where COURSE_CODE like ''{2}'%'' ";
         sql1 = MessageFormat.format(sql1, oldNodeCode, newNodeCode, oldNodeCode);
-        this.executeSql(sql + sql1);
+        this.doExecuteSql(sql + sql1);
     }
 
     /**
@@ -245,7 +245,7 @@ public class TrainCoursecategoryServiceImpl extends BaseServiceImpl<TrainCoursec
             saveEntity.setOrderIndex(orderIndex);
             nodeCode = BuildNode(saveEntity, nodeText, orderIndex, nodeCode, parentNode);
             saveEntity.setNodeCode(nodeCode);
-            entity = this.merge(saveEntity);// 执行修改方法
+            entity = this.doMerge(saveEntity);// 执行修改方法
 
             return entity;
         } catch (IllegalAccessException e) {
@@ -275,7 +275,7 @@ public class TrainCoursecategoryServiceImpl extends BaseServiceImpl<TrainCoursec
             parentLevel = parEntity.getNodeLevel();
             parentCode = parEntity.getNodeCode();
             parEntity.setLeaf(false);
-            this.merge(parEntity);
+            this.doMerge(parEntity);
             //根据上级节点的编码来生成当前的编码
             if (parentLevel == 0) {
                 //上级节点层次为0时，编码为拼音首字母大写
@@ -313,7 +313,7 @@ public class TrainCoursecategoryServiceImpl extends BaseServiceImpl<TrainCoursec
         StringBuffer countHql = new StringBuffer("select count(*) from TrainCoursecategory where 1=1");
         countHql.append(whereSql);
 
-        List<TrainCoursecategory> typeList = super.doQuery(hql.toString());
+        List<TrainCoursecategory> typeList = super.getQuery(hql.toString());
         List<TrainCoursecategoryTree> result = new ArrayList<TrainCoursecategoryTree>();
         // 构建Tree数据
         recursion(new TrainCoursecategoryTree(TreeVeriable.ROOT, new ArrayList<TrainCoursecategoryTree>()), result, typeList);
@@ -355,7 +355,7 @@ public class TrainCoursecategoryServiceImpl extends BaseServiceImpl<TrainCoursec
 
         String hql = " from  TrainCoursecategory  where orderIndex=(select max(orderIndex) from TrainCoursecategory where parentNode=''{0}'')";
         hql = MessageFormat.format(hql, parentNode);
-        List<TrainCoursecategory> list = this.doQuery(hql);
+        List<TrainCoursecategory> list = this.getQuery(hql);
         if (list.size() > 0) {
             orderIndex = (Integer) EntityUtil.getPropertyValue(list.get(0), "orderIndex") + 1;
         } else
@@ -376,7 +376,7 @@ public class TrainCoursecategoryServiceImpl extends BaseServiceImpl<TrainCoursec
         String nodeCode = StringUtils.ConvertWenziToPingYing(nodeText, CharConvertType.FIRSTUPPER, CharConvertType.RETURNFIRST);
         String hql = " from TrainCoursecategory where nodeCode = ''{0}'' ";
         hql = MessageFormat.format(hql, nodeCode);
-        List<TrainCoursecategory> list = this.doQuery(hql);
+        List<TrainCoursecategory> list = this.getQuery(hql);
         if (list.size() > 1) {
             nodeCode += "_" + StringUtils.addString(String.valueOf(list.size()), "0", 2, "L");
             return nodeCode;
@@ -395,7 +395,7 @@ public class TrainCoursecategoryServiceImpl extends BaseServiceImpl<TrainCoursec
             hql += " order by parentNode,orderIndex asc";
         else
             hql += orderSql;
-        List<TrainCoursecategory> list = this.doQuery(hql);
+        List<TrainCoursecategory> list = this.getQuery(hql);
         List<TrainCoursecategory> exportList = new ArrayList<>();
 
         //导出时要转换字典项

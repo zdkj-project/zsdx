@@ -58,7 +58,7 @@ public class CashDishesTimeController extends FrameWorkController<CashDinneritem
     	
 		List<CashDinnertime> mealTimeList = new ArrayList<CashDinnertime>();
     	String hql = "from  CashDinnertime WHERE isDelete=0 and beginTime<='"+mealtime+"' and endTime>='"+mealtime+"'";
-    	mealTimeList =cashDinnertimeService.doQuery(hql);
+    	mealTimeList =cashDinnertimeService.getQuery(hql);
     	
     	if(mealTimeList.size()==0){
     		writeJSON(response, "{}");
@@ -78,7 +78,7 @@ public class CashDishesTimeController extends FrameWorkController<CashDinneritem
 		String strData = "";
 		List<CashDinneritem> mealList = new ArrayList<CashDinneritem>();
     		hql = "from  CashDinneritem WHERE isDelete=0 and mealType='"+mealtype+"'";
-    		mealList =thisService.doQuery(hql);
+    		mealList =thisService.getQuery(hql);
     		for(int j=0;j<mealList.size();j++) {
     			if(strData!="") {
     				strData = strData+","+"{"+'"'+"mealName"+'"'+":"+'"'+mealList.get(j).getMealName()+'"'+","+'"'+"mealPrice"+'"'+":"+'"'+mealList.get(j).getMealPrice()+'"'+"}";

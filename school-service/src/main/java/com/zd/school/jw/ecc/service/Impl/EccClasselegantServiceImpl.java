@@ -53,7 +53,7 @@ public class EccClasselegantServiceImpl extends BaseServiceImpl<EccClasselegant>
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<EccClasselegant> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<EccClasselegant> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 }

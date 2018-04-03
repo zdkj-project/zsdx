@@ -44,17 +44,17 @@ public class OaNoticerightServiceImpl extends BaseServiceImpl<OaNoticeright> imp
 		String filterSql = StringUtils.convertFilterToSql(filter);
 		StringBuffer hql = new StringBuffer("from SysRole as r inner join fetch r.sysPermissions as p ");
 		hql.append("where p.perText='通知公告' and r.isDelete=0 and p.isDelete=0 ");
-		List<SysRole> roleList = roleService.doQuery(hql.toString());
+		List<SysRole> roleList = roleService.getQuery(hql.toString());
 
 		hql = new StringBuffer("from OaNoticeright o where 1=1 ");
-		List<OaNoticeright> noticeList = this.doQuery(hql.toString());
+		List<OaNoticeright> noticeList = this.getQuery(hql.toString());
 
 		if (noticeList == null || noticeList.size() == 0) {
 			for (int i = 0; i < roleList.size(); i++) {
 				SysRole role = roleList.get(i);
 				OaNoticeright notice = new OaNoticeright();
 				notice.setOwnRoleid(role.getUuid());
-				this.merge(notice);
+				this.doMerge(notice);
 			}
 		} else {
 			for (int i = 0; i < noticeList.size(); i++) {
@@ -67,11 +67,11 @@ public class OaNoticerightServiceImpl extends BaseServiceImpl<OaNoticeright> imp
 						break;
 					}
 					if (j == roleList.size() - 1 && !found) {
-						this.delete(notice);
+						this.doDelete(notice);
 					}
 				}
 			}
-			noticeList = this.doQuery(hql.toString());
+			noticeList = this.getQuery(hql.toString());
 			for (int i = 0; i < roleList.size(); i++) {
 				SysRole role = roleList.get(i);
 				boolean found = false;
@@ -84,7 +84,7 @@ public class OaNoticerightServiceImpl extends BaseServiceImpl<OaNoticeright> imp
 					if (j == noticeList.size() - 1 && !found) {
 						notice = new OaNoticeright();
 						notice.setOwnRoleid(role.getUuid());
-						this.merge(notice);
+						this.doMerge(notice);
 					}
 
 				}
@@ -103,7 +103,7 @@ public class OaNoticerightServiceImpl extends BaseServiceImpl<OaNoticeright> imp
 				hql.append(" order by  " + sortSql);
 		}
 
-		QueryResult<OaNoticeright> qResult = this.doQueryResult(hql.toString(), start, limit);
+		QueryResult<OaNoticeright> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 
@@ -113,9 +113,9 @@ public class OaNoticerightServiceImpl extends BaseServiceImpl<OaNoticeright> imp
 		try {
 			String hql = "from SysUser as u inner join fetch u.sysRoles as r where u.uuid='" + submitUser.getUuid()
 					+ "' and r.isDelete=0 and u.isDelete=0 ";
-			SysUser user = userService.doQuery(hql).get(0);
+			SysUser user = userService.getQuery(hql).get(0);
 			Set<SysRole> userRoles = user.getSysRoles();
-			List<OaNoticeright> list = this.doQueryAll();
+			List<OaNoticeright> list = this.getQueryAll();
 			for (SysRole sysRole : userRoles) {
 				for (OaNoticeright oaNoticeright : list) {
 					if (sysRole.getUuid().equals(oaNoticeright.getOwnRoleid())) {

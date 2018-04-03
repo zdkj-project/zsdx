@@ -66,7 +66,7 @@ public class TeaTeacherbaseServiceImpl extends BaseServiceImpl<TeaTeacherbase> i
 
         }
         if (hql.length() > 0) {
-            QueryResult<TeaTeacherbase> qr = this.doQueryResult(hql.toString(), start, limit);
+            QueryResult<TeaTeacherbase> qr = this.getQueryResult(hql.toString(), start, limit);
             Set<TeaTeacherbase> tt = new HashSet<TeaTeacherbase>();
             tt.addAll(qr.getResultList());
             qr.getResultList().clear();
@@ -87,7 +87,7 @@ public class TeaTeacherbaseServiceImpl extends BaseServiceImpl<TeaTeacherbase> i
         hql.append(whereSql);
         hql.append(" order by o.jobCode ");
         if (hql.length() > 0) {
-            QueryResult<TeaTeacherbase> qr = this.doQueryResult(hql.toString(), start, limit);
+            QueryResult<TeaTeacherbase> qr = this.getQueryResult(hql.toString(), start, limit);
 
             return qr;
         } else {
@@ -275,7 +275,7 @@ public class TeaTeacherbaseServiceImpl extends BaseServiceImpl<TeaTeacherbase> i
     @Override
     public QueryResult<TeaTeacherbase> getCourseTeacherlist(Integer start, Integer limit, String sort, String filter,
                                                             String whereSql, String orderSql, String querySql, Boolean isDelete) {
-        QueryResult<TeaTeacherbase> qr = this.doPaginationQuery(start, limit, sort, filter, true);
+        QueryResult<TeaTeacherbase> qr = this.getPaginationQuery(start, limit, sort, filter, true);
 
         return this.setTeacherJobAndDept(qr);
     }

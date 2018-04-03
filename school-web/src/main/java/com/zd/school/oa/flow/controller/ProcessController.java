@@ -248,10 +248,10 @@ public class ProcessController extends FrameWorkController<LeaveApplay> implemen
 			} else if (nextTask.getAssignee().equals("年级组长")) {
 				BaseOrg org = baseOrgService.get(deptId);
 				String hql = "from JwTGrade where gradeName='" + org.getNodeText() + "' and isDelete=0";
-				List<JwTGrade> grades = gradeService.doQuery(hql);
+				List<JwTGrade> grades = gradeService.getQuery(hql);
 				JwTGrade grade = grades != null && grades.size() > 0 ? grades.get(0) : null;
 				hql = "from JwTGradeclass where className='" + org.getNodeText() + "' and isDelete=0";
-				List<JwTGradeclass> gradeclasses = gClassService.doQuery(hql);
+				List<JwTGradeclass> gradeclasses = gClassService.getQuery(hql);
 				JwTGradeclass gradeClass = gradeclasses != null && gradeclasses.size() > 0 ? gradeclasses.get(0) : null;
 
 				// String[] proerties = new String[] { "gradeName", "isDelete"
@@ -266,7 +266,7 @@ public class ProcessController extends FrameWorkController<LeaveApplay> implemen
 				// proerties = new String[] { "graiId", "category" };
 				// values = new Object[] { gradeId, "0" };
 				hql = "from JwGradeteacher where graiId='" + gradeId + "' and category=0 and isDelete=0";
-				JwGradeteacher t = gTeacherService.doQuery(hql).get(0);
+				JwGradeteacher t = gTeacherService.getQuery(hql).get(0);
 				// JwGradeteacher t = gTeacherService.getByProerties(proerties,
 				// values);
 				// 设置年级组长为代理人
@@ -351,7 +351,7 @@ public class ProcessController extends FrameWorkController<LeaveApplay> implemen
 			pushInfo.setPushWay(1);
 			pushInfo.setRegStatus("您好,您提交的申请通过了!");
 			pushInfo.setPushUrl(url.toString());
-			pushInfoService.persist(pushInfo);
+			pushInfoService.doPersist(pushInfo);
 		}
 		writeJSON(response, JsonBuilder.getInstance().returnSuccessJson("'办理成功'"));
 	}
@@ -394,7 +394,7 @@ public class ProcessController extends FrameWorkController<LeaveApplay> implemen
 		pushInfo.setPushWay(1);
 		pushInfo.setRegStatus("您好,您提交的申请被驳回了!");
 		pushInfo.setPushUrl(url.toString());
-		pushInfoService.persist(pushInfo);
+		pushInfoService.doPersist(pushInfo);
 
 		return "true";
 	}
@@ -611,7 +611,7 @@ public class ProcessController extends FrameWorkController<LeaveApplay> implemen
 			userIdS = userIdS.substring(0, userIdS.length() - 1);
 			String hql = "from SysUser as u inner join fetch u.userDepts as d where u.uuid in(" + userIdS
 					+ ") and d.nodeText='" + deptName + "' and d.isDelete=0 and u.isDelete=0";
-			List<SysUser> list2 = sysUserService.doQuery(hql); // 在按部门名称
+			List<SysUser> list2 = sysUserService.getQuery(hql); // 在按部门名称
 																// 和角色名称相同查找
 			if (list2 != null && list2.size() == 1) {
 				list2.get(0).setExtField01(roleName);
@@ -715,7 +715,7 @@ public class ProcessController extends FrameWorkController<LeaveApplay> implemen
 		SysUser user = getCurrentSysUser();
 		String hql = "from SysUser as u inner join fetch u.userDepts as d where u.uuid='" + user.getUuid()
 				+ "' and d.isDelete=0";
-		List<SysUser> list = sysUserService.doQuery(hql);
+		List<SysUser> list = sysUserService.getQuery(hql);
 /*		for (SysUser sysUser : list) {
 			Set<BaseOrg> orgs = sysUser.getUserDepts();
 			return orgs;
@@ -726,7 +726,7 @@ public class ProcessController extends FrameWorkController<LeaveApplay> implemen
 	private Set<SysRole> getUserRoles(SysUser user) {
 		String hql = "from SysUser as u inner join fetch u.sysRoles as r where u.uuid='" + user.getUuid()
 				+ "' and r.isDelete=0";
-		SysUser u = sysUserService.doQuery(hql).get(0);
+		SysUser u = sysUserService.getQuery(hql).get(0);
 		return u.getSysRoles();
 	}
 
@@ -741,7 +741,7 @@ public class ProcessController extends FrameWorkController<LeaveApplay> implemen
 	private SysUser getUserByJob(BaseJob job) {
 		String hql = "from SysUser as u inner join fetch u.userJobs as j where j.uuid='" + job.getUuid()
 				+ "'and j.isDelete=0 and u.isDelete=0";
-		return sysUserService.doQuery(hql).get(0);
+		return sysUserService.getQuery(hql).get(0);
 	}
 
 	// 推送消息
@@ -766,7 +766,7 @@ public class ProcessController extends FrameWorkController<LeaveApplay> implemen
 		pushInfo.setPushWay(1);
 		pushInfo.setPushUrl(url.toString());
 		pushInfo.setRegStatus("您好," + approveUser.getXm() + "老师,有申请需要您尽快审批!");
-		pushInfoService.persist(pushInfo);
+		pushInfoService.doPersist(pushInfo);
 
 		// String hql = "from SysUser where jobName='" + task.getAssignee() + "'
 		// or uuid like '%" + task.getAssignee()
@@ -909,7 +909,7 @@ public class ProcessController extends FrameWorkController<LeaveApplay> implemen
 			pushInfo.setExtField01(url);
 			pushInfo.setRegStatus("您好," + sysUser.getXm() + roleName + "," + applayUserName + "提交的" + applayName
 					+ "审批通过了!" + task.getDescription());
-			pushInfoService.persist(pushInfo);
+			pushInfoService.doPersist(pushInfo);
 		}
 	}
 

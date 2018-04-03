@@ -34,7 +34,7 @@ public class PushInfoServiceImpl extends BaseServiceImpl<PushInfo> implements Pu
         pushInfo.setPushWay(pushWay);
         pushInfo.setRegStatus(info);
         pushInfo.setPushUrl("");
-        this.persist(pushInfo);
+        this.doPersist(pushInfo);
         br = true;
         return br;
     }
@@ -54,7 +54,7 @@ public class PushInfoServiceImpl extends BaseServiceImpl<PushInfo> implements Pu
             pushInfo.setPushUrl("");
         else
             pushInfo.setPushUrl(pushUrl);
-        this.persist(pushInfo);
+        this.doPersist(pushInfo);
         br = true;
         return br;
     }
@@ -73,7 +73,7 @@ public class PushInfoServiceImpl extends BaseServiceImpl<PushInfo> implements Pu
         pushInfo.setPushUrl("");
         pushInfo.setCreateUser(userId);	//发信人的人员id
         pushInfo.setEmplId(empId);		//收信人的人员id
-        this.persist(pushInfo);
+        this.doPersist(pushInfo);
         br = true;
         return br;
     }

@@ -67,7 +67,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 	@Override
 	public QueryResult<TrainClassschedule> list(Integer start, Integer limit, String sort, String filter,
 			Boolean isDelete) {
-		QueryResult<TrainClassschedule> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+		QueryResult<TrainClassschedule> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
 		return qResult;
 	}
 
@@ -87,7 +87,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 			Object[] conditionValue = ids.split(",");
 			String[] propertyName = { "isDelete", "updateUser", "updateTime" };
 			Object[] propertyValue = { 1, currentUser.getXm(), new Date() };
-			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 			delResult = true;
 
 			// 设置班级的状态
@@ -97,7 +97,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 				trainClass.setIsuse(2);
 				trainClass.setUpdateTime(new Date()); // 设置修改时间
 				trainClass.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-				trainClassService.update(trainClass);
+				trainClassService.doUpdate(trainClass);
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -144,7 +144,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 			trainCourseInfo.setCredits(entity.getCredits());
 			trainCourseInfo.setTeachType(teachType); // 当课程不存在，并创建的时候，才会设置教学形式
 
-			trainCourseinfoService.merge(trainCourseInfo);
+			trainCourseinfoService.doMerge(trainCourseInfo);
 
 			entity.setCourseId(trainCourseInfo.getUuid());
 
@@ -153,7 +153,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 			BeanUtils.copyPropertiesExceptNull(saveEntity, entity, exclued);
 			saveEntity.setUpdateTime(new Date()); // 设置修改时间
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -204,7 +204,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 				trainClass.setIsuse(2);
 				trainClass.setUpdateTime(new Date()); // 设置修改时间
 				trainClass.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-				trainClassService.update(trainClass);
+				trainClassService.doUpdate(trainClass);
 			}
 
 			// 查询课程表中是否存在 课程名、教师名一致的课程
@@ -228,11 +228,11 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 				trainCourseInfo.setMainTeacherName(entity.getMainTeacherName());
 				trainCourseInfo.setCredits(entity.getCredits());
 
-				trainCourseinfoService.merge(trainCourseInfo);
+				trainCourseinfoService.doMerge(trainCourseInfo);
 			}
 
 			saveEntity.setCourseId(trainCourseInfo.getUuid());
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -260,7 +260,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 				id = idArray[i];
 				for (int j = 0; j < roomIdArray.length; j++) {
 					roomId = roomIdArray[j];
-					List lists = this.doQuerySql("EXECUTE TRAIN_P_ISUSESITE '" + id + "','" + roomId + "'");
+					List lists = this.getQuerySql("EXECUTE TRAIN_P_ISUSESITE '" + id + "','" + roomId + "'");
 					if ("0".equals(lists.get(0).toString())) {
 						TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 						return 0;
@@ -269,7 +269,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 				String hqlUpdate = "update TrainClassschedule t set t.roomId='" + roomIds + "',t.scheduleAddress='"
 						+ roomNames + "'," + "	t.updateUser='" + currentUser.getXm() + "',t.updateTime='"
 						+ sdf.format(new Date()) + "' " + "where t.isDelete!=1 and t.uuid in ('" + id + "')";
-				this.executeHql(hqlUpdate);
+				this.doExecuteHql(hqlUpdate);
 			}
 			result = 1;
 
@@ -292,7 +292,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 			String hqlUpdate = "update TrainClassschedule t set t.roomId=NULL,t.scheduleAddress=NULL,"
 					+ "	t.updateUser='" + currentUser.getXm() + "',t.updateTime='" + sdf.format(new Date()) + "' "
 					+ "where t.uuid in ('" + ids.replace(",", "','") + "')";
-			this.executeHql(hqlUpdate);
+			this.doExecuteHql(hqlUpdate);
 			result = 1;
 
 		} catch (Exception e) {
@@ -319,7 +319,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 		Map<String, String> mapTeachType = new HashMap<>();
 		Map<String, String> mapClassGroup = new HashMap<>();
 		String hql = " from BaseDicitem where dicCode in ('TEACHTYPE','CLASSGROUP')";
-		List<BaseDicitem> listTeachType = dicitemService.doQuery(hql);
+		List<BaseDicitem> listTeachType = dicitemService.getQuery(hql);
 		for (BaseDicitem baseDicitem : listTeachType) {
 			if (baseDicitem.getDicCode().equals("TEACHTYPE"))
 				mapTeachType.put(baseDicitem.getItemName(), baseDicitem.getItemCode());
@@ -474,7 +474,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 					
 					//当没发生错误的时候，才会添加入库				
 					if (isError == false)
-						trainCourseinfoService.merge(trainCourseInfo);
+						trainCourseinfoService.doMerge(trainCourseInfo);
 				}
 
 				// 当没发生错误的时候，才会添加入库
@@ -482,7 +482,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 					tcs.setCourseId(trainCourseInfo.getUuid());
 					tcs.setMainTeacherId(trainCourseInfo.getMainTeacherId());
 
-					this.merge(tcs);
+					this.doMerge(tcs);
 				}
 
 			} catch (Exception e) {
@@ -507,7 +507,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 
 		// 如果两个容器的大小一样，表明没有导入数据,否则导入了
 		if (importData.size() != listNotExit.size()) {
-			trainClassService.update(trainClass);
+			trainClassService.doUpdate(trainClass);
 		}
 
 		return listNotExit;
@@ -542,7 +542,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 			sql += orderSql;
 		}
 		// this.getForValuesToSql()
-		QueryResult<TrainClassCourseEval> list = this.doQueryResultSqlObject(sql, start, limit,
+		QueryResult<TrainClassCourseEval> list = this.getQueryResultSqlObject(sql, start, limit,
 				TrainClassCourseEval.class);
 
 		return list;

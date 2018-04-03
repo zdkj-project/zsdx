@@ -37,12 +37,12 @@ public class OaNoticetypeAppController  extends FrameWorkController<OaNoticetype
 			throws IOException {
 		OaNoticetype tempON = thisService.get(entity.getUuid());
 		if(tempON==null){
-			entity = thisService.merge(entity);
+			entity = thisService.doMerge(entity);
 			entity.setSuccess(true);
 			entity.setFailed("添加成功");
 		}else{
 			tempON.setTypeName(entity.getTypeName());
-			entity = thisService.merge(tempON);
+			entity = thisService.doMerge(tempON);
 			entity.setSuccess(true);
 			entity.setFailed("修改成功");
 		}
@@ -62,7 +62,7 @@ public class OaNoticetypeAppController  extends FrameWorkController<OaNoticetype
 		if (StringUtils.isEmpty(delIds)) {
 			str = "没有传入删除主键";
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
 			if (flag) {
 				str = "删除成功";
 			} else {
@@ -86,7 +86,7 @@ public class OaNoticetypeAppController  extends FrameWorkController<OaNoticetype
 		if (StringUtils.isEmpty(delIds)) {
 			str = "没有传入删除主键";
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
 			if (flag) {
 				str = "还原成功";
 			} else {

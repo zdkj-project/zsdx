@@ -66,7 +66,7 @@ public class XcJxplartitemServiceImpl extends BaseServiceImpl<XcJxplartitem> imp
         		hql.append(" order by  " + sortSql);
         }
         
-        QueryResult<XcJxplartitem> qResult = this.doQueryResult(hql.toString(), start, limit);
+        QueryResult<XcJxplartitem> qResult = this.getQueryResult(hql.toString(), start, limit);
 		return qResult;
 	}
 	
@@ -82,20 +82,20 @@ public class XcJxplartitemServiceImpl extends BaseServiceImpl<XcJxplartitem> imp
 			List<XcJxplartitem> list;
 			Serializable id = ids[0];
 			String jxplartId = this.get(id).getJxplartId();
-			list = this.doQuery("from XcJxplartitem where jxplartId='" + jxplartId + "' order by orderIndex");
+			list = this.getQuery("from XcJxplartitem where jxplartId='" + jxplartId + "' order by orderIndex");
 			if (list.size()==ids.length) {
 				return -2;
 			}
 			for (int i = 0; i < ids.length; i++) {
 				id = ids[i];
-				this.deleteByPK(id);
+				this.doDeleteByPK(id);
 			}
 			// 对删除后的数据进行重新排序
-			list = this.doQuery("from XcJxplartitem where jxplartId='" + jxplartId + "' order by orderIndex");
+			list = this.getQuery("from XcJxplartitem where jxplartId='" + jxplartId + "' order by orderIndex");
 			for (int i = 0; i < list.size(); i++) {
 				XcJxplartitem item = list.get(i);
 				item.setOrderIndex(i + 1);
-				this.merge(item);
+				this.doMerge(item);
 			}
 			return 1;
 		} catch (Exception e) {
@@ -114,7 +114,7 @@ public class XcJxplartitemServiceImpl extends BaseServiceImpl<XcJxplartitem> imp
 	@Override
 	public boolean doBatchAdd(String idstr, String jxplartId, String userCh) {
 		try {
-			this.deleteByProperties("jxplartId", jxplartId);
+			this.doDeleteByProperties("jxplartId", jxplartId);
 			if (StringUtils.isNotEmpty(idstr)) {
 				String[] ids = idstr.split(",");
 				for (int i = 0; i < ids.length; i++) {
@@ -127,7 +127,7 @@ public class XcJxplartitemServiceImpl extends BaseServiceImpl<XcJxplartitem> imp
 					perEntity.setOrderIndex(i + 1);
 					perEntity.setUpdateTime(new Date()); // 设置修改时间
 					perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-					perEntity = this.merge(perEntity);// 执行修改方法
+					perEntity = this.doMerge(perEntity);// 执行修改方法
 				}
 			}
 			return true;
@@ -155,7 +155,7 @@ public class XcJxplartitemServiceImpl extends BaseServiceImpl<XcJxplartitem> imp
 				perEntity.setOrderIndex(i + 1);
 				perEntity.setUpdateTime(new Date()); // 设置修改时间
 				perEntity.setUpdateUser(userCh); // 设置修改人的中文名
-				perEntity = this.merge(perEntity);// 执行修改方法
+				perEntity = this.doMerge(perEntity);// 执行修改方法
 			}
 			return true;
 		} catch (Exception e) {

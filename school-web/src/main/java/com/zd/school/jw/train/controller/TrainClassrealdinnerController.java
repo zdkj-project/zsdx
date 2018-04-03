@@ -629,7 +629,7 @@ public class TrainClassrealdinnerController extends FrameWorkController<TrainCla
 			}
 			TrainClass trainClasss = trainClassService.get(classId);
 			trainClasss.setExtField05(djbh);
-			trainClassService.update(trainClasss);
+			trainClassService.doUpdate(trainClasss);
 			//定义sheet标题
 			String sheetTitle="";
 			String dinnerType= "";

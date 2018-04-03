@@ -40,7 +40,7 @@ public class MySchoolCourseController extends FrameWorkController<JwTSchoolcours
     public void getList(@ModelAttribute JwTSchoolcourse entity, HttpServletRequest request,
             HttpServletResponse response) throws IOException {
         String strData = ""; // 返回给js的数据
-        QueryResult<JwTSchoolcourse> qr = thisService.doPaginationQuery(super.start(request), super.limit(request),
+        QueryResult<JwTSchoolcourse> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
                 super.sort(request), super.filter(request), true);
 
         strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -74,7 +74,7 @@ public class MySchoolCourseController extends FrameWorkController<JwTSchoolcours
         entity.setTeacherName(userCh);
         entity.setTeachID(currentUser.getUuid());
         // 持久化到数据库
-        entity = thisService.merge(entity);
+        entity = thisService.doMerge(entity);
 
         //返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -108,7 +108,7 @@ public class MySchoolCourseController extends FrameWorkController<JwTSchoolcours
         entity.setTeacherName(userCh);
         entity.setTeachID(currentUser.getUuid());
         // 持久化到数据库
-        entity = thisService.merge(entity);
+        entity = thisService.doMerge(entity);
 
         //返回实体到前端界面
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(entity)));
@@ -121,7 +121,7 @@ public class MySchoolCourseController extends FrameWorkController<JwTSchoolcours
             writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
             return;
         } else {
-            boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+            boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
             if (flag) {
                 writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
             } else {
@@ -153,7 +153,7 @@ public class MySchoolCourseController extends FrameWorkController<JwTSchoolcours
 
         perEntity.setUpdateTime(new Date()); //设置修改时间
         perEntity.setUpdateUser(userCh); //设置修改人的中文名
-        entity = thisService.merge(perEntity);//执行修改方法
+        entity = thisService.doMerge(perEntity);//执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
@@ -165,7 +165,7 @@ public class MySchoolCourseController extends FrameWorkController<JwTSchoolcours
             throws IOException, IllegalAccessException, InvocationTargetException {
     	SysUser currentUser = getCurrentSysUser();
 		String hql1 = "from SysUser as u inner join fetch u.sysRoles as r where r.roleName='课程管理员' and r.isDelete=0 and u.isDelete=0 and u.uuid='"+currentUser.getUuid()+"'";
-		List<SysUser> list=userService.doQuery(hql1);
+		List<SysUser> list=userService.getQuery(hql1);
 		if(list.size()>0){
 	        String strData = ""; // 返回给js的数据
 	        StringBuffer hql = new StringBuffer("from " + entity.getClass().getSimpleName() + " o where 1=1 ");
@@ -176,7 +176,7 @@ public class MySchoolCourseController extends FrameWorkController<JwTSchoolcours
 			int limit = entity.getLimit();// 每页记录数
 			hql.append(whereSql);
 			countHql.append(whereSql);
-			List<JwTSchoolcourse> listapprove=thisService.doQuery(hql.toString(), start, limit);
+			List<JwTSchoolcourse> listapprove=thisService.getQuery(hql.toString(), start, limit);
 			Integer count = thisService.getCount(countHql.toString());// 查询总记录数
 			strData = jsonBuilder.buildObjListToJson(new Long(count), listapprove, true);// 处理数据
 	        writeJSON(response, strData);// 返回数据
@@ -206,7 +206,7 @@ public class MySchoolCourseController extends FrameWorkController<JwTSchoolcours
         
         perEntity.setUpdateTime(new Date()); //设置修改时间
         perEntity.setUpdateUser(userCh); //设置修改人的中文名
-        entity = thisService.merge(perEntity);//执行修改方法
+        entity = thisService.doMerge(perEntity);//执行修改方法
         
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
@@ -228,7 +228,7 @@ public class MySchoolCourseController extends FrameWorkController<JwTSchoolcours
         perEntity.setUpdateTime(new Date()); //设置修改时间
         perEntity.setUpdateUser(userCh); //设置修改人的中文名
         perEntity.setState(1);
-        entity = thisService.merge(perEntity);//执行修改方法
+        entity = thisService.doMerge(perEntity);//执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
@@ -257,7 +257,7 @@ public class MySchoolCourseController extends FrameWorkController<JwTSchoolcours
 
         perEntity.setUpdateTime(new Date()); //设置修改时间
         perEntity.setUpdateUser(userCh); //设置修改人的中文名
-        entity = thisService.merge(perEntity);//执行修改方法
+        entity = thisService.doMerge(perEntity);//执行修改方法
 
         writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 

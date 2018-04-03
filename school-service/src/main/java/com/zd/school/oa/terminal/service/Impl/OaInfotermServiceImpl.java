@@ -49,7 +49,7 @@ public class OaInfotermServiceImpl extends BaseServiceImpl<OaInfoterm> implement
 
 	@Override
 	public QueryResult<OaInfoterm> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-		QueryResult<OaInfoterm> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+		QueryResult<OaInfoterm> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
 		return qResult;
 	}
 
@@ -69,7 +69,7 @@ public class OaInfotermServiceImpl extends BaseServiceImpl<OaInfoterm> implement
 			Object[] conditionValue = ids.split(",");
 			String[] propertyName = { "isUse", "updateUser", "updateTime", "roomId", "roomName", "houseNumb" };
 			Object[] propertyValue = { 0, currentUser.getXm(), new Date(), "", "", "" };
-			this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+			this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 			delResult = true;
 		} catch (Exception e) {
 			logger.error(e.getMessage());
@@ -95,7 +95,7 @@ public class OaInfotermServiceImpl extends BaseServiceImpl<OaInfoterm> implement
 			BeanUtils.copyProperties(saveEntity, entity);
 			saveEntity.setUpdateTime(new Date()); // 设置修改时间
 			saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-			entity = this.merge(saveEntity);// 执行修改方法
+			entity = this.doMerge(saveEntity);// 执行修改方法
 
 			return entity;
 		} catch (IllegalAccessException e) {
@@ -135,7 +135,7 @@ public class OaInfotermServiceImpl extends BaseServiceImpl<OaInfoterm> implement
 				saveEntity.setTermCode(StringUtils.addString(newNumber.toString(), "0", 6, "L"));
 				saveEntity.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
 
-				entity = this.merge(saveEntity);// 执行修改方法
+				entity = this.doMerge(saveEntity);// 执行修改方法
 				newNumber++;
 			}
 
@@ -177,7 +177,7 @@ public class OaInfotermServiceImpl extends BaseServiceImpl<OaInfoterm> implement
 						String[] propertyName = { "isUse", "updateUser", "updateTime", "roomId", "roomName",
 								"houseNumb" };
 						Object[] propertyValue = { 0, currentUser.getXm(), new Date(), "", "", "" };
-						this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+						this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 						saveEntity = this.get(oaInfoterm.getUuid());
 					}
 				} else {
@@ -192,7 +192,7 @@ public class OaInfotermServiceImpl extends BaseServiceImpl<OaInfoterm> implement
 				saveEntity.setUpdateTime(new Date()); // 设置修改时间
 				saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
 
-				this.merge(saveEntity);// 执行修改方法
+				this.doMerge(saveEntity);// 执行修改方法
 
 				// 写入分配历史记录
 				OaInfotermuse useHistory = new OaInfotermuse();
@@ -202,7 +202,7 @@ public class OaInfotermServiceImpl extends BaseServiceImpl<OaInfoterm> implement
 				useHistory.setRoomName(roomName);
 				useHistory.setCreateUser(currentUser.getXm());
 
-				useHistoryService.persist(useHistory);
+				useHistoryService.doPersist(useHistory);
 			}
 
 			return true;

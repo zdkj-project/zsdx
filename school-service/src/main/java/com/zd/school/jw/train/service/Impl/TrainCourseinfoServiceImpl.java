@@ -60,7 +60,7 @@ public class TrainCourseinfoServiceImpl extends BaseServiceImpl<TrainCourseinfo>
 
     @Override
     public QueryResult<TrainCourseinfo> list(Integer start, Integer limit, String sort, String filter, Boolean isDelete) {
-        QueryResult<TrainCourseinfo> qResult = this.doPaginationQuery(start, limit, sort, filter, isDelete);
+        QueryResult<TrainCourseinfo> qResult = this.getPaginationQuery(start, limit, sort, filter, isDelete);
         return qResult;
     }
 
@@ -78,7 +78,7 @@ public class TrainCourseinfoServiceImpl extends BaseServiceImpl<TrainCourseinfo>
             Object[] conditionValue = ids.split(",");
             String[] propertyName = {"isDelete", "updateUser", "updateTime"};
             Object[] propertyValue = {1, currentUser.getXm(), new Date()};
-            this.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+            this.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
             delResult = true;
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -114,7 +114,7 @@ public class TrainCourseinfoServiceImpl extends BaseServiceImpl<TrainCourseinfo>
             BeanUtils.copyPropertiesExceptNull(saveEntity, entity, excludedProp);
             saveEntity.setUpdateTime(new Date()); // 设置修改时间
             saveEntity.setUpdateUser(currentUser.getXm()); // 设置修改人的中文名
-            entity = this.merge(saveEntity);// 执行修改方法
+            entity = this.doMerge(saveEntity);// 执行修改方法
 
             return entity;
         } catch (IllegalAccessException e) {
@@ -154,7 +154,7 @@ public class TrainCourseinfoServiceImpl extends BaseServiceImpl<TrainCourseinfo>
                 String[] temp = codeAndOrder.split(",");
                 saveEntity.setCourseCode(temp[0]);
                 saveEntity.setOrderIndex(Integer.valueOf(temp[1]));
-                entity = this.merge(saveEntity);// 执行修改方法
+                entity = this.doMerge(saveEntity);// 执行修改方法
 
                 return entity;
             } else {
@@ -174,7 +174,7 @@ public class TrainCourseinfoServiceImpl extends BaseServiceImpl<TrainCourseinfo>
                     String[] temp = codeAndOrder.split(",");
                     saveEntity.setCourseCode(temp[0]);
                     saveEntity.setOrderIndex(Integer.valueOf(temp[1]));
-                    entity = this.merge(saveEntity);// 执行修改方法
+                    entity = this.doMerge(saveEntity);// 执行修改方法
                 }
                 return entity;
             }
@@ -207,14 +207,14 @@ public class TrainCourseinfoServiceImpl extends BaseServiceImpl<TrainCourseinfo>
         String courseName=null;
         //所有的课程分类
         Map<String, TrainCoursecategory> mapCoursecategory = new HashMap<>();
-        List<TrainCoursecategory> lisCourSecategory = coursecategoryService.doQueryAll();
+        List<TrainCoursecategory> lisCourSecategory = coursecategoryService.getQueryAll();
         for (TrainCoursecategory trainCoursecategory : lisCourSecategory) {
             mapCoursecategory.put(trainCoursecategory.getNodeText(), trainCoursecategory);
         }
         //所有的教学形式字典项
         Map<String, String> mapTeachType = new HashMap<>();
         String hql = " from BaseDicitem where dicCode='TEACHTYPE'";
-        List<BaseDicitem> listTeachType = dicitemService.doQuery(hql);
+        List<BaseDicitem> listTeachType = dicitemService.getQuery(hql);
         for (BaseDicitem baseDicitem : listTeachType) {
             mapTeachType.put(baseDicitem.getItemName(), baseDicitem.getItemCode());
         }
@@ -222,7 +222,7 @@ public class TrainCourseinfoServiceImpl extends BaseServiceImpl<TrainCourseinfo>
         //所有的教师
         Map<String, String> mapTeacher = new HashMap<>();
         hql = " from TrainTeacher where isDelete=0";
-        List<TrainTeacher> listTeacher = teacherService.doQuery(hql);
+        List<TrainTeacher> listTeacher = teacherService.getQuery(hql);
         for (TrainTeacher trainTeacher : listTeacher) {
             mapTeacher.put(trainTeacher.getXm(), trainTeacher.getUuid());
         }
@@ -284,7 +284,7 @@ public class TrainCourseinfoServiceImpl extends BaseServiceImpl<TrainCourseinfo>
             course.setUpdateUser(currentUser.getXm());
             
             if(isExist==true)
-            	this.merge(course);
+            	this.doMerge(course);
             else
                 this.doAddEntity(course, currentUser);
             	
@@ -304,7 +304,7 @@ public class TrainCourseinfoServiceImpl extends BaseServiceImpl<TrainCourseinfo>
         else
             hql += orderSql;
 
-        list = this.doQuery(hql);
+        list = this.getQuery(hql);
         for (TrainCourseinfo trainCourseinfo : list) {
             trainCourseinfo.setCourseDesc(StringUtils.HtmlToText(trainCourseinfo.getCourseDesc()));
         }
@@ -328,7 +328,7 @@ public class TrainCourseinfoServiceImpl extends BaseServiceImpl<TrainCourseinfo>
         //得到排序号
         String hql = " from  TrainCourseinfo  where orderIndex=(select max(orderIndex) from TrainCourseinfo where categoryId=''{0}'')";
         hql = MessageFormat.format(hql, categoryId);
-        List<TrainCourseinfo> list = this.doQuery(hql);
+        List<TrainCourseinfo> list = this.getQuery(hql);
         if (list.size() > 0) {
             orderIndex = (Integer) EntityUtil.getPropertyValue(list.get(0), "orderIndex") + 1;
         } else
@@ -337,7 +337,7 @@ public class TrainCourseinfoServiceImpl extends BaseServiceImpl<TrainCourseinfo>
         //先检查同一分类下是否已有此课程名，如有，则使用此编码
         hql = " from TrainCourseinfo where categoryId=''{0}'' and courseName=''{1}'' ";
         hql = MessageFormat.format(hql, categoryId, courseName);
-        List<TrainCourseinfo> listCourse = this.doQuery(hql);
+        List<TrainCourseinfo> listCourse = this.getQuery(hql);
         if (listCourse.size() > 0) {
             //有此课程了,直接使用此编号
             courseCode = listCourse.get(0).getCourseCode();

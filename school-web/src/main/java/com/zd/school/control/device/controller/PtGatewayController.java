@@ -62,7 +62,7 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 		hql.append(querySql);
 		countHql.append(whereSql);
 		countHql.append(querySql);
-		List<PtGateway> lists = thisService.doQuery(hql.toString(), super.start(request), entity.getLimit());// 执行查询方法
+		List<PtGateway> lists = thisService.getQuery(hql.toString(), super.start(request), entity.getLimit());// 执行查询方法
 		Integer count = thisService.getCount(countHql.toString());// 查询总记录数
 		strData = jsonBuilder.buildObjListToJson(new Long(count), lists, true);// 处理数据
 		writeJSON(response, strData);// 返回数据
@@ -96,7 +96,7 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入删除主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(ids, StatuVeriable.ISDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(ids, StatuVeriable.ISDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'删除成功'"));
 			} else {
@@ -117,7 +117,7 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 			writeJSON(response, jsonBuilder.returnSuccessJson("'没有传入还原主键'"));
 			return;
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
 			if (flag) {
 				writeJSON(response, jsonBuilder.returnSuccessJson("'还原成功'"));
 			} else {
@@ -149,7 +149,7 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 			ptGateway.setFrontserverId(entity.getFrontserverId());
 			ptGateway.setUpdateUser(userCh);
 			ptGateway.setUpdateTime(new Date());
-			thisService.merge(ptGateway);
+			thisService.doMerge(ptGateway);
 		}
 		writeJSON(response, jsonBuilder.returnSuccessJson("'成功'"));
 	}
@@ -178,7 +178,7 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 		BeanUtils.copyPropertiesExceptNull(perEntity, entity);
 		perEntity.setUpdateUser(userCh);
 
-		entity = thisService.merge(perEntity);// 执行修改方法
+		entity = thisService.doMerge(perEntity);// 执行修改方法
 
 		writeJSON(response, jsonBuilder.returnSuccessJson(jsonBuilder.toJson(perEntity)));
 
@@ -198,7 +198,7 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 	public void batchHighParam(TLVModel tlvs,HttpServletRequest request, HttpServletResponse response)
 			throws IOException, IllegalAccessException, InvocationTargetException {
 		byte[] result=TLVUtils.encode(tlvs.getTlvs());
-		List<PtGateway> list=thisService.doQueryAll();
+		List<PtGateway> list=thisService.getQueryAll();
 		String userCh = "超级管理员";
 		SysUser currentUser = getCurrentSysUser();
 		if (currentUser != null)
@@ -207,7 +207,7 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 			gateway.setUpdateUser(userCh);
 			gateway.setUpdateTime(new Date());
 			gateway.setAdvParam(result);
-			thisService.merge(gateway);
+			thisService.doMerge(gateway);
 		}
 		writeJSON(response, jsonBuilder.returnSuccessJson("'高级参数批量设置成功。'"));
 
@@ -227,7 +227,7 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 	public void batchBaseParam(TLVModel tlvs, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, IllegalAccessException, InvocationTargetException {
 			byte[] result=TLVUtils.encode(tlvs.getTlvs());
-			List<PtGateway> list=thisService.doQueryAll();
+			List<PtGateway> list=thisService.getQueryAll();
 			String userCh = "超级管理员";
 			SysUser currentUser = getCurrentSysUser();
 			if (currentUser != null)
@@ -236,7 +236,7 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 				gateway.setUpdateUser(userCh);
 				gateway.setUpdateTime(new Date());
 				gateway.setBaseParam(result);
-				thisService.merge(gateway);
+				thisService.doMerge(gateway);
 			}
 			writeJSON(response, jsonBuilder.returnSuccessJson("'基础参数批量设置成功。'"));
 	}
@@ -258,7 +258,7 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 		result=TLVUtils.encode( tlvs.getTlvs());
 		perEntity.setBaseParam(result);
 
-		thisService.merge(perEntity);// 执行修改方法
+		thisService.doMerge(perEntity);// 执行修改方法
 		writeJSON(response, jsonBuilder.returnSuccessJson("'基础参数设置成功。'"));
 
 	}
@@ -298,7 +298,7 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 		perEntity.setUpdateTime(new Date());
 		result=TLVUtils.encode(tlvs.getTlvs());
 		perEntity.setAdvParam(result);
-		thisService.merge(perEntity);// 执行修改方法
+		thisService.doMerge(perEntity);// 执行修改方法
 		writeJSON(response, jsonBuilder.returnSuccessJson("'高级参数设置成功。'"));
 
 	}
@@ -318,7 +318,7 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 	public void batchGatewayParam(TLVModel tlvs, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, IllegalAccessException, InvocationTargetException {
 			byte[] result=TLVUtils.encode(tlvs.getTlvs());
-			List<PtGateway> list=thisService.doQueryAll();
+			List<PtGateway> list=thisService.getQueryAll();
 			SysUser currentUser = getCurrentSysUser();
 			String userCh = "超级管理员";
 			if (currentUser != null)
@@ -327,7 +327,7 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 				gateway.setUpdateUser(userCh);
 				gateway.setUpdateTime(new Date());
 				gateway.setNetParam(result);
-				thisService.merge(gateway);// 执行修改方法
+				thisService.doMerge(gateway);// 执行修改方法
 			}
 			writeJSON(response, jsonBuilder.returnSuccessJson("'网关参数批量设置成功。'"));
 	}
@@ -345,7 +345,7 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 			userCh = currentUser.getXm();
 		perEntity.setUpdateUser(userCh);
 		perEntity.setUpdateTime(new Date());
-		thisService.merge(perEntity);// 执行修改方法
+		thisService.doMerge(perEntity);// 执行修改方法
 		writeJSON(response, jsonBuilder.returnSuccessJson("'网关参数设置成功。'"));
 
 	}

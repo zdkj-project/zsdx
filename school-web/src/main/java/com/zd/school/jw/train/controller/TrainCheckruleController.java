@@ -168,7 +168,7 @@ public class TrainCheckruleController extends FrameWorkController<TrainCheckrule
                 Object[] conditionValue = Ids.split(",");
                 String[] propertyName = {"startUsing", "updateUser", "updateTime"};
                 Object[] propertyValue = {Short.parseShort("1"), currentUser.getXm(), new Date()};
-                thisService.updateByProperties("uuid", conditionValue, propertyName, propertyValue);
+                thisService.doUpdateByProperties("uuid", conditionValue, propertyName, propertyValue);
 
                 writeJSON(response, jsonBuilder.returnSuccessJson("'启用考勤规则成功'"));
 

@@ -129,7 +129,7 @@ public class JwTGradeclassServiceImpl extends BaseServiceImpl<JwTGradeclass> imp
 		}
 		// if (currentUser.getUserName().equals("schooladmin"))
 		// queryFilter = "";
-		QueryResult<JwTGradeclass> qr = this.doPaginationQuery(start, limit, sort, queryFilter, true);
+		QueryResult<JwTGradeclass> qr = this.getPaginationQuery(start, limit, sort, queryFilter, true);
 		return qr;
 	}
 

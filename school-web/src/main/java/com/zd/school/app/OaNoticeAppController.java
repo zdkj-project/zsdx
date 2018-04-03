@@ -42,7 +42,7 @@ public class OaNoticeAppController extends FrameWorkController<OaNotice> impleme
 			org.springframework.web.bind.annotation.RequestMethod.POST })
 	public @ResponseBody List<OaNotice> list(@ModelAttribute OaNotice entity, HttpServletRequest request,
 			HttpServletResponse response) {
-		List<OaNotice> onList = thisService.doQuery(" from OaNotice where isDelete =0");
+		List<OaNotice> onList = thisService.getQuery(" from OaNotice where isDelete =0");
 		return onList;
 	}
 
@@ -60,7 +60,7 @@ public class OaNoticeAppController extends FrameWorkController<OaNotice> impleme
 		if (StringUtils.isEmpty(delIds)) {
 			str = "没有传入删除主键";
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISDELETE);
 			if (flag) {
 				str = "删除成功";
 			} else {
@@ -84,7 +84,7 @@ public class OaNoticeAppController extends FrameWorkController<OaNotice> impleme
 		if (StringUtils.isEmpty(delIds)) {
 			str = "没有传入删除主键";
 		} else {
-			boolean flag = thisService.logicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
+			boolean flag = thisService.doLogicDelOrRestore(delIds, StatuVeriable.ISNOTDELETE);
 			if (flag) {
 				str = "还原成功";
 			} else {

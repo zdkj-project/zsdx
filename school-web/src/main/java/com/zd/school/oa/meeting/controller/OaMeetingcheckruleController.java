@@ -186,7 +186,7 @@ public class OaMeetingcheckruleController extends FrameWorkController<OaMeetingc
 			meetingcheckrule.setUpdateUser(currentUser.getUserName());
 			meetingcheckrule.setUpdateTime(new Date());
 			
-			thisService.merge(meetingcheckrule);
+			thisService.doMerge(meetingcheckrule);
 			
 			writeJSON(response, jsonBuilder.returnSuccessJson("\"设置启用状态成功！\""));
 			
