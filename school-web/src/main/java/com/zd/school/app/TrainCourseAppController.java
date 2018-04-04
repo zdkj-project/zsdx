@@ -164,7 +164,7 @@ public class TrainCourseAppController {
 //								+ "isnull((SELECT top 1 a.USE_STATE FROM CARD_T_USEINFO a where a.USER_ID=TRAIN_T_CLASSTRAINEE.CLASS_TRAINEE_ID order by a.CREATE_TIME desc),0) AS useState,"
 //								+ "IS_LEAVE AS isLeave "
 //								+ " FROM dbo.TRAIN_T_CLASSTRAINEE WHERE ISDELETE=0 and  CLASS_ID=''{0}''", classId);
-						voList=classService.doQuerySqlObject(sql, VoTrainClasstrainee.class);
+						voList=classService.getQuerySqlObject(sql, VoTrainClasstrainee.class);
 						voMapList.put(classId,voList);
 						
 						//统计请假人数
@@ -200,7 +200,7 @@ public class TrainCourseAppController {
 						sql = MessageFormat.format(
 								"SELECT ATTACH_NAME AS attachName,ATTACH_URL AS attachUrl FROM dbo.BASE_T_ATTACHMENT WHERE ATTACH_TYPE=''jpg'' AND ENTITY_NAME=''TrainClass'' AND RECORD_ID=''{0}''",
 								classId);
-						voAttaList = classService.doQuerySqlObject(sql, CommAttachment.class);
+						voAttaList = classService.getQuerySqlObject(sql, CommAttachment.class);
 						voMapAttaList.put(classId,voAttaList);
 					}
 					c.setAttachmentlist(voAttaList);
@@ -563,7 +563,7 @@ public class TrainCourseAppController {
 						
 				}
 				
-				trainees=classService.doQuerySqlObject(sql, VoTrainClasstrainee.class);
+				trainees=classService.getQuerySqlObject(sql, VoTrainClasstrainee.class);
 					
 				// 统计总人数
 				int countNum = trainees.size();
@@ -698,7 +698,7 @@ public class TrainCourseAppController {
 			}
 
 			
-			traineeList=classService.doQuerySqlObject(sql, VoTrainClasstrainee.class);
+			traineeList=classService.getQuerySqlObject(sql, VoTrainClasstrainee.class);
 			
 
 			info.setSuccess(true);

@@ -131,7 +131,7 @@ public class SysRoleServiceImpl extends BaseServiceImpl<SysRole> implements SysR
 				+ " and p.ISDELETE=0 ";
 		
 		 
-		List<SysPermission> list = perimissonSevice.doQuerySqlObject(sql, SysPermission.class);
+		List<SysPermission> list = perimissonSevice.getQuerySqlObject(sql, SysPermission.class);
 		 
 		return list;
 	}

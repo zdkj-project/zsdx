@@ -520,7 +520,7 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 					+ " FROM TC_Department " + " where DepartmentID = '" + smallDeptId + "'"
 					+ " order by DepartmentID asc";
 
-			List<BaseOrgToUP> upDeptInfos = this.doQuerySqlObject(sql, BaseOrgToUP.class);
+			List<BaseOrgToUP> upDeptInfos = this.getQuerySqlObject(sql, BaseOrgToUP.class);
 
 			// 2.判断用户信息该作哪种处理
 			if (upDeptInfos.isEmpty()) { // 若UP没有此数据，则增加
@@ -581,7 +581,7 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 					+ " FROM TC_Department " + " where DepartmentID not like 'Train%'"	
 					+ " order by DepartmentID asc";
 
-			List<BaseOrgToUP> upDeptInfos = this.doQuerySqlObject(sql, BaseOrgToUP.class);
+			List<BaseOrgToUP> upDeptInfos = this.getQuerySqlObject(sql, BaseOrgToUP.class);
 			
 			// 循环对比
 			BaseOrgToUP currentDept = null;

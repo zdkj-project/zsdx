@@ -35,7 +35,7 @@ public class CommTreeServiceImpl extends BaseServiceImpl<BaseEntity> implements 
     public List<FacultyClassTree> getFacultyClassTree(String whereSql) {
 
         String sql = "select id,text,iconCls,leaf,level,parent from EDU_V_FACULTYCLASS_TREE where 1=1 " + whereSql;
-        List<FacultyClass> lists = this.doQuerySqlObject(sql, FacultyClass.class);
+        List<FacultyClass> lists = this.getQuerySqlObject(sql, FacultyClass.class);
 
         List<FacultyClassTree> result = new ArrayList<FacultyClassTree>();
 
@@ -78,7 +78,7 @@ public class CommTreeServiceImpl extends BaseServiceImpl<BaseEntity> implements 
 
         String sql = "select id,text,iconCls,leaf,level,parent from " + treeView + " where 1=1 " + whereSql;
 
-        List<CommBase> lists = this.doQuerySqlObject(sql, CommBase.class);
+        List<CommBase> lists = this.getQuerySqlObject(sql, CommBase.class);
 
         List<CommTree> result = new ArrayList<CommTree>();
 
@@ -115,7 +115,7 @@ public class CommTreeServiceImpl extends BaseServiceImpl<BaseEntity> implements 
     public List<UpGradeRule> getUpGradeRuleList() {
 
         String sql = "select beforeName,afterName,upDirect from base_t_upgraderule";
-        List<UpGradeRule> lists = this.doQuerySqlObject(sql, UpGradeRule.class);
+        List<UpGradeRule> lists = this.getQuerySqlObject(sql, UpGradeRule.class);
         return lists;
     }
 

@@ -69,7 +69,7 @@ public class XcJxbookServiceImpl extends BaseServiceImpl<XcJxbook> implements Xc
         String sql = "";
         List<CommBase> romoeList = new ArrayList<CommBase>();
         sql = "select id,text,iconCls,leaf,level,parent from " + viewName +" where 1=1 " + whereSql;
-        List<CommBase> lists = this.doQuerySqlObject(sql, CommBase.class);
+        List<CommBase> lists = this.getQuerySqlObject(sql, CommBase.class);
         List<CommTree> result = new ArrayList<CommTree>();
         // 构建Tree数据
         createTreeChild(new CommTree(TreeVeriable.ROOT, new ArrayList<CommTree>()), result, lists);

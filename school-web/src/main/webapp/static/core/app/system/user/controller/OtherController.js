@@ -450,6 +450,13 @@ Ext.define("core.system.user.controller.OtherController", {
                     });
                     loading.show();
 
+                    /*将身份证和手机号进行加密*/
+                    var base = new Base64();
+                    if(params.sfzjh)
+                        params.sfzjh=base.encode(params.sfzjh);
+                    if(params.mobile)
+                        params.mobile=base.encode(params.mobile);
+                    
                     self.asyncAjax({
                         url: funData.action + "/" + act,
                         params: params,

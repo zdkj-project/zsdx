@@ -20,5 +20,11 @@ public class SysOperateLogServiceImpl extends BaseServiceImpl<SysOperateLog> imp
         this.dao = dao;
     }
     
+	@Override
+	public void addLog(SysOperateLog entity) {
+		// TODO Auto-generated method stub
+		this.dao.merge(entity);	
+	}
+    
 }
 

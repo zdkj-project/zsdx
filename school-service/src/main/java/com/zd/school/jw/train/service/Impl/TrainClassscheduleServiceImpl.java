@@ -521,7 +521,7 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 				+ " teachTypeName,advise FROM TRAIN_V_CLASSCOURSEEVAL where classScheduleId=''{0}''";
 		sql = MessageFormat.format(sql, scheduleId);
 		CourseEvalApp entity = new CourseEvalApp();
-		List<TrainClassCourseEval> evalCourse = this.doQuerySqlObject(sql, TrainClassCourseEval.class);
+		List<TrainClassCourseEval> evalCourse = this.getQuerySqlObject(sql, TrainClassCourseEval.class);
 		entity.setSuccess(true);
 		entity.setMessage("获取评价标准成功");
 		entity.setEvalCourse(evalCourse.get(0));

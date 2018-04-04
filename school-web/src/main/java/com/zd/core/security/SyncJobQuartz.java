@@ -88,7 +88,7 @@ public class SyncJobQuartz {
 					+ " convert(varchar,ORDER_INDEX) as layerorder  " + " from BASE_T_ORG" + " where isdelete=0"
 					+ " order by DepartmentID asc";
 
-			List<BaseOrgToUP> deptInfos = thisService.doQuerySqlObject(sql, BaseOrgToUP.class);
+			List<BaseOrgToUP> deptInfos = thisService.getQuerySqlObject(sql, BaseOrgToUP.class);
 
 			// 2.进入事物之前切换数据源
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
@@ -131,7 +131,7 @@ public class SyncJobQuartz {
 					+ " where xm not like '%管理员%' and XM not Like '%测试%' and XM not like '%test%'"
 					+ " order by userId asc";
 
-			List<SysUserToUP> userInfos = thisService.doQuerySqlObject(sql, SysUserToUP.class);
+			List<SysUserToUP> userInfos = thisService.getQuerySqlObject(sql, SysUserToUP.class);
 
 			// 2.进入事物之前切换数据源
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
@@ -191,7 +191,7 @@ public class SyncJobQuartz {
 					+ " from TC_Card A left join Tc_Employee B" + " on A.CardID=B.CardID and A.EmployeeID=B.EmployeeID "
 					+ " where A.EmployeeID=B.EmployeeID or A.EmployeeID=0" + " order by A.CardID asc";
 
-			List<CardUserInfoToUP> upCardUserInfos = thisService.doQuerySqlObject(sql, CardUserInfoToUP.class);
+			List<CardUserInfoToUP> upCardUserInfos = thisService.getQuerySqlObject(sql, CardUserInfoToUP.class);
 
 			// 3.恢复数据源
 			DBContextHolder.clearDBType();

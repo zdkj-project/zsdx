@@ -687,7 +687,7 @@ public class BaseServiceImpl<E> implements BaseService<E> {
     }
 
     @Override
-    public <T> List<T> doQuerySqlObject(String sql, Class<T> clz) {
+    public <T> List<T> getQuerySqlObject(String sql, Class<T> clz) {
 
         // TODO Auto-generated method stub
         return this.dao.doQuerySqlObject(sql, clz);

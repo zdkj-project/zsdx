@@ -85,7 +85,7 @@ public class DocSendcheckServiceImpl extends BaseServiceImpl<DocSendcheck> imple
 		String userId = currentUser.getUuid();
 		String sql = "SELECT recordID,docId,userId,docTitle,doResult,doState,createTime,docNumb,docEmg,operType,allOpininon,classification,wenzhong,keyword,createDate,doctypeName,progress FROM DOC_V_USERALLDOCS WHERE userId='"
 				+ userId + "' " + whereSql + " ORDER BY operType,createTime DESC";
-		List<AllUserDoc> lists = this.doQuerySqlObject(sql, AllUserDoc.class);
+		List<AllUserDoc> lists = this.getQuerySqlObject(sql, AllUserDoc.class);
 
 		return lists;
 	}

@@ -2,6 +2,7 @@ package com.zd.school.jw.train.service.Impl;
 
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
+import com.zd.core.util.Base64Util;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.StringUtils;
 import com.zd.school.jw.train.dao.TrainTraineeDao;
@@ -13,6 +14,7 @@ import com.zd.school.plartform.system.model.SysUser;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Base64Utils;
 
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
@@ -160,8 +162,11 @@ public class TrainTraineeServiceImpl extends BaseServiceImpl<TrainTrainee> imple
 			}
 			trainee.setXm(String.valueOf(lo.get(0)));
 			trainee.setXbm(mapDicItem.get(lo.get(1) + "XBM"));
-			trainee.setMobilePhone(String.valueOf(lo.get(2)));
-			trainee.setSfzjh(String.valueOf(lo.get(3)));
+			//trainee.setMobilePhone(String.valueOf(lo.get(2)));
+			//trainee.setSfzjh(String.valueOf(lo.get(3)));
+			trainee.setMobilePhone(Base64Util.encodeData(String.valueOf(lo.get(2))));
+			trainee.setSfzjh(Base64Util.encodeData(String.valueOf(lo.get(3))));
+			
 			trainee.setWorkUnit(String.valueOf(lo.get(4)));
 			trainee.setPosition(String.valueOf(lo.get(5)));
 			if (lo.get(6) != null)

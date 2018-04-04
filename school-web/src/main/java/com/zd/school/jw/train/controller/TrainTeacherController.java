@@ -118,8 +118,10 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
 				writeJSON(response, jsonBuilder.returnFailureJson("\"教师的身份证件号不能重复！\""));
 				return;
 			}
-			entity.setMobilePhone(Base64Util.encodeData(entity.getMobilePhone()));
-			entity.setSfzjh(Base64Util.encodeData(entity.getSfzjh()));
+			
+			//前端处理
+			//entity.setMobilePhone(Base64Util.encodeData(entity.getMobilePhone()));
+			//entity.setSfzjh(Base64Util.encodeData(entity.getSfzjh()));
 			
             if (!file.isEmpty() && file.getSize() > 0) {
                 // 重命名上传后的文件名
@@ -227,7 +229,10 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
 				writeJSON(response, jsonBuilder.returnFailureJson("\"教师的身份证件号不能重复！\""));
 				return;
 			}
-			
+			//前端处理
+			//entity.setMobilePhone(Base64Util.encodeData(entity.getMobilePhone()));
+	        //entity.setSfzjh(Base64Util.encodeData(entity.getSfzjh()));
+	        
             if (!file.isEmpty() && file.getSize() > 0) {
                 // 重命名上传后的文件名
                 String myFileName = file.getOriginalFilename();
@@ -338,7 +343,11 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
                     teacher.setTechnical(mapDicItem.get(String.valueOf(lo.get(3))+"TECHNICAL"));
 
                     teacher.setXlm(mapDicItem.get(String.valueOf(lo.get(4))+"XLM"));
-                    teacher.setMobilePhone(String.valueOf(lo.get(5)));
+                    
+                    //teacher.setMobilePhone(String.valueOf(lo.get(5)));                   
+                    teacher.setMobilePhone(Base64Util.encodeData(String.valueOf(lo.get(5))));
+        		
+        			
                     teacher.setInout(mapDicItem.get(String.valueOf(lo.get(6))+"INOUT"));
 
                     teacher.setWorkUnits(String.valueOf(lo.get(7)));
@@ -350,7 +359,10 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
                     teacher.setResearchArea(String.valueOf(lo.get(12)));
                     teacher.setResearchResult(String.valueOf(lo.get(13)));
                     teacher.setTeachingProject(String.valueOf(lo.get(14)));
-                    teacher.setSfzjh(String.valueOf(lo.get(15)));
+                    
+                    //teacher.setSfzjh(String.valueOf(lo.get(15)));
+                    teacher.setSfzjh(Base64Util.encodeData(String.valueOf(lo.get(15))));
+                    
                     teacher.setZp("/static/upload/trainTeacherPhoto/" + String.valueOf(lo.get(15)) + ".jpg");
                     
                     teacher.setUpdateTime(new Date());

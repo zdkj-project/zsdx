@@ -60,6 +60,7 @@ Ext.define("core.train.trainee.view.DetailForm", {
             emptyText: "请输入移动电话",
             maxLength: 36,
             maxLengthText: "最多36个字符,汉字占2个字符",
+            submitValue :false  
         }, {
             beforeLabelTextTpl: comm.get("required"),
             allowBlank: false,
@@ -72,6 +73,7 @@ Ext.define("core.train.trainee.view.DetailForm", {
             emptyText: "请输入身份证件号",
             maxLength: 20,
             maxLengthText: "最多20个字符,汉字占2个字符",
+            submitValue :false
             //inputType: 'password',
             //disabled:true
   //          hidden:true

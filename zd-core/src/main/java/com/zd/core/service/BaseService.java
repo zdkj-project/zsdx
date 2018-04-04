@@ -417,7 +417,7 @@ public interface BaseService<E> {
 
     public <T> List<T> getForValues(String hql, Object... args);
 
-    public <T> List<T> doQuerySqlObject(String sql, Class<T> clz);
+    public <T> List<T> getQuerySqlObject(String sql, Class<T> clz);
 
     public Integer doExecuteSql(String sql);
 

@@ -103,8 +103,25 @@ Ext.define("core.train.trainee.controller.OtherController", {
         var act = Ext.isEmpty(pkField.getValue()) ? "doadd" : "doupdate";
         if (formObj.isValid()) {
 
+             /*将身份证和手机号进行加密*/
+            var base = new Base64();
+            var sfzjh=formObj.findField("sfzjh").getValue();
+            var mobilePhone=formObj.findField("mobilePhone").getValue()
+            if(sfzjh){
+                sfzjh=base.encode(sfzjh);        
+            }
+            if(mobilePhone){
+                mobilePhone=base.encode(mobilePhone);
+            }
+                   
+
             formObj.submit({
                 url: funData.action + "/" + act,
+                //params: params,       //表单的参数会自动上传
+                params : {
+                    sfzjh:sfzjh,
+                    mobilePhone:mobilePhone
+                },
                 //params: params,       //表单的参数会自动上传
                 submitEmptyText: false,     //不提交表单为空值的数据
                 waitMsg: '正在提交，请等待...',

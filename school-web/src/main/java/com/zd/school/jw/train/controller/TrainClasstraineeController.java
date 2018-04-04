@@ -450,7 +450,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 					+ "		select top 1 CardID from TC_Card where EmployeeID=a.EmployeeID order by ModifyDate desc"
 					+ " ) where a.DepartmentID='" + departmentId + "' and a.UserId is not null ";
 
-			List<CardUserInfoToUP> upCardUserInfos = thisService.doQuerySqlObject(sql, CardUserInfoToUP.class);
+			List<CardUserInfoToUP> upCardUserInfos = thisService.getQuerySqlObject(sql, CardUserInfoToUP.class);
 
 			// 3.恢复数据源
 			DBContextHolder.clearDBType();

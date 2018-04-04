@@ -414,7 +414,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 					+ "' as departmentId,'学员' as jobName " + " from TRAIN_T_CLASSTRAINEE " + " where CLASS_ID='" + classId + "'"
 					+ " order by CLASS_TRAINEE_ID asc";
 
-			List<SysUserToUP> userInfos = thisService.doQuerySqlObject(sql, SysUserToUP.class);
+			List<SysUserToUP> userInfos = thisService.getQuerySqlObject(sql, SysUserToUP.class);
 
 			// 5.切换数据源
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);

@@ -133,8 +133,9 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			writeJSON(response, jsonBuilder.returnFailureJson("'用户名不能重复！'"));
 			return;
 		}
-		entity.setMobile(Base64Util.encodeData(entity.getMobile()));
-		entity.setSfzjh(Base64Util.encodeData(entity.getSfzjh()));
+		//前端处理
+		//entity.setMobile(Base64Util.encodeData(entity.getMobile()));
+		//entity.setSfzjh(Base64Util.encodeData(entity.getSfzjh()));
 		// 获取当前操作用户
 		SysUser currentUser = getCurrentSysUser();
 
@@ -184,6 +185,11 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			writeJSON(response, jsonBuilder.returnFailureJson("'用户名不能重复！'"));
 			return;
 		}
+		
+		//前端处理
+		//entity.setMobile(Base64Util.encodeData(entity.getMobile()));
+        //entity.setSfzjh(Base64Util.encodeData(entity.getSfzjh()));
+        
 		// 获取当前的操作用户
 		SysUser currentUser = getCurrentSysUser();
 
@@ -553,7 +559,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 					+ " where u.ISDELETE=0 and u.USER_ID='" + userId + "'";
 			
 
-			List<SysUserToUP> userInfo = thisService.doQuerySqlObject(sql, SysUserToUP.class);
+			List<SysUserToUP> userInfo = thisService.getQuerySqlObject(sql, SysUserToUP.class);
 
 			// 2.进入事物之前切换数据源
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
@@ -612,12 +618,23 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 					+ " where xm not like '%管理员%' and XM not Like '%测试%' and XM not like '%test%'"
 					+ " order by userId asc";
 
-			List<SysUserToUP> userInfos = thisService.doQuerySqlObject(sql, SysUserToUP.class);
+			List<SysUserToUP> userInfos = thisService.getQuerySqlObject(sql, SysUserToUP.class);
 
 			// 2.进入事物之前切换数据源
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 			int row = 0;
 			if (userInfos.size() > 0) {
+				
+				//在同步到UP前，先进行数据的转换
+	            userInfos.stream().forEach((x)->{		            
+	            	if(Base64Util.isBase64(x.getEmployeeTel())){
+	            		x.setEmployeeTel(Base64Util.decodeData(x.getEmployeeTel()));
+		            }
+	            	if(Base64Util.isBase64(x.getIdentifier())){
+	            		x.setIdentifier(Base64Util.decodeData(x.getIdentifier()));
+		            }
+	            });
+	            
 				row = thisService.syncUserInfoToAllUP(userInfos, null);
 			} else {
 				row = thisService.syncUserInfoToAllUP(null, null);
@@ -677,7 +694,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 					+ " order by A.CardID asc";
 					
 			
-			List<CardUserInfoToUP> upCardUserInfos = thisService.doQuerySqlObject(sql, CardUserInfoToUP.class);
+			List<CardUserInfoToUP> upCardUserInfos = thisService.getQuerySqlObject(sql, CardUserInfoToUP.class);
 
 			// 3.恢复数据源
 			DBContextHolder.clearDBType();

@@ -262,7 +262,7 @@ public class JwGradeteacherServiceImpl extends BaseServiceImpl<JwGradeteacher> i
         Map<String, CommBase> mapBase = new HashMap<String, CommBase>();
         List<CommBase> romoeList = new ArrayList<CommBase>();
         sql = "select id,text,iconCls,leaf,level,parent from " + viewName + " where 1=1 " + whereSql;
-        List<CommBase> lists = this.doQuerySqlObject(sql, CommBase.class);
+        List<CommBase> lists = this.getQuerySqlObject(sql, CommBase.class);
 
         //for (JwTGradeclass jwTGradeclass : jgClass) {
         for (CommBase cb : lists) {

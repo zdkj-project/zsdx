@@ -85,7 +85,7 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
 
     @MapperCell(cellName = "移动电话", order = 3)
     @FieldInfo(name = "移动电话")
-    @Column(name = "MOBILE_PHONE", length = 36, nullable = true)
+    @Column(name = "MOBILE_PHONE", length = 50, nullable = true)
     private String mobilePhone;
 
     public void setMobilePhone(String mobilePhone) {
@@ -97,7 +97,7 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
     }
 
     @FieldInfo(name = "身份证件号")
-    @Column(name = "SFZJH", length = 20, nullable = true)
+    @Column(name = "SFZJH", length = 255, nullable = true)
     private String sfzjh;
 
     public void setSfzjh(String sfzjh) {

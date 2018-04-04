@@ -141,7 +141,8 @@ Ext.define("core.system.user.view.UserForm", {
             xtype: 'textfield',
             allowBlank: true,
             emptyText: '请输入移动电话',
-            blankText: "移动电话不能为空"
+            blankText: "移动电话不能为空",
+            vtype:'phoneCode'
         }]
     }, {
         xtype: 'container',
@@ -154,6 +155,7 @@ Ext.define("core.system.user.view.UserForm", {
             xtype: 'textfield',
             allowBlank: true,
             emptyText: '请输入身份证件号',
+            vtype:'idCode'
         }, {
             columnWidth: .5,
             beforeLabelTextTpl: "",
@@ -161,7 +163,8 @@ Ext.define("core.system.user.view.UserForm", {
             name: "dzxx",
             xtype: 'textfield',
             allowBlank: true,
-            emptyText: '请输入电子邮箱'
+            emptyText: '请输入电子邮箱',
+            vtype:'email'
         }]
     }]
 });

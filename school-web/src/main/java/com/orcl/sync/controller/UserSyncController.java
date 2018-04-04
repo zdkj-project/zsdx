@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
+import com.zd.core.util.Base64Util;
 import com.zd.core.util.DBContextHolder;
 import com.zd.school.oa.doc.model.DocSendcheck;
 import com.zd.school.plartform.baseset.model.BaseOrgToUP;
@@ -431,7 +433,7 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
 	                    + " where isdelete=0"
 	                    + " order by DepartmentID asc";
 
-	            List<BaseOrgToUP> deptInfo = orgService.doQuerySqlObject(sql, BaseOrgToUP.class);
+	            List<BaseOrgToUP> deptInfo = orgService.getQuerySqlObject(sql, BaseOrgToUP.class);
 	            
 	            // 2.查询最新的用户、部门信息
 				sql = "select  u.USER_ID as userId,u.XM as employeeName, u.user_numb as employeeStrId,"
@@ -452,15 +454,24 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
 						+ " where xm not like '%管理员%' and XM not Like '%测试%' and XM not like '%test%'"
 						+ " order by userId asc";
 
-				List<SysUserToUP> userInfos = userservice.doQuerySqlObject(sql, SysUserToUP.class);
-
+				List<SysUserToUP> userInfos = userservice.getQuerySqlObject(sql, SysUserToUP.class);
+				
 				
 	            //2.进入事物之前切换数据源
 	            DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);	         
 	            if(deptInfo.size()!=0){
 	                orgService.syncAllDeptInfoToUP(deptInfo);
 	            }
-				if (userInfos.size() > 0) {
+				if (userInfos.size() > 0) {		
+					//在同步到UP前，先进行数据的转换
+		            userInfos.stream().forEach((x)->{		            
+		            	if(Base64Util.isBase64(x.getEmployeeTel())){
+		            		x.setEmployeeTel(Base64Util.decodeData(x.getEmployeeTel()));
+			            }
+		            	if(Base64Util.isBase64(x.getIdentifier())){
+		            		x.setIdentifier(Base64Util.decodeData(x.getIdentifier()));
+			            }
+		            });
 					userservice.syncUserInfoToAllUP(userInfos, null);
 				} 
 				

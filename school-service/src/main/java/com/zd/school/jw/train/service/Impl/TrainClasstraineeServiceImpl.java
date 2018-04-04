@@ -19,6 +19,7 @@ import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import com.zd.core.model.ImportNotInfo;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
+import com.zd.core.util.Base64Util;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.StringUtils;
 import com.zd.school.build.define.model.BuildRoominfo;
@@ -345,8 +346,11 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 				trainee.setClassId(classId);
 				trainee.setXm(String.valueOf(lo.get(0)));
 				trainee.setXbm(mapXbm.get(lo.get(1)));
-				trainee.setMobilePhone(String.valueOf(lo.get(2)));
-				trainee.setSfzjh(String.valueOf(lo.get(3)));
+				//trainee.setMobilePhone(String.valueOf(lo.get(2)));
+				//trainee.setSfzjh(String.valueOf(lo.get(3)));
+				trainee.setMobilePhone(Base64Util.encodeData(String.valueOf(lo.get(2))));
+				trainee.setSfzjh(Base64Util.encodeData(String.valueOf(lo.get(3))));
+				
 				trainee.setWorkUnit(String.valueOf(lo.get(4)));
 				trainee.setPosition(String.valueOf(lo.get(5)));
 				trainee.setHeadshipLevel(mapHeadshipLevel.get(lo.get(6)));
@@ -509,7 +513,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 					+ " where a.UserId in('" + ids.replace(",", "','")
 					+ "') and (b.CardStatusIDXF=1 or b.CardStatusIDXF=2)";
 
-			List<CardUserInfoToUP> upCardUserInfos = this.doQuerySqlObject(sql, CardUserInfoToUP.class);
+			List<CardUserInfoToUP> upCardUserInfos = this.getQuerySqlObject(sql, CardUserInfoToUP.class);
 
 			SimpleDateFormat fmtDateTime = new SimpleDateFormat("yyyy-M-d h:mm");
 			String currentDate = fmtDateTime.format(new Date());

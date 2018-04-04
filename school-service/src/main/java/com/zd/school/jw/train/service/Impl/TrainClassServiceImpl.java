@@ -589,7 +589,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 			String sql = "SELECT  classId,classCategory,className,beginDate,endDate,trainDays,holdUnit,undertaker,trainees,convert(varchar(10),verySatisfaction) as verySatisfaction"
 					+ ",convert(varchar(10),satisfaction) as satisfaction,bzr,mobile FROM TRAIN_V_CLASSEVAL where classId=''{0}''";
 			sql = MessageFormat.format(sql, classId);
-			List<TrainClassEval> list = this.doQuerySqlObject(sql, TrainClassEval.class);
+			List<TrainClassEval> list = this.getQuerySqlObject(sql, TrainClassEval.class);
 			List<TrainIndicatorStand> stand = standService.getClassEvalStand();
 			entity.setEvalClass(list.get(0));
 			entity.setEvalStand(stand);
@@ -953,7 +953,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
                 + ",convert(varchar(10),satisfaction) as satisfaction,bzr,mobile,trainees,advise" +
                 " FROM TRAIN_V_CLASSEVAL WHERE classId=''{0}''";
         sql = MessageFormat.format(sql, ids);
-        List<TrainClassEval> evalClassList = this.doQuerySqlObject(sql,TrainClassEval.class);
+        List<TrainClassEval> evalClassList = this.getQuerySqlObject(sql,TrainClassEval.class);
         if(evalClassList.size()>0)
             return  evalClassList.get(0);
         else

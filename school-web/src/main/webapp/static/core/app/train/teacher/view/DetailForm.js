@@ -60,7 +60,8 @@ Ext.define("core.train.teacher.view.DetailForm", {
             emptyText: "请输入移动电话",
             maxLength: 36,
             maxLengthText: "最多36个字符,汉字占2个字符",
-            vtype:'phoneCode'
+            vtype:'phoneCode',
+            submitValue :false      //调用submit方法时，不会提交这里的值，从而可以实现修改值后，在通过params属性传入参数
         }, {
             fieldLabel: "身份证件号",
             columnWidth: 0.5,
@@ -69,7 +70,8 @@ Ext.define("core.train.teacher.view.DetailForm", {
             emptyText: "请输入身份证件号",
             maxLength: 20,
             maxLengthText: "最多20个字符,汉字占2个字符",
-            vtype:'idCode'
+            vtype:'idCode',
+            submitValue :false
         }]
     }, {
         xtype: "container",

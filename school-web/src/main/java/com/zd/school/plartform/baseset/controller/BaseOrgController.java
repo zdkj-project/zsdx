@@ -220,7 +220,7 @@ public class BaseOrgController extends FrameWorkController<BaseOrg> implements C
 					+ " where isdelete=0 and EXT_FIELD04='"+smallDeptId+"'"
 					+ " order by DepartmentID asc";
 			
-			List<BaseOrgToUP> deptInfo = thisService.doQuerySqlObject(sql, BaseOrgToUP.class);
+			List<BaseOrgToUP> deptInfo = thisService.getQuerySqlObject(sql, BaseOrgToUP.class);
 			
 			//2.进入事物之前切换数据源		
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
@@ -267,7 +267,7 @@ public class BaseOrgController extends FrameWorkController<BaseOrg> implements C
 					+ " where isdelete=0"
 					+ " order by DepartmentID asc";
 			
-			List<BaseOrgToUP> deptInfo = thisService.doQuerySqlObject(sql, BaseOrgToUP.class);
+			List<BaseOrgToUP> deptInfo = thisService.getQuerySqlObject(sql, BaseOrgToUP.class);
 			
 			//2.进入事物之前切换数据源		
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);

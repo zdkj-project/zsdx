@@ -110,8 +110,9 @@ public class TrainTraineeController extends FrameWorkController<TrainTrainee> im
 				return;
 			}
 
-            entity.setMobilePhone(Base64Util.encodeData(entity.getMobilePhone()));
-            entity.setSfzjh(Base64Util.encodeData(entity.getSfzjh()));
+			//前端处理
+            //entity.setMobilePhone(Base64Util.encodeData(entity.getMobilePhone()));
+            //entity.setSfzjh(Base64Util.encodeData(entity.getSfzjh()));
 			
             if (!file.isEmpty() && file.getSize() > 0) {
                 // 重命名上传后的文件名
@@ -220,6 +221,11 @@ public class TrainTraineeController extends FrameWorkController<TrainTrainee> im
 				writeJSON(response, jsonBuilder.returnFailureJson("\"学员的身份证件号不能重复！\""));
 				return;
 			}
+			
+			//前端处理
+			//entity.setMobilePhone(Base64Util.encodeData(entity.getMobilePhone()));
+	        //entity.setSfzjh(Base64Util.encodeData(entity.getSfzjh()));
+	            
 			
             if (!file.isEmpty() && file.getSize() > 0) {
                 // 重命名上传后的文件名

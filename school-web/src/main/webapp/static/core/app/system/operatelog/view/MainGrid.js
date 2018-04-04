@@ -51,7 +51,6 @@ Ext.define("core.system.operatelog.view.MainGrid", {
         }, {
             text: "IP地址",
             dataIndex: "ipHost",
-            flex:1,
             width:140
         }, {
             text: "访问方法",
@@ -67,17 +66,20 @@ Ext.define("core.system.operatelog.view.MainGrid", {
             dataIndex: "methodParams",
             flex:1,
             renderer: function(value, metaData) {
-                var title = "参数";            
-                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + value + '"';
-                return value;
+                var title = "参数";      
+                var v=value.replace( new RegExp('"',"gm"),''); 
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + v + '"';
+                return v;
             }
         }, {
             text: "返回结果",
             dataIndex: "methodResult",
             flex:1,
             renderer: function(value, metaData) {
-                var title = "返回结果";            
-                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + value + '"';
+                var title = "返回结果";  
+                //var v=Ext.decode(value);        
+                var v=value.replace( new RegExp('"',"gm"),'');  
+                metaData.tdAttr = 'data-qtitle="' + title + '" data-qtip="' + v + '"';
                 return value;
             }
         }, {

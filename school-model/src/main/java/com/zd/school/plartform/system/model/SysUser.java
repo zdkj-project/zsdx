@@ -244,7 +244,7 @@ public class SysUser extends BaseEntity implements Serializable {
     }
 
     @FieldInfo(name = "身份证件号")
-    @Column(name = "SFZJH", length = 20, nullable = true)
+    @Column(name = "SFZJH", length = 255, nullable = true)
     private String sfzjh;
 
     public void setSfzjh(String sfzjh) {
@@ -268,7 +268,7 @@ public class SysUser extends BaseEntity implements Serializable {
     }
 
     @FieldInfo(name = "移动电话")
-    @Column(name = "MOBILE", length = 64, nullable = true)
+    @Column(name = "MOBILE", length = 50, nullable = true)
     private String mobile;
 
     public void setMobile(String mobile) {

@@ -313,7 +313,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 					+ " employeeStrId,sid,convert(varchar(1),sexId) sexId,identifier " + " from Tc_Employee "
 					+ " where UserId='" + userId + "'";
 
-			List<SysUserToUP> upUserInfos = this.doQuerySqlObject(sql, SysUserToUP.class);
+			List<SysUserToUP> upUserInfos = this.getQuerySqlObject(sql, SysUserToUP.class);
 
 			// 2.判断用户信息该作哪种处理
 			if (upUserInfos.isEmpty()) { // 若UP没有此数据，则增加
@@ -395,7 +395,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 			sql += " order by userId asc";
 
-			List<SysUserToUP> upUserInfos = this.doQuerySqlObject(sql, SysUserToUP.class);
+			List<SysUserToUP> upUserInfos = this.getQuerySqlObject(sql, SysUserToUP.class);
 
 			// 循环对比
 			SysUserToUP currentUser = null;
@@ -583,7 +583,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 					+ " USER_ID as userId,convert(varchar,UP_CARD_ID) as upCardId,CARD_PRINT_ID as sid"
 					+ " from CARD_T_USEINFO where ISDELETE=0 " + " order by upCardId asc";
 
-			List<CardUserInfoToUP> webCardUserInfos = this.doQuerySqlObject(sql, CardUserInfoToUP.class);
+			List<CardUserInfoToUP> webCardUserInfos = this.getQuerySqlObject(sql, CardUserInfoToUP.class);
 
 			String updateTime = null;
 
@@ -756,7 +756,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 					+ " from CARD_T_USEINFO a join TRAIN_T_CLASSTRAINEE b on a.USER_ID=b.CLASS_TRAINEE_ID"
 					+ " where a.ISDELETE=0 and b.CLASS_ID='" + classId + "'" + " order by a.UP_CARD_ID asc";
 
-			List<CardUserInfoToUP> webCardUserInfos = this.doQuerySqlObject(sql, CardUserInfoToUP.class);
+			List<CardUserInfoToUP> webCardUserInfos = this.getQuerySqlObject(sql, CardUserInfoToUP.class);
 
 			String updateTime = null;
 
@@ -879,7 +879,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				+ " SYS_T_USER u on ru.USER_ID=u.USER_ID  " + " where" + " u.USER_ID='" + sysUser.getUuid() + "'  "
 				+ " and u.ISDELETE=0 " + " and r.ISDELETE=0 ";
 
-		List<SysRole> list = roleService.doQuerySqlObject(sql, SysRole.class);
+		List<SysRole> list = roleService.getQuerySqlObject(sql, SysRole.class);
 
 		return list;
 	}

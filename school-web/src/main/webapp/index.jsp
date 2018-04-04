@@ -23,7 +23,7 @@
 
 <link rel="stylesheet" type="text/css" href="${contextPath}/static/core/resources/css/icon.css" />
 <link rel="stylesheet" type="text/css"	href="${contextPath}/static/core/resources/examples/shared/example.css" />
-
+<script type="text/javascript" src="${contextPath}/static/core/resources/js/base64.js"></script>
 <!--script type="text/javascript"  src="${contextPath}/static/core/resources/examples/shared/examples.js"></script>
 <script type="text/javascript"  src="${contextPath}/ueditor/ueditor.config.js"></script>
 <script type="text/javascript"  src="${contextPath}/ueditor/ueditor.all.min.js"></script>

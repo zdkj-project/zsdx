@@ -124,7 +124,7 @@ public class MeetingAppController {
 					String sql = MessageFormat.format(
 							"SELECT ATTACH_NAME AS attachName,ATTACH_URL AS attachUrl FROM dbo.BASE_T_ATTACHMENT WHERE  ATTACH_TYPE=''jpg'' AND ENTITY_NAME=''OaMeeting'' AND RECORD_ID=''{0}''",
 							o.getUuid());
-					List<CommAttachment> attachmentList = meetingService.doQuerySqlObject(sql, CommAttachment.class);
+					List<CommAttachment> attachmentList = meetingService.getQuerySqlObject(sql, CommAttachment.class);
 					// if(attachmentList.size()==0){
 					// CommAttachment tempAtt=new CommAttachment();
 					// tempAtt.setAttachName("image");
