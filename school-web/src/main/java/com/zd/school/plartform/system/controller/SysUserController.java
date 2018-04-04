@@ -6,11 +6,7 @@ import com.zd.core.constant.Constant;
 import com.zd.core.constant.TreeVeriable;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.util.DBContextHolder;
-import com.zd.core.util.ModelUtil;
-import com.zd.core.util.PoiExportExcel;
-import com.zd.core.util.StringUtils;
-import com.zd.core.util.exportMeetingInfo;
+import com.zd.core.util.*;
 import com.zd.school.excel.FastExcel;
 import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.plartform.baseset.model.BaseDicitem;
@@ -79,6 +75,14 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			
 			QueryResult<SysUser> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
 					super.sort(request), super.filter(request), true);
+			for(int i=0;i<qr.getResultList().size();i++) {
+				if(Base64Util.isBase64(qr.getResultList().get(i).getMobile())){
+					qr.getResultList().get(i).setMobile(Base64Util.decodeData(qr.getResultList().get(i).getMobile()));
+				}
+				if(Base64Util.isBase64(qr.getResultList().get(i).getSfzjh())){
+					qr.getResultList().get(i).setSfzjh(Base64Util.decodeData(qr.getResultList().get(i).getSfzjh()));
+				}
+			}
 			strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
 		
 		} else {
@@ -96,6 +100,14 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 				SysUser currentUser = getCurrentSysUser();
 				QueryResult<SysUser> qr = thisService.getDeptUser(super.start(request), super.limit(request),
 						super.sort(request), super.filter(request), true, userIds, currentUser);
+				for(int i=0;i<qr.getResultList().size();i++) {
+					if(Base64Util.isBase64(qr.getResultList().get(i).getMobile())){
+						qr.getResultList().get(i).setMobile(Base64Util.decodeData(qr.getResultList().get(i).getMobile()));
+					}
+					if(Base64Util.isBase64(qr.getResultList().get(i).getSfzjh())){
+						qr.getResultList().get(i).setSfzjh(Base64Util.decodeData(qr.getResultList().get(i).getSfzjh()));
+					}
+				}
 				strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
 			
 			}else{
@@ -121,7 +133,8 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			writeJSON(response, jsonBuilder.returnFailureJson("'用户名不能重复！'"));
 			return;
 		}
-
+		entity.setMobile(Base64Util.encodeData(entity.getMobile()));
+		entity.setSfzjh(Base64Util.encodeData(entity.getSfzjh()));
 		// 获取当前操作用户
 		SysUser currentUser = getCurrentSysUser();
 

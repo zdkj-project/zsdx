@@ -4,6 +4,7 @@ package com.zd.school.jw.train.controller;
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
+import com.zd.core.util.Base64Util;
 import com.zd.core.util.ImportExcelUtil;
 import com.zd.core.util.StringUtils;
 import com.zd.school.excel.FastExcel;
@@ -67,6 +68,14 @@ public class TrainTraineeController extends FrameWorkController<TrainTrainee> im
         String sort = super.sort(request);
         String filter = super.filter(request);
         QueryResult<TrainTrainee> qResult = thisService.list(start, limit, sort, filter, true);
+        for(int i=0;i<qResult.getResultList().size();i++) {
+            if(Base64Util.isBase64(qResult.getResultList().get(i).getMobilePhone())){
+                qResult.getResultList().get(i).setMobilePhone(Base64Util.decodeData(qResult.getResultList().get(i).getMobilePhone()));
+            }
+            if(Base64Util.isBase64(qResult.getResultList().get(i).getSfzjh())){
+                qResult.getResultList().get(i).setSfzjh(Base64Util.decodeData(qResult.getResultList().get(i).getSfzjh()));
+            }
+        }
         strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
         writeJSON(response, strData);// 返回数据
     }
@@ -93,6 +102,8 @@ public class TrainTraineeController extends FrameWorkController<TrainTrainee> im
 				return;
 			}
 
+            entity.setMobilePhone(Base64Util.encodeData(entity.getMobilePhone()));
+            entity.setSfzjh(Base64Util.encodeData(entity.getSfzjh()));
 			
             if (!file.isEmpty() && file.getSize() > 0) {
                 // 重命名上传后的文件名
