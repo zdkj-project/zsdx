@@ -106,6 +106,14 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
         // 此处为放在入库前的一些检查的代码，如唯一校验等
         try {
         	String hql1 = " o.isDelete='0'";
+        	if(null==entity.getSfzjh()||"".equals(entity.getSfzjh())){
+                writeJSON(response, jsonBuilder.returnFailureJson("\"教师的身份证件号不能为空！\""));
+                return;
+            }
+            if(null==entity.getMobilePhone()||"".equals(entity.getMobilePhone())){
+                writeJSON(response, jsonBuilder.returnFailureJson("\"教师的电话号码不能为空！\""));
+                return;
+            }
 			if (thisService.IsFieldExist("sfzjh", entity.getSfzjh(), "-1", hql1)) {
 				writeJSON(response, jsonBuilder.returnFailureJson("\"教师的身份证件号不能重复！\""));
 				return;

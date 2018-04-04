@@ -97,6 +97,14 @@ public class TrainTraineeController extends FrameWorkController<TrainTrainee> im
         try {
         	
 			String hql1 = " o.isDelete='0'";
+            if(null==entity.getSfzjh()||"".equals(entity.getSfzjh())){
+                writeJSON(response, jsonBuilder.returnFailureJson("\"学员的身份证件号不能为空！\""));
+                return;
+            }
+            if(null==entity.getMobilePhone()||"".equals(entity.getMobilePhone())){
+                writeJSON(response, jsonBuilder.returnFailureJson("\"学员的电话号码不能为空！\""));
+                return;
+            }
 			if (thisService.IsFieldExist("sfzjh", entity.getSfzjh(), "-1", hql1)) {
 				writeJSON(response, jsonBuilder.returnFailureJson("\"学员的身份证件号不能重复！\""));
 				return;
