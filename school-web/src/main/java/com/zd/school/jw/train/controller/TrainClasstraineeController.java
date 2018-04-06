@@ -1,33 +1,6 @@
 
 package com.zd.school.jw.train.controller;
 
-import com.zd.core.constant.Constant;
-import com.zd.core.controller.core.FrameWorkController;
-import com.zd.core.model.ImportNotInfo;
-import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.util.*;
-import com.zd.school.jw.train.model.TrainClass;
-import com.zd.school.jw.train.model.TrainClasstrainee;
-import com.zd.school.jw.train.model.vo.VoTrainClassCheck;
-import com.zd.school.jw.train.service.TrainClassService;
-import com.zd.school.jw.train.service.TrainClasstraineeService;
-import com.zd.school.plartform.baseset.model.BaseDicitem;
-import com.zd.school.plartform.baseset.service.BaseDicitemService;
-import com.zd.school.plartform.system.model.CardUserInfoToUP;
-import com.zd.school.plartform.system.model.SysUser;
-import com.zd.school.plartform.system.service.SysUserService;
-
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
@@ -38,6 +11,41 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.zd.core.constant.Constant;
+import com.zd.core.controller.core.FrameWorkController;
+import com.zd.core.model.ImportNotInfo;
+import com.zd.core.model.extjs.QueryResult;
+import com.zd.core.util.Base64Util;
+import com.zd.core.util.DBContextHolder;
+import com.zd.core.util.ExportExcel;
+import com.zd.core.util.ImportExcelUtil;
+import com.zd.core.util.ModelUtil;
+import com.zd.core.util.PoiExportExcel;
+import com.zd.core.util.StringUtils;
+import com.zd.core.util.exportMeetingInfo;
+import com.zd.school.jw.train.model.TrainClass;
+import com.zd.school.jw.train.model.TrainClasstrainee;
+import com.zd.school.jw.train.model.vo.VoTrainClassCheck;
+import com.zd.school.jw.train.service.TrainClassService;
+import com.zd.school.jw.train.service.TrainClasstraineeService;
+import com.zd.school.plartform.baseset.model.BaseDicitem;
+import com.zd.school.plartform.baseset.service.BaseDicitemService;
+import com.zd.school.plartform.system.model.CardUserInfoToUP;
+import com.zd.school.plartform.system.model.SysUser;
+import com.zd.school.plartform.system.service.SysUserService;
 
 /**
  * 
@@ -88,6 +96,17 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		String sort = super.sort(request);
 		String filter = super.filter(request);
 		QueryResult<TrainClasstrainee> qResult = thisService.list(start, limit, sort, filter, true);
+		for (int i = 0; i < qResult.getResultList().size(); i++) {
+			if (Base64Util.isBase64(qResult.getResultList().get(i).getMobilePhone())) {
+				qResult.getResultList().get(i)
+						.setMobilePhone(Base64Util.decodeData(qResult.getResultList().get(i).getMobilePhone()));
+			}
+			if (Base64Util.isBase64(qResult.getResultList().get(i).getSfzjh())) {
+				qResult.getResultList().get(i)
+						.setSfzjh(Base64Util.decodeData(qResult.getResultList().get(i).getSfzjh()));
+			}
+		}
+
 		strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
 	}
@@ -216,23 +235,20 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			List<List<Object>> listObject = null;
 			List<ImportNotInfo> listReturn;
 
-			
 			if (!file.isEmpty()) {
 				in = file.getInputStream();
 				listObject = new ImportExcelUtil().getBankListByExcel(in, file.getOriginalFilename());
 				in.close();
-				
+
 				listReturn = thisService.doImportTrainee(listObject, classId, needSync, currentUser);
 
-                if (listReturn.size() == 0)
-                    writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导入成功！\""));
-                else {
-                    String strData = jsonBuilder.buildList(listReturn, "");
-                    request.getSession().setAttribute("TrainClassTraineeImportError", strData);
-                    writeJSON(response, jsonBuilder.returnSuccessJson("-1")); // 返回前端-1，表示存在错误数据
-                }
-                
-				
+				if (listReturn.size() == 0)
+					writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导入成功！\""));
+				else {
+					String strData = jsonBuilder.buildList(listReturn, "");
+					request.getSession().setAttribute("TrainClassTraineeImportError", strData);
+					writeJSON(response, jsonBuilder.returnSuccessJson("-1")); // 返回前端-1，表示存在错误数据
+				}
 
 			} else {
 				writeJSON(response, jsonBuilder.returnFailureJson("\"文件不存在！\""));
@@ -242,31 +258,30 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		}
 	}
 
-	@RequestMapping(value = {"/downNotImportInfo"})
-    public void downNotImportInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        Object obj = request.getSession().getAttribute("TrainClassTraineeImportError");
-        if (obj != null) {
+	@RequestMapping(value = { "/downNotImportInfo" })
+	public void downNotImportInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		Object obj = request.getSession().getAttribute("TrainClassTraineeImportError");
+		if (obj != null) {
 
-            request.getSession().removeAttribute("TrainClassTraineeImportError");// 移除此session
+			request.getSession().removeAttribute("TrainClassTraineeImportError");// 移除此session
 
-            String downData = (String) obj;
+			String downData = (String) obj;
 
-            List<ImportNotInfo> list = (List<ImportNotInfo>) jsonBuilder.fromJsonArray(downData, ImportNotInfo.class);
-            ExportExcel excel = new ExportExcel();
+			List<ImportNotInfo> list = (List<ImportNotInfo>) jsonBuilder.fromJsonArray(downData, ImportNotInfo.class);
+			ExportExcel excel = new ExportExcel();
 
-            String[] Title = {"序号", "学生姓名", "异常级别", "异常原因"};
-            Integer[] coulumnWidth = {8, 20, 20, 100};
-            Integer[] coulumnDirection = {1, 1, 1, 1};
+			String[] Title = { "序号", "学生姓名", "异常级别", "异常原因" };
+			Integer[] coulumnWidth = { 8, 20, 20, 100 };
+			Integer[] coulumnDirection = { 1, 1, 1, 1 };
 
-            List<String> excludeList = new ArrayList<>();
-            SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日");
-            String fileNAME = "（" + sdf2.format(new Date()) + "导出）导入班级学员的异常信息名单";
+			List<String> excludeList = new ArrayList<>();
+			SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy年MM月dd日");
+			String fileNAME = "（" + sdf2.format(new Date()) + "导出）导入班级学员的异常信息名单";
 
-            excel.exportExcel(response, fileNAME, Title, list, excludeList, coulumnWidth, coulumnDirection);
-        }
-    }
+			excel.exportExcel(response, fileNAME, Title, list, excludeList, coulumnWidth, coulumnDirection);
+		}
+	}
 
-	
 	/**
 	 * 描述：同步班级学员信息到学员库
 	 * 
@@ -372,7 +387,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		String ids = request.getParameter("ids");
 		String xbm = request.getParameter("xbm");
 		String classId = request.getParameter("classId");
-		int result = thisService.doUpdateRoomInfo(classId,roomId, roomName, ids, xbm, currentUser);
+		int result = thisService.doUpdateRoomInfo(classId, roomId, roomName, ids, xbm, currentUser);
 
 		if (result == 1) {
 			writeJSON(response, jsonBuilder.returnSuccessJson("\"设置宿舍成功！\""));
@@ -700,7 +715,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 
 		List<Map<String, Object>> allList = new ArrayList<>();
 		Integer[] columnWidth = new Integer[] { 10, 30, 30, 20, 20, 20, 20 };
-		Integer[] headColumnWidth = new Integer[] { 10, 15, 15,20, 15, 25, 25, 25, 30 };
+		Integer[] headColumnWidth = new Integer[] { 10, 15, 15, 20, 15, 25, 25, 25, 30 };
 
 		// 数据字典项
 		String mapKey = null;
@@ -726,11 +741,11 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		for (Map<String, Object> list : classTraineetList) {
 			traineeMap = new LinkedHashMap<>();
 			classTraineeIdList.add(String.valueOf(list.get("CLASS_TRAINEE_ID")));
-			
-			String headShipLevel=mapDicItem.get(String.valueOf(list.get("HEADSHIP_LEVEL")) + "HEADSHIPLEVEL");
-			if(headShipLevel==null)
-				headShipLevel="";
-			
+
+			String headShipLevel = mapDicItem.get(String.valueOf(list.get("HEADSHIP_LEVEL")) + "HEADSHIPLEVEL");
+			if (headShipLevel == null)
+				headShipLevel = "";
+
 			traineeMap.put("xh", String.valueOf(j++));
 			traineeMap.put("xm", String.valueOf(list.get("XM")));
 			traineeMap.put("xb", mapDicItem.get(String.valueOf(list.get("XBM")) + "XBM"));
@@ -739,8 +754,8 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 					: String.valueOf(list.get("REAL＿CREDIT")));
 			traineeMap.put("phone", String.valueOf(list.get("MOBILE_PHONE")));
 			traineeMap.put("position", String.valueOf(list.get("POSITION")));
-			traineeMap.put("headShipLevel",headShipLevel);
-					
+			traineeMap.put("headShipLevel", headShipLevel);
+
 			traineeMap.put("workUnit", String.valueOf(list.get("WORK_UNIT")));
 			traineeMap.put("classTraineeId", String.valueOf(list.get("CLASS_TRAINEE_ID")));
 			traineeList.add(traineeMap);
@@ -833,20 +848,20 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		request.getSession().removeAttribute("exportTrainClassTraineeCardIIsState");
 
 		List<Map<String, Object>> allList = new ArrayList<>();
-		Integer[] columnWidth = new Integer[] { 6, 10, 6, 15, 10, 10,10,15,10};
+		Integer[] columnWidth = new Integer[] { 6, 10, 6, 15, 10, 10, 10, 15, 10 };
 
 		// 1.班级信息
 		String classId = request.getParameter("classId"); // 程序中限定每次只能导出一个班级
 		TrainClass trainClass = trainClassService.get(classId);
-		String dinnerType="";
-		if(trainClass.getDinnerType()==1){
-			dinnerType="围餐";
-		}else if( trainClass.getDinnerType()==2){
-			dinnerType="自助餐";
-		}else{
-			dinnerType="快餐";
+		String dinnerType = "";
+		if (trainClass.getDinnerType() == 1) {
+			dinnerType = "围餐";
+		} else if (trainClass.getDinnerType() == 2) {
+			dinnerType = "自助餐";
+		} else {
+			dinnerType = "快餐";
 		}
-		
+
 		// 数据字典项
 		String mapKey = null;
 		String[] propValue = { "XBM", "CARDSTATE" };
@@ -881,11 +896,11 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			traineeMap.put("stustatus",
 					(classTrainee.getIsDelete() == 0) ? "正常" : ((classTrainee.getIsDelete() == 1) ? "取消" : "新增"));
 			traineeMap.put("cardPrintNo", classTrainee.getCardPrintId());
-			
+
 			traineeMap.put("dinnerType", dinnerType);
-			traineeMap.put("roomName",classTrainee.getRoomName());
+			traineeMap.put("roomName", classTrainee.getRoomName());
 			traineeMap.put("isGet", "");
-			
+
 			i++;
 			traineeList.add(traineeMap);
 		}
@@ -893,9 +908,9 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		Map<String, Object> courseAllMap = new LinkedHashMap<>();
 		courseAllMap.put("data", traineeList);
 		courseAllMap.put("title", null);
-		courseAllMap.put("head", new String[] { "序号", "姓名", "性别", "电话", "学员状态", "印刷卡号","就餐类型","房间名称","是否领用" }); // 规定名字相同的，设定为合并
+		courseAllMap.put("head", new String[] { "序号", "姓名", "性别", "电话", "学员状态", "印刷卡号", "就餐类型", "房间名称", "是否领用" }); // 规定名字相同的，设定为合并
 		courseAllMap.put("columnWidth", columnWidth); // 30代表30个字节，15个字符
-		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0,0,0,0 }); // 0代表居中，1代表居左，2代表居右
+		courseAllMap.put("columnAlignment", new Integer[] { 0, 0, 0, 0, 0, 0, 0, 0, 0 }); // 0代表居中，1代表居左，2代表居右
 		courseAllMap.put("mergeCondition", null); // 合并行需要的条件，条件优先级按顺序决定，NULL表示不合并,空数组表示无条件
 		allList.add(courseAllMap);
 
@@ -956,21 +971,20 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			int trainClasstraineeListCount = trainClasstraineeList.size();
 
 			for (int i = 0; i < trainClasstraineeListCount; i++) {
-				ids += trainClasstraineeList.get(i).getUuid() + ",";		
+				ids += trainClasstraineeList.get(i).getUuid() + ",";
 			}
-			
+
 			ids = ids.substring(0, ids.length() - 1);
 		}
-		
-		
+
 		// 判断原先是否已经有学员已经绑定
-		String sql = "select Count(CARD_ID) from CARD_T_USEINFO where USER_ID in ('"+ids.replace(",", "','")+"')";
-		int count = thisService.getForValueToSql(sql);		
+		String sql = "select Count(CARD_ID) from CARD_T_USEINFO where USER_ID in ('" + ids.replace(",", "','") + "')";
+		int count = thisService.getForValueToSql(sql);
 		if (count != 0) {
 			writeJSON(response, jsonBuilder.returnFailureJson("\"所选学员已经有部分绑定！\""));
 			return;
 		}
-		
+
 		String[] idsArray = ids.split(",");
 		int idsCount = idsArray.length;
 		// 获取未绑定卡的数量
@@ -978,19 +992,19 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		count = thisService.getForValueToSql(sql);
 		// 判断空闲卡数量
 		if (count < idsCount) {
-			writeJSON(response, jsonBuilder.returnFailureJson("\"绑定失败，没有足够的空闲卡!<br/><br/>剩余可用卡 "+count+" 张！\""));
+			writeJSON(response, jsonBuilder.returnFailureJson("\"绑定失败，没有足够的空闲卡!<br/><br/>剩余可用卡 " + count + " 张！\""));
 			return;
 		}
-		List<Map<String, Object>> cardInfoToUp=thisService.doCardBind(ids);
-		
-		if(cardInfoToUp==null){
+		List<Map<String, Object>> cardInfoToUp = thisService.doCardBind(ids);
+
+		if (cardInfoToUp == null) {
 			writeJSON(response, jsonBuilder.returnFailureJson("\"绑定失败，服务器错误！\""));
 			return;
-		}else if(cardInfoToUp.size()==0){
+		} else if (cardInfoToUp.size() == 0) {
 			writeJSON(response, jsonBuilder.returnFailureJson("\"绑定失败，没有足够的空闲卡！\""));
 			return;
 		}
-		
+
 		SysUser sysuser = getCurrentSysUser();
 		try {
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
@@ -1006,12 +1020,10 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			return;
 		} finally {
 			DBContextHolder.clearDBType();
-		}	
-		
-		
+		}
+
 		writeJSON(response, jsonBuilder.returnSuccessJson("\"绑定成功！\""));
 
-		
 	}
 
 	/**
@@ -1040,7 +1052,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			trainClasstraineeList = thisService.getQuery(hql);
 			int trainClasstraineeListCount = trainClasstraineeList.size();
 
-			for (int i = 0; i < trainClasstraineeListCount; i++) {				
+			for (int i = 0; i < trainClasstraineeListCount; i++) {
 				ids += trainClasstraineeList.get(i).getUuid() + ",";
 			}
 			ids = ids.substring(0, ids.length() - 1);
@@ -1049,10 +1061,10 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		// 使用两个异常处理器来防止数据错乱。
 		String sql = "";
 		try {
-			//正常发卡的解绑，把状态置为4，挂失类的卡片信息，不用更改状态
-			sql = "update CARD_T_USEINFO SET USE_STATE=4  WHERE USE_STATE=1 and USER_ID in ('"
-					+ ids.replace(",", "','") + "');";
-			
+			// 正常发卡的解绑，把状态置为4，挂失类的卡片信息，不用更改状态
+			sql = "update CARD_T_USEINFO SET USE_STATE=4  WHERE USE_STATE=1 and USER_ID in ('" + ids.replace(",", "','")
+					+ "');";
+
 			thisService.doExecuteSql(sql);
 		} catch (Exception e) {
 			writeJSON(response, jsonBuilder.returnFailureJson("\"解除绑定失败！\""));
@@ -1067,8 +1079,8 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		} catch (Exception e) {
 			// 恢复web数据
 			DBContextHolder.clearDBType();
-			sql = "update CARD_T_USEINFO SET USE_STATE=1 WHERE USE_STATE=4 and USER_ID in ('"
-					+ ids.replace(",", "','") + "')";
+			sql = "update CARD_T_USEINFO SET USE_STATE=1 WHERE USE_STATE=4 and USER_ID in ('" + ids.replace(",", "','")
+					+ "')";
 			thisService.doExecuteSql(sql);
 
 			writeJSON(response, jsonBuilder.returnFailureJson("\"解除绑定失败！\""));
@@ -1076,12 +1088,14 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		} finally {
 			DBContextHolder.clearDBType();
 		}
-		
+
 		// 当没有报错的时候，再把用户id清空(分别把正常解绑 和 挂失解绑 的数据处理)
-		sql = "update CARD_T_USEINFO SET USER_ID=NULL  WHERE USE_STATE=4 and USER_ID in ('" + ids.replace(",", "','") + "');";
-		sql += "update CARD_T_USEINFO SET USER_ID=NULL  WHERE USE_STATE=2 and USER_ID in ('" + ids.replace(",", "','") + "')";
+		sql = "update CARD_T_USEINFO SET USER_ID=NULL  WHERE USE_STATE=4 and USER_ID in ('" + ids.replace(",", "','")
+				+ "');";
+		sql += "update CARD_T_USEINFO SET USER_ID=NULL  WHERE USE_STATE=2 and USER_ID in ('" + ids.replace(",", "','")
+				+ "')";
 		thisService.doExecuteSql(sql);
-					
+
 		writeJSON(response, jsonBuilder.returnSuccessJson("\"解除绑定成功！\""));
 	}
 
@@ -1141,6 +1155,5 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		}
 		writeJSON(response, jsonBuilder.returnSuccessJson("\"挂失成功！\""));
 	}
-	
-	
+
 }

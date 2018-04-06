@@ -108,7 +108,10 @@ function login() {
                             } else if (returninfo == -2) {
                                 jAlert("密码错误", "提示");
                                 //$("#loginMsk").fadeOut();
-                            } else {
+                            } else if (returninfo == 0) { {
+                                jAlert("服务器已关闭此登录通道，请从统一身份入口登录！", "提示");
+                                //$("#loginMsk").fadeOut();
+                            }else {
                                 jAlert("服务器错误", "提示");
                                 //$("#loginMsk").fadeOut();
                             }
