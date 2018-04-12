@@ -122,9 +122,9 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 			
 			// 查询此班级是否已经存在此课程
 			TrainClassschedule tcs = thisService.getByProerties(
-					new String[] { "courseName", "mainTeacherName", "classId", "beginTime", "endTime" },
+					new String[] { "courseName", "mainTeacherName", "classId", "beginTime", "endTime" ,"isDelete"},
 					new Object[] { entity.getCourseName(), entity.getMainTeacherName(), entity.getClassId(),entity.getBeginTime(),
-							entity.getEndTime() });
+							entity.getEndTime(),new Object[]{0,2}});
 			
 			if(tcs!=null){
 				writeJSON(response, jsonBuilder.returnFailureJson("\"此班级已经存在此时段的相同课程！\""));
@@ -227,13 +227,13 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 			entity.setBeginTime(sdf.parse(courseDate + " " + courseBeginTime));
 			entity.setEndTime(sdf.parse(courseDate + " " + courseEndTime));
 			
-			// 查询此班级是否已经存在此课程
+			// 查询此班级是否已经存在此课程（查询生效的）
 			TrainClassschedule tcs = thisService.getByProerties(
-					new String[] { "courseName", "mainTeacherName", "classId", "beginTime", "endTime" },
+					new String[] { "courseName", "mainTeacherName", "classId", "beginTime", "endTime","isDelete" },
 					new Object[] { entity.getCourseName(), entity.getMainTeacherName(), entity.getClassId(),entity.getBeginTime(),
-							entity.getEndTime() });
+							entity.getEndTime(),new Object[]{0,2}});
 			
-			if(tcs!=null&&tcs.getUuid()!=entity.getUuid()){
+			if(tcs!=null&&!tcs.getUuid().equals(entity.getUuid())){
 				writeJSON(response, jsonBuilder.returnFailureJson("\"此班级已经存在此时段的相同课程！\""));
 				return;
 			}

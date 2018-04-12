@@ -758,6 +758,8 @@ Ext.define("core.train.arrange.controller.OtherController", {
                         var formDeptObj = objDetForm.getForm();
                         self.setFormValue(formDeptObj, insertObj);
                         
+                        formDeptObj.findField("teachType").setValue(insertObj.teachTypeName);
+
                         if(insertObj.beginTime){
                             var beginTimeDate=new Date(insertObj.beginTime);
                             var startDate=Ext.Date.dateFormat(beginTimeDate, 'Y-m-d H:i');

@@ -145,7 +145,7 @@ Ext.define("core.train.arrange.view.ArrangeSiteDetailForm", {
                     width:120,
                     text: "教学形式",
                     dataIndex: "teachTypeName", 
-                },{
+                }, {
                     width:125,
                     text: "开始日期",
                     dataIndex: "beginTime",            
