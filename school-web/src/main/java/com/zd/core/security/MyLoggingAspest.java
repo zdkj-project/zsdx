@@ -4,12 +4,14 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -36,6 +38,8 @@ public class MyLoggingAspest {
 	public void pointService() {
 	}
 
+	@Autowired
+	private  HttpServletRequest request;
 	// @Pointcut("execution(* *..controller..*.do*(..))")
 	// public void pointController(){}
 
@@ -47,7 +51,7 @@ public class MyLoggingAspest {
 		SysOperateLog operteLog = new SysOperateLog();
 		operteLog.setUuid(null);
 		try {
-			HttpServletRequest request = this.getHttpServletRequest();
+			//HttpServletRequest request = this.getHttpServletRequest();	//单点登录进来后报错
 			
 			String ip = this.getIpAddress(request);
 			String userName = "未知用户"; // 当接口不需要登录时，就直接使用这个名称。
@@ -96,7 +100,7 @@ public class MyLoggingAspest {
 				logService.addLog(operteLog);	//发生异常后，也存入数据库
 			
 			//发现错误后，要抛出运行时异常，让程序自动回滚，并让上层控制器自动捕获异常并返回数据给前端；
-			throw new RuntimeException(e);		//抛出后，下面的代码不再执行。
+			//throw new RuntimeException(e);		//抛出后，下面的代码不再执行。
 		}
 		// 后置通知
 		logger.info("【请求结束】");

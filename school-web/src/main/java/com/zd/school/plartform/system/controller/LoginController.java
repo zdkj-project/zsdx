@@ -189,7 +189,7 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
 			try {
 				// List<Authority> allMenuList =
 				// authorityService.queryAllMenuList(globalRoleKey);
-				return new ModelAndView("redirect:/index.jsp", "authorityList", null);
+				return new ModelAndView("redirect:/main.jsp", "authorityList", null);
 			} catch (Exception e) {
 				logger.error(e.toString());
 				return new ModelAndView("login");	//返回登录页面
@@ -213,7 +213,7 @@ public class LoginController extends FrameWorkController<SysUser> implements Con
             	//System.out.println("进入到index页面!");
                 // List<Authority> allMenuList =
                 // authorityService.queryAllMenuList(globalRoleKey);
-                return new ModelAndView("redirect:/index.jsp", "authorityList", null);
+                return new ModelAndView("redirect:/main.jsp", "authorityList", null);
             } catch (Exception e) {
                 logger.error(e.toString());
                 //System.out.println("进入到index错误页面!");

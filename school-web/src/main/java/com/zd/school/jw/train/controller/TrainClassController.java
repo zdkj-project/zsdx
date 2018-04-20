@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
+import com.zd.core.util.Base64Util;
 import com.zd.core.util.DBContextHolder;
 import com.zd.core.util.ImportExcelUtil;
 import com.zd.core.util.ModelUtil;
@@ -100,6 +101,12 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		String sort = super.sort(request);
 		String filter = super.filter(request);
 		QueryResult<TrainClass> qResult = thisService.list(start, limit, sort, filter, true);
+		for (int i = 0; i < qResult.getResultList().size(); i++) {
+			if (Base64Util.isBase64(qResult.getResultList().get(i).getContactPhone())) {
+				qResult.getResultList().get(i)
+						.setContactPhone(Base64Util.decodeData(qResult.getResultList().get(i).getContactPhone()));
+			}			
+		}
 		strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
 	}
@@ -656,6 +663,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 					foodDinnerNum=trainClass.getDinnerCount() == null ? 0 : trainClass.getDinnerCount();				
 				}
 
+				String traineePhone="";
 				for (TrainClasstrainee classTrainee : trainClasstraineeList) {
 					traineeMap = new LinkedHashMap<>();
 					traineeMap.put("xm", classTrainee.getXm());
@@ -663,7 +671,12 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 					traineeMap.put("mz",mapMzmCategory.get(classTrainee.getMzm()));
 					traineeMap.put("position", classTrainee.getPosition());
 					traineeMap.put("headshipLevel", mapHeadshipLevel.get(classTrainee.getHeadshipLevel()));
-					traineeMap.put("phone", classTrainee.getMobilePhone());
+					
+					traineePhone=classTrainee.getMobilePhone();
+					if (Base64Util.isBase64(traineePhone)) {
+						traineePhone=Base64Util.decodeData(traineePhone);
+					}
+					traineeMap.put("phone", traineePhone);
 					//traineeMap.put("sfzjh", classTrainee.getSfzjh());
 					traineeMap.put("workUnit", classTrainee.getWorkUnit());
 					traineeMap.put("traineeCategory", mapTraineeCategory.get(classTrainee.getTraineeCategory()));
@@ -765,7 +778,12 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				classMap.put("className", trainClass.getClassName());
 				classMap.put("bzr", trainClass.getBzrName());
 				classMap.put("contactPerson", trainClass.getContactPerson());
-				classMap.put("contactPhone", trainClass.getContactPhone());
+				
+				String contactPhone=trainClass.getContactPhone();
+				if (Base64Util.isBase64(contactPhone)) {
+					contactPhone=Base64Util.decodeData(contactPhone);
+				}
+				classMap.put("contactPhone", contactPhone);
 				classMap.put("traineeNum", String.valueOf(traineeNum));
 				classMap.put("foodBreakfastNum", String.valueOf(foodBreakfastNum));
 				classMap.put("foodLunchNum", String.valueOf(foodLunchNum));
@@ -890,6 +908,8 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		// 处理学员基本数据
 		List<Map<String, String>> roomList = new ArrayList<>();
 		Map<String, String> roomMap = null;
+		String traineePhone="";
+		String traineeSfzjh="";
 		for (TrainClasstrainee classTrainee : roomClasstraineeList) {
 			roomMap = new LinkedHashMap<>();
 			Integer siesta = classTrainee.getSiesta();
@@ -897,8 +917,17 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 
 			roomMap.put("xm", classTrainee.getXm());
 			roomMap.put("xbm", mapXbm.get(classTrainee.getXbm()));
-			roomMap.put("phone", classTrainee.getMobilePhone());
-			roomMap.put("sfzjh", classTrainee.getSfzjh());
+			
+			traineePhone=classTrainee.getMobilePhone();
+			if (Base64Util.isBase64(traineePhone)) {
+				traineePhone=Base64Util.decodeData(traineePhone);
+			}
+			traineeSfzjh=classTrainee.getSfzjh();
+			if (Base64Util.isBase64(traineeSfzjh)) {
+				traineeSfzjh=Base64Util.decodeData(traineeSfzjh);
+			}
+			roomMap.put("phone", traineePhone);
+			roomMap.put("sfzjh", traineeSfzjh);		
 			roomMap.put("position", classTrainee.getPosition());
 			roomMap.put("headshipLevel", mapHeadshipLevel.get(classTrainee.getHeadshipLevel()));
 			roomMap.put("siesta", siesta == null ? "否" : siesta == 1 ? "是" : "否");
@@ -1316,6 +1345,8 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			foodDinnerNum=trainClass.getDinnerCount() == null ? 0 : trainClass.getDinnerCount();
 		}
 
+		String traineePhone="";
+		String traineeSfzjh="";
 		for (TrainClasstrainee classTrainee : trainClasstraineeList) {
 			traineeMap = new LinkedHashMap<>();
 
@@ -1324,8 +1355,18 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			traineeMap.put("mz", mapMzmCategory.get(classTrainee.getMzm()));
 			traineeMap.put("position", classTrainee.getPosition());
 			traineeMap.put("headshipLevel", mapHeadshipLevel.get(classTrainee.getHeadshipLevel()));
-			traineeMap.put("phone", classTrainee.getMobilePhone());
-			traineeMap.put("sfzjh", classTrainee.getSfzjh());
+			
+			traineePhone=classTrainee.getMobilePhone();
+			if (Base64Util.isBase64(traineePhone)) {
+				traineePhone=Base64Util.decodeData(traineePhone);
+			}
+			traineeSfzjh=classTrainee.getSfzjh();
+			if (Base64Util.isBase64(traineeSfzjh)) {
+				traineeSfzjh=Base64Util.decodeData(traineeSfzjh);
+			}
+			traineeMap.put("phone", traineePhone);
+			traineeMap.put("sfzjh", traineeSfzjh);
+			
 			traineeMap.put("workUnit", classTrainee.getWorkUnit());
 			traineeMap.put("traineeCategory", mapTraineeCategory.get(classTrainee.getTraineeCategory()));
 			
@@ -1401,9 +1442,14 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		classMap1.put("beginDate", fmtDate.format(trainClass.getBeginDate()));
 		classMap1.put("endDate", fmtDate.format(trainClass.getEndDate()));
 		classMap1.put("className", trainClass.getClassName());
-		classMap1.put("bzr", trainClass.getBzrName());
+		classMap1.put("bzr", trainClass.getBzrName());	
 		classMap1.put("contactPerson", trainClass.getContactPerson());
-		classMap1.put("contactPhone", trainClass.getContactPhone());
+		
+		String contactPhone=trainClass.getContactPhone();
+		if (Base64Util.isBase64(contactPhone)) {
+			contactPhone=Base64Util.decodeData(contactPhone);
+		}
+		classMap1.put("contactPhone", contactPhone);
 		classMap2.put("traineeNum", String.valueOf(traineeNum));
 		classMap2.put("foodBreakfastNum", String.valueOf(foodBreakfastNum));
 		classMap2.put("foodLunchNum", String.valueOf(foodLunchNum));
@@ -1993,7 +2039,13 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		classMap1.put("className", trainClass.getClassName());
 		classMap1.put("bzr", trainClass.getBzrName());
 		classMap1.put("contactPerson", trainClass.getContactPerson());
-		classMap1.put("contactPhone", trainClass.getContactPhone());
+		
+		
+		String contactPhone=trainClass.getContactPhone();
+		if (Base64Util.isBase64(contactPhone)) {
+			contactPhone=Base64Util.decodeData(contactPhone);
+		}
+		classMap1.put("contactPhone",contactPhone );
 		classMap2.put("traineeNum", String.valueOf(traineeNum));
 		classMap2.put("foodBreakfastNum", String.valueOf(foodBreakfastNum));
 		classMap2.put("foodLunchNum", String.valueOf(foodLunchNum));

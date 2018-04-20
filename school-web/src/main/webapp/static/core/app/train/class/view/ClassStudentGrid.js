@@ -66,8 +66,8 @@ Ext.define("core.train.class.view.ClassStudentGrid", {
      
     /** 排序字段定义 */
     defSort: [{
-        property: "createTime", //字段名
-        direction: "DESC" //升降序
+        property: "traineeNumber", //字段名
+        direction: "ASC" //升降序
     }],
     /** 扩展参数 */
     extParams: {

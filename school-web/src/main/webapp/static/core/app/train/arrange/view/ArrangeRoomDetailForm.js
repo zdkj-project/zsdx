@@ -4,7 +4,7 @@ Ext.define("core.train.arrange.view.ArrangeRoomDetailForm", {
         'core.train.arrange.store.ArrangeRoomGridStore',    //在该组件内，若不写此代码，则会在使用此组件时才加载（若写了，当加载此组件时，也加载requires里面的）
     ],
     alias: "widget.arrange.roomdetailform",
-    layout: "form", //从上往下布局
+    //layout: "form", //从上往下布局
     autoHeight: true,
     frame: false,
     bodyPadding: '10 25 10 5',
@@ -14,70 +14,86 @@ Ext.define("core.train.arrange.view.ArrangeRoomDetailForm", {
         labelWidth: 100,
         labelAlign: "right"
     },
-    items: [{
-        fieldLabel: "主键",
-        name: "uuid",
-        xtype: "textfield",
-        hidden: true
-    }, {
-        xtype: "container",
-        layout: "column",
-        labelAlign: "right",
-        items: [{          
-            columnWidth: 0.5,
-            readOnly:true,
-            fieldLabel: "班级名称",    
-            name: "className",
-            xtype: "textfield"    
-        },{           
-            columnWidth: 0.5,
-            readOnly:true,
-            fieldLabel: "班级编号",    
-            name: "classNumb",
-            xtype: "textfield"  
+    layout:'vbox',
+    items:[{
+        xtype:'container',
+        layout: "form", //从上往下布局
+        height:80,
+        defaults:{
+            width:'100%',
+            margin:"10 5",
+            xtype : 'textfield',
+            labelAlign : 'right',
+            //columnWidth : 0.5,
+            msgTarget: 'qtip',
+        },
+        items: [{
+            fieldLabel: "主键",
+            name: "uuid",
+            xtype: "textfield",
+            hidden: true
+        }, {
+            xtype: "container",
+            layout: "column",
+            labelAlign: "right",
+            items: [{          
+                columnWidth: 0.5,
+                readOnly:true,
+                fieldLabel: "班级名称",    
+                name: "className",
+                xtype: "textfield"    
+            },{           
+                columnWidth: 0.5,
+                readOnly:true,
+                fieldLabel: "班级编号",    
+                name: "classNumb",
+                xtype: "textfield"  
+            }]
+        },{
+            xtype: "container",
+            layout: "column",
+            labelAlign: "right",
+            items: [{           
+                fieldLabel: "开始日期",
+                columnWidth: 0.5,
+                name: "beginDate",
+                xtype: "datefield",
+                editable:false,
+                readOnly:true,
+                //dateType: 'date',
+                format: "Y-m-d",
+                formatText:'',
+                emptyText: "请输入开始日期",
+
+                vtype:'beginDate',
+                compareField:'endDate'
+                /*
+                maxLength: 10,
+                maxLengthText: "最多8个字符,汉字占2个字符",*/
+            }, {           
+                fieldLabel: "结束日期",
+                columnWidth: 0.5,
+                name: "endDate",
+                xtype: "datefield",
+                editable:true,
+                readOnly:true,
+                //dateType: 'date',
+                format: "Y-m-d",
+                formatText:'',
+                emptyText: "请输入结束日期",
+                maxLength: 10,
+                maxLengthText: "最多10个字符,汉字占2个字符",
+
+                vtype:'endDate',
+                compareField:'beginDate'
+            }]
         }]
     },{
         xtype: "container",
-        layout: "column",
+        layout: "fit",
         labelAlign: "right",
-        items: [{           
-            fieldLabel: "开始日期",
-            columnWidth: 0.5,
-            name: "beginDate",
-            xtype: "datefield",
-            editable:false,
-            readOnly:true,
-            //dateType: 'date',
-            format: "Y-m-d",
-            formatText:'',
-            emptyText: "请输入开始日期",
-
-            vtype:'beginDate',
-            compareField:'endDate'
-            /*
-            maxLength: 10,
-            maxLengthText: "最多8个字符,汉字占2个字符",*/
-        }, {           
-            fieldLabel: "结束日期",
-            columnWidth: 0.5,
-            name: "endDate",
-            xtype: "datefield",
-            editable:true,
-            readOnly:true,
-            //dateType: 'date',
-            format: "Y-m-d",
-            formatText:'',
-            emptyText: "请输入结束日期",
-            maxLength: 10,
-            maxLengthText: "最多10个字符,汉字占2个字符",
-
-            vtype:'endDate',
-            compareField:'beginDate'
-        }]
-    },  {
-        xtype: "container",
-        layout: "column",
-        labelAlign: "right",
+        flex:1,
+        minHeight: 300,
         items: [{
             xtype:'grid',
             ref:'arrangeRoomGrid',
@@ -95,7 +111,7 @@ Ext.define("core.train.arrange.view.ArrangeRoomDetailForm", {
                 stripeRows: false   //不展示隔行变色
             },
             columnWidth:1,
-            height:500,
+            //height:500,
             store:{
                 type:"arrange.arrangeroomgridStore"
             },

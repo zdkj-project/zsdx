@@ -1,7 +1,7 @@
 Ext.define("core.train.class.view.RoomDetailForm", {
     extend: "core.base.view.BaseForm",
     alias: "widget.class.roomdetailform",
-    layout: "form", //从上往下布局
+    //layout: "form", //从上往下布局
     autoHeight: true,
     frame: false,
     //bodyPadding: '10 15 10 5',
@@ -11,124 +11,140 @@ Ext.define("core.train.class.view.RoomDetailForm", {
         labelWidth: 110,
         labelAlign: "right"
     },
-    items: [{
-        allowBlank: false,
-        fieldLabel: "主键",
-        name: "uuid",
-        xtype: "textfield",
-        hidden: true
-    }, {
-        xtype: "container",
-        layout: "column",
-        labelAlign: "right",
-        items: [ {
-            fieldLabel: "所属班级",
-            name: "className",
+    layout:'vbox',
+    items:[{
+        xtype:'container',
+        layout: "form", //从上往下布局
+        height:160,
+        defaults:{
+            width:'100%',
+            margin:"10 5",
+            xtype : 'textfield',
+            labelAlign : 'right',
+            //columnWidth : 0.5,
+            msgTarget: 'qtip',
+        },
+        items: [{
+            allowBlank: false,
+            fieldLabel: "主键",
+            name: "uuid",
             xtype: "textfield",
-            columnWidth: 0.5,
-            readOnly:true,
             hidden: true
-        },{        
-            columnWidth: 0.5,
-            readOnly:true,
-            fieldLabel: "班级编号",    
-            name: "classNumb",
-            xtype: "textfield",
-            hidden: true  
-        }]
-    },{
-        xtype: "container",
-        layout: "column",
-        labelAlign: "right",
-        items: [ {
-            fieldLabel: "开始日期",
-            columnWidth: 0.5,
-            name: "beginDate",
-            xtype: "datefield",
-            editable:false,
-            readOnly:true,
-            //dateType: 'date',
-            format: "Y-m-d",
-            formatText:'',
-            emptyText: "请输入开始日期",
-            hidden: true,
-
-            vtype:'beginDate',
-            compareField:'endDate'
         }, {
-            fieldLabel: "结束日期",
-            columnWidth: 0.5,
-            name: "endDate",
-            xtype: "datefield",
-            editable:true,
-            readOnly:true,
-            //dateType: 'date',
-            format: "Y-m-d",
-            formatText:'',
-            emptyText: "请输入结束日期",
-            hidden: true,
+            xtype: "container",
+            layout: "column",
+            labelAlign: "right",
+            items: [ {
+                fieldLabel: "所属班级",
+                name: "className",
+                xtype: "textfield",
+                columnWidth: 0.5,
+                readOnly:true,
+                hidden: true
+            },{        
+                columnWidth: 0.5,
+                readOnly:true,
+                fieldLabel: "班级编号",    
+                name: "classNumb",
+                xtype: "textfield",
+                hidden: true  
+            }]
+        },{
+            xtype: "container",
+            layout: "column",
+            labelAlign: "right",
+            items: [ {
+                fieldLabel: "开始日期",
+                columnWidth: 0.5,
+                name: "beginDate",
+                xtype: "datefield",
+                editable:false,
+                readOnly:true,
+                //dateType: 'date',
+                format: "Y-m-d",
+                formatText:'',
+                emptyText: "请输入开始日期",
+                hidden: true,
 
-            vtype:'endDate',
-            compareField:'beginDate'
-        }]
-    }, { 
-        xtype: "container",
-        layout: "column",
-        labelAlign: "right",
-        items: [{            
-            columnWidth: 0.333,
-            fieldLabel: "午休人数（男）",    
-            name: "siestaManNum",
-            xtype: "textfield",        
-            value:0,
-            readOnly :true  
-        },{          
-            columnWidth: 0.333,
-            fieldLabel: "午休人数（女）",    
-            name: "siestaWomenNum",
-            xtype: "textfield",
-            value:0,
-            readOnly :true      
-        
-        },{    
-            columnWidth: 0.333,
-            fieldLabel: "不午休人数",    
-            name: "noSiestaNum",
-            xtype: "textfield",        
-            value:0,
-            readOnly :true          
-        }]
-    },{ 
-        xtype: "container",
-        layout: "column",
-        labelAlign: "right",
-        items: [{            
-            columnWidth: 0.333,
-            fieldLabel: "晚宿人数（男）",    
-            name: "sleepManNum",
-            xtype: "textfield",        
-            value:0,
-            readOnly :true  
-        },{          
-            columnWidth: 0.333,
-            fieldLabel: "晚宿人数（女）",    
-            name: "sleepWomenNum",
-            xtype: "textfield",
-            value:0,
-            readOnly :true      
-        
-        },{    
-            columnWidth: 0.333,
-            fieldLabel: "不晚宿人数",    
-            name: "noSleepNum",
-            xtype: "textfield",        
-            value:0,
-            readOnly :true          
+                vtype:'beginDate',
+                compareField:'endDate'
+            }, {
+                fieldLabel: "结束日期",
+                columnWidth: 0.5,
+                name: "endDate",
+                xtype: "datefield",
+                editable:true,
+                readOnly:true,
+                //dateType: 'date',
+                format: "Y-m-d",
+                formatText:'',
+                emptyText: "请输入结束日期",
+                hidden: true,
+
+                vtype:'endDate',
+                compareField:'beginDate'
+            }]
+        }, { 
+            xtype: "container",
+            layout: "column",
+            labelAlign: "right",
+            items: [{            
+                columnWidth: 0.333,
+                fieldLabel: "午休人数（男）",    
+                name: "siestaManNum",
+                xtype: "textfield",        
+                value:0,
+                readOnly :true  
+            },{          
+                columnWidth: 0.333,
+                fieldLabel: "午休人数（女）",    
+                name: "siestaWomenNum",
+                xtype: "textfield",
+                value:0,
+                readOnly :true      
+            
+            },{    
+                columnWidth: 0.333,
+                fieldLabel: "不午休人数",    
+                name: "noSiestaNum",
+                xtype: "textfield",        
+                value:0,
+                readOnly :true          
+            }]
+        },{ 
+            xtype: "container",
+            layout: "column",
+            labelAlign: "right",
+            items: [{            
+                columnWidth: 0.333,
+                fieldLabel: "晚宿人数（男）",    
+                name: "sleepManNum",
+                xtype: "textfield",        
+                value:0,
+                readOnly :true  
+            },{          
+                columnWidth: 0.333,
+                fieldLabel: "晚宿人数（女）",    
+                name: "sleepWomenNum",
+                xtype: "textfield",
+                value:0,
+                readOnly :true      
+            
+            },{    
+                columnWidth: 0.333,
+                fieldLabel: "不晚宿人数",    
+                name: "noSleepNum",
+                xtype: "textfield",        
+                value:0,
+                readOnly :true          
+            }]
         }]
     },{
         xtype: "container",
-        layout: "column",
+        layout: "fit",
         labelAlign: "right",
+        flex:1,
+        minHeight: 300,
         items: [{
             xtype:'grid',
             ref:'traineeRoomGrid',
@@ -142,7 +158,7 @@ Ext.define("core.train.class.view.RoomDetailForm", {
                 stripeRows: false   //不展示隔行变色
             },
             columnWidth:1,
-            height: 350,
+            //height: 350,
             store:{
                 type:"class.trainroomgridStore"
             },

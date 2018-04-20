@@ -107,7 +107,7 @@ public class SSOFilter implements Filter {
 			throws Exception {
 		String path = request.getContextPath();
 		String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path
-				+ "/";
+				+ "/main.jsp";
 		
 		//如果本平台已经登录，则直接进入主界面
 		if(SecurityUtils.getSubject().isAuthenticated()==true){
