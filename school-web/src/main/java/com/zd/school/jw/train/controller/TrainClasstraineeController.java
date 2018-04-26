@@ -611,6 +611,12 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		String sql = "SELECT * FROM TRAIN_T_CLASSTRAINEE WHERE CLASS_TRAINEE_ID='" + classTraineeId + "'";
 		classTraineeinfo = thisService.getForValuesToSql(sql);
 		String name = String.valueOf(classTraineeinfo.get(0).get("XM"));
+		
+		String traineePhone=String.valueOf(classTraineeinfo.get(0).get("MOBILE_PHONE"));
+		if (Base64Util.isBase64(traineePhone)) {
+			traineePhone=Base64Util.decodeData(traineePhone);
+		}	
+		classTraineeinfo.get(0).put("MOBILE_PHONE", traineePhone);
 
 		List<Map<String, Object>> list = thisService.getClassTraineeCreditsList(classTraineeId);
 		// 处理班级基本数据
@@ -693,6 +699,14 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		 * writeJSON(response, strData);// 返回数据 return; }
 		 */
 		QueryResult<VoTrainClassCheck> qResult = thisService.getCheckList(start, limit, classId, classScheduleId, xm);
+		
+		for (int i = 0; i < qResult.getResultList().size(); i++) {
+			if (Base64Util.isBase64(qResult.getResultList().get(i).getMobilePhone())) {
+				qResult.getResultList().get(i)
+						.setMobilePhone(Base64Util.decodeData(qResult.getResultList().get(i).getMobilePhone()));
+			}		
+		}
+		
 		strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
 	}
@@ -738,6 +752,8 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		List<String> classTraineeIdList = new ArrayList<>();
 		Map<String, String> traineeMap = null;
 		int j = 1;
+		
+		String traineePhone="";
 		for (Map<String, Object> list : classTraineetList) {
 			traineeMap = new LinkedHashMap<>();
 			classTraineeIdList.add(String.valueOf(list.get("CLASS_TRAINEE_ID")));
@@ -752,7 +768,12 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			traineeMap.put("xuehao", String.valueOf(list.get("TRAINEE_NUMBER")));
 			traineeMap.put("xf", (String.valueOf(list.get("REAL＿CREDIT"))).equals("null") ? ""
 					: String.valueOf(list.get("REAL＿CREDIT")));
-			traineeMap.put("phone", String.valueOf(list.get("MOBILE_PHONE")));
+			
+			traineePhone=String.valueOf(list.get("MOBILE_PHONE"));
+			if (Base64Util.isBase64(traineePhone)) {
+				traineePhone=Base64Util.decodeData(traineePhone);
+			}
+			traineeMap.put("phone", traineePhone);
 			traineeMap.put("position", String.valueOf(list.get("POSITION")));
 			traineeMap.put("headShipLevel", headShipLevel);
 
@@ -886,13 +907,20 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		Map<String, String> traineeMap = null;
 		String ClassName = "";
 		int i = 1;
+		String traineePhone="";
 		for (TrainClasstrainee classTrainee : trainClasstraineeList) {
 			traineeMap = new LinkedHashMap<>();
 			ClassName = classTrainee.getClassName();
 			traineeMap.put("xh", i + "");
 			traineeMap.put("name", classTrainee.getXm());
 			traineeMap.put("xb", mapDicItem.get(classTrainee.getXbm() + "XBM"));
-			traineeMap.put("phone", classTrainee.getMobilePhone());
+			
+			traineePhone=String.valueOf( classTrainee.getMobilePhone());
+			if (Base64Util.isBase64(traineePhone)) {
+				traineePhone=Base64Util.decodeData(traineePhone);
+			}		
+			traineeMap.put("phone", traineePhone);
+			
 			traineeMap.put("stustatus",
 					(classTrainee.getIsDelete() == 0) ? "正常" : ((classTrainee.getIsDelete() == 1) ? "取消" : "新增"));
 			traineeMap.put("cardPrintNo", classTrainee.getCardPrintId());

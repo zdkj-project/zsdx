@@ -21,7 +21,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.orcl.sync.controller.UserSyncController;
 import com.zd.core.constant.Constant;
 import com.zd.core.constant.StatuVeriable;
 import com.zd.core.controller.core.FrameWorkController;
@@ -32,6 +31,7 @@ import com.zd.core.util.BeanUtils;
 import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.StringUtils;
 import com.zd.core.util.exportMeetingInfo;
+import com.zd.orcl.sync.controller.UserSyncController;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClassrealdinner ;

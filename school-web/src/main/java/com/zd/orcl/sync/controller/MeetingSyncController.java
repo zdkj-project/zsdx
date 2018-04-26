@@ -1,4 +1,4 @@
-package com.orcl.sync.controller;
+package com.zd.orcl.sync.controller;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -186,16 +186,16 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
 			List<Object[]> meetingList = empService.ObjectQuerySql(
 					"select MEETING_ID,cast(MEETING_TITLE as VARCHAR2(255)),cast(CONTENT as VARCHAR2(2048)),"
 							+ " cast(MEETING_CATEGORY as VARCHAR2(255)),BEGIN_TIME,END_TIME,"
-							+ " cast(ROOM_NAME as VARCHAR2(255)),cast(CREATE_BY as VARCHAR2(255)),"
-							+ " cast(MEETING_USER_IDS as  VARCHAR2(4000)), cast(MEETING_USER_NAMES as  VARCHAR2(4000))"
+							+ " cast(ROOM_NAME as VARCHAR2(255)),cast(CREATE_BY as VARCHAR2(255))"
 							+ " from zsdx_sync.meeting_msg where BEGIN_TIME >=(sysdate-7) ORDER BY  BEGIN_TIME ASC");
 	
 
-			// 不从这个表取人员数据了。
-//			List<Object[]> empList = empService.ObjectQuerySql(
-//					"select a.MEETING_ID,a.EMPLOYEE_ID,cast(a.XM as VARCHAR2(255)),b.BEGIN_TIME,b.END_TIME "
-//							+ " from zsdx_sync.meeting_user a join zsdx_sync.meeting_msg b "
-//							+ " on a.MEETING_ID =b.MEETING_ID" + " where b.BEGIN_TIME >=(sysdate-7) ");
+			// 从这个表取人员数据。
+			List<Object[]> empList = empService.ObjectQuerySql(
+					"select a.MEETING_ID,a.EMPLOYEE_ID,cast(a.XM as VARCHAR2(255)),b.BEGIN_TIME,b.END_TIME "
+							+ " from zsdx_sync.meeting_user a join zsdx_sync.meeting_msg b "
+							+ " on a.MEETING_ID =b.MEETING_ID" + " where b.BEGIN_TIME >=(sysdate-7) ");
+			
 			
 			logger.info("查询到OA会议数据！");
 			
@@ -203,7 +203,7 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
 			
 			logger.info("开始同步OA会议数据！");
 			
-			Integer state = meetingService.doSyncMetting(meetingList);
+			Integer state = meetingService.doSyncMetting(meetingList,empList);
 			
 			logger.info("同步OA会议数据完毕！");
 			if (state == 1)

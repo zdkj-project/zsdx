@@ -279,14 +279,19 @@ public class SyncJobQuartz {
 			List<Object[]> meetingList = thisService.ObjectQuerySql(
 					"select MEETING_ID,cast(MEETING_TITLE as VARCHAR2(255)),cast(CONTENT as VARCHAR2(2048)),"
 							+ " cast(MEETING_CATEGORY as VARCHAR2(255)),BEGIN_TIME,END_TIME,"
-							+ " cast(ROOM_NAME as VARCHAR2(255)),cast(CREATE_BY as VARCHAR2(255)),"
-							+ " cast(MEETING_USER_IDS as  VARCHAR2(4000)), cast(MEETING_USER_NAMES as  VARCHAR2(4000))"
+							+ " cast(ROOM_NAME as VARCHAR2(255)),cast(CREATE_BY as VARCHAR2(255))"							
 							+ " from zsdx_sync.meeting_msg where BEGIN_TIME >=(sysdate-7) ORDER BY  BEGIN_TIME ASC");
 
+			// 取人员数据。
+			List<Object[]> empList = thisService.ObjectQuerySql(
+					"select a.MEETING_ID,a.EMPLOYEE_ID,cast(a.XM as VARCHAR2(255)),b.BEGIN_TIME,b.END_TIME "
+							+ " from zsdx_sync.meeting_user a join zsdx_sync.meeting_msg b "
+							+ " on a.MEETING_ID =b.MEETING_ID" + " where b.BEGIN_TIME >=(sysdate-7) ");
+			
 			// 重置数据库源，切换回Q1
 			DBContextHolder.clearDBType();
 
-			Integer state = meetingService.doSyncMetting(meetingList);
+			Integer state = meetingService.doSyncMetting(meetingList,empList);
 
 			row = state;
 		} catch (Exception e) {

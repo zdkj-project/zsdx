@@ -1,9 +1,9 @@
 package com.zd.school.app;
 
-import com.orcl.sync.controller.UserSyncController;
 import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.ModelUtil;
 import com.zd.core.util.StringUtils;
+import com.zd.orcl.sync.controller.UserSyncController;
 import com.zd.school.jw.model.app.MeetCheckApp;
 import com.zd.school.jw.model.app.MeetingApp;
 import com.zd.school.jw.model.app.ResponseApp;

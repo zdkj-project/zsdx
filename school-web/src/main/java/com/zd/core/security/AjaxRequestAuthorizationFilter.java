@@ -105,7 +105,7 @@ public class AjaxRequestAuthorizationFilter extends PassThruAuthenticationFilter
 					//System.out.println("单点登录用户名："+accessAccountSession);
 				
 					SysUser sysUser = sysUserService.getByProerties("userName", accessAccountSession);
-			        if (sysUser == null || "1".equals(sysUser.getState())) { // 用户名有误或已被禁用		        
+			        if (sysUser == null ){		//|| "1".equals(sysUser.getState())) { // 用户名有误或已被禁用		        
 						//WebUtils.issueRedirect(request, response, "/noAuth.jsp");
 			        	
 						String accessTokenSession = (String) session.getAttribute("accessToken");
