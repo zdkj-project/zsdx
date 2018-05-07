@@ -1,5 +1,6 @@
 package com.zd.core.security;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import javax.annotation.Resource;
@@ -90,7 +91,7 @@ public class MyLoggingAspest {
 		} catch (Throwable e) {
 			//异常通知
 			logger.error("【请求失败】异常原因：" + e.getMessage());
-		
+			logger.error("【请求失败】异常原因：" + Arrays.toString(e.getStackTrace()));
 			operteLog.setExceptionClass(e.getClass().getName());
 			operteLog.setExceptionDetail(e.getMessage());
 			operteLog.setMethodResult("请求失败，错误信息："+e.getMessage());

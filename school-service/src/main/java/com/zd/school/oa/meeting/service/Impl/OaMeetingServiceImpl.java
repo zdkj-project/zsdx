@@ -121,7 +121,9 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
             meetingemp.setCreateUser(currentUser.getUuid());
             meetingemp.setUpdateUser(currentUser.getUuid());
             meetingemp.setIsDelete(0);
-            meetingempService.doMerge(meetingemp);
+            
+            meetingempService.getBaseDao().merge(meetingemp);
+            //meetingempService.doMerge(meetingemp);
         }
         return true;
     }
@@ -191,7 +193,7 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 		}
 	}
 	@Override
-	public Integer doSyncMetting(List<Object[]> meetingList,List<Object[]> empList) {
+	public Integer syncMetting(List<Object[]> meetingList,List<Object[]> empList) {
 		// TODO Auto-generated method stub
 		int row = 1;
         OaMeeting m = null;
@@ -259,8 +261,8 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
 	            //创建人
 	            m.setCreateUser(o[7].toString());
 	            
-	            
-	            this.doMerge(m);	
+	            this.getBaseDao().merge(m);
+	            //this.doMerge(m);	
 	            
 	            
 	            //5. 过时：处理会议人员（从MEETING_USER_IDS、MEETING_USER_NAMES字段获取，逗号隔开）
@@ -304,8 +306,9 @@ public class OaMeetingServiceImpl extends BaseServiceImpl<OaMeeting> implements 
                             
                 emp.setBeginTime(sdf.parse(o[3].toString()));
                 emp.setEndTime(sdf.parse(o[4].toString()));
-             
-                meetingempService.doMerge(emp);
+                
+                meetingempService.getBaseDao().merge(emp);
+                //meetingempService.doMerge(emp);
             }
 	        
     	} catch (Exception e) {

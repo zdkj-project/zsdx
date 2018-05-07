@@ -3,6 +3,7 @@ package com.zd.school.jw.train.service.Impl;
 import com.zd.core.constant.InfoPushWay;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
+import com.zd.core.util.Base64Util;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.DateUtil;
 import com.zd.core.util.JsonBuilder;
@@ -964,8 +965,14 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
     public Boolean doSendInfoUser(String sendUserId, String sendInfo, SysUser currentUser) {
         String[] sendUserIds = sendUserId.split(",");
         List<SysUser> sendUserList =  userService.queryByProerties("uuid", sendUserIds);
+        String phone="";
         for (SysUser sysUser : sendUserList) {
-            pushService.pushInfo(currentUser.getUuid(), sysUser.getUuid(), sysUser.getXm(), String.valueOf(sysUser.getMobile()), "培训安排通知", sendInfo, InfoPushWay.DX.getCode());
+        	phone=String.valueOf(sysUser.getMobile());
+        	if (Base64Util.isBase64(phone)) {
+        		phone=Base64Util.decodeData(phone);
+			}	
+        	
+            pushService.pushInfo(currentUser.getUuid(), sysUser.getUuid(), sysUser.getXm(),phone, "培训安排通知", sendInfo, InfoPushWay.DX.getCode());
         }
 
         return true;

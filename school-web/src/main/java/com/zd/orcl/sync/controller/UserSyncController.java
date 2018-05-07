@@ -421,7 +421,7 @@ public class UserSyncController extends FrameWorkController<DocSendcheck> implem
 	        //重置数据库源，切换回Q1
             DBContextHolder.clearDBType();
 	        
-	        Integer state=userservice.doSyncOaUserandDept(deptList,jobList,deptJobList,userDeptList,userList);
+	        Integer state=userservice.syncOaUserandDept(deptList,jobList,deptJobList,userDeptList,userList);
 	        if(state==1){
 	        
 	        	//同步成功之后，同步数据到UP库

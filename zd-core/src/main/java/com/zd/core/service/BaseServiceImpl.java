@@ -40,6 +40,10 @@ public class BaseServiceImpl<E> implements BaseService<E> {
     	return this.dao.getSession();
 	}
     
+    public BaseDao<E> getBaseDao(){
+    	return this.dao;
+    }
+    
     /**
      * 持久化对象实体.
      *
@@ -744,5 +748,6 @@ public class BaseServiceImpl<E> implements BaseService<E> {
         return this.dao.doQueryResultSqlObject(sql, start, limit, clz);
     }
 
+	
 	
 }

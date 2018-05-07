@@ -532,14 +532,17 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 				// 若积累的语句长度大于2000（大约50条语句左右），则执行
 				if (sqlSb.length() > 2000) {
-					row += this.doExecuteSql(sqlSb.toString());
+					//row += this.doExecuteSql(sqlSb.toString());
+					row += this.getBaseDao().executeSql(sqlSb.toString());
 					sqlSb.setLength(0); // 清空
 				}
 			}
 
 			// 最后执行一次
-			if (sqlSb.length() > 0)
-				row += this.doExecuteSql(sqlSb.toString());
+			if (sqlSb.length() > 0){
+				//row += this.doExecuteSql(sqlSb.toString());
+				row += this.getBaseDao().executeSql(sqlSb.toString());
+			}
 
 			// 剩下的，表明不存在平台的库中，进行删除
 			/*
@@ -596,7 +599,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			// 当参数为null或内容为空，则直接删除发卡信息
 			if (upCardUserInfos == null || upCardUserInfos.size() == 0) {
 				sqlStr = "	delete from CARD_T_USEINFO ";
-				this.doExecuteSql(sqlSb.toString());
+				//this.doExecuteSql(sqlSb.toString());
+				this.getBaseDao().executeSql(sqlSb.toString());
 			} else {
 				for (int i = 0; i < upCardUserInfos.size(); i++) {
 					upCardUser = upCardUserInfos.get(i);
@@ -605,7 +609,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 
 					// 【new：放在前面，因为下面的一个if会continue】若积累的语句长度大于3000（大约50条语句左右），则执行
 					if (sqlSb.length() > 3000) {
-						row += this.doExecuteSql(sqlSb.toString());
+						//row += this.doExecuteSql(sqlSb.toString());
+						row += this.getBaseDao().executeSql(sqlSb.toString());
 						sqlSb.setLength(0); // 清空
 					}
 
@@ -715,8 +720,11 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				}
 
 				// 最后执行一次
-				if (sqlSb.length() > 0)
-					row += this.doExecuteSql(sqlSb.toString());
+				if (sqlSb.length() > 0){
+					//row += this.doExecuteSql(sqlSb.toString());
+					row += this.getBaseDao().executeSql(sqlSb.toString());
+				}
+					
 
 				// 如果还有没执行到的发卡数据，则进行循环删除(2017-10-10不再删除未绑定的卡,置为空卡)
 				if (webCardUserInfos.size() > 0) {
@@ -729,7 +737,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 						// webCardUser.getUuid() + "';";
 						sqlSb.append(sqlStr + "  ");
 					}
-					this.doExecuteSql(sqlSb.toString());
+					//this.doExecuteSql(sqlSb.toString());
+					this.getBaseDao().executeSql(sqlSb.toString());
 					// 若web库中存在此发卡信息
 				}
 			}
@@ -894,7 +903,7 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 	 * @return
 	 */
 	@Override
-	public Integer doSyncOaUserandDept(List<Map<String,Object>> deptList, List<Map<String,Object>> jobList,
+	public Integer syncOaUserandDept(List<Map<String,Object>> deptList, List<Map<String,Object>> jobList,
 			List<Map<String,Object>> deptJobList, List<Map<String,Object>> userDeptList,List<Map<String,Object>> userList) {
 		int row = 1;
 		try {
@@ -904,7 +913,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			 * 1：处理部门数据
 			 */
 			String sql = "update BASE_T_ORG set isdelete=1 where parent_node!='ROOT'";
-			orgService.doExecuteSql(sql);
+			//orgService.doExecuteSql(sql);
+			orgService.getBaseDao().executeSql(sql);
 			BaseOrg org = null;
 			for(int i=0;i<deptList.size();i++){
 				map=deptList.get(i);
@@ -933,7 +943,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				org.setOrderIndex(Integer.parseInt(String.valueOf(map.get("ORDERBY"))));
 				org.setExtField01(parentId);
 
-				orgService.doMerge(org);
+				//orgService.doMerge(org);
+				orgService.getBaseDao().merge(org);
 			}
 			logger.info("处理部门数据");
 			
@@ -947,7 +958,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			 * 2：处理岗位数据
 			 */
 			sql = "update BASE_T_JOB set isdelete=1";
-			jobservice.doExecuteSql(sql);
+			//jobservice.doExecuteSql(sql);
+			jobservice.getBaseDao().executeSql(sql);
 			BaseJob b = null;
 			for (int i=0;i<jobList.size();i++) {
 				map=jobList.get(i);
@@ -966,7 +978,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 				b.setJobName((String) map.get("NAMES"));
 				b.setRemark((String) map.get("DUTY"));
 
-				jobservice.doMerge(b);
+				//jobservice.doMerge(b);
+				jobservice.getBaseDao().merge(b);
 			}		
 			logger.info("处理岗位数据");
 			
@@ -974,7 +987,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 			 * 3：处理部门岗位数据
 			 */
 			sql = "delete from BASE_T_DEPTJOB";
-	        deptjobService.doExecuteSql(sql);
+//	        deptjobService.doExecuteSql(sql);
+	        deptjobService.getBaseDao().executeSql(sql);
 	        BaseDeptjob dj = null;
 	        for (int i=0;i<deptJobList.size();i++) {
 	        	map=deptJobList.get(i);
@@ -994,7 +1008,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
 	            dj.setUpdateTime((Date) map.get("UPDATE_DATE"));
 	            dj.setIsDelete(0);
 	            dj.setJobType(2);
-	            deptjobService.doMerge(dj);
+//	            deptjobService.doMerge(dj);
+	            deptjobService.getBaseDao().merge(dj);
 	        }	      
 	        logger.info("处理部门岗位数据");
 	        
@@ -1010,7 +1025,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
             mapDicItme.put("女", "2");
             String defaultPwd = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
            
-            this.doExecuteSql("delete BASE_T_USERDEPTJOB where user_id!='8a8a8834533a065601533a065ae80000' and user_id!='f111ebab-933b-4e48-b328-c731ae792ca0'");
+            //this.doExecuteSql("delete BASE_T_USERDEPTJOB where user_id!='8a8a8834533a065601533a065ae80000' and user_id!='f111ebab-933b-4e48-b328-c731ae792ca0'");
+            this.getBaseDao().executeSql("delete BASE_T_USERDEPTJOB where user_id!='8a8a8834533a065601533a065ae80000' and user_id!='f111ebab-933b-4e48-b328-c731ae792ca0'");
             
             Date justDate = new Date();
             String justYear = DateUtil.formatDate(justDate,"yyyy");
@@ -1050,7 +1066,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
                     theUserRole.add(defaultRole);
                     u.setSysRoles(theUserRole);
                     integer++;
-                    this.doMerge(u);
+                    //this.doMerge(u);
+                    this.getBaseDao().merge(u);
                 }else {
                 	 u.setXm((String) map.get("USER_NAME"));
                      u.setUserName((String) map.get("ACCOUNTS"));
@@ -1076,7 +1093,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
                 mapKdy = "";
             }
             sql = "delete from BASE_T_USERDEPTJOB";
-            userdeptjobService.doExecuteSql(sql);
+//            userdeptjobService.doExecuteSql(sql);
+            userdeptjobService.getBaseDao().executeSql(sql);
             BaseUserdeptjob udj = null;
             for (int i=0;i<userDeptList.size();i++) {
             	map=userDeptList.get(i);
@@ -1104,7 +1122,8 @@ public class SysUserServiceImpl extends BaseServiceImpl<SysUser> implements SysU
                 String deptJobId=mapDeptJob.get(mapKdy);
                 udj.setDeptjobId(deptJobId==null?"":deptJobId);
                 
-                userdeptjobService.doMerge(udj);
+//                userdeptjobService.doMerge(udj);
+                userdeptjobService.getBaseDao().merge(udj);
                 mapKdy = "";
             }                   
             logger.info("处理用户部门岗位数据");

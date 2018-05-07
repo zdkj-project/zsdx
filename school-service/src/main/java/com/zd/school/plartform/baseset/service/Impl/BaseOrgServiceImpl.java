@@ -629,14 +629,18 @@ public class BaseOrgServiceImpl extends BaseServiceImpl<BaseOrg> implements Base
 
 				// 若积累的语句长度大于2000（大约50条语句左右），则执行
 				if (sqlSb.length() > 2000) {
-					row += this.doExecuteSql(sqlSb.toString());
+					//row += this.doExecuteSql(sqlSb.toString());
+					
+					row += this.getBaseDao().executeSql(sql.toString());
 					sqlSb.setLength(0); // 清空
 				}
 			}
 			
 			// 最后执行一次
-			if (sqlSb.length() > 0)
-				row += this.doExecuteSql(sqlSb.toString());
+			if (sqlSb.length() > 0){
+				//row += this.doExecuteSql(sqlSb.toString());
+				row += this.getBaseDao().executeSql(sql.toString());
+			}
 			
 		} catch (Exception e) {
 			// 捕获了异常后，要手动进行回滚； 还需要进行验证测试是否完全正确。

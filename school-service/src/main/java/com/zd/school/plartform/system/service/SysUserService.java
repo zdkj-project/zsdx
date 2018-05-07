@@ -149,6 +149,6 @@ public interface SysUserService extends BaseService<SysUser> {
 
 	public List<SysRole> getSysRoleList(SysUser sysUser);
 
-	public Integer doSyncOaUserandDept(List<Map<String, Object>> deptList, List<Map<String, Object>> jobList, List<Map<String, Object>> deptJobList,
+	public Integer syncOaUserandDept(List<Map<String, Object>> deptList, List<Map<String, Object>> jobList, List<Map<String, Object>> deptJobList,
 			List<Map<String, Object>> userDeptList, List<Map<String, Object>> userList);
 }

@@ -1,5 +1,6 @@
 package com.zd.core.service;
 
+import com.zd.core.dao.BaseDao;
 import com.zd.core.model.extjs.QueryResult;
 
 import java.io.Serializable;
@@ -11,6 +12,8 @@ import org.hibernate.Session;
 public interface BaseService<E> {
 	
 	public Session getSession();
+	
+	public BaseDao<E> getBaseDao();
 	
     /**
      * 持久化对象实体

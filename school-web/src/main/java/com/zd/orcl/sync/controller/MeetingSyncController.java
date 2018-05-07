@@ -203,7 +203,7 @@ public class MeetingSyncController extends FrameWorkController<DocSendcheck> imp
 			
 			logger.info("开始同步OA会议数据！");
 			
-			Integer state = meetingService.doSyncMetting(meetingList,empList);
+			Integer state = meetingService.syncMetting(meetingList,empList);
 			
 			logger.info("同步OA会议数据完毕！");
 			if (state == 1)

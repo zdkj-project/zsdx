@@ -1,5 +1,6 @@
 package com.zd.core.security;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import javax.annotation.Resource;
 
 import org.apache.log4j.Logger;
 
+import com.zd.core.util.Base64Util;
 import com.zd.core.util.DBContextHolder;
 import com.zd.school.oa.meeting.service.OaMeetingService;
 import com.zd.school.plartform.baseset.model.BaseOrgToUP;
@@ -135,8 +137,18 @@ public class SyncJobQuartz {
 
 			// 2.进入事物之前切换数据源
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
-
+			
 			if (userInfos.size() > 0) {
+						
+				//在同步到UP前，先进行数据的转换
+	            userInfos.stream().forEach((x)->{		            
+	            	if(Base64Util.isBase64(x.getEmployeeTel())){
+	            		x.setEmployeeTel(Base64Util.decodeData(x.getEmployeeTel()));
+		            }
+	            	if(Base64Util.isBase64(x.getIdentifier())){
+	            		x.setIdentifier(Base64Util.decodeData(x.getIdentifier()));
+		            }
+	            });			
 				row = thisService.syncUserInfoToAllUP(userInfos, null);
 			} else {
 				row = thisService.syncUserInfoToAllUP(null, null);
@@ -255,8 +267,7 @@ public class SyncJobQuartz {
 			// 重置数据库源，切换回Q1
 			DBContextHolder.clearDBType();
 
-			Integer state = thisService.doSyncOaUserandDept(deptList, jobList, deptJobList, userDeptList, userList);
-
+			Integer state = thisService.syncOaUserandDept(deptList, jobList, deptJobList, userDeptList, userList);
 			row = state;
 		} catch (Exception e) {
 			row = -1;
@@ -291,7 +302,7 @@ public class SyncJobQuartz {
 			// 重置数据库源，切换回Q1
 			DBContextHolder.clearDBType();
 
-			Integer state = meetingService.doSyncMetting(meetingList,empList);
+			Integer state = meetingService.syncMetting(meetingList,empList);
 
 			row = state;
 		} catch (Exception e) {
