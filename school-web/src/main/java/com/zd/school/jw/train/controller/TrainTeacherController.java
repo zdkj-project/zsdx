@@ -4,11 +4,7 @@ package com.zd.school.jw.train.controller;
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.util.Base64Util;
-import com.zd.core.util.ImportExcelUtil;
-import com.zd.core.util.NotSendUtil;
-import com.zd.core.util.PoiExportExcel;
-import com.zd.core.util.StringUtils;
+import com.zd.core.util.*;
 import com.zd.school.excel.FastExcel;
 import com.zd.school.jw.train.model.TrainTeacher;
 import com.zd.school.jw.train.model.TrainTrainee;
@@ -16,6 +12,7 @@ import com.zd.school.jw.train.service.TrainTeacherService;
 import com.zd.school.plartform.baseset.model.BaseDicitem;
 import com.zd.school.plartform.baseset.service.BaseDicitemService;
 import com.zd.school.plartform.system.model.SysUser;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -79,11 +76,19 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
         String filter = super.filter(request);
         QueryResult<TrainTeacher> qResult = thisService.list(start, limit, sort, filter, true);
         for(int i=0;i<qResult.getResultList().size();i++) {
-            if(Base64Util.isBase64(qResult.getResultList().get(i).getMobilePhone())){
-            	qResult.getResultList().get(i).setMobilePhone(Base64Util.decodeData(qResult.getResultList().get(i).getMobilePhone()));
+            try {
+                byte[] decode = RSACoder.decryptByPublicKey
+                        (Base64.decodeBase64(qResult.getResultList().get(i).getSfzjh()),Base64.decodeBase64(qResult.getResultList().get(i).getExtField01()));
+                qResult.getResultList().get(i).setSfzjh(new String(decode));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            if(Base64Util.isBase64(qResult.getResultList().get(i).getSfzjh())){
-            	qResult.getResultList().get(i).setSfzjh(Base64Util.decodeData(qResult.getResultList().get(i).getSfzjh()));
+            try {
+                byte[] decode = RSACoder.decryptByPublicKey
+                        (Base64.decodeBase64(qResult.getResultList().get(i).getMobilePhone()),Base64.decodeBase64(qResult.getResultList().get(i).getExtField01()));
+                qResult.getResultList().get(i).setMobilePhone(new String(decode));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
@@ -102,7 +107,15 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
     @RequestMapping(value = {"/doadd"}, method = {org.springframework.web.bind.annotation.RequestMethod.GET,
             org.springframework.web.bind.annotation.RequestMethod.POST})
     public void doAdd(TrainTeacher entity, @RequestParam("file") MultipartFile file, HttpServletRequest request,
-                      HttpServletResponse response) throws IOException, IllegalAccessException, InvocationTargetException {
+                      HttpServletResponse response) throws Exception {
+        //初始化密钥
+        //生成密钥对
+        Map<String, Object> keyMap = RSACoder.initKey();
+        //公钥
+        byte[] publicKey = RSACoder.getPublicKey(keyMap);
+
+        //私钥
+        byte[] privateKey = RSACoder.getPrivateKey(keyMap);
         // 此处为放在入库前的一些检查的代码，如唯一校验等
         try {
         	String hql1 = " o.isDelete='0'";
@@ -118,10 +131,11 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
 				writeJSON(response, jsonBuilder.returnFailureJson("\"教师的身份证件号不能重复！\""));
 				return;
 			}
-			
-			//前端处理
-			//entity.setMobilePhone(Base64Util.encodeData(entity.getMobilePhone()));
-			//entity.setSfzjh(Base64Util.encodeData(entity.getSfzjh()));
+
+            entity.setMobilePhone(Base64.encodeBase64String(RSACoder.encryptByPrivateKey(Base64Util.decodeData(entity.getMobilePhone()).getBytes(), privateKey)));
+            entity.setSfzjh(Base64.encodeBase64String(RSACoder.encryptByPrivateKey(Base64Util.decodeData(entity.getSfzjh()).getBytes(), privateKey)));
+            entity.setExtField01(Base64.encodeBase64String(publicKey));
+            entity.setExtField02(Base64.encodeBase64String(privateKey));
 			
             if (!file.isEmpty() && file.getSize() > 0) {
                 // 重命名上传后的文件名
@@ -220,8 +234,15 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
      */
     @RequestMapping("/doupdate")
     public void doUpdates(TrainTeacher entity, @RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response)
-            throws IOException, IllegalAccessException, InvocationTargetException {
+            throws Exception {
+        //初始化密钥
+        //生成密钥对
+        Map<String, Object> keyMap = RSACoder.initKey();
+        //公钥
+        byte[] publicKey = RSACoder.getPublicKey(keyMap);
 
+        //私钥
+        byte[] privateKey = RSACoder.getPrivateKey(keyMap);
         // 入库前检查代码
         try {
         	String hql1 = " o.isDelete='0'";
@@ -229,9 +250,10 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
 				writeJSON(response, jsonBuilder.returnFailureJson("\"教师的身份证件号不能重复！\""));
 				return;
 			}
-			//前端处理
-			//entity.setMobilePhone(Base64Util.encodeData(entity.getMobilePhone()));
-	        //entity.setSfzjh(Base64Util.encodeData(entity.getSfzjh()));
+            entity.setMobilePhone(Base64.encodeBase64String(RSACoder.encryptByPrivateKey(Base64Util.decodeData(entity.getMobilePhone()).getBytes(), privateKey)));
+            entity.setSfzjh(Base64.encodeBase64String(RSACoder.encryptByPrivateKey(Base64Util.decodeData(entity.getSfzjh()).getBytes(), privateKey)));
+            entity.setExtField01(Base64.encodeBase64String(publicKey));
+            entity.setExtField02(Base64.encodeBase64String(privateKey));
 	        
             if (!file.isEmpty() && file.getSize() > 0) {
                 // 重命名上传后的文件名
@@ -300,6 +322,14 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
     @RequestMapping(value = "/importData", method = {RequestMethod.GET, RequestMethod.POST})
     public void uploadExcel(@RequestParam("file") MultipartFile file, HttpServletRequest request, HttpServletResponse response) throws Exception {
         try {
+            //初始化密钥
+            //生成密钥对
+            Map<String, Object> keyMap = RSACoder.initKey();
+            //公钥
+            byte[] publicKey = RSACoder.getPublicKey(keyMap);
+
+            //私钥
+            byte[] privateKey = RSACoder.getPrivateKey(keyMap);
         	SysUser currentUser=getCurrentSysUser();
             InputStream in = null;
             List<List<Object>> listObject = null;
@@ -345,7 +375,7 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
                     teacher.setXlm(mapDicItem.get(String.valueOf(lo.get(4))+"XLM"));
                     
                     //teacher.setMobilePhone(String.valueOf(lo.get(5)));                   
-                    teacher.setMobilePhone(Base64Util.encodeData(String.valueOf(lo.get(5))));
+                    //teacher.setMobilePhone(Base64Util.encodeData(String.valueOf(lo.get(5))));
         		
         			
                     teacher.setInout(mapDicItem.get(String.valueOf(lo.get(6))+"INOUT"));
@@ -361,7 +391,11 @@ public class TrainTeacherController extends FrameWorkController<TrainTeacher> im
                     teacher.setTeachingProject(String.valueOf(lo.get(14)));
                     
                     //teacher.setSfzjh(String.valueOf(lo.get(15)));
-                    teacher.setSfzjh(Base64Util.encodeData(String.valueOf(lo.get(15))));
+                    //teacher.setSfzjh(Base64Util.encodeData(String.valueOf(lo.get(15))));
+                    teacher.setMobilePhone(Base64.encodeBase64String(RSACoder.encryptByPrivateKey(String.valueOf(lo.get(5)).getBytes(), privateKey)));
+                    teacher.setSfzjh(Base64.encodeBase64String(RSACoder.encryptByPrivateKey(String.valueOf(lo.get(15)).getBytes(), privateKey)));
+                    teacher.setExtField01(Base64.encodeBase64String(publicKey));
+                    teacher.setExtField02(Base64.encodeBase64String(privateKey));
                     
                     teacher.setZp("/static/upload/trainTeacherPhoto/" + String.valueOf(lo.get(15)) + ".jpg");
                     

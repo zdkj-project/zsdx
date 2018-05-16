@@ -7,6 +7,7 @@ import com.zd.core.constant.TreeVeriable;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.*;
+import org.apache.commons.codec.binary.Base64;
 import com.zd.school.excel.FastExcel;
 import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.plartform.baseset.model.BaseDicitem;
@@ -76,11 +77,25 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			QueryResult<SysUser> qr = thisService.getPaginationQuery(super.start(request), super.limit(request),
 					super.sort(request), super.filter(request), true);
 			for(int i=0;i<qr.getResultList().size();i++) {
-				if(Base64Util.isBase64(qr.getResultList().get(i).getMobile())){
-					qr.getResultList().get(i).setMobile(Base64Util.decodeData(qr.getResultList().get(i).getMobile()));
+//				if(Base64Util.isBase64(qr.getResultList().get(i).getMobile())){
+//					qr.getResultList().get(i).setMobile(Base64Util.decodeData(qr.getResultList().get(i).getMobile()));
+//				}
+//				if(Base64Util.isBase64(qr.getResultList().get(i).getSfzjh())){
+//					qr.getResultList().get(i).setSfzjh(Base64Util.decodeData(qr.getResultList().get(i).getSfzjh()));
+//				}
+				try {
+					byte[] decode = RSACoder.decryptByPublicKey
+							(Base64.decodeBase64(qr.getResultList().get(i).getMobile()),Base64.decodeBase64(qr.getResultList().get(i).getExtField01()));
+					qr.getResultList().get(i).setMobile(new String(decode));
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				if(Base64Util.isBase64(qr.getResultList().get(i).getSfzjh())){
-					qr.getResultList().get(i).setSfzjh(Base64Util.decodeData(qr.getResultList().get(i).getSfzjh()));
+				try {
+					byte[] decode = RSACoder.decryptByPublicKey
+							(Base64.decodeBase64(qr.getResultList().get(i).getSfzjh()),Base64.decodeBase64(qr.getResultList().get(i).getExtField01()));
+					qr.getResultList().get(i).setSfzjh(new String(decode));
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 			strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -101,11 +116,25 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 				QueryResult<SysUser> qr = thisService.getDeptUser(super.start(request), super.limit(request),
 						super.sort(request), super.filter(request), true, userIds, currentUser);
 				for(int i=0;i<qr.getResultList().size();i++) {
-					if(Base64Util.isBase64(qr.getResultList().get(i).getMobile())){
-						qr.getResultList().get(i).setMobile(Base64Util.decodeData(qr.getResultList().get(i).getMobile()));
+//					if(Base64Util.isBase64(qr.getResultList().get(i).getMobile())){
+//						qr.getResultList().get(i).setMobile(Base64Util.decodeData(qr.getResultList().get(i).getMobile()));
+//					}
+//					if(Base64Util.isBase64(qr.getResultList().get(i).getSfzjh())){
+//						qr.getResultList().get(i).setSfzjh(Base64Util.decodeData(qr.getResultList().get(i).getSfzjh()));
+//					}
+					try {
+						byte[] decode = RSACoder.decryptByPublicKey
+								(Base64.decodeBase64(qr.getResultList().get(i).getMobile()),Base64.decodeBase64(qr.getResultList().get(i).getExtField01()));
+						qr.getResultList().get(i).setMobile(new String(decode));
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-					if(Base64Util.isBase64(qr.getResultList().get(i).getSfzjh())){
-						qr.getResultList().get(i).setSfzjh(Base64Util.decodeData(qr.getResultList().get(i).getSfzjh()));
+					try {
+						byte[] decode = RSACoder.decryptByPublicKey
+								(Base64.decodeBase64(qr.getResultList().get(i).getSfzjh()),Base64.decodeBase64(qr.getResultList().get(i).getExtField01()));
+						qr.getResultList().get(i).setSfzjh(new String(decode));
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
 				}
 				strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
@@ -127,6 +156,14 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 	 */
 	@RequestMapping("/doadd")
 	public void doAdd(SysUser entity, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		//初始化密钥
+		//生成密钥对
+		Map<String, Object> keyMap = RSACoder.initKey();
+		//公钥
+		byte[] publicKey = RSACoder.getPublicKey(keyMap);
+
+		//私钥
+		byte[] privateKey = RSACoder.getPrivateKey(keyMap);
 		String userName = entity.getUserName();
 		// 此处为放在入库前的一些检查的代码，如唯一校验等
 		if (thisService.IsFieldExist("userName", userName, "-1")) {
@@ -136,6 +173,10 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 		//前端处理
 		//entity.setMobile(Base64Util.encodeData(entity.getMobile()));
 		//entity.setSfzjh(Base64Util.encodeData(entity.getSfzjh()));
+		entity.setMobile(Base64.encodeBase64String(RSACoder.encryptByPrivateKey(Base64Util.decodeData(entity.getMobile()).getBytes(), privateKey)));
+		entity.setSfzjh(Base64.encodeBase64String(RSACoder.encryptByPrivateKey(Base64Util.decodeData(entity.getSfzjh()).getBytes(), privateKey)));
+		entity.setExtField01(Base64.encodeBase64String(publicKey));
+		entity.setExtField02(Base64.encodeBase64String(privateKey));
 		// 获取当前操作用户
 		SysUser currentUser = getCurrentSysUser();
 
@@ -177,7 +218,14 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 	 */
 	@RequestMapping("/doupdate")
 	public void doUpdates(SysUser entity, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		//初始化密钥
+		//生成密钥对
+		Map<String, Object> keyMap = RSACoder.initKey();
+		//公钥
+		byte[] publicKey = RSACoder.getPublicKey(keyMap);
 
+		//私钥
+		byte[] privateKey = RSACoder.getPrivateKey(keyMap);
 		String userName = entity.getUserName();
 		String userId = entity.getUuid();
 		// 此处为放在入库前的一些检查的代码，如唯一校验等
@@ -189,7 +237,10 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 		//前端处理
 		//entity.setMobile(Base64Util.encodeData(entity.getMobile()));
         //entity.setSfzjh(Base64Util.encodeData(entity.getSfzjh()));
-        
+		entity.setMobile(Base64.encodeBase64String(RSACoder.encryptByPrivateKey(Base64Util.decodeData(entity.getMobile()).getBytes(), privateKey)));
+		entity.setSfzjh(Base64.encodeBase64String(RSACoder.encryptByPrivateKey(Base64Util.decodeData(entity.getSfzjh()).getBytes(), privateKey)));
+		entity.setExtField01(Base64.encodeBase64String(publicKey));
+		entity.setExtField02(Base64.encodeBase64String(privateKey));
 		// 获取当前的操作用户
 		SysUser currentUser = getCurrentSysUser();
 
@@ -599,7 +650,7 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 			// String userId="8a8a8834533a065601533a065ae80234";
 
 			// 1.查询最新的用户、部门信息
-			String sql = "select  u.USER_ID as userId,u.XM as employeeName, u.user_numb as employeeStrId,"
+			String sql = "select  u.USER_ID as userId,u.XM as employeeName, u.user_numb as employeeStrId,u.EXT_FIELD01 as extField01,"
 					+ "'' as employeePwd,CASE u.XBM WHEN '2' THEN '0' ELSE '1' END AS sexId,u.isDelete as isDelete,"
 					+ "u.SFZJH AS identifier,u.MOBILE as employeeTel,'1' AS cardState, " // cardState
 																	// 和 sid
@@ -627,12 +678,26 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 				
 				//在同步到UP前，先进行数据的转换
 	            userInfos.stream().forEach((x)->{		            
-	            	if(Base64Util.isBase64(x.getEmployeeTel())){
-	            		x.setEmployeeTel(Base64Util.decodeData(x.getEmployeeTel()));
-		            }
-	            	if(Base64Util.isBase64(x.getIdentifier())){
-	            		x.setIdentifier(Base64Util.decodeData(x.getIdentifier()));
-		            }
+//	            	if(Base64Util.isBase64(x.getEmployeeTel())){
+//	            		x.setEmployeeTel(Base64Util.decodeData(x.getEmployeeTel()));
+//		            }
+//	            	if(Base64Util.isBase64(x.getIdentifier())){
+//	            		x.setIdentifier(Base64Util.decodeData(x.getIdentifier()));
+//		            }
+					try {
+						byte[] decode = RSACoder.decryptByPublicKey
+								(Base64.decodeBase64(x.getEmployeeTel()),Base64.decodeBase64(x.getExtField01()));
+						x.setEmployeeTel(new String(decode));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						byte[] decode = RSACoder.decryptByPublicKey
+								(Base64.decodeBase64(x.getIdentifier()),Base64.decodeBase64(x.getExtField01()));
+						x.setIdentifier(new String(decode));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 	            });
 	            
 				row = thisService.syncUserInfoToAllUP(userInfos, null);

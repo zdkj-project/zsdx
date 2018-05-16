@@ -16,6 +16,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.zd.core.util.*;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -28,14 +30,6 @@ import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.ImportNotInfo;
 import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.util.Base64Util;
-import com.zd.core.util.DBContextHolder;
-import com.zd.core.util.ExportExcel;
-import com.zd.core.util.ImportExcelUtil;
-import com.zd.core.util.ModelUtil;
-import com.zd.core.util.PoiExportExcel;
-import com.zd.core.util.StringUtils;
-import com.zd.core.util.exportMeetingInfo;
 import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.jw.train.model.vo.VoTrainClassCheck;
@@ -97,13 +91,19 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		String filter = super.filter(request);
 		QueryResult<TrainClasstrainee> qResult = thisService.list(start, limit, sort, filter, true);
 		for (int i = 0; i < qResult.getResultList().size(); i++) {
-			if (Base64Util.isBase64(qResult.getResultList().get(i).getMobilePhone())) {
-				qResult.getResultList().get(i)
-						.setMobilePhone(Base64Util.decodeData(qResult.getResultList().get(i).getMobilePhone()));
+			try {
+				byte[] decode = RSACoder.decryptByPublicKey
+						(Base64.decodeBase64(qResult.getResultList().get(i).getSfzjh()),Base64.decodeBase64(qResult.getResultList().get(i).getExtField01()));
+				qResult.getResultList().get(i).setSfzjh(new String(decode));
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-			if (Base64Util.isBase64(qResult.getResultList().get(i).getSfzjh())) {
-				qResult.getResultList().get(i)
-						.setSfzjh(Base64Util.decodeData(qResult.getResultList().get(i).getSfzjh()));
+			try {
+				byte[] decode = RSACoder.decryptByPublicKey
+						(Base64.decodeBase64(qResult.getResultList().get(i).getMobilePhone()),Base64.decodeBase64(qResult.getResultList().get(i).getExtField01()));
+				qResult.getResultList().get(i).setMobilePhone(new String(decode));
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 
@@ -613,9 +613,17 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		String name = String.valueOf(classTraineeinfo.get(0).get("XM"));
 		
 		String traineePhone=String.valueOf(classTraineeinfo.get(0).get("MOBILE_PHONE"));
-		if (Base64Util.isBase64(traineePhone)) {
-			traineePhone=Base64Util.decodeData(traineePhone);
-		}	
+//		if (Base64Util.isBase64(traineePhone)) {
+//			traineePhone=Base64Util.decodeData(traineePhone);
+//		}
+
+		try {
+			byte[] decode = RSACoder.decryptByPublicKey
+					(Base64.decodeBase64(traineePhone),Base64.decodeBase64(String.valueOf(classTraineeinfo.get(0).get("EXT_FIELD01"))));
+			traineePhone=new String(decode);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		classTraineeinfo.get(0).put("MOBILE_PHONE", traineePhone);
 
 		List<Map<String, Object>> list = thisService.getClassTraineeCreditsList(classTraineeId);
@@ -701,10 +709,13 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		QueryResult<VoTrainClassCheck> qResult = thisService.getCheckList(start, limit, classId, classScheduleId, xm);
 		
 		for (int i = 0; i < qResult.getResultList().size(); i++) {
-			if (Base64Util.isBase64(qResult.getResultList().get(i).getMobilePhone())) {
-				qResult.getResultList().get(i)
-						.setMobilePhone(Base64Util.decodeData(qResult.getResultList().get(i).getMobilePhone()));
-			}		
+			try {
+				byte[] decode = RSACoder.decryptByPublicKey
+						(Base64.decodeBase64(qResult.getResultList().get(i).getMobilePhone()),Base64.decodeBase64(qResult.getResultList().get(i).getExtField01()));
+				qResult.getResultList().get(i).setMobilePhone(new String(decode));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
@@ -743,7 +754,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 
 		// 获取班级所有学员信息
 		List<Map<String, Object>> classTraineetList = new ArrayList<>();
-		String sql = "select CLASS_TRAINEE_ID,XM,XBM,REAL＿CREDIT,MOBILE_PHONE,WORK_UNIT,POSITION,HEADSHIP_LEVEL,TRAINEE_NUMBER from TRAIN_T_CLASSTRAINEE where (ISDELETE=0 or ISDELETE=2) AND CLASS_ID='"
+		String sql = "select CLASS_TRAINEE_ID,XM,XBM,REAL＿CREDIT,MOBILE_PHONE,WORK_UNIT,POSITION,HEADSHIP_LEVEL,TRAINEE_NUMBER,EXT_FIELD01 from TRAIN_T_CLASSTRAINEE where (ISDELETE=0 or ISDELETE=2) AND CLASS_ID='"
 				+ classId + "' order by xm asc";
 		classTraineetList = thisService.getForValuesToSql(sql);
 
@@ -770,8 +781,15 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 					: String.valueOf(list.get("REAL＿CREDIT")));
 			
 			traineePhone=String.valueOf(list.get("MOBILE_PHONE"));
-			if (Base64Util.isBase64(traineePhone)) {
-				traineePhone=Base64Util.decodeData(traineePhone);
+//			if (Base64Util.isBase64(traineePhone)) {
+//				traineePhone=Base64Util.decodeData(traineePhone);
+//			}
+			try {
+				byte[] decode = RSACoder.decryptByPublicKey
+						(Base64.decodeBase64(traineePhone),Base64.decodeBase64(String.valueOf(list.get("EXT_FIELD01"))));
+				traineePhone=new String(decode);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			traineeMap.put("phone", traineePhone);
 			traineeMap.put("position", String.valueOf(list.get("POSITION")));
@@ -916,9 +934,16 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			traineeMap.put("xb", mapDicItem.get(classTrainee.getXbm() + "XBM"));
 			
 			traineePhone=String.valueOf( classTrainee.getMobilePhone());
-			if (Base64Util.isBase64(traineePhone)) {
-				traineePhone=Base64Util.decodeData(traineePhone);
-			}		
+//			if (Base64Util.isBase64(traineePhone)) {
+//				traineePhone=Base64Util.decodeData(traineePhone);
+//			}
+			try {
+				byte[] decode = RSACoder.decryptByPublicKey
+						(Base64.decodeBase64(traineePhone),Base64.decodeBase64(classTrainee.getExtField01()));
+				traineePhone=new String(decode);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			traineeMap.put("phone", traineePhone);
 			
 			traineeMap.put("stustatus",

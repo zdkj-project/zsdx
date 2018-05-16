@@ -4,6 +4,7 @@ import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
 import com.zd.core.util.Base64Util;
 import com.zd.core.util.BeanUtils;
+import com.zd.core.util.RSACoder;
 import com.zd.core.util.StringUtils;
 import com.zd.school.jw.train.dao.TrainTraineeDao;
 import com.zd.school.jw.train.model.TrainTrainee;
@@ -19,6 +20,7 @@ import org.springframework.util.Base64Utils;
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * ClassName: TrainTraineeServiceImpl Function: ADD FUNCTION. Reason: ADD
@@ -164,8 +166,25 @@ public class TrainTraineeServiceImpl extends BaseServiceImpl<TrainTrainee> imple
 			trainee.setXbm(mapDicItem.get(lo.get(1) + "XBM"));
 			//trainee.setMobilePhone(String.valueOf(lo.get(2)));
 			//trainee.setSfzjh(String.valueOf(lo.get(3)));
-			trainee.setMobilePhone(Base64Util.encodeData(String.valueOf(lo.get(2))));
-			trainee.setSfzjh(Base64Util.encodeData(String.valueOf(lo.get(3))));
+//			trainee.setMobilePhone(Base64Util.encodeData(String.valueOf(lo.get(2))));
+//			trainee.setSfzjh(Base64Util.encodeData(String.valueOf(lo.get(3))));
+
+			//初始化密钥
+			//生成密钥对
+			Map<String, Object> keyMap = null;
+			try {
+				keyMap = RSACoder.initKey();
+				//公钥
+				byte[] publicKey = RSACoder.getPublicKey(keyMap);
+				//私钥
+				byte[] privateKey = RSACoder.getPrivateKey(keyMap);
+				trainee.setMobilePhone(Base64.encodeBase64String(RSACoder.encryptByPrivateKey(String.valueOf(lo.get(2)).getBytes(), privateKey)));
+				trainee.setSfzjh(Base64.encodeBase64String(RSACoder.encryptByPrivateKey(String.valueOf(lo.get(3)).getBytes(), privateKey)));
+				trainee.setExtField01(Base64.encodeBase64String(publicKey));
+				trainee.setExtField02(Base64.encodeBase64String(privateKey));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			
 			trainee.setWorkUnit(String.valueOf(lo.get(4)));
 			trainee.setPosition(String.valueOf(lo.get(5)));

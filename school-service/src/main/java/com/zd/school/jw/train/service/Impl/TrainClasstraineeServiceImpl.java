@@ -11,6 +11,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.zd.core.util.RSACoder;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -247,6 +249,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 			SysUser currentUser) {
 		// TODO Auto-generated method stub
 
+
 		List<ImportNotInfo> listNotExit = new ArrayList<>();
 		SimpleDateFormat dateTimeSdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		ImportNotInfo notExits = null;
@@ -348,8 +351,25 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 				trainee.setXbm(mapXbm.get(lo.get(1)));
 				//trainee.setMobilePhone(String.valueOf(lo.get(2)));
 				//trainee.setSfzjh(String.valueOf(lo.get(3)));
-				trainee.setMobilePhone(Base64Util.encodeData(String.valueOf(lo.get(2))));
-				trainee.setSfzjh(Base64Util.encodeData(String.valueOf(lo.get(3))));
+//				trainee.setMobilePhone(Base64Util.encodeData(String.valueOf(lo.get(2))));
+//				trainee.setSfzjh(Base64Util.encodeData(String.valueOf(lo.get(3))));
+				//初始化密钥
+				//生成密钥对
+				Map<String, Object> keyMap = null;
+				try {
+					keyMap = RSACoder.initKey();
+					//公钥
+					byte[] publicKey = RSACoder.getPublicKey(keyMap);
+					//私钥
+					byte[] privateKey = RSACoder.getPrivateKey(keyMap);
+					trainee.setMobilePhone(Base64.encodeBase64String(RSACoder.encryptByPrivateKey(String.valueOf(lo.get(2)).getBytes(), privateKey)));
+					trainee.setSfzjh(Base64.encodeBase64String(RSACoder.encryptByPrivateKey(String.valueOf(lo.get(3)).getBytes(), privateKey)));
+					trainee.setExtField01(Base64.encodeBase64String(publicKey));
+					trainee.setExtField02(Base64.encodeBase64String(privateKey));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
 				
 				trainee.setWorkUnit(String.valueOf(lo.get(4)));
 				trainee.setPosition(String.valueOf(lo.get(5)));
@@ -482,7 +502,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 				+ " xm as xm, xbm as xbm, mobilePhone as mobilePhone, workUnit as workUnit,"
 				+ " classScheduleId as classScheduleId,incardTime as incardTime,outcardTime as outcardTime,"
 				+ " attendResult as attendResult,attendMinute as attendMinute,isLeave as isLeave,"
-				+ " remark as remark,traineeNumber as traineeNumber"
+				+ " remark as remark,traineeNumber as traineeNumber,extField01 as extField01"
 				+ " FROM TRAIN_V_CHECKRESULT where 1=1 ";
 		
 	

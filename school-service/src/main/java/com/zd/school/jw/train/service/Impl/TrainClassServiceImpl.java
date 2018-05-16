@@ -3,11 +3,7 @@ package com.zd.school.jw.train.service.Impl;
 import com.zd.core.constant.InfoPushWay;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
-import com.zd.core.util.Base64Util;
-import com.zd.core.util.BeanUtils;
-import com.zd.core.util.DateUtil;
-import com.zd.core.util.JsonBuilder;
-import com.zd.core.util.StringUtils;
+import com.zd.core.util.*;
 import com.zd.school.jw.model.app.ClassEvalApp;
 import com.zd.school.jw.train.dao.TrainClassDao;
 import com.zd.school.jw.train.model.*;
@@ -24,6 +20,7 @@ import org.hibernate.jdbc.Work;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
@@ -968,9 +965,13 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
         String phone="";
         for (SysUser sysUser : sendUserList) {
         	phone=String.valueOf(sysUser.getMobile());
-        	if (Base64Util.isBase64(phone)) {
-        		phone=Base64Util.decodeData(phone);
-			}	
+			try {
+				byte[] decode = RSACoder.decryptByPublicKey
+						(Base64.decodeBase64(phone),Base64.decodeBase64(sysUser.getExtField01()));
+				phone=new String(decode);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
         	
             pushService.pushInfo(currentUser.getUuid(), sysUser.getUuid(), sysUser.getXm(),phone, "培训安排通知", sendInfo, InfoPushWay.DX.getCode());
         }

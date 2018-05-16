@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.zd.core.util.RSACoder;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
 import com.zd.core.util.Base64Util;
@@ -115,7 +117,7 @@ public class SyncJobQuartz {
 		int row = 0;
 		try {
 			// 1.查询最新的用户、部门信息
-			String sql = "select  u.USER_ID as userId,u.XM as employeeName, u.user_numb as employeeStrId,"
+			String sql = "select  u.USER_ID as userId,u.XM as employeeName, u.user_numb as employeeStrId,u.EXT_FIELD01 as extField01,"
 					+ "'' as employeePwd,CASE u.XBM WHEN '2' THEN '0' ELSE '1' END AS sexId,u.isDelete as isDelete,"
 					+ "u.SFZJH AS identifier,u.MOBILE as employeeTel,'1' AS cardState, " // cardState
 			// 和 sid
@@ -142,12 +144,26 @@ public class SyncJobQuartz {
 						
 				//在同步到UP前，先进行数据的转换
 	            userInfos.stream().forEach((x)->{		            
-	            	if(Base64Util.isBase64(x.getEmployeeTel())){
-	            		x.setEmployeeTel(Base64Util.decodeData(x.getEmployeeTel()));
-		            }
-	            	if(Base64Util.isBase64(x.getIdentifier())){
-	            		x.setIdentifier(Base64Util.decodeData(x.getIdentifier()));
-		            }
+//	            	if(Base64Util.isBase64(x.getEmployeeTel())){
+//	            		x.setEmployeeTel(Base64Util.decodeData(x.getEmployeeTel()));
+//		            }
+//	            	if(Base64Util.isBase64(x.getIdentifier())){
+//	            		x.setIdentifier(Base64Util.decodeData(x.getIdentifier()));
+//		            }
+					try {
+						byte[] decode = RSACoder.decryptByPublicKey
+								(Base64.decodeBase64(x.getEmployeeTel()),Base64.decodeBase64(x.getExtField01()));
+						x.setEmployeeTel(new String(decode));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					try {
+						byte[] decode = RSACoder.decryptByPublicKey
+								(Base64.decodeBase64(x.getIdentifier()),Base64.decodeBase64(x.getExtField01()));
+						x.setIdentifier(new String(decode));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 	            });			
 				row = thisService.syncUserInfoToAllUP(userInfos, null);
 			} else {

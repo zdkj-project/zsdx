@@ -16,6 +16,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.zd.core.util.*;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -27,13 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.util.Base64Util;
-import com.zd.core.util.DBContextHolder;
-import com.zd.core.util.ImportExcelUtil;
-import com.zd.core.util.ModelUtil;
-import com.zd.core.util.PoiExportExcel;
-import com.zd.core.util.StringUtils;
-import com.zd.core.util.exportMeetingInfo;
 import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClassschedule;
 import com.zd.school.jw.train.model.TrainClasstrainee;
@@ -94,18 +89,22 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 	@RequestMapping(value = { "/list" }, method = { org.springframework.web.bind.annotation.RequestMethod.GET,
 			org.springframework.web.bind.annotation.RequestMethod.POST })
 	public void list(@ModelAttribute TrainClass entity, HttpServletRequest request, HttpServletResponse response)
-			throws IOException {
+			throws Exception {
 		String strData = ""; // 返回给js的数据
 		Integer start = super.start(request);
 		Integer limit = super.limit(request);
 		String sort = super.sort(request);
 		String filter = super.filter(request);
 		QueryResult<TrainClass> qResult = thisService.list(start, limit, sort, filter, true);
+
 		for (int i = 0; i < qResult.getResultList().size(); i++) {
-			if (Base64Util.isBase64(qResult.getResultList().get(i).getContactPhone())) {
-				qResult.getResultList().get(i)
-						.setContactPhone(Base64Util.decodeData(qResult.getResultList().get(i).getContactPhone()));
-			}			
+			try {
+				byte[] decode = RSACoder.decryptByPublicKey
+						(Base64.decodeBase64(qResult.getResultList().get(i).getContactPhone()),Base64.decodeBase64(qResult.getResultList().get(i).getExtField01()));
+				qResult.getResultList().get(i).setContactPhone(new String(decode));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
@@ -597,7 +596,8 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 	@RequestMapping(value = { "/getClassAllInfo" }, method = {
 			org.springframework.web.bind.annotation.RequestMethod.GET,
 			org.springframework.web.bind.annotation.RequestMethod.POST })
-	public void getClassAllInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	public void getClassAllInfo(HttpServletRequest request, HttpServletResponse response) throws Exception {
+
 		String strData = ""; // 返回给js的数据
 		SimpleDateFormat fmtDate = new SimpleDateFormat("yyyy年MM月dd日");
 		SimpleDateFormat fmtDateTime = new SimpleDateFormat("yyyy-M-d h:mm");
@@ -673,9 +673,18 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 					traineeMap.put("headshipLevel", mapHeadshipLevel.get(classTrainee.getHeadshipLevel()));
 					
 					traineePhone=classTrainee.getMobilePhone();
-					if (Base64Util.isBase64(traineePhone)) {
+					/*if (Base64Util.isBase64(traineePhone)) {
 						traineePhone=Base64Util.decodeData(traineePhone);
+					}*/
+					try {
+						byte[] decode = RSACoder.decryptByPublicKey
+								(Base64.decodeBase64(traineePhone),Base64.decodeBase64(classTrainee.getExtField01()));
+						traineePhone=new String(decode);
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
+
+
 					traineeMap.put("phone", traineePhone);
 					//traineeMap.put("sfzjh", classTrainee.getSfzjh());
 					traineeMap.put("workUnit", classTrainee.getWorkUnit());
@@ -780,8 +789,16 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				classMap.put("contactPerson", trainClass.getContactPerson());
 				
 				String contactPhone=trainClass.getContactPhone();
-				if (Base64Util.isBase64(contactPhone)) {
+				/*if (Base64Util.isBase64(contactPhone)) {
 					contactPhone=Base64Util.decodeData(contactPhone);
+				}*/
+
+				try {
+					byte[] decode = RSACoder.decryptByPublicKey
+							(Base64.decodeBase64(contactPhone),Base64.decodeBase64(trainClass.getExtField01()));
+					contactPhone=new String(decode);
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 				classMap.put("contactPhone", contactPhone);
 				classMap.put("traineeNum", String.valueOf(traineeNum));
@@ -919,13 +936,28 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			roomMap.put("xbm", mapXbm.get(classTrainee.getXbm()));
 			
 			traineePhone=classTrainee.getMobilePhone();
-			if (Base64Util.isBase64(traineePhone)) {
+			/*if (Base64Util.isBase64(traineePhone)) {
 				traineePhone=Base64Util.decodeData(traineePhone);
+			}*/
+			try {
+				byte[] decode = RSACoder.decryptByPublicKey
+						(Base64.decodeBase64(traineePhone),Base64.decodeBase64(classTrainee.getExtField01()));
+				traineePhone=new String(decode);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			traineeSfzjh=classTrainee.getSfzjh();
-			if (Base64Util.isBase64(traineeSfzjh)) {
+			/*if (Base64Util.isBase64(traineeSfzjh)) {
 				traineeSfzjh=Base64Util.decodeData(traineeSfzjh);
+			}*/
+			try {
+				byte[] decode = RSACoder.decryptByPublicKey
+						(Base64.decodeBase64(traineeSfzjh),Base64.decodeBase64(classTrainee.getExtField01()));
+				traineeSfzjh=new String(decode);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
+
 			roomMap.put("phone", traineePhone);
 			roomMap.put("sfzjh", traineeSfzjh);		
 			roomMap.put("position", classTrainee.getPosition());
@@ -1357,12 +1389,26 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			traineeMap.put("headshipLevel", mapHeadshipLevel.get(classTrainee.getHeadshipLevel()));
 			
 			traineePhone=classTrainee.getMobilePhone();
-			if (Base64Util.isBase64(traineePhone)) {
+			/*if (Base64Util.isBase64(traineePhone)) {
 				traineePhone=Base64Util.decodeData(traineePhone);
+			}*/
+			try {
+				byte[] decode = RSACoder.decryptByPublicKey
+						(Base64.decodeBase64(traineePhone),Base64.decodeBase64(classTrainee.getExtField01()));
+				traineePhone=new String(decode);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			traineeSfzjh=classTrainee.getSfzjh();
-			if (Base64Util.isBase64(traineeSfzjh)) {
+			/*if (Base64Util.isBase64(traineeSfzjh)) {
 				traineeSfzjh=Base64Util.decodeData(traineeSfzjh);
+			}*/
+			try {
+				byte[] decode = RSACoder.decryptByPublicKey
+						(Base64.decodeBase64(traineeSfzjh),Base64.decodeBase64(classTrainee.getExtField01()));
+				traineeSfzjh=new String(decode);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 			traineeMap.put("phone", traineePhone);
 			traineeMap.put("sfzjh", traineeSfzjh);
@@ -1446,8 +1492,15 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		classMap1.put("contactPerson", trainClass.getContactPerson());
 		
 		String contactPhone=trainClass.getContactPhone();
-		if (Base64Util.isBase64(contactPhone)) {
+		/*if (Base64Util.isBase64(contactPhone)) {
 			contactPhone=Base64Util.decodeData(contactPhone);
+		}*/
+		try {
+			byte[] decode = RSACoder.decryptByPublicKey
+					(Base64.decodeBase64(contactPhone),Base64.decodeBase64(trainClass.getExtField01()));
+			contactPhone=new String(decode);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		classMap1.put("contactPhone", contactPhone);
 		classMap2.put("traineeNum", String.valueOf(traineeNum));
@@ -2042,8 +2095,15 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 		
 		
 		String contactPhone=trainClass.getContactPhone();
-		if (Base64Util.isBase64(contactPhone)) {
+		/*if (Base64Util.isBase64(contactPhone)) {
 			contactPhone=Base64Util.decodeData(contactPhone);
+		}*/
+		try {
+			byte[] decode = RSACoder.decryptByPublicKey
+					(Base64.decodeBase64(contactPhone),Base64.decodeBase64(trainClass.getExtField01()));
+			contactPhone=new String(decode);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		classMap1.put("contactPhone",contactPhone );
 		classMap2.put("traineeNum", String.valueOf(traineeNum));

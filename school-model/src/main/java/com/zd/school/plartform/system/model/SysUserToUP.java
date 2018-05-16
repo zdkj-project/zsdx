@@ -19,10 +19,20 @@ public class SysUserToUP implements Serializable {
 	
 	private String employeePwd;
 	private String cardState;
-	
+
+	private String extField01;
+
+
+
 	private Integer isDelete=0;
 	private String employeeTel;
-	
+	public String getExtField01() {
+		return extField01;
+	}
+
+	public void setExtField01(String extField01) {
+		this.extField01 = extField01;
+	}
 	public String getEmployeeId() {
 		return employeeId;
 	}

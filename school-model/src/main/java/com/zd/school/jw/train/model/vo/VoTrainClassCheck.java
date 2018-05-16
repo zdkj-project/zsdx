@@ -168,4 +168,15 @@ public class VoTrainClassCheck implements Serializable {
     public void setTraineeNumber(String traineeNumber) {
         this.traineeNumber = traineeNumber;
     }
+
+    @FieldInfo(name = "RSA加密")
+    private  String extField01;
+
+    public String getExtField01() {
+        return extField01;
+    }
+
+    public void setExtField01(String extField01) {
+        this.extField01 = extField01;
+    }
 }
