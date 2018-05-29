@@ -1,0 +1,36 @@
+配置信息：
+	funData:{
+		action:"", //请求Action
+		whereSql:"",//表格查询条件
+		orderSql:"",//表格排序条件
+		pkName:"",//主键名称
+		modelName:"",实体全路径
+		tableName:"",//表名
+		defaultObj:{},//默认信息，用于表格添加的时候字段默认值
+		itemId:"",功能ID
+		childFun:[{
+			itemId:"",
+			
+		},{
+			action:"",
+			whereSql:"",
+			orderSql:"",
+			pkName:""
+		}]
+	}
+查询组件配置
+	queryType:"mtsstree",
+	title:"",窗体展示的标题,
+	multiSelect:true, //配置多选,
+	callback:function(record,win){}
+	config:{
+		url:"",
+		params:{
+			whereSql:""
+		},
+		//字典功能配置，后续考虑
+		isDD:false,
+		ddConfig:{
+		
+		}
+	}
