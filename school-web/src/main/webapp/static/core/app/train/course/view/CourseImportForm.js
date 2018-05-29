@@ -34,7 +34,7 @@ Ext.define("core.train.course.view.CourseImportForm", {
             height:500,
             multiSelect: false,
             fieldInfo: "categoryName~categoryId,text~id",
-            whereSql: " and isDelete='0' ",
+            whereSql: "and isDelete='0' ",
             orderSql: " order by createTime DESC,parentCategory",
             url:comm.get('baseUrl') + "/TrainCoursecategory/treelist",
         },

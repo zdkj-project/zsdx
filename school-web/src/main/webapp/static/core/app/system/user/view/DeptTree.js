@@ -10,7 +10,7 @@ Ext.define("core.system.user.view.DeptTree", {
         selType: ""
     },
     extParams: {
-        whereSql: " and isDelete='0' ",
+        whereSql: "and isDelete='0' ",
         orderSql: " order by parentNode,orderIndex asc",
         excludes:"checked",
     },

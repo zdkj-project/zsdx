@@ -5,7 +5,7 @@ Ext.define("core.train.coursetype.view.CourseCategoryTree", {
     model: factory.ModelFactory.getModelByName("com.zd.school.jw.train.model.TrainCoursecategoryTree", "checked").modelName,
     al: true,
     extParams: {
-        whereSql: " and isDelete='0' ",
+        whereSql: "and isDelete='0' ",
         orderSql: " order by parentNode,orderIndex asc"
     },
     tbar: [{

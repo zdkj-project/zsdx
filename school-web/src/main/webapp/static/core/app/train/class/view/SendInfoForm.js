@@ -39,7 +39,7 @@ Ext.define("core.train.class.view.SendInfoForm", {
             width: 1200,
             height: 650,
             fieldInfo: "sendUserId~sendUserName,uuid~xm",
-            whereSql: " and isDelete='0' ",
+            whereSql: "and isDelete='0' ",
             orderSql: " order by createTime DESC ",
             muiltSelect: true //是否多选
         },

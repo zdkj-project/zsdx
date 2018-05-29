@@ -4,7 +4,7 @@ Ext.define("core.system.menu.view.DetailLayout", {
     funCode: "menu_detail",
     funData: {
         action: comm.get('baseUrl') + "/BaseMenu", //请求controller路径
-        whereSql: "  and isDelete='0'",
+        whereSql: "and isDelete='0'",
         orderSql: " order by parentNode,isHidden,orderIndex asc",
         pkName: "uuid", //主键id    
         defaultObj: {

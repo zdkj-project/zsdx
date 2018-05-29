@@ -95,7 +95,7 @@ Ext.define("core.system.menu.view.MenuForm", {
             	height:500,
                 multiSelect: false,
                 fieldInfo: "parentName~parentNode,text~id",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by parentNode,orderIndex asc",
                 url:comm.get('baseUrl') + "/BaseMenu/treelist",
             } //// 			 

@@ -36,7 +36,7 @@ Ext.define("core.public.selectUser.view.SelectUserGrid", {
             configInfo: {
                 multiSelect: false,
                 fieldInfo: "deptName~deptId,text~id",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by parentNode,orderIndex asc",
                 url:comm.get('baseUrl') + "/BaseOrg/chktreelist"
             }

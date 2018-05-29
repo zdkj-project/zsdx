@@ -258,7 +258,7 @@ Ext.define("core.train.course.controller.OtherController", {
         var insertObj = self.getDefaultValue(defaultObj);
         var popFunData = Ext.apply(funData, {
             grid: tree,
-            whereSql: " and isDelete='0' "
+            whereSql: "and isDelete='0' "
         });
         //根据选择的记录与操作确定form初始化的数据
         var iconCls = "x-fa fa-plus-circle";

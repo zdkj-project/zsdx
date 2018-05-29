@@ -5,7 +5,7 @@ Ext.define("core.eduresources.room.view.RoomGrid", {
     model: "com.zd.school.build.define.model.BuildRoominfo",
     al:false,
     extParams: {
-        whereSql: " and isDelete='0' ",
+        whereSql: "and isDelete='0' ",
         orderSql: " order by roomName ",
         filter: "[{'type':'string','comparison':'=','value':'ROOT','field':'areaId'}]"
     },

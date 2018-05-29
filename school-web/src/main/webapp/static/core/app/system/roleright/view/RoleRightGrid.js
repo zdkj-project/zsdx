@@ -6,7 +6,7 @@ Ext.define("core.system.roleright.view.RoleRightGrid", {
 	model: factory.ModelFactory.getModelByName("com.zd.school.plartform.system.model.SysMenuTree", "checked").modelName,
 	al: true,
 	extParams: {
-		whereSql: " and isDelete='0' ",
+		whereSql: "and isDelete='0' ",
 		orderSql: " order by parentNode,orderIndex asc"
 	},
 	tbar: [{

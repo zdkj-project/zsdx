@@ -620,7 +620,7 @@ Ext.define("core.train.coursetype.controller.MainController", {
      var insertObj = self.getDefaultValue(defaultObj);
      var popFunData = Ext.apply(funData, {
      grid: baseGrid,
-     whereSql: " and isDelete='0' "
+     whereSql: "and isDelete='0' "
      });
 
      //先确定要选择记录

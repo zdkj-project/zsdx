@@ -10,7 +10,7 @@ Ext.define("core.system.dept.store.DeptStore", {
         url: comm.get('baseUrl') + "/BaseOrg/treelist",
         extraParams: {
             excludes: 'checked',
-            whereSql: "  and isDelete='0'",
+            whereSql: "and isDelete='0'",
             orderSql: ' ORDER BY NODELEVEL,ORDER_INDEX'
         },
         reader: {

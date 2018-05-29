@@ -131,7 +131,7 @@ Ext.define("core.train.arrange.view.CourseDetailForm", {
             configInfo: {
                 width:1000,
                 fieldInfo: "courseId~courseName,uuid~courseName",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by jobCode ",
                 muiltSelect: false //是否多选
             },
@@ -182,7 +182,7 @@ Ext.define("core.train.arrange.view.CourseDetailForm", {
             funcTitle: "讲师选择", //查询窗口的标题
             configInfo: {
                 fieldInfo: "mainTeacherId~mainTeacherName,uuid~xm",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by jobCode ",
                 muiltSelect: true //是否多选
             },
@@ -261,7 +261,7 @@ Ext.define("core.train.arrange.view.CourseDetailForm", {
                 width:1200,
                 height:650,
                 fieldInfo: "mainTeacherId~mainTeacherName~mainTeacherXbm~mainTeacherWork,uuid~xm~xbm~workUnits",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by createTime DESC ",
                 muiltSelect: true //是否多选
             },
@@ -366,7 +366,7 @@ Ext.define("core.train.arrange.view.CourseDetailForm", {
                 width: 1200,
                 height: 700,
                 fieldInfo: "roomId~scheduleAddress,uuid~roomName",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by areaUpName, areaName,orderIndex asc",
                 muiltSelect: true //是否多选
             },

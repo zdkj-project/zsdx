@@ -37,7 +37,7 @@ Ext.define("core.train.class.view.SelectUserGrid", {
                 //controller: 'role.OtherController',
                 multiSelect: false,
                 fieldInfo: "deptName~deptId,text~id",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by parentNode,orderIndex asc",
                 url:comm.get('baseUrl') + "/BaseOrg/chktreelist"
             }

@@ -51,7 +51,7 @@ Ext.define("core.train.course.view.MainQueryPanel", {
                 height:650,
                 multiSelect: false,
                 fieldInfo: "categoryName~categoryId,text~id",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by parentNode,orderIndex asc ",
                 url:comm.get('baseUrl') + "/TrainCoursecategory/treelist"
             }

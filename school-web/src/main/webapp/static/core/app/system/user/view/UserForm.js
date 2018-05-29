@@ -100,7 +100,7 @@ Ext.define("core.system.user.view.UserForm", {
             configInfo: {
                 multiSelect: false,
                 fieldInfo: "deptName~deptId,text~id",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by parentNode,orderIndex asc"
             } //
         },*/ /*{
@@ -112,7 +112,7 @@ Ext.define("core.system.user.view.UserForm", {
             funcTitle: "岗位选择", //查询窗口的标题
             configInfo: {
                 fieldInfo: "jobId~jobName,uuid~jobName",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by jobCode ",
                 muiltSelect: true //是否多选
             },

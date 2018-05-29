@@ -53,7 +53,7 @@ Ext.define("core.eduresources.room.controller.RoomController", {
                     var store = baseGrid.getStore();
                     var proxy = store.getProxy();
                     proxy.extraParams = {
-                        whereSql: " and isDelete='0' ",
+                        whereSql: "and isDelete='0' ",
                         orderSql: "",
                         excludes:"checked"
                     };
@@ -490,7 +490,7 @@ Ext.define("core.eduresources.room.controller.RoomController", {
         var insertObj = self.getDefaultValue(defaultObj);
         var popFunData = Ext.apply(funData, {
             grid: baseGrid,
-            whereSql: " and isDelete='0' "
+            whereSql: "and isDelete='0' "
         });
         //先确定要选择记录
         var records = baseGrid.getSelectionModel().getSelection();

@@ -8,7 +8,7 @@ Ext.define("core.system.dept.view.DeptGrid", {
     al: true,
     selModel: null,    
     extParams: {
-        whereSql: " and isDelete='0' ",
+        whereSql: "and isDelete='0' ",
         orderSql: " order by parentNode,orderIndex asc"
     },
     tbar: [{

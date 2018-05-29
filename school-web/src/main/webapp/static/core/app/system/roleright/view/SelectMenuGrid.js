@@ -10,7 +10,7 @@ Ext.define("core.system.roleright.view.SelectMenuGrid", {
         //selType: "checkboxmodel"
     },
     extParams: {
-        whereSql: " and isDelete='0' ",
+        whereSql: "and isDelete='0' ",
         orderSql: " order by parentNode,orderIndex asc"
     },
 

@@ -53,7 +53,7 @@ Ext.define("core.train.course.view.DetailForm", {
                 height: 600,
                 multiSelect: false,
                 fieldInfo: "categoryName~categoryId~categoryCode,text~id~nodeCode",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by parentNode,orderIndex",
                 url: comm.get('baseUrl') + "/TrainCoursecategory/treelist",
             },
@@ -77,7 +77,7 @@ Ext.define("core.train.course.view.DetailForm", {
                 width: 1200,
                 height: 650,
                 fieldInfo: "mainTeacherId~mainTeacherName,uuid~xm",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by createTime DESC ",
                 muiltSelect: true //是否多选
             },

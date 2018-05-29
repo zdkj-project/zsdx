@@ -4,7 +4,7 @@ Ext.define("core.system.dept.view.DeptLayout", {
     funCode: "deptinfo_detail",
     funData: {
         action: comm.get('baseUrl') + "/BaseOrg", //请求controller路径
-        whereSql: "  and isDelete='0'",
+        whereSql: "and isDelete='0'",
         orderSql: ' order by parentNode,orderIndex asc',
         pkName: "uuid", //主键id    
         defaultObj: {

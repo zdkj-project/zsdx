@@ -363,7 +363,7 @@ Ext.define("core.train.course.controller.MainController", {
         //一些要传递的参数
         var popFunData = Ext.apply(funData, {
             grid: baseGrid,
-            whereSql: " and isDelete='0' ",
+            whereSql: "and isDelete='0' ",
             categoryId: categoryId,
             categoryName: categoryName,
             categoryCode: categoryCode

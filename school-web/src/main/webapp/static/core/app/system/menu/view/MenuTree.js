@@ -5,7 +5,7 @@ Ext.define("core.system.menu.view.MenuTree", {
 	model: factory.ModelFactory.getModelByName("com.zd.school.plartform.system.model.SysMenuTree", "checked").modelName,
 	al: true,
 	extParams: {
-		whereSql: " and isDelete='0' ",
+		whereSql: "and isDelete='0' ",
 		orderSql: " order by parentNode,isHidden,orderIndex asc"
 	},
 	tbar: [{

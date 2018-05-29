@@ -5,7 +5,7 @@ Ext.define("core.systemset.dictionary.view.dicGrid", {
     model: factory.ModelFactory.getModelByName("com.zd.school.plartform.baseset.model.BaseDicTree", "checked").modelName,
     al: true,
     extParams: {
-        whereSql: " and isDelete='0' ",
+        whereSql: "and isDelete='0' ",
         orderSql: ""
         //filter: "[{'type':'string','comparison':'=','value':'0','field':'isDelete'}]"
     },

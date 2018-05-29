@@ -64,7 +64,7 @@ Ext.define("core.system.dept.view.DeptForm", {
             configInfo: {
                 multiSelect: false,
                 fieldInfo: "parentName~parentNode~parentType,text~id~parentType",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by parentNode,orderIndex asc",
                 url: comm.get('baseUrl') + "/BaseOrg/treelist",
             } 
@@ -243,7 +243,7 @@ Ext.define("core.system.dept.view.DeptForm", {
             configInfo: {
 
                 fieldInfo: "mainLeader~mainLeaderName,uuid~jobName",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by jobCode ",
                 muiltSelect: true //是否多选
             },
@@ -266,7 +266,7 @@ Ext.define("core.system.dept.view.DeptForm", {
             funcTitle: "副岗位选择", //查询窗口的标题
             configInfo: {
                 fieldInfo: "viceLeader~viceLeaderName,uuid~jobName",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by jobCode ",
                 muiltSelect: true //是否多选
             },

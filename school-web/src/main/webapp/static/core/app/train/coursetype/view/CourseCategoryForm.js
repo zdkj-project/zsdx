@@ -39,7 +39,7 @@ Ext.define("core.train.coursetype.view.CourseCategoryForm", {
                 height: 600,
                 multiSelect: false,
                 fieldInfo: "parentName~parentNode,text~id",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by parentNode,orderIndex",
                 url: comm.get('baseUrl') + "/TrainCoursecategory/treelist",
             },

@@ -153,7 +153,7 @@ Ext.define("core.oa.meeting.checkresult.view.DetailForm", {
                 width:1200,
                 height:650,
                 fieldInfo: "mettingEmpid~mettingEmpname,uuid~xm",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: "",
                 muiltSelect: true //是否多选
             },

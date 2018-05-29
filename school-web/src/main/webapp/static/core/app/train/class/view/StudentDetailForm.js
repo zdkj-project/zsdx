@@ -47,7 +47,7 @@ Ext.define("core.train.class.view.StudentDetailForm", {
         configInfo: {
             width:800,
             fieldInfo: "traineeId~xm,uuid~xm",
-            whereSql: " and isDelete='0' ",
+            whereSql: "and isDelete='0' ",
             orderSql: " order by jobCode ",
             muiltSelect: false //是否多选
         },

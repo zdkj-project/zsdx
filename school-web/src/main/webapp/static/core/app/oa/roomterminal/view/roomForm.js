@@ -46,7 +46,7 @@ Ext.define("core.oa.roomterminal.view.roomForm", {
             funcTitle: "选择终端", //查询窗口的标题
             configInfo: {
                 fieldInfo: "termId1~termCode1,uuid~termCode",
-                whereSql: " and 1=1 and isDelete='0' and isUse='0' ",
+                whereSql: "and 1=1 and isDelete='0' and isUse='0' ",
                 filter: "[{'type':'numeric','comparison':'=','value':'0','field':'isUse'}]",
                 muiltSelect: false //是否多选
             }
@@ -75,7 +75,7 @@ Ext.define("core.oa.roomterminal.view.roomForm", {
             funcTitle: "选择终端", //查询窗口的标题
             configInfo: {
                 fieldInfo: "termId2~termCode2,uuid~termCode",
-                whereSql: " and 1=1 and isDelete='0' ",
+                whereSql: "and 1=1 and isDelete='0' ",
                 filter: "[{'type':'numeric','comparison':'=','value':'0','field':'isUse'}]",
                 muiltSelect: false //是否多选
             }
@@ -104,7 +104,7 @@ Ext.define("core.oa.roomterminal.view.roomForm", {
             funcTitle: "选择终端", //查询窗口的标题
             configInfo: {
                 fieldInfo: "termId3~termCode3,uuid~termCode",
-                whereSql: " and 1=1 and isDelete='0' ",
+                whereSql: "and 1=1 and isDelete='0' ",
                 filter: "[{'type':'numeric','comparison':'=','value':'0','field':'isUse'}]",
                 muiltSelect: false //是否多选
             }
@@ -133,7 +133,7 @@ Ext.define("core.oa.roomterminal.view.roomForm", {
             funcTitle: "选择终端", //查询窗口的标题
             configInfo: {
                 fieldInfo: "termId4~termCode4,uuid~termCode",
-                whereSql: " and 1=1 and isDelete='0' ",
+                whereSql: "and 1=1 and isDelete='0' ",
                 filter: "[{'type':'numeric','comparison':'=','value':'0','field':'isUse'}]",
                 muiltSelect: false //是否多选
             }
@@ -162,7 +162,7 @@ Ext.define("core.oa.roomterminal.view.roomForm", {
             funcTitle: "选择终端", //查询窗口的标题
             configInfo: {
                 fieldInfo: "termId5~termCode5,uuid~termCode",
-                whereSql: " and 1=1 and isDelete='0' and isUse='0' ",
+                whereSql: "and 1=1 and isDelete='0' and isUse='0' ",
                 filter: "[{'type':'numeric','comparison':'=','value':'0','field':'isUse'}]",
                 muiltSelect: false //是否多选
             }

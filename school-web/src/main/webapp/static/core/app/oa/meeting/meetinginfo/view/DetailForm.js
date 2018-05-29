@@ -77,7 +77,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
                 width: 1050,
                 height: 600,
                 fieldInfo: "roomId~roomName,uuid~roomName",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by areaUpName, areaName,orderIndex asc",
                 filter: "[{\"type\":\"string\",\"comparison\":\"=\",\"value\":\"3\",\"field\":\"roomType\"}]",
                 muiltSelect: false //是否多选
@@ -149,7 +149,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
                 width: 1050,
                 height: 600,
                 fieldInfo: "emceeId~emcee,uuid~xm",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by createTime DESC ",
                 muiltSelect: false //是否多选
             },
@@ -203,7 +203,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
                 width: 1050,
                 height: 600,
                 fieldInfo: "checkruleId~checkruleName,uuid~ruleName",
-                whereSql: " and isDelete='0' and startUsing=1 ",
+                whereSql: "and isDelete='0' and startUsing=1 ",
                 orderSql: " order by createTime DESC ",
                 muiltSelect: false //是否多选
             },
@@ -232,7 +232,7 @@ Ext.define("core.oa.meeting.meetinginfo.view.DetailForm", {
                 width: 1050,
                 height: 600,
                 fieldInfo: "mettingEmpid~mettingEmpname,uuid~xm",
-                whereSql: " and isDelete='0' ",
+                whereSql: "and isDelete='0' ",
                 orderSql: " order by deptName,jobName,xm DESC ",
                 muiltSelect: true //是否多选
             },

@@ -5,7 +5,7 @@ Ext.define("core.system.user.store.DeptStore",{
 	proxy:{
 		type:"ajax",
 		url: comm.get('baseUrl') + "/sysdept/getDeptTree",
-		extraParams :{excludes: 'checked',whereSql:"  and isDelete='0'"},
+		extraParams :{excludes: 'checked',whereSql:"and isDelete='0'"},
 		reader:{
 			type:"json"
 		},

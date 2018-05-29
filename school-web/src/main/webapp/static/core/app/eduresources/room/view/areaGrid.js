@@ -10,7 +10,7 @@ Ext.define("core.eduresources.room.view.areaGrid", {
         mode:'single'
     },
     extParams: {
-        whereSql: " and isDelete='0' ",
+        whereSql: "and isDelete='0' ",
         orderSql: "",
         excludes:"checked"
             //filter: "[{'type':'string','comparison':'=','value':'0','field':'isDelete'}]"
