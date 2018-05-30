@@ -12,8 +12,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
+import com.zd.core.annotation.Auth;
 import com.zd.core.constant.Constant;
 import com.zd.core.constant.StatuVeriable;
 import com.zd.core.controller.core.FrameWorkController;
@@ -22,7 +22,7 @@ import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.StringUtils;
 import com.zd.core.util.TLVUtils;
 import com.zd.school.control.device.model.PtGateway;
-import com.zd.school.control.device.model.PtTerm;
+import com.zd.school.control.device.model.TLVModel;
 import com.zd.school.control.device.service.PtGatewayService;
 import com.zd.school.plartform.comm.model.CommTree;
 import com.zd.school.plartform.comm.service.CommTreeService;
@@ -360,4 +360,37 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 		}
 		writeJSON(response, strData);// 返回数据
 	}
+	
+	/**
+	 * 设置基础与高级参数
+	 * @param tlvs
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 */
+	@Auth("BASEGATEWAY_baseAndHigh")
+	@RequestMapping("/doBaseAndHighParam")
+	public void baseAndHighParam(TLVModel tlvs, HttpServletRequest request, HttpServletResponse response)
+			throws IOException, IllegalAccessException, InvocationTargetException {
+		
+		SysUser currentUser = getCurrentSysUser();
+	
+		//1.判断，是否批量设置(0-不批量，1-选择批量，2-所有网关)
+		String gatewayRadio=request.getParameter("gatewayRadio");
+		if("1".equals(gatewayRadio)){
+			String gatewayIds=request.getParameter("gatewayIds");
+			thisService.doUpdateBaseHighParamToIds(tlvs, gatewayIds , currentUser.getXm());
+		}else if("2".equals(gatewayRadio)){
+			thisService.doUpdateBaseHighParamToAll(tlvs, currentUser.getXm());
+		}else{	//默认为0，只设置当前自己
+			thisService.doUpdateBaseHighParam(tlvs, currentUser.getXm());
+		}
+		
+		writeJSON(response, jsonBuilder.returnSuccessJson("\"设备参数设置成功！\""));
+
+	}
+
+	
 }

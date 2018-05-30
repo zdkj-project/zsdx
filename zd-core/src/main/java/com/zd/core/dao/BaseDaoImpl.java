@@ -1474,6 +1474,198 @@ public class BaseDaoImpl<E> implements BaseDao<E> {
         qr.setResultList(query.setResultTransformer(Transformers.aliasToBean(clz)).list());
         return qr;
     }
+    
+    
+    @Override
+	@SuppressWarnings({ "unchecked" })
+	public <T> List<T> queryEntityBySql(String sql, Class<T> clz) {
+		Query query = getSession().createSQLQuery(sql);
+		if (clz != null)
+			query.setResultTransformer(Transformers.aliasToBean(clz));
+
+		List<T> values = query.list();
+		return values;
+	}
+    
+    /**
+	 * 修正分页的统计总数方式，推荐使用count(*)来查询总数
+	 */
+	@Override
+	public QueryResult<E> queryPageResult(Integer start, Integer limit, String hql, String countHql) {
+		Query query = this.getSession().createQuery(hql);
+		QueryResult<E> qr = new QueryResult<E>();
+
+		// 如果存在countHql，就使用count(*)查询
+		if (StringUtils.isNotEmpty(countHql)) {
+			Query query2 = this.getSession().createQuery(countHql);
+			
+			Object count = query2.uniqueResult();
+			if (null != count) 
+				qr.setTotalCount(Long.valueOf(count.toString()));
+			else
+				qr.setTotalCount((long) 0);
+			
+		} else {
+			qr.setTotalCount((long) query.list().size());
+		}
+
+		if (limit > 0) {
+			query.setFirstResult(start);
+			query.setMaxResults(limit);
+
+		}
+		qr.setResultList(query.list());
+		return qr;
+	}
+	
+	@Override
+	@SuppressWarnings({ "unchecked", "deprecation" })
+	public QueryResult<E> queryPageResult(Integer start, Integer limit, String sort, String filter, boolean isDelete) {
+		Criteria criteria = getSession().createCriteria(this.entityClass);
+		// 如果isDlete 为true 则为只列出未删除的数据
+		if (isDelete) {
+			criteria.add(Restrictions.eq("isDelete", Integer.parseInt(StatuVeriable.ISNOTDELETE)));
+		}
+		// 设置 了过滤条件，需要组装这些过滤条件
+		if (StringUtils.isNotEmpty(filter)) {
+			List<ExtDataFilter> listFilters = (List<ExtDataFilter>) JsonBuilder.getInstance().fromJsonArray(filter,
+					ExtDataFilter.class);
+			for (ExtDataFilter extDataFilter : listFilters) {
+				String type = extDataFilter.getType();
+				String field = extDataFilter.getField();
+				String value = extDataFilter.getValue();
+				String comparison = extDataFilter.getComparison();
+				switch (type) {
+				case "string":
+					if (StringUtils.isEmpty(comparison)) {
+						criteria.add(Restrictions.like(field, "%" + value + "%"));
+					} else {
+						criteria.add(GetComparison(comparison, field, value));
+					}
+					break;
+				case "boolean":
+					criteria.add(Restrictions.eq(field, Boolean.parseBoolean(value)));
+					break;
+				case "short":
+					criteria.add(GetComparison(comparison, field, Short.parseShort(value)));
+					break;
+				case "numeric":
+					criteria.add(GetComparison(comparison, field, Integer.parseInt(value)));
+					break;
+				case "float":
+					criteria.add(GetComparison(comparison, field, Float.parseFloat(value)));
+					break;
+				case "date":
+					criteria.add(GetComparison(comparison, field, DateUtil.getDate(value)));
+					break;
+				case "time":
+					criteria.add(GetComparison(comparison, field, DateUtil.getTime(value)));
+					break;
+				default:// 不在其中，则表示为实体类型
+					try {
+						String hqlTemp = "from " + type + " g where g." + field + " = ?";
+						Query query = getSession().createQuery(hqlTemp);
+						query.setParameter(0, value);
+						Object o = query.uniqueResult();
+						char c = type.charAt(0);
+						if (c <= 97) {
+							c = (char) (c + 32);
+							type = c + type.substring(1);
+						}
+						criteria.add(Restrictions.eq(type, o));
+					} catch (Exception e) {
+						System.out.println("实体参数转换出错了！");
+					}
+				}
+			}
+		}
+		try {
+			QueryResult<E> qr = new QueryResult<E>();
+			criteria.setProjection(Projections.rowCount());
+			qr.setTotalCount(Long.valueOf(((Number) criteria.uniqueResult()).longValue()));
+			if (qr.getTotalCount().longValue() > 0L) {
+				// 构建排序条件
+				if (StringUtils.isNotEmpty(sort)) {
+					List<ExtSortModel> listSorts = (List<ExtSortModel>) JsonBuilder.getInstance().fromJsonArray(sort,
+							ExtSortModel.class);
+					// for(int i=listSorts.size()-1;i>=0;i--){
+					for (ExtSortModel extSortModel : listSorts) {
+						// ExtSortModel extSortModel=listSorts.get(i);
+						String direction = extSortModel.getDirection().toUpperCase();
+						String property = extSortModel.getProperty();
+						if ("DESC".equals(direction)) {
+							criteria.addOrder(Order.desc(property));
+						} else if ("ASC".equals(direction)) {
+							criteria.addOrder(Order.asc(property));
+						}
+					}
+				}
+				criteria.setProjection(null);
+				if (limit <= 0)
+					criteria.setMaxResults(Integer.MAX_VALUE);
+				else
+					criteria.setMaxResults(limit);
+
+				criteria.setFirstResult(start);
+				qr.setResultList(criteria.list());
+			} else {
+				qr.setResultList(new ArrayList());
+			}
+			return qr;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> List<T> queryEntityByHql(String hql, Object... args) {
+		Query query = getSession().createQuery(hql);
+		if (args.length > 0) {
+			for (int i = 0; i < args.length; i++) {
+				query.setParameter(i, args[i]);
+			}
+		}
+		List<T> values = query.list();
+		return values;
+	}
+	
+	/**
+	 * hql语句查询实体列表
+	 *
+	 * @param hql
+	 *            查询语句
+	 * @return
+	 */
+	@Override
+	public List<E> queryByHql(String hql) {
+		return queryByHql(hql, 0, 0);
+	}
+	
+	/**
+	 * 根据HQL查询实体列表
+	 *
+	 * @param hql
+	 *            查询语句
+	 * @param start
+	 *            返回记录起始位置
+	 * @param limit
+	 *            返回最大记录数
+	 * @return
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<E> queryByHql(String hql, Integer start, Integer limit) {
+		Query query = getSession().createQuery(hql);
+		if (limit > 0) {
+			query.setFirstResult(start);
+			query.setMaxResults(limit);
+
+		}
+		return query.list();
+	}
+
 
 }
 

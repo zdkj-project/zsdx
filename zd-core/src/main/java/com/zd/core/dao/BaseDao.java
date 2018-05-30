@@ -448,4 +448,63 @@ public interface BaseDao<E> {
      * @return 返回转换后的结果
      */
     public <T> QueryResult<T> doQueryResultSqlObject(String sql, Integer start, Integer limit, Class<T> clz);
+    
+    /**
+     * 根据HQL查询实体列表
+     *
+     * @param hql   查询语句
+     * @param start 返回记录起始位置
+     * @param limit 返回最大记录数
+     * @return
+     */
+    public <T> List<T> queryEntityBySql(String sql, Class<T> clz);
+    
+
+    /**
+     * 修正totalCount的获取方式，以免造成数据量过多时的内存爆炸的风险
+     * @param start
+     * @param limit
+     * @param hql
+     * @param countHql
+     * @return
+     */
+    public QueryResult<E> queryPageResult(Integer start, Integer limit, String hql, String countHql);
+    
+    /**
+     * 查询数据并以指定的格式返回，带翻页功能
+     * @param start 起始页
+     * @param limit 每页记录数
+     * @param sort 排列方式
+     * @param filter 过滤方式
+     * @param isDelete 记录的删除标记
+     * @return
+     */
+    public QueryResult<E> queryPageResult(Integer start, Integer limit, String sort, String filter, boolean isDelete);
+    
+    /**
+     * 执行HQL语句，返回实体类清单
+     * @param hql SQL语句
+     * @param args 参数列表
+     * @param <T>
+     * @return
+     */
+    public <T> List<T> queryEntityByHql(String hql, Object... args);
+    
+    /**
+     * 根据HQL查询实体列表
+     *
+     * @param hql 查询语句
+     * @return
+     */
+    public List<E> queryByHql(String hql);
+    
+    /**
+     * 根据HQL查询实体列表
+     *
+     * @param hql   查询语句
+     * @param start 返回记录起始位置
+     * @param limit 返回最大记录数
+     * @return
+     */
+    public List<E> queryByHql(String hql, Integer start, Integer limit);
 }

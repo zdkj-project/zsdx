@@ -446,5 +446,44 @@ public interface BaseService<E> {
      * @return 返回转换后的结果
      */
     public <T> QueryResult<T> getQueryResultSqlObject(String sql, Integer start, Integer limit, Class<T> clz);
+    
+
+	public QueryResult<E> queryPageResult(Integer start, Integer limit, String sort, String filter, boolean isDelete);
+
+	/**
+	 * 执行HQL语句，返回实体类清单
+	 * 
+	 * @param hql
+	 *            SQL语句
+	 * @param args
+	 *            参数列表
+	 * @param <T>
+	 * @return
+	 */
+
+	public <T> List<T> queryEntityByHql(String hql, Object... args);
+
+	public <T> QueryResult<T> queryCountToHql(Integer start, Integer limit, String sort, String filter, String hql,
+			String groupBy, String orderBy);
+
+	/**
+	 * 根据sql查询转换成指定的实体合集
+	 * 
+	 * @param sql
+	 *            SQL语句
+	 * @param clz
+	 *            指定转换实体类
+	 * @param <T>
+	 * @return
+	 */
+	public <T> List<T> queryEntityBySql(String sql, Class<T> clz);
+	
+	 /**
+     * 根据HQL查询实体列表
+     *
+     * @param hql 查询语句
+     * @return
+     */
+    public List<E> queryByHql(String hql);
 
 }

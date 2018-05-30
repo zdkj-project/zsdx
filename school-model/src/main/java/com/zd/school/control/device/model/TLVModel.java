@@ -1,8 +1,7 @@
-package com.zd.school.control.device.controller;
+package com.zd.school.control.device.model;
+
 
 import java.util.List;
-
-import org.apache.commons.lang3.ArrayUtils;
 
 import com.zd.core.util.TagLenVal;
 

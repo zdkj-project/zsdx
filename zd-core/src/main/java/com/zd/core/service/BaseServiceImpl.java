@@ -748,6 +748,44 @@ public class BaseServiceImpl<E> implements BaseService<E> {
         return this.dao.doQueryResultSqlObject(sql, start, limit, clz);
     }
 
-	
+    
+    @Override
+	public QueryResult<E> queryPageResult(Integer start, Integer limit, String sort, String filter,
+			boolean isDelete) {
+		// TODO Auto-generated method stub
+		return this.dao.queryPageResult(start, limit, sort, filter, isDelete);
+	}
+    
+    
+    
+    @Override
+	public <T> List<T> queryEntityByHql(String hql, Object... args) {
+		return this.dao.queryEntityByHql(hql, args);
+	}
+    
+    @Override
+	public <T> QueryResult<T> queryCountToHql(Integer start, Integer limit, String sort, String filter, String hql,
+			String groupBy, String orderBy) {
+		return this.dao.doQueryCountToHql(start, limit, sort, filter, hql, groupBy, orderBy);
+	}
+
+    @Override
+	public <T> List<T> queryEntityBySql(String sql, Class<T> clz) {
+
+		// TODO Auto-generated method stub
+		return this.dao.queryEntityBySql(sql, clz);
+	}
+    
+    /**
+	 * 根据HQL查询实体列表.
+	 *
+	 * @param hql
+	 *            the hql
+	 * @return the list
+	 */
+	@Override
+	public List<E> queryByHql(String hql) {
+		return this.dao.queryByHql(hql);
+	}
 	
 }

@@ -12,6 +12,7 @@ import org.hibernate.annotations.Formula;
 import com.zd.core.annotation.FieldInfo;
 import com.zd.core.model.BaseEntity;
 
+
 /**
  * 网关表
  * @author hucy
@@ -47,7 +48,40 @@ public class PtGateway extends BaseEntity implements Serializable {
 	@Column(name = "GATEWAYIP", length = 100, nullable = true)
 	private String gatewayIP;
 
-	@FieldInfo(name = "网关状态(0是启用 1是禁用)")
+	@FieldInfo(name = "设备掩码")
+    @Column(name = "GATEWAY_MASK",length = 36,nullable = true)
+    private String gatewayMask;
+
+    public String getGatewayMask() {
+        return gatewayMask;
+    }
+
+    public void setGatewayMask(String gatewayMask) {
+        this.gatewayMask = gatewayMask;
+    }
+    @FieldInfo(name = "设备MAC")
+    @Column(name = "GATEWAY_MAC",length = 36,nullable = true)
+    private String gatewayMac;
+
+    public String getGatewayMac() {
+        return gatewayMac;
+    }
+
+    public void setGatewayMac(String gatewayMac) {
+        this.gatewayMac = gatewayMac;
+    }
+    @FieldInfo(name = "接入网关")
+    @Column(name = "NETGATEWAY_IP")
+    private String netgatewayIp;
+
+    public String getNetgatewayIp() {
+        return netgatewayIp;
+    }
+	public void setNetgatewayIp(String netgatewayIp) {
+		this.netgatewayIp = netgatewayIp;
+	}
+	
+	@FieldInfo(name = "网关状态(1是启用 0是禁用)")//修正，数据弄反
 	@Column(name = "GATEWAYSTATUS")
 	private Integer gatewayStatus;
 
@@ -63,20 +97,20 @@ public class PtGateway extends BaseEntity implements Serializable {
 	@Formula("(SELECT A.FRONTSERVER_PORT FROM dbo.SYS_FRONTSERVER A WHERE A.FRONTSERVER_ID=FRONTSERVER_ID)")
 	private Integer frontServerPort;
 	
-	@FieldInfo(name = "前置状态(0是启用 1是禁用)")
+	@FieldInfo(name = "前置状态(1是启用 0是禁用)")//修正，数据弄反
 	@Formula("(SELECT A.FRONTSERVER_STATUS FROM dbo.SYS_FRONTSERVER A WHERE A.FRONTSERVER_ID=FRONTSERVER_ID)")
 	private Integer frontServerStatus;
 	
 	@FieldInfo(name = "基础参数")
-	@Column(name = "BASEPARAM")
+	@Column(name = "BASEPARAM",length=8000)
 	private byte[] baseParam;
 
 	@FieldInfo(name = "高级参数")
-	@Column(name = "ADVPARAM")
+	@Column(name = "ADVPARAM",length=8000)
 	private byte[] advParam;
 
 	@FieldInfo(name = "网络参数")
-	@Column(name = "NETPARAM")
+	@Column(name = "NETPARAM",length=8000)
 	private byte[] netParam;
 
 	@FieldInfo(name = "备注说明")
