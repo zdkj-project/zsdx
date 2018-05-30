@@ -139,15 +139,12 @@ Ext.define("core.mjmanage.deviceallot.view.MainGrid", {
                 style:'font-size:12px;', 
                 tooltip: '编辑',
                 ref: 'gridEdit',
-                getClass :function(v,metadata,record,rowIndex,colIndex,store){                            
-                    if(comm.get("isAdmin")!="1"){
-                        var menuCode="DEVICEALLOT";     // 此菜单的前缀
-                        var userBtn=comm.get("userBtn");                 
-                        if(userBtn.indexOf(menuCode+"_gridEdit_Tab")==-1){
-                            return 'x-hidden-display';
-                        }
-                    }
-                    return null; 
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("TCMANAGER") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 },
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);
@@ -161,15 +158,12 @@ Ext.define("core.mjmanage.deviceallot.view.MainGrid", {
                 style:'font-size:12px;', 
                 tooltip: '移除此设备',
                 ref: 'gridDelete',
-                getClass :function(v,metadata,record,rowIndex,colIndex,store){                            
-                    if(comm.get("isAdmin")!="1"){
-                        var menuCode="DEVICEALLOT";     // 此菜单的前缀
-                        var userBtn=comm.get("userBtn");                 
-                        if(userBtn.indexOf(menuCode+"_gridDelete")==-1){
-                            return 'x-hidden-display';
-                        }
-                    }
-                    return null; 
+                getClass: function (v, metadata, record) {
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("TCMANAGER") == -1){
+                        return 'x-hidden-display';
+                    } else
+                        return null;
                 },
                 handler: function(view, rowIndex, colIndex, item) {
                     var rec = view.getStore().getAt(rowIndex);

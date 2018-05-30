@@ -1,3 +1,55 @@
+.icon_basetSmartDevice
+{
+    background-image: url(../images/icon/index_basetSmartDevice.png) !important;
+    background-size: cover;
+}
+
+.icon_mjOpenDoor
+{
+    background-image: url(../images/icon/index_mjOpenDoor.png) !important;
+    background-size: cover;
+}
+
+.icon_roomAccessInfo
+{
+    background-image: url(../images/icon/index_roomAccessInfo.png) !important;
+    background-size: cover;
+}
+
+.icon_userAccessInfo
+{
+    background-image: url(../images/icon/index_userAccessInfo.png) !important;
+    background-size: cover;
+}
+
+.icon_userAccess
+{
+    background-image: url(../images/icon/index_userAccess.png) !important;
+    background-size: cover;
+}
+
+.icon_deviceAllot
+{
+    background-image: url(../images/icon/index_deviceAllot.png) !important;
+    background-size: cover;
+}
+
+.icon_baseGateway
+{
+    background-image: url(../images/icon/index_baseGateway.png) !important;
+    background-size: cover;
+}
+.icon_baseFrontServer
+{
+    background-image: url(../images/icon/index_baseFrontServer.png) !important;
+    background-size: cover;
+}
+
+.icon_accessControl
+{
+    background-image: url(../images/icon/index_accessControl.png) !important;
+    background-size: cover;
+}
 
 .icon_banjiguanli
 {

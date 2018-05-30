@@ -485,5 +485,16 @@ public interface BaseService<E> {
      * @return
      */
     public List<E> queryByHql(String hql);
+    
+    /**
+     * 逻辑删除或还原指定的记录
+     *
+     * @param ids      要处理的记录的ID,多个ID使用","间隔
+     * @param isDelete 处理标记
+     * @param operator 操作人
+     * @return
+     * @return
+     */
+    public boolean doLogicDelOrRestore(String ids, String isDelete,String operator);
 
 }

@@ -20,12 +20,33 @@ Ext.define("core.mjmanage.basefrontserver.controller.MainController", {
                     return false;
                 }
             },
-             "basegrid[xtype=mjmanage.basefrontserver.maingrid] actioncolumn": {
+
+            "basegrid[xtype=mjmanage.basefrontserver.maingrid] actioncolumn": {
                 detailClick_Tab: function (data) {
                     this.doDetail_Tab(null,data.view,data.record);
                     return false;
                 }
             },
+
+            "basepanel basegrid[xtype=mjmanage.basefrontserver.maingrid]": {
+                afterrender: function (grid, eOpts) {
+                    var btnAdd = grid.down("button[ref=gridAdd_Tab]");
+                    var btnGridEdit = grid.down("button[ref=gridEdit_Tab]");
+                    var btnDelete = grid.down("button[ref=gridDelete]");
+                    
+                    var roleKey = comm.get("roleKey");
+                    if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("ZONGWUROLE") == -1) {
+                      btnAdd.setHidden(true);
+                      btnGridEdit.setHidden(true);
+                      btnDelete.setHidden(true);
+                    }
+                },
+                beforeitemclick: function(grid) {
+                    this.disabledFuncBtn(grid);              
+                    return false;
+                },
+
+          },
     },
 
     doDetail_Tab:function(btn,grid,record) {
@@ -104,5 +125,27 @@ Ext.define("core.mjmanage.basefrontserver.controller.MainController", {
         }
 
         tabPanel.setActiveTab( tabItem);   
+    },
+
+    disabledFuncBtn:function(grid){
+      var basePanel = grid.up("basepanel");
+      var basegrid = basePanel.down("basegrid[xtype=mjmanage.basefrontserver.maingrid]");
+      var records = basegrid.getSelectionModel().getSelection();
+
+      var btnGridEdit = basegrid.down("button[ref=gridEdit_Tab]");
+      var btnDelete = basegrid.down("button[ref=gridDelete]");
+      var btnDetail = basegrid.down("button[ref=gridDetail_Tab]");
+
+      if (records.length == 0) {
+        btnGridEdit.setDisabled(true);
+        btnDelete.setDisabled(true);
+      } else if (records.length == 1) {
+        btnGridEdit.setDisabled(false);
+        btnDelete.setDisabled(false);
+        btnDetail.setDisabled(false);
+      } else {
+        btnGridEdit.setDisabled(true);
+        btnDetail.setDisabled(true);
+      }
     },
 });

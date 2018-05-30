@@ -3,7 +3,6 @@ package com.zd.school.control.device.controller;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -14,30 +13,24 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.zd.core.annotation.Auth;
 import com.zd.core.constant.Constant;
-import com.zd.core.constant.StatuVeriable;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.util.BeanUtils;
 import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.ModelUtil;
 import com.zd.core.util.PoiExportExcel;
 import com.zd.core.util.StringUtils;
 import com.zd.core.util.TLVUtils;
-import com.zd.core.util.TagLenVal;
 import com.zd.school.control.device.model.PtTerm;
 import com.zd.school.control.device.model.TLVModel;
 import com.zd.school.control.device.service.PtTermService;
 import com.zd.school.plartform.baseset.model.BaseDicitem;
 import com.zd.school.plartform.baseset.service.BaseDicitemService;
-import com.zd.school.plartform.comm.model.CommTree;
 import com.zd.school.plartform.comm.service.CommTreeService;
 import com.zd.school.plartform.system.model.SysUser;
 
@@ -189,8 +182,8 @@ public class PtTermController extends FrameWorkController<PtTerm> implements Con
 	 * @throws InvocationTargetException
 	 */
 	@Auth("DEVICEALLOT_update")
-	@RequestMapping("/doUpdate")
-	public void doUpdates(PtTerm entity, HttpServletRequest request, HttpServletResponse response)
+	@RequestMapping("/doupdate")
+	public void doupdates(PtTerm entity, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, IllegalAccessException, InvocationTargetException {
 		SysUser currentUser = getCurrentSysUser();
 		entity = thisService.doUpdateEntity(entity, currentUser);// 执行修改方法
@@ -211,8 +204,8 @@ public class PtTermController extends FrameWorkController<PtTerm> implements Con
 	 * @throws InvocationTargetException
 	 */
 	@Auth("DEVICEALLOT_delete")
-	@RequestMapping("/doDelete")
-	public void doDelete(String uuid, HttpServletRequest request, HttpServletResponse response)
+	@RequestMapping("/dodelete")
+	public void dodelete(String uuid, HttpServletRequest request, HttpServletResponse response)
 			throws IOException, IllegalAccessException, InvocationTargetException {
 		String uuids[] = uuid.split(",");
 		for (int i = 0; i < uuids.length; i++) {

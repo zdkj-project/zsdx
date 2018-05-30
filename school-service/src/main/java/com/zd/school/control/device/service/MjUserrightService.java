@@ -2,6 +2,7 @@ package com.zd.school.control.device.service;
 
 import com.zd.core.service.BaseService;
 import com.zd.school.control.device.model.MjUserright ;
+import com.zd.school.plartform.system.model.SysUser;
 
 
 /**
@@ -19,4 +20,8 @@ import com.zd.school.control.device.model.MjUserright ;
  
 public interface MjUserrightService extends BaseService<MjUserright> {
 
+	public MjUserright doAddEntity(MjUserright entity, SysUser currentUser);
+
+	public void doAddMj(String userId, String termId, SysUser currentUser);
+	
 }

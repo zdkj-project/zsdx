@@ -62,7 +62,7 @@ Ext.define("core.mjmanage.smartdevice.controller.OtherController", {
             loading.show();
 
             self.asyncAjax({
-                url: comm.get('baseUrl') + "/BasePtTerm/doSetHighParam",
+                url: comm.get('baseUrl') + "/PtTerm/doSetHighParam",
                 params: params,
                 //回调代码必须写在里面
                 success: function (response) {
@@ -261,7 +261,7 @@ Ext.define("core.mjmanage.smartdevice.controller.OtherController", {
             loading.show();
 
             self.asyncAjax({
-                url: comm.get('baseUrl') + "/BasePtTerm/doSetBaseParam",
+                url: comm.get('baseUrl') + "/PtTerm/doSetBaseParam",
                 params: params,
                 //回调代码必须写在里面
                 success: function (response) {

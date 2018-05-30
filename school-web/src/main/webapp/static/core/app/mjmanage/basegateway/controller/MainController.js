@@ -15,10 +15,15 @@ Ext.define("core.mjmanage.basegateway.controller.MainController", {
             
            "basegrid[xtype=mjmanage.basegateway.miangrid]": {
                 afterrender: function (grid, eOpts) {
-                    var btngridExportExcel = grid.down("button[ref=gridExportExcel]");
+                    var btngridSetFront = grid.down("button[ref=gridSetFront]");
+                    var btngridEdit = grid.down("button[ref=gridEdit_Tab]");
+                    var btngridDelete = grid.down("button[ref=gridDelete]");
+
                     var roleKey = comm.get("roleKey");
                     if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("ZONGWUROLE") == -1) {
-                    	btngridExportExcel.setHidden(true);
+                    	btngridSetFront.setHidden(true);
+                        btngridEdit.setHidden(true);
+                        btngridDelete.setHidden(true);
                     }
                 },
                 beforeitemclick: function(grid) {
@@ -278,12 +283,20 @@ Ext.define("core.mjmanage.basegateway.controller.MainController", {
         var basegrid = basePanel.down("basegrid[xtype=mjmanage.basegateway.miangrid]");
         var records = basegrid.getSelectionModel().getSelection();
         var btnSetFront = basegrid.down("button[ref=gridSetFront]");
+        var btngridEdit = basegrid.down("button[ref=gridEdit_Tab]");
+        var btngridDelete = basegrid.down("button[ref=gridDelete]");
+
         if (records.length == 0) {
             btnSetFront.setDisabled(true);
+            btngridEdit.setDisabled(true);
+            btngridDelete.setDisabled(true);
         } else if (records.length == 1) {
             btnSetFront.setDisabled(false);
+            btngridEdit.setDisabled(false);
+            btngridDelete.setDisabled(false);
         } else {
             btnSetFront.setDisabled(false);
+            btngridEdit.setDisabled(true);
         }
     }
 });

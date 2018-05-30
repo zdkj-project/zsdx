@@ -788,4 +788,18 @@ public class BaseServiceImpl<E> implements BaseService<E> {
 		return this.dao.queryByHql(hql);
 	}
 	
+	/**
+	 * 逻辑删除或还原指定的记录.
+	 *
+	 * @param ids
+	 *            要处理的记录的ID,多个ID使用","间隔
+	 * @param isDelete
+	 *            处理标记
+	 * @return true, if successful
+	 */
+	@Override
+	public boolean doLogicDelOrRestore(String ids, String isDelete, String operator) {
+		return this.dao.logicDelOrRestore(ids, isDelete, operator);
+	}
+	
 }

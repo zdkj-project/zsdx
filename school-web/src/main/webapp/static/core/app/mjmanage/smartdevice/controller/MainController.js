@@ -88,13 +88,13 @@ Ext.define("core.mjmanage.smartdevice.controller.MainController", {
                     width: 0,
                     height: 0,
                     hidden: true,
-                    html: '<iframe src="' + comm.get('baseUrl') + '/BasePtTerm/doExportExcel?termName='+termName+'&roomId='+roomId+'&roomLeaf='+roomLeaf+'"></iframe>',
+                    html: '<iframe src="' + comm.get('baseUrl') + '/PtTerm/doExportExcel?termName='+termName+'&roomId='+roomId+'&roomLeaf='+roomLeaf+'"></iframe>',
                     renderTo: Ext.getBody()
                 });
 
                 var time = function () {
                     self.syncAjax({
-                        url: comm.get('baseUrl') + '/BasePtTerm/checkExportEnd',
+                        url: comm.get('baseUrl') + '/PtTerm/checkExportEnd',
                         timeout: 1000 * 60 * 30,        //半个小时
                         //回调代码必须写在里面
                         success: function (response) {
@@ -209,7 +209,7 @@ Ext.define("core.mjmanage.smartdevice.controller.MainController", {
                     var highParams =  objForm.highFormData;
                     highParams.uuid = uuid;
                     self.asyncAjax({                      
-                        url: comm.get('baseUrl') + "/BasePtTerm/highParam_read",
+                        url: comm.get('baseUrl') + "/PtTerm/highParam_read",
                         params: highParams,                      
                         //回调代码必须写在里面
                         success: function(response) {
@@ -356,7 +356,7 @@ Ext.define("core.mjmanage.smartdevice.controller.MainController", {
                     var baseParams =  objForm.baseFormData;
                     baseParams.uuid = uuid;
                     self.asyncAjax({                      
-                        url: comm.get('baseUrl') + "/BasePtTerm/baseParam_read",
+                        url: comm.get('baseUrl') + "/PtTerm/baseParam_read",
                         params: baseParams,                      
                         //回调代码必须写在里面
                         success: function(response) {
@@ -418,7 +418,7 @@ Ext.define("core.mjmanage.smartdevice.controller.MainController", {
                     var baseParams =  objForm.baseFormData;
                     baseParams.uuid = uuid;
                     self.asyncAjax({                      
-                        url: comm.get('baseUrl') + "/BasePtTerm/baseParam_read",
+                        url: comm.get('baseUrl') + "/PtTerm/baseParam_read",
                         params: baseParams,                      
                         //回调代码必须写在里面
                         success: function(response) {
@@ -482,7 +482,7 @@ Ext.define("core.mjmanage.smartdevice.controller.MainController", {
                     var baseParams =  objForm.baseFormData;
                     baseParams.uuid = uuid;
                     self.asyncAjax({                      
-                        url: comm.get('baseUrl') + "/BasePtTerm/baseParam_read",
+                        url: comm.get('baseUrl') + "/PtTerm/baseParam_read",
                         params: baseParams,                      
                         //回调代码必须写在里面
                         success: function(response) {                            
@@ -505,7 +505,7 @@ Ext.define("core.mjmanage.smartdevice.controller.MainController", {
                     var baseParams =  objForm.baseFormData;
                     baseParams.uuid = uuid;
                     self.asyncAjax({                      
-                        url: comm.get('baseUrl') + "/BasePtTerm/baseParam_read",
+                        url: comm.get('baseUrl') + "/PtTerm/baseParam_read",
                         params: baseParams,                      
                         //回调代码必须写在里面
                         success: function(response) {
@@ -577,7 +577,7 @@ Ext.define("core.mjmanage.smartdevice.controller.MainController", {
                     var baseParams =  objForm.baseFormData;
                     baseParams.uuid = uuid;
                     self.asyncAjax({                      
-                        url: comm.get('baseUrl') + "/BasePtTerm/baseParam_read",
+                        url: comm.get('baseUrl') + "/PtTerm/baseParam_read",
                         params: baseParams,                      
                         //回调代码必须写在里面
                         success: function(response) {

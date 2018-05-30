@@ -3,7 +3,7 @@ package com.zd.school.control.device.dao.Impl;
 import org.springframework.stereotype.Repository;
 
 import com.zd.core.dao.BaseDaoImpl;
-import com.zd.school.control.device.dao.MjUserrightDao ;
+import com.zd.school.control.device.dao.MjUserrightDao;
 import com.zd.school.control.device.model.MjUserright ;
 
 

@@ -507,4 +507,25 @@ public interface BaseDao<E> {
      * @return
      */
     public List<E> queryByHql(String hql, Integer start, Integer limit);
+    
+    /**
+     * 逻辑删除或还原指定的记录
+     *
+     * @param ids      要处理的记录的ID,多个ID使用","间隔
+     * @param isDelete 处理标记
+     * @param operator 操作人
+     * @return
+     * @return
+     */
+    public boolean logicDelOrRestore(String ids, String isDelete,String operator);
+    
+
+    /**
+     * 执行HQL语句并返回受影响的记录的条数
+     *
+     * @param hql 要执行的HQL语句
+     * @return 受影响的记录数
+     */
+    public Integer getExecuteCountByHql(String hql);
+
 }

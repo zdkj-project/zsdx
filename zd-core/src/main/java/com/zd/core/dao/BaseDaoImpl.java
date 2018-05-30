@@ -1665,6 +1665,41 @@ public class BaseDaoImpl<E> implements BaseDao<E> {
 		}
 		return query.list();
 	}
+	
+	/**
+	 * 逻辑删除或还原指定的记录
+	 *
+	 * @param ids
+	 *            要处理的记录的ID,多个ID使用","间隔
+	 * @param isDelete
+	 *            处理标记
+	 * @return
+	 */
+	@Override
+	public boolean logicDelOrRestore(String ids, String isDelete, String operator) {
+		String doIds = "'" + ids.replace(",", "','") + "'";
+		String pkName = ModelUtil.getClassPkName(entityClass);
+		String entityName = entityClass.getSimpleName();
+		String updateTime = DateUtil.formatDateTime(new Date());
+		String hql = "UPDATE " + entityName + " SET isDelete='" + isDelete + "', updateTime= CONVERT(datetime,'"
+				+ updateTime + "'),updateUser='" + operator + "' WHERE " + pkName + " IN (" + doIds + ")";
+
+		return getExecuteCountByHql(hql) > 0;
+	}
+	
+	/**
+	 * 执行HQL语句并返回受影响的记录的条数
+	 *
+	 * @param hql
+	 *            要执行的HQL语句
+	 * @return 受影响的记录数
+	 */
+	@Override
+	public Integer getExecuteCountByHql(String hql) {
+		Query query = getSession().createQuery(hql);
+
+		return query.executeUpdate();
+	}
 
 
 }

@@ -70,7 +70,7 @@ Ext.define("core.mjmanage.deviceallot.controller.OtherController", {
             uuid += record.get("uuid") + "," ;
         }
 
-        var loading = self.LoadMask(win);
+        // var loading = self.LoadMask(win);
 
         self.asyncAjax({
             url: comm.get('baseUrl') + "/PtTerm/doSetPtTerm",
@@ -85,7 +85,7 @@ Ext.define("core.mjmanage.deviceallot.controller.OtherController", {
                 basegrid.getStore().load(); 
                 baseGrid.getStore().removeAll();
                 deviceAllotGrid.getStore().load();  
-                loading.hide();
+                // loading.hide();
                // win.close();
              } else {
                 loading.hide();
@@ -103,8 +103,8 @@ Ext.define("core.mjmanage.deviceallot.controller.OtherController", {
         //得到组件                 
         var baseGrid = component.up("basegrid");
         var toolBar = component.up("toolbar");
-        var filter = [];
-        var filterStr = [];
+        var filter = [{"type":"string","comparison":"=","value":"4","field":"termTypeID"}];
+        var filterStr = [{"type":"string","comparison":"=","value":"4","field":"termTypeID"}];
         //可能存在多个文本框       
         var girdSearchTexts = toolBar.query("field[funCode=girdFastSearchText]");
         for (var i in girdSearchTexts) {
@@ -112,7 +112,7 @@ Ext.define("core.mjmanage.deviceallot.controller.OtherController", {
             var value = girdSearchTexts[i].getValue();
             if(girdSearchTexts[i].dataType=='numeric'){
               if(value==null){
-                 filter= [];
+                 filter= [{"type":"string","comparison":"=","value":"4","field":"termTypeID"}];
               }else{
                 filter[i]={"type": "numeric", "value": value, "field": name, "comparison": ""};
               }

@@ -13,6 +13,26 @@ Ext.define("core.mjmanage.deviceallot.controller.MainController", {
     },
     
     control: {
+
+        "basepanel basegrid[xtype=mjmanage.deviceallot.maingrid]": {
+            afterrender: function (grid, eOpts) {
+                var btnAdd = grid.down("button[ref=gridAdd_Tab]");
+                var btnGridEdit = grid.down("button[ref=gridEdit_Tab]");
+                var btnDelete = grid.down("button[ref=gridDelete]");
+                    
+                var roleKey = comm.get("roleKey");
+                if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("ZONGWUROLE") == -1) {
+                      btnAdd.setHidden(true);
+                      btnGridEdit.setHidden(true);
+                      btnDelete.setHidden(true);
+                    }
+            },
+            beforeitemclick: function(grid) {
+                    this.disabledFuncBtn(grid);              
+                    return false;
+            },
+
+        },
     	
         //区域列表刷新按钮
         "basetreegrid[xtype=mjmanage.deviceallot.roominfotree] button[ref=gridRefresh]": {
@@ -131,7 +151,7 @@ Ext.define("core.mjmanage.deviceallot.controller.MainController", {
                     };
 
                     self.asyncAjax({
-                        url: funData.action + "/doDelete",
+                        url: funData.action + "/dodelete",
                         params: {
                              uuid: uuid                       
                         },                    
@@ -221,13 +241,13 @@ Ext.define("core.mjmanage.deviceallot.controller.MainController", {
                     width: 0,
                     height: 0,
                     hidden: true,
-                    html: '<iframe src="' + comm.get('baseUrl') + '/BasePtTerm/doExportPtTermAllotExcel?termSN='+termSN+'&roomId='+roomId+'&termSN='+termSN+'&termNo='+termNo+'&termName='+termName+'&roomLeaf='+roomLeaf+'"></iframe>',
+                    html: '<iframe src="' + comm.get('baseUrl') + '/PtTerm/doExportPtTermAllotExcel?termSN='+termSN+'&roomId='+roomId+'&termSN='+termSN+'&termNo='+termNo+'&termName='+termName+'&roomLeaf='+roomLeaf+'"></iframe>',
                     renderTo: Ext.getBody()
                 });
 
                 var time = function () {
                     self.syncAjax({
-                        url: comm.get('baseUrl') + '/BasePtTerm/checkPtTermAllotExportEnd',
+                        url: comm.get('baseUrl') + '/PtTerm/checkPtTermAllotExportEnd',
                         timeout: 1000 * 60 * 30,        //半个小时
                         //回调代码必须写在里面
                         success: function (response) {
@@ -262,4 +282,23 @@ Ext.define("core.mjmanage.deviceallot.controller.MainController", {
         });
        return false;
  	},
+
+    disabledFuncBtn:function(grid){
+        var basePanel = grid.up("basepanel");
+        var basegrid = basePanel.down("basegrid[xtype=mjmanage.basefrontserver.maingrid]");
+        var records = basegrid.getSelectionModel().getSelection();
+
+        var btnGridEdit = basegrid.down("button[ref=gridEdit_Tab]");
+        var btnDelete = basegrid.down("button[ref=gridDelete]");
+
+        if (records.length == 0) {
+            btnGridEdit.setDisabled(true);
+            btnDelete.setDisabled(true);
+        } else if (records.length == 1) {
+            btnGridEdit.setDisabled(false);
+            btnDelete.setDisabled(false);
+        } else {
+            btnGridEdit.setDisabled(true);
+        }
+    },
 });
