@@ -65,7 +65,7 @@ Ext.define("core.mjmanage.userauthority.controller.MainController", {
         //获取快速搜索框的值
         var girdSearchTexts = baseGrid.query("field[funCode=girdFastSearchText]");
         var value1 =girdSearchTexts[0].getValue();
-        var filter=new Array();
+        /*var filter=new Array();
         if(value1){
             filter.push({"type": "string", "value": value1, "field": "termName", "comparison": ""})
         }          
@@ -73,11 +73,19 @@ Ext.define("core.mjmanage.userauthority.controller.MainController", {
             filter = JSON.stringify(filter);
         else
             filter = "";
+        */
 
-        
         var store = baseGrid.getStore();
         var proxy = store.getProxy();
-        proxy.extraParams.filter = filter;
+
+        /*5-30*/
+        if(value1){
+            proxy.extraParams.roomName=value1;
+        }else
+            proxy.extraParams.roomName='';
+        
+        
+        //proxy.extraParams.filter = filter;
         store.loadPage(1);
     },
 
@@ -88,6 +96,7 @@ Ext.define("core.mjmanage.userauthority.controller.MainController", {
         //获取快速搜索框的值
         var girdSearchTexts = baseGrid.query("field[funCode=girdFastSearchText]");
         var value1 =girdSearchTexts[0].getValue();
+        /*
         var filter=new Array();
         if(value1){
             filter.push({"type": "string", "value": value1, "field": "termName", "comparison": ""})
@@ -96,13 +105,15 @@ Ext.define("core.mjmanage.userauthority.controller.MainController", {
             filter = JSON.stringify(filter);
         else
             filter = "";
-    
+          */
+
         var stores = baseGrid.getStore();
         var proxy = stores.getProxy();
-
+        
         proxy.extraParams={
             userId:record.get("uuid"),
-            filter:filter
+            roomName:value1,
+            //filter:filter
         };
         stores.loadPage(1); //刷新
     },

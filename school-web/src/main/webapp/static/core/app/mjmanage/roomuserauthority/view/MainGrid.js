@@ -2,7 +2,7 @@ Ext.define("core.mjmanage.roomuserauthority.view.MainGrid", {
     extend: "core.base.view.BaseGrid",
     alias: "widget.mjmanage.roomuserauthority.maingrid",
     dataUrl: comm.get("baseUrl") + "/BaseMjUserright/roomUserRightList", //数据获取地址
-    model:"com.zd.school.control.device.model.MjUserright", //对应的数据模型
+    model:"com.zd.school.teacher.teacherinfo.model.ViewUserRoom", //对应的数据模型
     menuCode:"ROOM_ACCESS_CONTROL",
     al: false,
     //pageDisplayInfo:false,
@@ -22,15 +22,15 @@ Ext.define("core.mjmanage.roomuserauthority.view.MainGrid", {
             html:'快速搜索：'
         },{
             xtype:'textfield',
-            name:'xm',
+            name:'XM',
             funCode: 'girdFastSearchText',
             emptyText: '请输入姓名'
-        },{
+        },/*{
             xtype:'textfield',
             name:'termName',
             funCode: 'girdFastSearchText',
             emptyText: '请输入设备名称'
-        },{
+        },*/{
             xtype: 'button',            
             ref: 'gridFastSearchBtn',  
             funCode:'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型  
@@ -38,7 +38,7 @@ Ext.define("core.mjmanage.roomuserauthority.view.MainGrid", {
         }]
     },
     defSort: [{
-        property: 'termId',
+        property: 'ROOM_CODE',
         direction: 'ASC'
     }],
     panelButtomBar:{},
@@ -70,6 +70,21 @@ Ext.define("core.mjmanage.roomuserauthority.view.MainGrid", {
         minWidth:100,
         flex:1,
     },{
+        text: "房间编号",
+        dataIndex: "room_CODE",
+        minWidth:80,
+        flex:0.8,
+    },{
+        text: "房间名称",
+        dataIndex: "room_NAME",
+        minWidth:80,
+        flex:0.8,
+    },{
+        text: "房间类型",
+        dataIndex: "room_TYPE",
+        minWidth:80,
+        flex:0.8,
+    }/*{
         text: "房间名称",
         dataIndex: "roomName",
         minWidth:100,
@@ -84,6 +99,6 @@ Ext.define("core.mjmanage.roomuserauthority.view.MainGrid", {
         dataIndex: "termSN",
         minWidth:100,
         flex:1,
-    }]
+    }*/]
     }
 });

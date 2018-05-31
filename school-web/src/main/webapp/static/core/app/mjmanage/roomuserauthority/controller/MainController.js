@@ -8,7 +8,7 @@ Ext.define("core.mjmanage.roomuserauthority.controller.MainController", {
         gridActionUtil: "core.util.GridActionUtil",
         dateUtil: 'core.util.DateUtil'
     },
-    init: function () {
+      init: function () {
         /*执行一些初始化的代码*/
     },
     /** 该视图内的组件事件注册 */
@@ -47,11 +47,20 @@ Ext.define("core.mjmanage.roomuserauthority.controller.MainController", {
                 var proxy = store.getProxy();
 
                 //获取右边筛选框中的条件数据
+                /*
                 var filter=self.getFastSearchFilter(storeGrid);            
                 if(filter.length!=0)
                     filter = JSON.stringify(filter);
                 else
                     filter = "";
+                */
+
+                /*5-30*/
+                var girdSearchTexts = storeGrid.query("field[funCode=girdFastSearchText]");
+                var xm =girdSearchTexts[0].getValue();
+                if(xm)
+                    xm = '';
+
 
                 //获取点击树节点的参数            
                 var roomId= record.get("id");
@@ -66,7 +75,8 @@ Ext.define("core.mjmanage.roomuserauthority.controller.MainController", {
                     roomId:roomId,
                     roomLeaf:roomLeaf,
                     //querySql2:querySql2,
-                    filter:filter
+                    //filter:filter
+                    xm:xm
                 }
                 store.loadPage(1); 
                 return false;
@@ -95,17 +105,29 @@ Ext.define("core.mjmanage.roomuserauthority.controller.MainController", {
         var toolBar = btn.up("toolbar");    
 
         //获取快速搜索框的值    
-        var filter=self.getFastSearchFilter(toolBar);
+        //var filter=self.getFastSearchFilter(toolBar);
         
         var store = baseGrid.getStore();
         var proxy = store.getProxy();
 
+        /*
         if(filter.length!=0)
             filter = JSON.stringify(filter);
         else
             filter = "";
         //proxy.extraParams.querySql2 =  querySql2 ;
         proxy.extraParams.filter = filter;
+        */
+
+        /*5-30*/
+        var girdSearchTexts = toolBar.query("field[funCode=girdFastSearchText]");
+        var value1 =girdSearchTexts[0].getValue();
+        if(value1){
+            proxy.extraParams.xm = value1;
+        }else
+            proxy.extraParams.xm = '';
+
+
         store.loadPage(1);
     },
 

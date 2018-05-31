@@ -527,5 +527,16 @@ public interface BaseDao<E> {
      * @return 受影响的记录数
      */
     public Integer getExecuteCountByHql(String hql);
+    
+    /**
+     * 修正totalCount的获取方式，以免造成数据量过多时的内存爆炸的风险
+     * @param start
+     * @param limit
+     * @param hql
+     * @param countHql
+     * @return
+     */
+    public <T> QueryResult<T> queryPageResultBySql(String sql, Integer start, Integer limit, Class<T> clz,String countSql);
+
 
 }
