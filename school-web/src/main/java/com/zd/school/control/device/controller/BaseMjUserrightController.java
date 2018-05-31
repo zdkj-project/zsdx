@@ -28,6 +28,7 @@ import com.zd.school.control.device.service.MjUserrightService;
 import com.zd.school.plartform.comm.model.CommTree;
 import com.zd.school.plartform.comm.service.CommTreeService;
 import com.zd.school.plartform.system.model.SysUser;
+import com.zd.school.teacher.teacherinfo.model.ViewUserRoom;
 
 /**
  * 门禁权限
@@ -177,21 +178,45 @@ public class BaseMjUserrightController extends FrameWorkController<MjUserright> 
 			org.springframework.web.bind.annotation.RequestMethod.POST })
 	public void mjrightlist(@ModelAttribute MjUserright entity, HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
-		/*
-		String strData = ""; // 返回给js的数据
-		String sort = super.sort(request);
-		String querySql = querySql(request);
-		String orderSql = orderSql(request);
-		String querySql2 = request.getParameter("querySql2");// 快速搜索框中的参数
-		String sql = " select  *  from PT_V_USERROOM  where 1=1 ";
-		sql = sql + querySql + querySql2 + orderSql;
-		QueryResult qResult = thisService.queryPageResultBySql(sql, super.start(request), super.limit(request),
-				ViewUserRoom.class);
-		// QueryResult qResult = thisService.getDao().getForValuesToSql(start,
-		// limit, querySql,orderSql,sql, sql1);
+		
+		String strData = ""; // 返回给js的数据	
+		String userId = request.getParameter("userId");
+		if(StringUtils.isEmpty(userId)){
+			strData = jsonBuilder.buildObjListToJson(0L, new ArrayList<>(), true);// 处理数据
+			writeJSON(response, strData);// 返回数据
+			return;
+		}
+		
+		String roomName = request.getParameter("roomName");	
+		String querySql ="";
+		if(StringUtils.isNotEmpty(userId)){
+			querySql +=" and o.USER_ID='"+userId+"'";
+		}
+		if(StringUtils.isNotEmpty(roomName)){
+			querySql +=" and o.ROOM_NAME like '%"+roomName+"%'";
+		}
+		
+		String sort=super.sort(request);	
+		String orderSql = StringUtils.convertSortToSql(sort);
+		if(StringUtils.isNotEmpty(orderSql)){
+			orderSql=" order by "+orderSql;
+		}
+		
+		
+		String sql = " select  XM as XM,ROOM_NAME as ROOM_NAME,ROOM_TYPE as ROOM_TYPE  from PT_V_USERROOM as o where 1=1 ";
+		sql = sql + querySql + orderSql;
+		
+		String countSql="select count(*) from PT_V_USERROOM as o where 1=1";
+		countSql=countSql + querySql ;
+					
+		QueryResult<ViewUserRoom> qResult = thisService.queryPageResultBySql(sql, super.start(request), super.limit(request), 
+				ViewUserRoom.class, countSql);
+
 		strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
-		*/
+		
+		/*
+		 * 以门禁记录表为主的方式
 		String strData = ""; // 返回给js的数据
 		String filter = request.getParameter("filter");
 		String userId = request.getParameter("userId");
@@ -210,7 +235,7 @@ public class BaseMjUserrightController extends FrameWorkController<MjUserright> 
 		strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
 
 		writeJSON(response, strData);// 返回数据
-		
+		*/
 	}
 
 	/**
@@ -223,13 +248,15 @@ public class BaseMjUserrightController extends FrameWorkController<MjUserright> 
 			org.springframework.web.bind.annotation.RequestMethod.GET,
 			org.springframework.web.bind.annotation.RequestMethod.POST })
 	public void roomUserRightList(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		/*
 		String strData = ""; // 返回给js的数据
+		
 		String filter = request.getParameter("filter");
 		String roomId = request.getParameter("roomId");
 		String roomLeaf = request.getParameter("roomLeaf");
 		
 		List<String> termList=new ArrayList<>();
-		if (StringUtils.isNotEmpty(roomId)) {
+		if (StringUtils.isNotEmpty(roomId) && !AdminType.ADMIN_ORG_ID.equals(roomId)) {
 			if ("1".equals(roomLeaf)) { // 当选择的区域为房间时		
 				termList=getPtTermIds(roomId);		
 				
@@ -268,31 +295,41 @@ public class BaseMjUserrightController extends FrameWorkController<MjUserright> 
 				super.sort(request), filter, true);
 		strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
+		*/
 		
-		/*old
+		
 		String strData = ""; // 返回给js的数据
 		String roomId = request.getParameter("roomId");
 		String roomLeaf = request.getParameter("roomLeaf");
-		String orderSql = orderSql(request);
-		String querySql = "";
-		String querySql2 = request.getParameter("querySql2");// 快速搜索框中的参数
+		
+		String xm = request.getParameter("xm");
+
+		String querySql ="";
+		if(StringUtils.isNotEmpty(xm)){
+			querySql +=" and o.XM like '%"+xm+"%'";
+		}
+		
+		String sort=super.sort(request);	
+		String orderSql = StringUtils.convertSortToSql(sort);
+		if(StringUtils.isNotEmpty(orderSql)){
+			orderSql=" order by "+orderSql;
+		}
+		
+		String sql = " select o.XM as XM,o.ROOM_CODE as ROOM_CODE,"
+				+ " o.ROOM_NAME as ROOM_NAME,o.ROOM_TYPE as ROOM_TYPE"
+				+ " from PT_V_USERROOM AS o where 1=1 ";
+		String countSql = "select count(*) from PT_V_USERROOM as o where 1=1  ";
 		
 		
-		String sql = " select  USER_ID as USER_ID,XM as XM,ROOM_ID as ROOM_ID,ROOM_CODE as ROOM_CODE,"
-				+ " EXT_FIELD01 as EXT_FIELD01,AREA_ID as AREA_ID,ROOM_NAME as ROOM_NAME,ROOM_TYPE as ROOM_TYPE"
-				+ " from PT_V_USERROOM  where 1=1 ";
-		String countSql = "select count(*) from PT_V_USERROOM  where 1=1  ";
-		
-		
-		if (StringUtils.isNotEmpty(roomId) && !AdminType.ADMIN_ORG_ID.equals(roomId)) {
+		if (StringUtils.isNotEmpty(roomId)) {
 			if ("1".equals(roomLeaf)) { // 当选择的区域为房间时
-				querySql = " and ROOM_ID ='" + roomId + "'";
+				querySql += " and ROOM_ID ='" + roomId + "'";
 			} else { // 当选择的区域不为房间时
 				List<String> roomList = getRoomIds(roomId);
 
 				if (!roomList.isEmpty()) {
 					String roomIds = roomList.stream().collect(Collectors.joining("','", "'", "'"));
-					querySql = " and ROOM_ID in (" + roomIds + ")";
+					querySql += " and ROOM_ID in (" + roomIds + ")";
 
 				} else { // 若区域之下没有房间，则直接返回空数据
 
@@ -302,14 +339,14 @@ public class BaseMjUserrightController extends FrameWorkController<MjUserright> 
 				}
 			}
 		}
-		sql = sql + querySql + querySql2 + orderSql;
-		countSql = countSql + querySql + querySql2 + orderSql;
+		sql = sql + querySql  + orderSql;
+		countSql = countSql + querySql;
 
 		QueryResult<ViewUserRoom> qResult = thisService.queryPageResultBySql(sql, super.start(request),
 				super.limit(request), ViewUserRoom.class, countSql);
 		strData = jsonBuilder.buildObjListToJson(qResult.getTotalCount(), qResult.getResultList(), true);// 处理数据
 		writeJSON(response, strData);// 返回数据
-		*/
+		
 	}
 
 	/**

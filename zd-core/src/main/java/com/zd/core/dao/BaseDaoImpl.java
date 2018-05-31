@@ -1700,6 +1700,73 @@ public class BaseDaoImpl<E> implements BaseDao<E> {
 
 		return query.executeUpdate();
 	}
+	
+	/**
+	 * 带分页的sql查询并转换成实体类;修正totalCount值的获取方式
+	 * 
+	 * @param sql
+	 *            查询的sql语句
+	 * @param start
+	 *            起始页
+	 * @param limit
+	 *            每页记录数
+	 * @param clz
+	 *            要转换成的实体类
+	 * @param <T>
+	 *            实体类的泛型参数
+	 * @return 返回转换后的结果
+	 */
+	@Override
+	public <T> QueryResult<T> queryPageResultBySql(String sql,Integer start, Integer limit,
+			Class<T> clz, String countSql) {
+		Query query = this.getSession().createSQLQuery(sql);
+		QueryResult<T> qr = new QueryResult<T>();
+
+		if (StringUtils.isNotEmpty(countSql)) {
+			Query query2 = this.getSession().createSQLQuery(countSql);
+			
+			Object count = query2.uniqueResult();
+			if (null != count) 
+				qr.setTotalCount(Long.valueOf(count.toString()));
+			else
+				qr.setTotalCount((long) 0);
+			
+			//qr.setTotalCount(Long.parseLong(query2.uniqueResult().toString()));
+			
+		} else {
+			qr.setTotalCount((long) query.list().size());
+		}
+
+		if (limit > 0) {
+			query.setFirstResult(start);
+			query.setMaxResults(limit);
+
+		}
+		if (clz != null) {
+			qr.setResultList(query.setResultTransformer(Transformers.aliasToBean(clz)).list());
+		} else {
+			// 转为hashmap
+			query.setResultTransformer(new ResultTransformer() {
+
+				@Override
+				public Object transformTuple(Object[] values, String[] columns) {
+					Map<String, Object> map = new LinkedHashMap<String, Object>(1);
+					int i = 0;
+					for (String column : columns) {
+						map.put(column, values[i++]);
+					}
+					return map;
+				}
+
+				@Override
+				public List transformList(List list) {
+					return list;
+				}
+			});
+			qr.setResultList(query.list());
+		}
+		return qr;
+	}
 
 
 }

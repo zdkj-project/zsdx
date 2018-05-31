@@ -496,5 +496,7 @@ public interface BaseService<E> {
      * @return
      */
     public boolean doLogicDelOrRestore(String ids, String isDelete,String operator);
+    
+    public <T> QueryResult<T> queryPageResultBySql(String sql, Integer start, Integer limit, Class<T> clz,String countSql);
 
 }

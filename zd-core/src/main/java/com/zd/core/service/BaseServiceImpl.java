@@ -802,4 +802,9 @@ public class BaseServiceImpl<E> implements BaseService<E> {
 		return this.dao.logicDelOrRestore(ids, isDelete, operator);
 	}
 	
+	@Override
+	public <T> QueryResult<T> queryPageResultBySql(String sql, Integer start, Integer limit, Class<T> clz,String countSql) {
+		return this.dao.queryPageResultBySql(sql,start, limit, clz,countSql);
+	}
+	
 }
