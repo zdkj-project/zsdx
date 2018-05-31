@@ -37,7 +37,7 @@ Ext.define("core.mjmanage.useraccess.view.MjUserrightGrid", {
         xtype:'toolbar',
         items: [{
             xtype: 'tbtext',
-            html: '房间下属设备',
+            html: '房间下属设备（此模块，仅仅用于给用户分配和取消额外的门禁权限）',
             style: {
                 fontSize: '16px',
                 color: '#C44444',
