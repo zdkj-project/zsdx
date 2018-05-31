@@ -26,6 +26,7 @@ Ext.define("core.mjmanage.basegateway.view.PtGatewayTree", {
     },
     extParams: {
         whereSql: "",
+        excludes:"checked"
     },
    
   columns: {

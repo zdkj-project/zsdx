@@ -79,8 +79,9 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 	public void getGradeTreeList(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String strData = "";
 		String whereSql = request.getParameter("whereSql");
+		String excludes = request.getParameter("excludes");
 		List<CommTree> lists = treeService.getCommTree("JW_V_SYS_FRONTSERVER", whereSql);
-		strData = JsonBuilder.getInstance().buildList(lists, "");// 处理数据
+		strData = JsonBuilder.getInstance().buildList(lists, excludes);// 处理数据
 		writeJSON(response, strData);// 返回数据
 	}
 	

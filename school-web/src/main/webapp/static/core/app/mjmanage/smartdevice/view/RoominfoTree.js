@@ -1,8 +1,8 @@
 Ext.define("core.mjmanage.smartdevice.view.RoominfoTree", {
 	extend: "core.base.view.BaseTreeGrid",
     alias: "widget.mjmanage.smartdevice.roominfotree",
-    dataUrl: comm.get('baseUrl') + "/MjUserright/treelist",
-    model: "com.zd.school.build.define.model.BuildRoomAreaTree",
+    dataUrl: comm.get('baseUrl') + "/BaseMjUserright/treelist",
+    model: "com.zd.school.plartform.comm.model.CommTree",
     al: true,
     expandFirst:true,
     forceFit:true,

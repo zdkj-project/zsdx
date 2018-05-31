@@ -66,7 +66,7 @@ public class BaseMjUserrightController extends FrameWorkController<MjUserright> 
 	}
 
 	/**
-	 * 生成树
+	 * 生成树（显示已定义的房间的数）
 	 * 
 	 * @param request
 	 * @param response
@@ -76,8 +76,10 @@ public class BaseMjUserrightController extends FrameWorkController<MjUserright> 
 	public void getGradeTreeList(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		String strData = "";
 		String whereSql = request.getParameter("whereSql");
-		List<CommTree> lists = treeService.getCommTree("JW_AREAROOMINFOTREE", whereSql);
-		strData = JsonBuilder.getInstance().buildList(lists, "");// 处理数据
+		String excludes = request.getParameter("excludes");
+		//List<CommTree> lists = treeService.getCommTree("JW_AREAROOMINFOTREE", whereSql);
+		List<CommTree> lists = treeService.getCommTree("JW_V_AREAROOMINFOTREE_DEFINED", whereSql);
+		strData = JsonBuilder.getInstance().buildList(lists,excludes);// 处理数据
 		writeJSON(response, strData);// 返回数据
 	}
 

@@ -2,7 +2,7 @@ Ext.define("core.mjmanage.deviceallot.view.RoominfoTree", {
 	extend: "core.base.view.BaseTreeGrid",
     alias: "widget.mjmanage.deviceallot.roominfotree",
     dataUrl: comm.get('baseUrl') + "/BaseMjUserright/treelist",
-    model: "com.zd.school.build.define.model.BuildRoomAreaTree",
+    model: "com.zd.school.plartform.comm.model.CommTree",
     al: true,
     expandFirst:true,
     forceFit:true,

@@ -18,8 +18,10 @@ Ext.define("core.base.view.BaseTreeGrid", {
     columns: false,
     enableKeyNav: true, //可以使用键盘控制上下
     al: true,
+    expandFirst:false,
     emptyText: '<span style="display: block;text-align:center">没有需要显示的数据！</span>',
     initComponent: function () {
+        var self=this;
         this.store = Ext.create('Ext.data.TreeStore', {
             defaultRootId: "ROOT",
             autoLoad: this.al,
@@ -37,6 +39,39 @@ Ext.define("core.base.view.BaseTreeGrid", {
                 writer: {
                     type: 'json'
                 }
+            }, listeners:{
+                load:function( store , records , successful , operation , eOpts ){
+                    
+                    //(处理服务器登录超时的解决方式)若为false，则表明返回的数据不是proxy指定的格式；则弹出提示
+                    if(successful==false) {    
+                       
+                        if(operation.getResponse()==null){      //请求无响应出错的时候      
+                            return;
+                        }
+
+                        var result=Ext.decode(Ext.valueFrom(  operation.getResponse().responseText, '{}')); 
+                        var msg=result.obj;
+                        if(!msg||typeof(msg) != "string")
+                            msg="请求失败，请刷新页面重试！";
+                                                
+                        Ext.MessageBox.show({
+                            title: "警告",
+                            msg: msg,
+                            buttons: Ext.MessageBox.OK,
+                            icon: Ext.MessageBox.WARNING,
+                            fn: function(btn) {
+                                location.reload()       
+                            }
+                        });
+                    
+                    }else{
+                        //当expandFirst为true时，展开第一层
+                        if(self.expandFirst==true && self.getRootNode().childNodes.length>0){
+                            self.getRootNode().childNodes[0].expand();   //展开第一层
+                        }
+                       
+                    }                   
+                }    
             }
         });
 
