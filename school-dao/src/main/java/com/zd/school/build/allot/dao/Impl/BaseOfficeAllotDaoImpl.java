@@ -3,7 +3,7 @@ package com.zd.school.build.allot.dao.Impl;
 import org.springframework.stereotype.Repository;
 
 import com.zd.core.dao.BaseDaoImpl;
-import com.zd.school.build.allot.dao.JwOfficeAllotDao;
+import com.zd.school.build.allot.dao.BaseOfficeAllotDao;
 import com.zd.school.build.allot.model.JwOfficeAllot;
 
 
@@ -20,8 +20,8 @@ import com.zd.school.build.allot.model.JwOfficeAllot;
  * @since JDK 1.8
  */
 @Repository
-public class JwOfficeAllotDaoImpl extends BaseDaoImpl<JwOfficeAllot> implements JwOfficeAllotDao{
-    public JwOfficeAllotDaoImpl() {
+public class BaseOfficeAllotDaoImpl extends BaseDaoImpl<JwOfficeAllot> implements BaseOfficeAllotDao{
+    public BaseOfficeAllotDaoImpl() {
         super(JwOfficeAllot.class);
         // TODO Auto-generated constructor stub
     }

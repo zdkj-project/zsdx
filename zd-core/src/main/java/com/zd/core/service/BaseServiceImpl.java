@@ -807,4 +807,25 @@ public class BaseServiceImpl<E> implements BaseService<E> {
 		return this.dao.queryPageResultBySql(sql,start, limit, clz,countSql);
 	}
 	
+	@Override
+	public <T> T getEntityByHql(String hql, Object... args) {
+		return this.dao.getEntityByHql(hql, args);
+	}
+	
+	/**
+	 * 根据多个id参数删除对象.
+	 *
+	 * @param id
+	 *            多个id，以英文逗号隔开
+	 * @return 返回true或者false
+	 */
+	@Override
+	public boolean deleteByPK(Serializable... id) {
+		return this.dao.deleteByPK(id);
+	}
+	
+	@Override
+	public Integer getQueryCountBySql(String sql) {
+		return this.dao.getQueryCountBySql(sql);
+	}
 }

@@ -1769,5 +1769,28 @@ public class BaseDaoImpl<E> implements BaseDao<E> {
 	}
 
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public <T> T getEntityByHql(String hql, Object... args) {
+		Query query = getSession().createQuery(hql);
+		if (args.length > 0) {
+			for (int i = 0; i < args.length; i++) {
+				query.setParameter(i, args[i]);
+			}
+		}
+		T value = (T) query.uniqueResult();
+		return value;
+	}
+	
+	@Override
+	public Integer getQueryCountBySql(String sql) {
+		Integer c = 0;
+		Query query = getSession().createSQLQuery(sql);
+		Object count = query.uniqueResult();
+		if (null != count && StringUtils.isInteger(count.toString())) {
+			c = Integer.parseInt(count.toString());
+		}
+		return c;
+	}
 }
 

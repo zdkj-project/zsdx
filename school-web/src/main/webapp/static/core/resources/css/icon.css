@@ -1,3 +1,9 @@
+.icon_roomAllot
+{
+    background-image: url(../images/icon/index_roomAllot.png) !important;
+    background-size: cover;
+}
+
 .icon_basetSmartDevice
 {
     background-image: url(../images/icon/index_basetSmartDevice.png) !important;

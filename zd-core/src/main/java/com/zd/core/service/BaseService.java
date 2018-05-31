@@ -498,5 +498,30 @@ public interface BaseService<E> {
     public boolean doLogicDelOrRestore(String ids, String isDelete,String operator);
     
     public <T> QueryResult<T> queryPageResultBySql(String sql, Integer start, Integer limit, Class<T> clz,String countSql);
+    
+    /**
+     * 执行HQL语句，获取实体类
+     * @param hql SQL语句
+     * @param args 参数列表
+     * @param <T>
+     * @return
+     */
+    public <T> T getEntityByHql(String hql, Object... args);
+    
+    /**
+     * 根据多个id参数删除对象
+     *
+     * @param id 多个id，以英文逗号隔开
+     * @return 返回true或者false
+     */
+    public boolean deleteByPK(Serializable... id);
+    
+    /**
+     * 执行SQL语句，并返回查询记录数
+     * @param sql SQL语句
+     * @return
+     */
+    public Integer getQueryCountBySql(String sql);
+
 
 }

@@ -1,7 +1,13 @@
 package com.zd.school.build.allot.service;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+
 import com.zd.core.service.BaseService;
+import com.zd.school.build.allot.model.DormStudentDorm;
 import com.zd.school.build.allot.model.JwOfficeAllot ;
+import com.zd.school.plartform.system.model.SysUser;
+import com.zd.school.student.studentclass.model.JwClassstudent;
 
 
 /**
@@ -18,5 +24,12 @@ import com.zd.school.build.allot.model.JwOfficeAllot ;
  */
  
 public interface JwOfficeAllotService extends BaseService<JwOfficeAllot> {
-
+	/**
+	 * 分配门禁
+	 */
+	public boolean mjUserRight(String uuid, String roomId, String userId, DormStudentDorm dorm,JwClassstudent classStu);
+	public Boolean doAddRoom(JwOfficeAllot entity,Map hashMap,SysUser currentUser)throws IllegalAccessException, InvocationTargetException;
+	public Boolean doPushMessage(String roomId);
+	public Boolean doDeleteOff(String delIds,String roomId,String tteacId);
+	public void doOffSetOff(String roomIds);
 }

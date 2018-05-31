@@ -538,5 +538,21 @@ public interface BaseDao<E> {
      */
     public <T> QueryResult<T> queryPageResultBySql(String sql, Integer start, Integer limit, Class<T> clz,String countSql);
 
+    
+    /**
+     * 执行HQL语句，获取实体类
+     * @param hql SQL语句
+     * @param args 参数列表
+     * @param <T>
+     * @return
+     */
+    public <T> T getEntityByHql(String hql, Object... args);
+
+    /**
+     * 执行SQL语句，并返回查询记录数
+     * @param sql SQL语句
+     * @return
+     */
+    public Integer getQueryCountBySql(String sql);
 
 }

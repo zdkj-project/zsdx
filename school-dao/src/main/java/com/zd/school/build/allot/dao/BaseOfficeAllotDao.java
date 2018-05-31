@@ -17,6 +17,6 @@ import com.zd.school.build.allot.model.JwOfficeAllot;
  * @since JDK 1.8
  */
  
-public interface JwOfficeAllotDao extends BaseDao<JwOfficeAllot> {
+public interface BaseOfficeAllotDao extends BaseDao<JwOfficeAllot> {
 
 }
