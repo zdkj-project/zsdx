@@ -285,7 +285,7 @@ Ext.define("core.mjmanage.deviceallot.controller.MainController", {
 
     disabledFuncBtn:function(grid){
         var basePanel = grid.up("basepanel");
-        var basegrid = basePanel.down("basegrid[xtype=mjmanage.basefrontserver.maingrid]");
+        var basegrid = basePanel.down("basegrid[xtype=mjmanage.deviceallot.maingrid]");
         var records = basegrid.getSelectionModel().getSelection();
 
         var btnGridEdit = basegrid.down("button[ref=gridEdit_Tab]");

@@ -46,7 +46,7 @@ Ext.define("core.mjmanage.basefrontserver.controller.MainController", {
                     return false;
                 },
 
-          },
+            },
     },
 
     doDetail_Tab:function(btn,grid,record) {

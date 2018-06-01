@@ -17,6 +17,7 @@ import com.zd.core.annotation.Auth;
 import com.zd.core.constant.Constant;
 import com.zd.core.constant.StatuVeriable;
 import com.zd.core.controller.core.FrameWorkController;
+import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.BeanUtils;
 import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.StringUtils;
@@ -52,19 +53,12 @@ public class PtGatewayController extends FrameWorkController<PtGateway> implemen
 	public void list(@ModelAttribute PtGateway entity, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
 		String strData = ""; // 返回给js的数据
-		// hql语句
-		StringBuffer hql = new StringBuffer("from " + entity.getClass().getSimpleName() + "");
-		// 总记录数
-		StringBuffer countHql = new StringBuffer("select count(*) from " + entity.getClass().getSimpleName() + "");
-		String whereSql = entity.getWhereSql();// 查询条件
-		String querySql = entity.getQuerySql();// 查询条件
-		hql.append(whereSql);
-		hql.append(querySql);
-		countHql.append(whereSql);
-		countHql.append(querySql);
-		List<PtGateway> lists = thisService.getQuery(hql.toString(), super.start(request), entity.getLimit());// 执行查询方法
-		Integer count = thisService.getCount(countHql.toString());// 查询总记录数
-		strData = jsonBuilder.buildObjListToJson(new Long(count), lists, true);// 处理数据
+
+		QueryResult<PtGateway> qr = thisService.queryPageResult(super.start(request), super.limit(request),
+				super.sort(request), super.filter(request), true);
+
+		strData = jsonBuilder.buildObjListToJson(qr.getTotalCount(), qr.getResultList(), true);// 处理数据
+
 		writeJSON(response, strData);// 返回数据
 	}
 

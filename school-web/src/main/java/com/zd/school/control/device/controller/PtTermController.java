@@ -560,7 +560,7 @@ public class PtTermController extends FrameWorkController<PtTerm> implements Con
 			hql += " and a.termSN like'%" + termSN + "%'";
 		}
 		if (StringUtils.isNotEmpty(termNo)) {
-			hql += " and a.termNo like'%" + termNo + "%'";
+			hql += " and a.termNo ='"+termNo+"'";
 		}
 		if (StringUtils.isNotEmpty(termName)) {
 			hql += " and a.termName like'%" + termName + "%'";

@@ -295,7 +295,7 @@ Ext.define("core.mjmanage.useraccess.controller.MainController", {
                     });
 
                     self.asyncAjax({
-                        url: funData.action + "/doDelete",
+                        url: funData.action + "/dodelete",
                         params: {
                             ids: ids.join(","),
                             pkName: pkName

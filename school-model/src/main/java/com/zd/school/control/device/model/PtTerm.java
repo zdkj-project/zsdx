@@ -61,9 +61,9 @@ public class PtTerm extends BaseEntity implements Serializable {
 	@Column(name = "TERMTYPEID")
 	private String termTypeID;
 
-	@FieldInfo(name = "设备状态(0是启用 1是禁用)")
+	@FieldInfo(name = "设备状态(1是启用 0是禁用)")
 	@Column(name = "TERM_STATUS")
-	private Integer termStatus = 0;
+	private Integer termStatus = 1;
 
 	@FieldInfo(name = "是否允许脱机使用")
 	@Column(name = "OFFLINEUSE")
@@ -108,6 +108,20 @@ public class PtTerm extends BaseEntity implements Serializable {
 	@Transient
 	@FieldInfo(name = "用于接收来自于前台的组合数据")
 	private String baseParamUi;
+	
+	
+
+	@Formula("(select  cast((s.PRICE_NAME+':'+cast(s.PRICE_VALUE as varchar(10))) as varchar(100)  ) from dbo.PT_PRICEBIND b,dbo.PT_SK_PRICE s where s.SK_PRICEID=b.PRICEID and b.TERM_ID=TERM_ID) ")
+	@FieldInfo(name = "水控费率")
+	private String skprice;
+	
+	@Formula("(select  cast((s.PRICE_NAME+':'+cast(s.PRICE_VALUE as varchar(10))) as varchar(100)  ) from dbo.PT_PRICEBIND b,dbo.PT_DK_PRICE s where s.DK_PRICEID=b.PRICEID and b.TERM_ID=TERM_ID) ")
+	@FieldInfo(name = "电控费率")
+	private String dkprice;
+	
+	@Formula("(select  cast(s.MEASURE as varchar(100)  ) from dbo.PT_SK_METER s,dbo.PT_SK_METERBIND b where s.METER_ID=b.METER_ID and b.TERM_ID=TERM_ID)")
+	@FieldInfo(name = "水控计量")
+	private String skmeasure;
 	
 	public String getBaseParamUi() {
 		return baseParamUi;
@@ -253,4 +267,29 @@ public class PtTerm extends BaseEntity implements Serializable {
 	public void setGatewayName(String gatewayName) {
 		this.gatewayName = gatewayName;
 	}
+
+	public String getSkprice() {
+		return skprice;
+	}
+
+	public void setSkprice(String skprice) {
+		this.skprice = skprice;
+	}
+
+	public String getDkprice() {
+		return dkprice;
+	}
+
+	public void setDkprice(String dkprice) {
+		this.dkprice = dkprice;
+	}
+
+	public String getSkmeasure() {
+		return skmeasure;
+	}
+
+	public void setSkmeasure(String skmeasure) {
+		this.skmeasure = skmeasure;
+	}
+
 }
