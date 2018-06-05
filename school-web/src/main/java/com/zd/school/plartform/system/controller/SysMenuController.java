@@ -79,10 +79,14 @@ public class SysMenuController extends FrameWorkController<SysMenu> implements C
     public void getRoleMenuList(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String strData = "";
         String roleId = request.getParameter("roleId");
-
-        List<SysMenuTree> lists = thisService.getRoleMenuTreeList(roleId);
-
-        strData = JsonBuilder.getInstance().buildList(lists, "");// 处理数据
+        
+        if(StringUtils.isNotEmpty(roleId)){
+        	 List<SysMenuTree> lists = thisService.getRoleMenuTreeList(roleId);
+        	 strData = JsonBuilder.getInstance().buildList(lists, "");// 处理数据
+        }else{
+        	 strData = JsonBuilder.getInstance().buildList(new ArrayList<>(), "");// 处理数据
+        }
+       
         writeJSON(response, strData);// 返回数据
     }
 
