@@ -422,7 +422,20 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 					+ " order by CLASS_TRAINEE_ID asc";
 
 			List<SysUserToUP> userInfos = thisService.getQuerySqlObject(sql, SysUserToUP.class);
-
+			
+			//转为正常的数据
+			for(int i=0;i<userInfos.size();i++){
+				if (Base64Util.isBase64(userInfos.get(i).getIdentifier())) {
+					userInfos.get(i)
+							.setIdentifier(Base64Util.decodeData(userInfos.get(i).getIdentifier()));
+				}	
+				if (Base64Util.isBase64(userInfos.get(i).getEmployeeStrId())) {
+					userInfos.get(i)
+							.setEmployeeStrId(Base64Util.decodeData(userInfos.get(i).getEmployeeStrId()));
+				}	
+			}
+			
+			
 			// 5.切换数据源
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 
