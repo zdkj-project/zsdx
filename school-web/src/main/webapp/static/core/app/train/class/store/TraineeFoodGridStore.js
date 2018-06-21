@@ -4,6 +4,6 @@
 	
 	alias: 'store.class.trainfoodgridStore',
 
- 	fields: ['uuid', 'xm', 'xbm','breakfast','lunch','dinner','isDelete']      
+ 	fields: ['uuid', 'xm','traineeNumber','xbm','breakfast','lunch','dinner','isDelete']      
 
 });

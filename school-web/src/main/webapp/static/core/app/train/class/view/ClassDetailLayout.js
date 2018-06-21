@@ -103,7 +103,7 @@ Ext.define("core.train.class.view.ClassDetailLayout", {
         },
         items:[{
             xtype:'class.fooddetailform',
-            height:550,
+            height:580,
             margin:0,
             bodyPadding: '0 20 0 5',
             bodyStyle: {

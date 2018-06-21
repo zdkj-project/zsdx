@@ -15,7 +15,7 @@ Ext.define("core.train.class.view.FoodDetailForm", {
     items:[{
         xtype:'container',
         layout: "form", //从上往下布局
-        height:200,
+        height:'auto',  //自动高度
         defaults:{
             width:'100%',
             margin:"10 5",
@@ -138,7 +138,7 @@ Ext.define("core.train.class.view.FoodDetailForm", {
 
                             //currentForm.clearFood();
                             currentForm.countFood1();//计算汇总数据1
-                            currentForm.setHeight(275);
+                            currentForm.setHeight(300);
 
                         } else  if (record == 2) {
 
@@ -178,7 +178,7 @@ Ext.define("core.train.class.view.FoodDetailForm", {
 
                             //currentForm.clearFood();
                             currentForm.countFood2();//计算汇总数据1
-                            currentForm.setHeight(235);
+                            currentForm.setHeight(260);
                             
                         } else if (record == 3) {
 
@@ -213,7 +213,7 @@ Ext.define("core.train.class.view.FoodDetailForm", {
                             }
                             //currentForm.clearFood();
                             currentForm.countFood3();
-                            currentForm.setHeight(550);
+                            currentForm.setHeight(580);
                         }
                         
                     }
@@ -538,7 +538,27 @@ Ext.define("core.train.class.view.FoodDetailForm", {
                 stripeRows: false   //不展示隔行变色
             },
             columnWidth:1,
-            
+            tbar: ['->',{
+                xtype: 'tbtext', 
+                html:'快速搜索：'
+            },{
+                xtype:'textfield',
+                name:'xm',
+                width:100,
+                funCode:'girdFastSearchText', 
+                emptyText: '姓名'
+            },{
+                xtype:'textfield',
+                name:'traineeNumber',
+                width:100,
+                funCode:'girdFastSearchText', 
+                emptyText: '学号'
+            },{
+                xtype: 'button',
+                funCode:'girdSearchBtn',    //指定此类按钮为girdSearchBtn类型
+                ref: 'gridFastSearchBtn',   
+                iconCls: 'x-fa fa-search',  
+            }],
             store:{
                 type:"class.trainfoodgridStore"
             },
@@ -552,6 +572,7 @@ Ext.define("core.train.class.view.FoodDetailForm", {
                     align: 'center'
                 },
                 { align: 'center',titleAlign: "center",text: '姓名', dataIndex: 'xm', flex: 1.5 },
+                { align: 'center',titleAlign: "center",text: '学号', dataIndex: 'traineeNumber', flex: 1.5 },  
                 { align: 'center',titleAlign: "center", text: '性别', dataIndex: 'xbm', flex: 1,
                     renderer : function(v, p, record){                                 
                         return v=="1"?"男":"女";      
@@ -574,7 +595,10 @@ Ext.define("core.train.class.view.FoodDetailForm", {
                                         var rec=roomStore.getAt(i);
                                         rec.set("sleep",1);
                                         rec.commit();
-                                    }                            
+                                    } 
+                                    var roomForm=basetab.down("baseform[xtype=class.roomdetailform]");
+                                    if(roomForm)
+                                        roomForm.countRoom();                               
                                 }
                             }
                         },
@@ -592,6 +616,9 @@ Ext.define("core.train.class.view.FoodDetailForm", {
                                     rec.set("sleep",1);
                                     rec.commit();
                                 }
+                                var roomForm=basetab.down("baseform[xtype=class.roomdetailform]");                        
+                                if(roomForm)
+                                    roomForm.countRoom();       
                             }
                           
                         }
@@ -614,10 +641,44 @@ Ext.define("core.train.class.view.FoodDetailForm", {
                         headercheckchange:function ( me , checked , e , eOpts ) {
                             var currentForm=me.up("baseform[xtype=class.fooddetailform]");
                             currentForm.countFood3();
+
+                            if(checked==true){
+                                //更新单个人员的住宿情况
+                                var basetab = currentForm.up('baseformtab');
+                                var roomGrid=basetab.down("grid[ref=traineeRoomGrid]");
+                                if(roomGrid){
+                                    var roomStore=roomGrid.getStore();
+                                    var len=roomStore.data.length;
+                                    for(var i=0;i<len;i++){
+                                        var rec=roomStore.getAt(i);
+                                        rec.set("sleep",1);
+                                        rec.commit();
+                                    }   
+
+                                    var roomForm=basetab.down("baseform[xtype=class.roomdetailform]");
+                                    if(roomForm)
+                                        roomForm.countRoom();             
+                                }
+                            }                        
                         },
                         checkchange:function ( me , rowIndex , checked , record , e , eOpts ) {
                             var currentForm=me.up("baseform[xtype=class.fooddetailform]");
                             currentForm.countFood3();
+
+                            if(checked==true){
+                                //更新单个人员的住宿情况
+                                var basetab = currentForm.up('baseformtab');
+                                var roomGrid=basetab.down("grid[ref=traineeRoomGrid]");
+                                if(roomGrid){
+                                    var roomStore=roomGrid.getStore();
+                                    var rec=roomStore.findRecord("uuid",record.get("uuid"));
+                                    rec.set("sleep",1);
+                                    rec.commit();
+                                }
+                                var roomForm=basetab.down("baseform[xtype=class.roomdetailform]");
+                                if(roomForm)
+                                    roomForm.countRoom(); 
+                            }            
                         }
                     }
                 },

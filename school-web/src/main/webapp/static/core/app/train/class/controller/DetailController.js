@@ -14,12 +14,206 @@ Ext.define("core.train.class.controller.DetailController", {
         dateUtil: 'core.util.DateUtil'
         
     },
-    init: function() {
-        /*执行一些初始化的代码*/
+    init: function() {          /*执行一些初始化的代码*/
         //console.log("初始化 detail controler");     
     },
     /** 该视图内的组件事件注册 */
     control: {
+        //快速搜索按按钮
+        "grid[ref=traineeFoodGrid] button[ref=gridFastSearchBtn]": {
+            beforeclick: function (btn) {
+                var self=this;
+
+                var baseformtab=btn.up("baseformtab");
+                var insertObj=baseformtab.insertObj;
+                var toolBar = btn.up("toolbar");
+                if (!toolBar)
+                    return false;
+
+                var store = btn.up("grid").getStore();
+
+                var girdSearchTexts = toolBar.query("textfield");                        
+                var nameValue = girdSearchTexts[0].getValue();                    
+                var traineeNumberValue = girdSearchTexts[1].getValue();                  
+                           
+                //查询班级的就餐信息
+                self.asyncAjax({
+                    url: comm.get("baseUrl") + "/TrainClasstrainee/getClassFoodTrainees",
+                    params: {
+                        classId: insertObj.uuid,
+                        xm: nameValue,
+                        traineeNumber: traineeNumberValue,
+                        page: 1,
+                        start: 0,
+                        limit: -1    //-1表示不分页
+                    },
+                    //回调代码必须写在里面
+                    success: function (response) {rows;                     
+                        var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                        var rows = data.rows;
+                        //console.log(rows);
+                        if (rows != undefined) {  //若存在rows数据，则表明请求正常
+                            //获取班级学员就餐信息                        
+                            store.loadData(rows);
+                        } else {
+                            self.Error(data.obj);
+                        }
+
+                    }
+                });
+
+                return false;
+            }
+        },
+        //快速搜索文本框回车事件
+        "grid[ref=traineeFoodGrid] textfield": {
+            specialkey: function (field, e) {
+                console.log(11);
+                if (e.getKey() == e.ENTER) {
+
+                    var self=this;
+
+                    var baseformtab=field.up("baseformtab");
+                    var insertObj=baseformtab.insertObj;
+                    var toolBar = field.up("toolbar");
+                    if (!toolBar)
+                        return false;
+
+                    var store = field.up("grid").getStore();
+
+                    var girdSearchTexts = toolBar.query("textfield");                        
+                    var nameValue = girdSearchTexts[0].getValue();                    
+                    var traineeNumberValue = girdSearchTexts[1].getValue();                  
+                               
+                    //查询班级的就餐信息
+                    self.asyncAjax({
+                        url: comm.get("baseUrl") + "/TrainClasstrainee/getClassFoodTrainees",
+                        params: {
+                            classId: insertObj.uuid,
+                            xm: nameValue,
+                            traineeNumber: traineeNumberValue,
+                            page: 1,
+                            start: 0,
+                            limit: -1    //-1表示不分页
+                        },
+                        //回调代码必须写在里面
+                        success: function (response) {rows;                     
+                            var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                            var rows = data.rows;
+                            //console.log(rows);
+                            if (rows != undefined) {  //若存在rows数据，则表明请求正常
+                                //获取班级学员就餐信息                        
+                                store.loadData(rows);
+                            } else {
+                                self.Error(data.obj);
+                            }
+
+                        }
+                    });
+                }
+                return false;
+            }
+        },
+
+        //快速搜索按按钮
+        "grid[ref=traineeRoomGrid] button[ref=gridFastSearchBtn]": {
+            beforeclick: function (btn) {
+                var self=this;
+
+                var baseformtab=btn.up("baseformtab");
+                var insertObj=baseformtab.insertObj;
+                var toolBar = btn.up("toolbar");
+                if (!toolBar)
+                    return false;
+
+                var store = btn.up("grid").getStore();
+
+                var girdSearchTexts = toolBar.query("textfield");                        
+                var nameValue = girdSearchTexts[0].getValue();                    
+                var traineeNumberValue = girdSearchTexts[1].getValue();                  
+                           
+                //查询班级的就餐信息
+                self.asyncAjax({
+                    url: comm.get("baseUrl") + "/TrainClasstrainee/getClassRoomTrainees",
+                    params: {
+                        classId: insertObj.uuid,
+                        xm: nameValue,
+                        traineeNumber: traineeNumberValue,
+                        page: 1,
+                        start: 0,
+                        limit: -1    //-1表示不分页
+                    },
+                    //回调代码必须写在里面
+                    success: function (response) {rows;                     
+                        var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                        var rows = data.rows;
+                        //console.log(rows);
+                        if (rows != undefined) {  //若存在rows数据，则表明请求正常
+                            //获取班级学员就餐信息                        
+                            store.loadData(rows);
+                        } else {
+                            self.Error(data.obj);
+                        }
+
+                    }
+                });
+
+                return false;
+            }
+        },
+        //快速搜索文本框回车事件
+        "grid[ref=traineeRoomGrid] textfield": {
+            specialkey: function (field, e) {
+                if (e.getKey() == e.ENTER) {
+
+                    var self=this;
+
+                    var baseformtab=field.up("baseformtab");
+                    var insertObj=baseformtab.insertObj;
+                    var toolBar = field.up("toolbar");
+                    if (!toolBar)
+                        return false;
+
+                    var store = field.up("grid").getStore();
+
+                    var girdSearchTexts = toolBar.query("textfield");                        
+                    var nameValue = girdSearchTexts[0].getValue();                    
+                    var traineeNumberValue = girdSearchTexts[1].getValue();                  
+                               
+                    //查询班级的就餐信息
+                    self.asyncAjax({
+                        url: comm.get("baseUrl") + "/TrainClasstrainee/getClassRoomTrainees",
+                        params: {
+                            classId: insertObj.uuid,
+                            xm: nameValue,
+                            traineeNumber: traineeNumberValue,
+                            page: 1,
+                            start: 0,
+                            limit: -1    //-1表示不分页
+                        },
+                        //回调代码必须写在里面
+                        success: function (response) {rows;                     
+                            var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
+
+                            var rows = data.rows;
+                            //console.log(rows);
+                            if (rows != undefined) {  //若存在rows数据，则表明请求正常
+                                //获取班级学员就餐信息                        
+                                store.loadData(rows);
+                            } else {
+                                self.Error(data.obj);
+                            }
+
+                        }
+                    });
+                }
+                return false;
+            }
+        },
+
         "basegrid[xtype=class.classcoursegrid]": {
              afterrender: function (grid, eOpts) {
                 var btnSetRoom = grid.down("button[ref=gridSetRoom]");

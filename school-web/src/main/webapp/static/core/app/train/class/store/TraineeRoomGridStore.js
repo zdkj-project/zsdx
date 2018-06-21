@@ -4,6 +4,6 @@
 	
 	alias: 'store.class.trainroomgridStore',
 
- 	fields: ['uuid', 'xm', 'xbm','siesta','sleep','isDelete']     
+ 	fields: ['uuid', 'xm', 'traineeNumber','xbm','siesta','sleep','isDelete']     
 
 });

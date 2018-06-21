@@ -317,16 +317,24 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			Integer start = super.start(request);
 			Integer limit = super.limit(request);
 			String classId = request.getParameter("classId");
+			String xm = request.getParameter("xm");
+			String traineeNumber = request.getParameter("traineeNumber");
 			String isDelete = request.getParameter("isDelete");
 
 			// g.isDelete=0 and 查询所有状态的
 			// new 不查询状态为1的
-			String hql = "select  new TrainClasstrainee(g.uuid,g.xm,g.xbm,g.breakfast,g.lunch,g.dinner,g.isDelete) from TrainClasstrainee g "
+			String hql = "select  new TrainClasstrainee(g.uuid,g.traineeNumber,g.xm,g.xbm,g.breakfast,g.lunch,g.dinner,g.isDelete) from TrainClasstrainee g "
 					+ " where g.classId='" + classId + "'";
 			if (isDelete != null) {
 				hql += " and g.isDelete!=1 ";
 			}
-			hql += " order by g.breakfast desc,g.lunch desc,g.dinner desc";
+			if(StringUtils.isNotEmpty(xm)){
+				hql += " and g.xm like '%"+xm+"%' ";
+			}
+			if(StringUtils.isNotEmpty(traineeNumber)){
+				hql += " and g.traineeNumber like '%"+traineeNumber+"%' ";
+			}
+			hql += " order by g.traineeNumber asc";	//"g.breakfast desc,g.lunch desc,g.dinner desc";
 
 			QueryResult<TrainClasstrainee> result = thisService.getQueryResult(hql, start, limit);
 
@@ -350,16 +358,24 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			Integer start = super.start(request);
 			Integer limit = super.limit(request);
 			String classId = request.getParameter("classId");
+			String xm = request.getParameter("xm");
+			String traineeNumber = request.getParameter("traineeNumber");
 			String isDelete = request.getParameter("isDelete");
 
 			// g.isDelete=0 or g.isDelete=1 and
 			// new: 不查询状态为1的
-			String hql = "select new TrainClasstrainee(g.uuid,g.xm,g.xbm,g.siesta,g.sleep,g.roomId,g.roomName,g.workUnit,g.isDelete) from TrainClasstrainee g "
+			String hql = "select new TrainClasstrainee(g.uuid,g.traineeNumber,g.xm,g.xbm,g.siesta,g.sleep,g.roomId,g.roomName,g.workUnit,g.isDelete) from TrainClasstrainee g "
 					+ " where g.classId='" + classId + "'";
 			if (isDelete != null) {
 				hql += " and g.isDelete!=1 ";
 			}
-			hql += "  order by g.siesta desc,g.sleep desc,g.xbm asc,g.workUnit asc";
+			if(StringUtils.isNotEmpty(xm)){
+				hql += " and g.xm like '%"+xm+"%' ";
+			}
+			if(StringUtils.isNotEmpty(traineeNumber)){
+				hql += " and g.traineeNumber like '%"+traineeNumber+"%' ";
+			}
+			hql += "  order by g.traineeNumber asc";	//"g.siesta desc,g.sleep desc,g.xbm asc,g.workUnit asc";
 
 			QueryResult<TrainClasstrainee> result = thisService.getQueryResult(hql, start, limit);
 
