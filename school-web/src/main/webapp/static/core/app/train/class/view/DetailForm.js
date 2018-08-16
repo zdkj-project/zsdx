@@ -262,7 +262,7 @@ Ext.define("core.train.class.view.DetailForm", {
                     width: 1200,
                     height: 650,
                     fieldInfo: "checkruleId~checkruleName,uuid~ruleName",
-                    whereSql: "and isDelete='0' and startUsing=1 ",
+                    whereSql: "and isDelete=0 and startUsing=1 ",
                     orderSql: " order by createTime DESC ",
                     muiltSelect: false //是否多选
                 },
@@ -288,9 +288,9 @@ Ext.define("core.train.class.view.DetailForm", {
                     width: 1200,
                     height: 650,
                     fieldInfo: "creditsruleId~creditsruleName,uuid~ruleName",
-                    whereSql: "and isDelete='0' and startUsing=1 ",
+                    whereSql: "and isDelete=0 and startUsing=1 ",
                     orderSql: " order by createTime DESC ",
-                    muiltSelect: false //是否多选
+                    muiltSelect: false //是否多选   
                 },
                 fieldLabel: "学分规则",
                 emptyText: "请选择学分规则",

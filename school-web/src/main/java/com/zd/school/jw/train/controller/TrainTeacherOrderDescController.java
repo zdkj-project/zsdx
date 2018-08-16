@@ -96,7 +96,7 @@ public class TrainTeacherOrderDescController extends FrameWorkController<TrainTe
      * IOException 设定参数 @return void 返回类型 @throws
      */
     @RequestMapping("/doUpdate")
-    public void doUpdateDesc(TrainTeacherOrderDesc entity, HttpServletRequest request, HttpServletResponse response)
+	public void doUpdateDesc(TrainTeacherOrderDesc entity, HttpServletRequest request, HttpServletResponse response)
             throws IOException, IllegalAccessException, InvocationTargetException {
 
         // 入库前检查代码

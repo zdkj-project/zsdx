@@ -82,13 +82,15 @@ Ext.define("core.mjmanage.smartdevice.view.DoorcontrolForm", {
                     width:100,
                     boxLabel: '物理卡号',
                     name: 'tlvs[5].valInt',
-                    inputValue: 0
+                    inputValue: 0,
+                    checked: true
                 }, {
                     width:100,
                     boxLabel: '卡流水号',
                     inputValue: 1,
                     name: 'tlvs[5].valInt',
-                    checked: true
+                    checked: true,
+                    hidden:true
                 }]
             }, {
                 xtype: 'radiogroup',

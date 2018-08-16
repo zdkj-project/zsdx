@@ -233,6 +233,18 @@ public class TrainTraineeServiceImpl extends BaseServiceImpl<TrainTrainee> imple
 			trainee.setXlmName(mapDicItem.get(trainee.getXlm() + "XLM"));
 			trainee.setZzmmmName(mapDicItem.get(trainee.getZzmmm() + "ZZMMM"));
 			trainee.setMzmName(mapDicItem.get(trainee.getMzm() + "MZM"));
+			
+			String traineePhone=trainee.getMobilePhone();
+			if (Base64Util.isBase64(traineePhone)) {
+				traineePhone=Base64Util.decodeData(traineePhone);
+			}
+			String traineeSfzjh=trainee.getSfzjh();
+			if (Base64Util.isBase64(traineeSfzjh)) {
+				traineeSfzjh=Base64Util.decodeData(traineeSfzjh);
+			}
+			trainee.setMobilePhone(traineePhone);
+			trainee.setSfzjh(traineeSfzjh);
+			
 		}
 		exportList.addAll(list);
 
