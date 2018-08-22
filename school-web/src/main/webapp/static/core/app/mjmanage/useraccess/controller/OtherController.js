@@ -128,7 +128,7 @@ Ext.define("core.mjmanage.useraccess.controller.OtherController", {
         var girdSearchTexts = toolBar.query("field[funCode=girdFastSearchText]");
         //这里快速搜索就姓名与部门，固定写死查询的条件
         var filter = new Array();
-        filter.push("{'type': 'string', 'comparison': '', 'value':'1', 'field': 'category'}");
+        //filter.push("{'type': 'string', 'comparison': '', 'value':'1', 'field': 'category'}");
         if (girdSearchTexts[0].getValue() != "")
         filter.push("{'type': 'string', 'comparison': '', 'value':'" + girdSearchTexts[0].getValue() + "', 'field': 'xm'}");
         if (girdSearchTexts[1].getValue() != "")
