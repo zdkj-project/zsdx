@@ -102,4 +102,5 @@ public interface TrainClasstraineeService extends BaseService<TrainClasstrainee>
 	public void doSyncBindToUP(List<Map<String, Object>> cardInfoToUp, String xm);
 
 	public void doRestoreCardBind(List<Map<String, Object>> cardInfoToUp);
+	public List<Map<String, Object>> insAdvanceOrders(String classId);
 }

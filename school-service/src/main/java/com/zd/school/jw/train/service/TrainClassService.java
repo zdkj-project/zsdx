@@ -7,11 +7,13 @@ import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.jw.train.model.TrainTeacher;
 import com.zd.school.jw.train.model.vo.TrainClassEval;
+import com.zd.school.opu.CreateOrderResponse;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.model.SysUserToUP;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -111,4 +113,16 @@ public interface TrainClassService extends BaseService<TrainClass> {
     public Boolean doSumCredit(String classId);
 
     public Boolean doSendInfoUser( String sendUserId,  String sendInfo, SysUser currentUser);
+    /**
+     * 创建酒店预订单
+     * @param classId
+     * @return
+     */
+    public CreateOrderResponse createOrder(TrainClass trainClass);
+    /**
+	 * 获得这个班入住最早和最晚的学员的日期
+	 * @param classId
+	 * @return
+	 */
+	public Map<String, Object> getMinAndMaxCheckinDate(String classId);
 }

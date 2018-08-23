@@ -691,4 +691,12 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 		// this.executeSql(sql);
 
 	}
+	@Override
+	public List<Map<String, Object>> insAdvanceOrders(String classId) {
+
+		String sql = "select * from CLASS_RESERVATION_NUMBER where classid='" + classId + "'";
+		List<Map<String, Object>> list = this.queryMapBySql(sql);
+		return list;
+	}
+
 }

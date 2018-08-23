@@ -828,4 +828,9 @@ public class BaseServiceImpl<E> implements BaseService<E> {
 	public Integer getQueryCountBySql(String sql) {
 		return this.dao.getQueryCountBySql(sql);
 	}
+	@Override
+	public List<Map<String, Object>> queryMapBySql(String sql) {
+		// TODO Auto-generated method stub
+		return this.dao.queryMapBySql(sql);
+	}
 }

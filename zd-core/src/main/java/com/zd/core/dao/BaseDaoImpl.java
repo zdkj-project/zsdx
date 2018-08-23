@@ -1792,5 +1792,30 @@ public class BaseDaoImpl<E> implements BaseDao<E> {
 		}
 		return c;
 	}
+	@Override
+    public List<Map<String, Object>> queryMapBySql(String sql) {
+        // TODO Auto-generated method stub
+        Query query = getSession().createSQLQuery(sql);
+        query.setResultTransformer(new ResultTransformer() {
+
+            @Override
+            public Object transformTuple(Object[] values, String[] columns) {
+                Map<String, Object> map = new LinkedHashMap<String, Object>(1);
+                int i = 0;
+                for (String column : columns) {
+                    map.put(column, values[i++]);
+                }
+                return map;
+            }
+
+            @Override
+            public List transformList(List list) {
+                return list;
+            }
+        });
+
+        List<Map<String, Object>> value = query.list();
+        return value;
+    }
 }
 

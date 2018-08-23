@@ -518,6 +518,54 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         this.useState = useState;
     }
     
+    @FieldInfo(name = "是否住宿")
+    @Column(name = "IFACCOMMODATION", length = 50, nullable = true)
+	private String ifaccommodation;
+	
+	public String getIfaccommodation() {
+		return ifaccommodation;
+	}
+
+	public void setIfaccommodation(String ifaccommodation) {
+		this.ifaccommodation = ifaccommodation;
+	}
+	@FieldInfo(name = "入住日期")
+    @Column(name = "CHECKIN_DATE", length = 50, nullable = true)
+    private String checkinDate;
+
+
+    @FieldInfo(name = "退宿日期")
+    @Column(name = "CHECKOUT_DATE", length = 50, nullable = true)
+    private String checkoutDate;
+
+    public String getCheckinDate() {
+        return checkinDate;
+    }
+
+    public void setCheckinDate(String checkinDate) {
+        this.checkinDate = checkinDate;
+    }
+
+    public String getCheckoutDate() {
+        return checkoutDate;
+    }
+
+    public void setCheckoutDate(String checkoutDate) {
+        this.checkoutDate = checkoutDate;
+    }
+    @FieldInfo(name ="是否提交过")
+    @Column(name = "ISDOCLASSUSE",length = 16,nullable = true)
+    private String isDoClassUse;
+	
+	
+    public String getIsDoClassUse() {
+		return isDoClassUse;
+	}
+
+	public void setIsDoClassUse(String isDoClassUse) {
+		this.isDoClassUse = isDoClassUse;
+	}
+    
     public TrainClasstrainee(String uuid) {
         super(uuid);
         // TODO Auto-generated constructor stub

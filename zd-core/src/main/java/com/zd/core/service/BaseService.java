@@ -523,5 +523,10 @@ public interface BaseService<E> {
      */
     public Integer getQueryCountBySql(String sql);
 
-
+    /**
+     * 执行SQL语句，返回结果的Map合集
+     * @param sql SQL 语句
+     * @return
+     */
+    public List<Map<String, Object>> queryMapBySql(String sql);
 }

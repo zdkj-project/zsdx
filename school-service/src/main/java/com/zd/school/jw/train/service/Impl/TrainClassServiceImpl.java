@@ -13,6 +13,9 @@ import com.zd.school.jw.train.dao.TrainClassDao;
 import com.zd.school.jw.train.model.*;
 import com.zd.school.jw.train.model.vo.TrainClassEval;
 import com.zd.school.jw.train.service.*;
+import com.zd.school.opu.CreateOrderPerson;
+import com.zd.school.opu.CreateOrderResponse;
+import com.zd.school.opu.OpuService;
 import com.zd.school.plartform.baseset.model.BaseOrgToUP;
 import com.zd.school.plartform.baseset.service.BaseOrgService;
 import com.zd.school.plartform.system.model.SysUser;
@@ -55,7 +58,10 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 
 	@Resource
 	private TrainTeacherService teacherService;
-
+	@Resource
+	private ClassReservationNumberService classReservationNumberService;
+	@Resource
+	private OpuService opuService;
 	@Resource
 	private TrainClasstraineeService trainClasstraineeService;
 
@@ -984,4 +990,96 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 
 	    return true;
     }
+    @Override
+	public synchronized CreateOrderResponse createOrder(TrainClass trainClass) {
+		String classId = trainClass.getUuid();
+		// 查询这个班级预定信息
+		List<Map<String, Object>> isOrder = trainClasstraineeService.insAdvanceOrders(classId);
+		boolean isCreatedOrder = isOrder.isEmpty();
+
+		// 查询学员信息 没有预订单就查询所有 有就只查询没有提交过的学员
+		List<TrainClasstrainee> list;
+		String hql = "from TrainClasstrainee where classId='" + classId + "' and isDelete=0";
+		if (!isCreatedOrder) {
+			hql += " and isDoClassUse is null";
+		}
+		list = trainClasstraineeService.queryByHql(hql);
+
+		// 已经创建了订单 且 本次没有需要提交的学员 直接返回预定号
+		if (!isCreatedOrder && list.isEmpty()) {
+			CreateOrderResponse ydInfo = new CreateOrderResponse();
+			ydInfo.setR_ydh(Integer.valueOf(isOrder.get(0).get("reservationid").toString()));
+			return ydInfo;
+		}
+
+		// 创建订单人员JSON数据
+		List<CreateOrderPerson> persons = new ArrayList<CreateOrderPerson>();
+		int totalCheckin = 0;
+		for (TrainClasstrainee trainee : list) {
+			String xb = "";
+			int isCheckin = 0;
+			if (trainee.getXbm() != null && trainee.getXbm().equals("1")) {
+				xb = "男";
+			} else {
+				xb = "女";
+			}
+			if (trainee.getIfaccommodation() != null && trainee.getIfaccommodation().equals("住宿")) {
+				isCheckin = 0;
+				totalCheckin++;
+			} else {
+				isCheckin = 1;
+			}
+			CreateOrderPerson person = new CreateOrderPerson(trainee.getXm(),Base64Util.decodeData(trainee.getSfzjh()) , xb,
+					trainee.getCheckinDate(), trainee.getCheckoutDate(), isCheckin, trainee.getTraineeNumber(),"ST");
+			persons.add(person);
+			trainee.setIsDoClassUse("0");
+			trainClasstraineeService.doMerge(trainee);
+		}
+
+		// 人员转换为接口需要格式
+		String personsJson = JsonBuilder.getInstance().toJson(persons);
+		Map<String, Object> dateMap = this.getMinAndMaxCheckinDate(trainClass.getUuid());
+		String minCheckinDate = dateMap.get("CHECKIN_DATE").toString();
+		if (minCheckinDate.equals("")) {
+			minCheckinDate = DateUtil.formatDate(trainClass.getBeginDate());
+		}
+		String maxCheckDate = dateMap.get("CHECKOUT_DATE").toString();
+		if (maxCheckDate.equals("")) {
+			maxCheckDate = DateUtil.formatDate(trainClass.getEndDate());
+		}
+
+		CreateOrderResponse orderResult = null;
+
+		// 确定是追加还是创建
+		if (!isCreatedOrder) {
+			// 获取预定号 追加预订单
+			String res = isOrder.get(0).get("reservationid").toString();
+			orderResult = opuService.addPersonsByOrder(res, totalCheckin, totalCheckin, personsJson);
+			if (orderResult.getRspCode() != 0) {
+				logger.error("追加酒店订单发生异常:" + orderResult.getRspMsg());
+			}
+			return orderResult;
+		} else {
+			// 创建预订单
+			orderResult = opuService.createOrder(trainClass.getClassName(), totalCheckin, totalCheckin, minCheckinDate,
+					maxCheckDate, trainClass.getBzrName(), "", personsJson);
+			if (orderResult.getRspCode() != 0) {
+				logger.error("创建酒店订单发生异常:" + orderResult.getRspMsg());
+			} else {
+				ClassReservationNumber classReservationNumber = new ClassReservationNumber();
+				classReservationNumber.setClassid(classId);
+				classReservationNumber.setReservationid(orderResult.getR_ydh() + "");
+				classReservationNumberService.doMerge(classReservationNumber);
+			}
+			return orderResult;
+		}
+
+	}
+    @Override
+	public Map<String, Object> getMinAndMaxCheckinDate(String classId) {
+		String sql = "SELECT ISNULL(MIN(CHECKIN_DATE),'') CHECKIN_DATE,ISNULL(MAX(CHECKOUT_DATE),'') CHECKOUT_DATE FROM dbo.TRAIN_T_CLASSTRAINEE WHERE CLASS_ID='"
+				+ classId + "' AND ISDELETE=0";
+		List<Map<String, Object>> list = this.queryMapBySql(sql);
+		return list.get(0);
+	}
 }

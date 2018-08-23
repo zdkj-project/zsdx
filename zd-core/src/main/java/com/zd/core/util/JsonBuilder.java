@@ -2,13 +2,14 @@ package com.zd.core.util;
 
 import java.io.StringWriter;
 import java.lang.reflect.Field;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zd.core.constant.ExtFieldType;
 import com.zd.core.constant.StringVeriable;
@@ -61,7 +62,30 @@ public class JsonBuilder {
             return "";
         }
     }
+    public Object fromJson(String json, Class<?> baseClass, Class<?>... elementClasses) {
+		json = cleanJson(json);
+		try {
+			JsonHolder.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			JavaType javaType = JsonHolder.mapper.getTypeFactory().constructParametricType(baseClass, elementClasses);
+			Object obj = JsonHolder.mapper.readValue(json, javaType);
+			return obj;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
+    public Object fromJson(String json, TypeReference<?> c) {
+		json = cleanJson(json);
+		try {
+			JsonHolder.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			Object obj = JsonHolder.mapper.readValue(json, c);
+			return obj;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
     /**
      * 将一个Json字符串封装为指定类型对象
      * 

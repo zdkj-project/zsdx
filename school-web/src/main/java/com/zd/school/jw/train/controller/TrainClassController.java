@@ -42,6 +42,7 @@ import com.zd.school.jw.train.service.TrainClassService;
 import com.zd.school.jw.train.service.TrainClassrealdinnerService;
 import com.zd.school.jw.train.service.TrainClassscheduleService;
 import com.zd.school.jw.train.service.TrainClasstraineeService;
+import com.zd.school.opu.CreateOrderResponse;
 import com.zd.school.plartform.baseset.model.BaseDicitem;
 import com.zd.school.plartform.baseset.service.BaseDicitemService;
 import com.zd.school.plartform.system.model.SysUser;
@@ -434,7 +435,8 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 							.setEmployeeStrId(Base64Util.decodeData(userInfos.get(i).getEmployeeStrId()));
 				}	
 			}
-			
+			// 5. 创建酒店预订单
+			CreateOrderResponse orderResult = thisService.createOrder(trainClass);
 			
 			// 5.切换数据源
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
@@ -442,12 +444,14 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 			// 6.执行同步代码
 			result = thisService.syncTraineeClassInfoToAllUP(departmentId, trainClass, userInfos);
 
-			if (result != -1) {
-				writeJSON(response, jsonBuilder.returnSuccessJson("\"提交班级信息成功！\""));
+			if (result != -1 && orderResult.getRspCode() == 0) {
+				writeJSON(response,
+						jsonBuilder.returnSuccessJson("\"提交班级信息成功！酒店预订单号是:" + orderResult.getR_ydh() + "\""));
 			} else {
 				// 若执行到这里，表明没有同步成功；所以，要把启用状态再设置为0；
 				// thisService.updateByProperties("uuid", classId,"isuse",0);
-				writeJSON(response, jsonBuilder.returnFailureJson("\"请求失败，请联系管理员\""));
+				writeJSON(response,
+						jsonBuilder.returnFailureJson("\"请求失败，请联系管理员！" + orderResult.getRspMsg() + "\""));
 			}
 
 		} catch (Exception e) {
