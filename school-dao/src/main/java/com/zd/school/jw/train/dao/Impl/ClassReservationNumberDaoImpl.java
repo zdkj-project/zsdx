@@ -10,5 +10,6 @@ import org.springframework.stereotype.Repository;
 public class ClassReservationNumberDaoImpl extends BaseDaoImpl<ClassReservationNumber>  implements ClassReservationNumberDao {
     public ClassReservationNumberDaoImpl(){
         super(ClassReservationNumber.class);
+        
     }
 }
