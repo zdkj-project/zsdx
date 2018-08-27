@@ -368,7 +368,7 @@ public class SysUser extends BaseEntity implements Serializable {
         this.rememberMe = rememberMe;
     }
     @FieldInfo(name = "主部门ID")
-    @Formula("(SELECT ISNULL(a.DEPT_ID,'') FROM dbo.BASE_T_USERDEPTJOB a WHERE a.MASTER_DEPT=1 AND a.ISDELETE=0 AND a.USER_ID=USER_ID)")
+    @Formula("(SELECT top 1 ISNULL(a.DEPT_ID,'') FROM dbo.BASE_T_USERDEPTJOB a WHERE a.MASTER_DEPT=1 AND a.ISDELETE=0 AND a.USER_ID=USER_ID)")
     private String deptId;
 
     public void setDeptId(String deptId) {
@@ -380,7 +380,7 @@ public class SysUser extends BaseEntity implements Serializable {
     }
 
     @FieldInfo(name = "主部门名称")
-    @Formula("(SELECT ISNULL(a.NODE_TEXT,'') FROM dbo.BASE_T_ORG a WHERE a.DEPT_ID=(SELECT b.DEPT_ID FROM BASE_T_USERDEPTJOB b WHERE b.MASTER_DEPT=1 AND  b.USER_ID=USER_ID AND b.ISDELETE=0))")
+    @Formula("(SELECT ISNULL(a.NODE_TEXT,'') FROM dbo.BASE_T_ORG a WHERE a.DEPT_ID=(SELECT top 1 b.DEPT_ID FROM BASE_T_USERDEPTJOB b WHERE b.MASTER_DEPT=1 AND  b.USER_ID=USER_ID AND b.ISDELETE=0))")
     private String deptName;
 
     public String getDeptName() {
@@ -392,7 +392,7 @@ public class SysUser extends BaseEntity implements Serializable {
     }
 
     @FieldInfo(name = "主岗位ID")
-    @Formula("(SELECT ISNULL(a.JOB_ID,'') FROM dbo.BASE_T_USERDEPTJOB a WHERE a.MASTER_DEPT=1 AND a.ISDELETE=0 AND a.USER_ID=USER_ID)")
+    @Formula("(SELECT top 1 ISNULL(a.JOB_ID,'') FROM dbo.BASE_T_USERDEPTJOB a WHERE a.MASTER_DEPT=1 AND a.ISDELETE=0 AND a.USER_ID=USER_ID)")
     private String jobId;
 
     public String getJobId() {
@@ -403,7 +403,7 @@ public class SysUser extends BaseEntity implements Serializable {
         this.jobId = jobId;
     }
     @FieldInfo(name = "主岗位名称")
-    @Formula("(SELECT ISNULL(a.JOB_NAME,'') FROM dbo.BASE_T_JOB a WHERE a.JOB_ID=(SELECT b.JOB_ID FROM BASE_T_USERDEPTJOB b WHERE b.MASTER_DEPT=1 AND  b.USER_ID=USER_ID AND b.ISDELETE=0))")
+    @Formula("(SELECT ISNULL(a.JOB_NAME,'') FROM dbo.BASE_T_JOB a WHERE a.JOB_ID=(SELECT top 1 b.JOB_ID FROM BASE_T_USERDEPTJOB b WHERE b.MASTER_DEPT=1 AND  b.USER_ID=USER_ID AND b.ISDELETE=0))")
     private String jobName;
 
     public String getJobName() {

@@ -360,9 +360,11 @@ public class TrainCourseevalresultServiceImpl extends BaseServiceImpl<TrainCours
     }
 
     public Map<String, Object>  getCourseEvalResultDetail(String courseId){
-        String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
-                + ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId," +
-                " teachTypeName,advise FROM TRAIN_V_CLASSCOURSEEVAL where classScheduleId=''{0}''";
+        String sql = "SELECT classId as classId,classCategory as classCategory,className as className,courseDate as courseDate"
+        		+ ",courseTime as courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
+                + ",convert(varchar(10),satisfaction) as satisfaction,ranking as ranking,teacherId as teacherId"
+                + ",teacherName as teacherName,courseId as courseId,courseName as courseName,classScheduleId as classScheduleId"
+                + ",teachTypeName as teachTypeName,advise as advise FROM TRAIN_V_CLASSCOURSEEVAL where classScheduleId=''{0}''";
         sql = MessageFormat.format(sql, courseId);
         QueryResult<TrainClassCourseEval> qr = this.getQueryResultSqlObject(sql, 0, 200,TrainClassCourseEval.class);
         TrainClassCourseEval classschedule = qr.getResultList().get(0);

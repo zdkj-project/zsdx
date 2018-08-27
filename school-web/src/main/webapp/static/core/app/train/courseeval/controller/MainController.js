@@ -35,6 +35,7 @@ Ext.define("core.train.courseeval.controller.MainController", {
                 var mainLayout = grid.up("panel[xtype=courseeval.mainlayout]");
                 var filter = "[{'type':'string','comparison':'=','value':'" + record.get("uuid") + "','field':'classId'}]";
                 var evalUrl = "http://" + window.location.host + "/static/traineval/classeval.jsp?classId=" + record.get("uuid");
+                var courseEvalUrl = "http://" + window.location.host + "/static/traineval/classcourseeval.jsp?classId=" + record.get("uuid")+"&className=" + record.get("className");
                 var classInfo = "【" + record.get("className") + "】已开启班级评价！";
                 var funData = mainLayout.funData;
                 funData = Ext.apply(funData, {
@@ -42,7 +43,8 @@ Ext.define("core.train.courseeval.controller.MainController", {
                     filter: filter,
                     classEvalUrl: evalUrl,
                     classGrid: grid,
-                    classRecord: record
+                    classRecord: record,
+                    classCourseEvalUrl:courseEvalUrl
                 });
                 mainLayout.funData = funData;
                 //加载该评定为该星级的班级信息
@@ -52,7 +54,7 @@ Ext.define("core.train.courseeval.controller.MainController", {
                 proxy.extraParams = {
                     classId: record.get("uuid")
                 };
-                store.load(); // 给form赋值
+                store.loadPage(1);
                 if (record.get("isEval") === 1 ) {
                     refreshgrid.down('panel[ref=evalClassInfoPanel] label[ref=label1]').setText(classInfo);
                     var btnPreview = refreshgrid.down("button[ref=btnPreview]");
@@ -61,6 +63,11 @@ Ext.define("core.train.courseeval.controller.MainController", {
                     var btnOpenClassEval = refreshgrid.down("button[ref=btnOpenClassEval]");
                     btnOpenClassEval.setHidden(false);
                     
+                    var btnPreviewCourse = refreshgrid.down("button[ref=btnPreviewCourse]");
+                    btnPreviewCourse.setHidden(false);
+
+                    var btnOpenClassEvalCourse = refreshgrid.down("button[ref=btnOpenClassEvalCourse]");
+                    btnOpenClassEvalCourse.setHidden(false);
 
                 }else if(record.get("isEval") === 2 ){
                 	refreshgrid.down('panel[ref=evalClassInfoPanel] label[ref=label1]').setText("");
@@ -70,6 +77,12 @@ Ext.define("core.train.courseeval.controller.MainController", {
                     var btnOpenClassEval = refreshgrid.down("button[ref=btnOpenClassEval]");
                     btnOpenClassEval.setHidden(true);
 
+                    var btnPreviewCourse = refreshgrid.down("button[ref=btnPreviewCourse]");
+                    btnPreviewCourse.setHidden(true);
+
+                    var btnOpenClassEvalCourse = refreshgrid.down("button[ref=btnOpenClassEvalCourse]");
+                    btnOpenClassEvalCourse.setHidden(true);
+
                 }else {
                     refreshgrid.down('panel[ref=evalClassInfoPanel] label[ref=label1]').setText("【" + record.get("className") + "】未开启班级评价");
                     var btnPreview = refreshgrid.down("button[ref=btnPreview]");
@@ -77,6 +90,12 @@ Ext.define("core.train.courseeval.controller.MainController", {
 
                      var btnOpenClassEval = refreshgrid.down("button[ref=btnOpenClassEval]");
                     btnOpenClassEval.setHidden(true);
+
+                    var btnPreviewCourse = refreshgrid.down("button[ref=btnPreviewCourse]");
+                    btnPreviewCourse.setHidden(true);
+
+                    var btnOpenClassEvalCourse = refreshgrid.down("button[ref=btnOpenClassEvalCourse]");
+                    btnOpenClassEvalCourse.setHidden(true);
                 }
 
                 return false;
@@ -267,6 +286,77 @@ Ext.define("core.train.courseeval.controller.MainController", {
                     self.Warning("当前班级未开始评价，无法预览地址！")
                 }
             }
+        },
+
+        /**
+         * 预览班级课程评价表
+         */
+        "basegrid[xtype=courseeval.evalgrid] button[ref=btnPreviewCourse]":{
+            click:function(btn){
+                var self = this;
+                var mainLayout = btn.up("panel[xtype=courseeval.mainlayout]");
+                var funData = mainLayout.funData;
+                var classCourseEvalUrl = funData.classCourseEvalUrl;
+                var record = funData.classRecord;
+                if (record.get("isEval") === 1 || record.get("isEval") === 2) {
+                    window.open(classCourseEvalUrl);
+                } else {
+                    self.Warning("当前班级未开始评价，无法预览")
+                }
+            }
+        },
+
+        /**
+         * 预览班级课程评价地址
+         */
+        "basegrid[xtype=courseeval.evalgrid] button[ref=btnOpenClassEvalCourse]":{
+            click:function(btn){
+                var self = this;
+
+                var mainLayout = btn.up("panel[xtype=courseeval.mainlayout]");
+                var funData = mainLayout.funData;
+                var classCourseEvalUrl = funData.classCourseEvalUrl;
+                var record = funData.classRecord;
+            
+                if (record.get("isEval") === 1 || record.get("isEval") === 2) {
+            
+                    var self = this;
+                    var winId = "classEval_win";
+                    var win = Ext.getCmp(winId);
+                    if (!win) {
+                        win = Ext.create('core.base.view.BaseFormWin', {
+                            iconCls: 'x-fa fa-plus-circle',
+                            operType: 'detail',
+                            title:'查看班级课程评价地址',
+                            width: 600,
+                            height: 500,
+                            //controller: controller, //指定视图控制器，从而能够使指定的控制器的事件生效
+                            //funData: funData,
+                            //funCode: funCode,
+                            //insertObj: insertObj,
+                            items: [{
+                                xtype: 'courseeval.detaillayout',
+                                items: [{
+                                    xtype: 'courseeval.evalurlform'
+                                }]
+                            }]
+                        });
+                    }
+                    win.show();
+
+                    var objDetForm = win.down("baseform[xtype=courseeval.evalurlform]");
+
+                    var qrCodeUrl=comm.get("baseUrl") + "/QrCode/image?url="+encodeURI(classCourseEvalUrl);
+                    objDetForm.down("image").setSrc(qrCodeUrl);
+
+                    var formDeptObj = objDetForm.getForm();
+
+                    self.setFormValue(formDeptObj, {evalUrl:classCourseEvalUrl});
+
+                } else {
+                    self.Warning("当前班级未开始评价，无法预览地址！")
+                }
+            }
         }
 
     },
@@ -353,6 +443,10 @@ Ext.define("core.train.courseeval.controller.MainController", {
                                 btnPreview.setHidden(false);
                                 var btnOpenClassEval = refreshgrid.down("button[ref=btnOpenClassEval]");
                                 btnOpenClassEval.setHidden(false);
+                                var btnPreviewCourse = refreshgrid.down("button[ref=btnPreviewCourse]");
+                                btnPreviewCourse.setHidden(false);
+                                var btnOpenClassEvalCourse = refreshgrid.down("button[ref=btnOpenClassEvalCourse]");
+                                btnOpenClassEvalCourse.setHidden(false);
 
                                 record.set("isEval",1);
 
