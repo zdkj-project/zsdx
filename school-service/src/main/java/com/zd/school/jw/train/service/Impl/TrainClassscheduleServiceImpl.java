@@ -534,9 +534,11 @@ public class TrainClassscheduleServiceImpl extends BaseServiceImpl<TrainClasssch
 			String classId) {
 		// 课程名称 课程类型 上课教师 很满意度 满意度 很满意排名
 
-		String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
-				+ ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId,"
-				+ " teachTypeName,advise FROM TRAIN_V_CLASSCOURSEEVAL where classId=''{0}''";
+		String sql = "SELECT classId as classId,classCategory as classCategory,className as className,courseDate as courseDate"
+				+ ",courseTime as courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
+				+ ",convert(varchar(10),satisfaction) as satisfaction,ranking as ranking,teacherId as teacherId"
+				+ ",teacherName as teacherName,courseId as courseId,courseName as courseName,classScheduleId as classScheduleId"
+				+ ",teachTypeName as teachTypeName,advise as advise FROM TRAIN_V_CLASSCOURSEEVAL where classId=''{0}''";
 		sql = MessageFormat.format(sql, classId);
 		if (StringUtils.isNotEmpty(orderSql)) {
 			sql += orderSql;

@@ -14,11 +14,13 @@ Ext.define("core.mjmanage.useraccess.controller.MainController", {
     control: {
     	     "basepanel basegrid[xtype=mjmanage.useraccess.mjuserrightgrid]": {
                 afterrender: function (grid, eOpts) {
+                    /*
                     var btngridselectPersonnel = grid.down("button[ref=selectPersonnel]");
                     var roleKey = comm.get("roleKey");
                     if (roleKey.indexOf("ROLE_ADMIN") == -1 && roleKey.indexOf("SCHOOLADMIN") == -1 && roleKey.indexOf("ZONGWUROLE") == -1) {
                       btngridselectPersonnel.setHidden(true);
                     }
+                    */
                 },
                 beforeitemclick: function(grid) {
                     this.disabledFuncBtn(grid);              
@@ -29,6 +31,7 @@ Ext.define("core.mjmanage.useraccess.controller.MainController", {
 
           "basepanel basegrid[xtype=mjmanage.useraccess.maingrid]": {
                 afterrender: function (grid, eOpts) {
+                    /*
                     var btngridDeletePer = grid.down("button[ref=gridDeletePer]");
                     var btngridDeleteAll = grid.down("button[ref=gridDeleteAll]");
                     var roleKey = comm.get("roleKey");
@@ -36,6 +39,7 @@ Ext.define("core.mjmanage.useraccess.controller.MainController", {
                       btngridDeletePer.setHidden(true);
                       btngridDeleteAll.setHidden(true);
                     }
+                    */
                 },
                 beforeitemclick: function(grid) {
                     this.disabledMainFuncBtn(grid);

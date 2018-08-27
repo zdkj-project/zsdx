@@ -214,4 +214,17 @@ public class TrainClassCourseEval {
     public void setAdvise(String advise) {
         this.advise = advise;
     }
+    
+    @FieldInfo(name = "是否结束")	//结束的课程才能评价
+    private Integer isOver;
+
+	public Integer getIsOver() {
+		return isOver;
+	}
+
+	public void setIsOver(Integer isOver) {
+		this.isOver = isOver;
+	}
+
+    
 }

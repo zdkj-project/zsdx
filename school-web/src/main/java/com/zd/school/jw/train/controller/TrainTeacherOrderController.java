@@ -266,12 +266,12 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 			} else {
 				calendar2.set(Calendar.DAY_OF_MONTH, calendar2.get(Calendar.DAY_OF_MONTH) - 1);
 				if (calendar2.compareTo(calendar1) != 1) {
-					calendar2.set(Calendar.HOUR_OF_DAY, 17);
+					calendar2.set(Calendar.HOUR_OF_DAY, 19);
 					calendar2.set(Calendar.MINUTE, 0);
 					calendar2.set(Calendar.SECOND, 0);
 					calendar2.set(Calendar.MILLISECOND, 0);
 					if (calendar2.compareTo(calendar1) != 1) {
-						writeJSON(response, jsonBuilder.returnFailureJson("\"超过17点钟，就不可再预定明天的就餐！\""));
+						writeJSON(response, jsonBuilder.returnFailureJson("\"超过19点钟，就不可再预定明天的就餐！\""));
 						return;
 					}
 				}
@@ -331,12 +331,12 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 			} else {
 				calendar2.set(Calendar.DAY_OF_MONTH, calendar2.get(Calendar.DAY_OF_MONTH) - 1);
 				if (calendar2.compareTo(calendar1) != 1) {
-					calendar2.set(Calendar.HOUR_OF_DAY, 17);
+					calendar2.set(Calendar.HOUR_OF_DAY, 19);
 					calendar2.set(Calendar.MINUTE, 0);
 					calendar2.set(Calendar.SECOND, 0);
 					calendar2.set(Calendar.MILLISECOND, 0);
 					if (calendar2.compareTo(calendar1) != 1) {
-						writeJSON(response, jsonBuilder.returnFailureJson("\"超过17点钟，就不可再修改明天的就餐！\""));
+						writeJSON(response, jsonBuilder.returnFailureJson("\"超过19点钟，就不可再修改明天的就餐！\""));
 						return;
 					}
 				}
@@ -377,12 +377,12 @@ public class TrainTeacherOrderController extends FrameWorkController<TrainTeache
 			} else {
 				calendar2.set(Calendar.DAY_OF_MONTH, calendar2.get(Calendar.DAY_OF_MONTH) - 1);
 				if (calendar2.compareTo(calendar1) != 1) {
-					calendar2.set(Calendar.HOUR_OF_DAY, 17);
+					calendar2.set(Calendar.HOUR_OF_DAY, 19);
 					calendar2.set(Calendar.MINUTE, 0);
 					calendar2.set(Calendar.SECOND, 0);
 					calendar2.set(Calendar.MILLISECOND, 0);
 					if (calendar2.compareTo(calendar1) != 1) {
-						writeJSON(response, jsonBuilder.returnFailureJson("\"超过17点钟，就不可再取消明天的就餐信息！\""));
+						writeJSON(response, jsonBuilder.returnFailureJson("\"超过19点钟，就不可再取消明天的就餐信息！\""));
 						return;
 					}
 				}

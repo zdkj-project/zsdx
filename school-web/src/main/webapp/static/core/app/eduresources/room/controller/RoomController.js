@@ -34,7 +34,7 @@ Ext.define("core.eduresources.room.controller.RoomController", {
                         filter: filter,
                     });
                     // 加载对应的房间信息
-                    var sort = "[{property: 'orderIndex', direction: 'ASC' }]";
+                    var sort = "[{property: 'roomName', direction: 'ASC' },{property: 'orderIndex', direction: 'ASC' }]";
                     var roomGrid = mainLayout.down("panel[xtype=room.RoomGrid]");
                     var store = roomGrid.getStore();
                     var proxy = store.getProxy();

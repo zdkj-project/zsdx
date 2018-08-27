@@ -592,6 +592,13 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 			sql = MessageFormat.format(sql, classId);
 			List<TrainClassEval> list = this.getQuerySqlObject(sql, TrainClassEval.class);
 			List<TrainIndicatorStand> stand = standService.getClassEvalStand();
+			
+			if (Base64Util.isBase64(list.get(0).getMobile())) {
+				list.get(0).setMobile(Base64Util.decodeData(list.get(0).getMobile()));
+			}		
+			
+			
+			
 			entity.setEvalClass(list.get(0));
 			entity.setEvalStand(stand);
 			entity.setMessage("获取班级评价标准成功");

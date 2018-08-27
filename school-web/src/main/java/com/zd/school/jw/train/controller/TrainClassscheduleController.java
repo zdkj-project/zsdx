@@ -406,9 +406,11 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 		Integer start = super.start(request);
 		Integer limit = super.limit(request);
 
-		String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
-				+ ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId,evalState "
-				+ ",teachTypeName FROM TRAIN_V_CLASSCOURSEEVAL ";
+		String sql = "SELECT classId as classId,classCategory as classCategory,className as className"
+				+ ",courseDate as courseDate,courseTime as courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
+				+ ",convert(varchar(10),satisfaction) as satisfaction,ranking as ranking,teacherId as teacherId,teacherName as teacherName"
+				+ ",courseId as courseId,courseName as courseName,classScheduleId as classScheduleId,evalState as evalState "
+				+ ",teachTypeName as teachTypeName FROM TRAIN_V_CLASSCOURSEEVAL ";
 		if (StringUtils.isNotEmpty(propName)) {
 			String[] name = propName.split(",");
 			String[] value = propValue.split(",");
@@ -451,9 +453,12 @@ public class TrainClassscheduleController extends FrameWorkController<TrainClass
 		Integer limit = super.limit(request);
 		String orderSql = super.orderSql(request);
 
-		String sql = "SELECT classId,classCategory,className,courseDate,courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
-				+ ",convert(varchar(10),satisfaction) as satisfaction,ranking,teacherId,teacherName,courseId,courseName,classScheduleId,evalState "
-				+ ",teachTypeName FROM TRAIN_V_CLASSCOURSEEVAL where  classId=''{0}'' ";
+		String sql = "SELECT classId as classId,classCategory as classCategory,className as className,courseDate as courseDate"
+				+ ",courseTime as courseTime,convert(varchar(10),verySatisfaction) as verySatisfaction"
+				+ ",convert(varchar(10),satisfaction) as satisfaction,ranking as ranking,teacherId as teacherId"
+				+ ",teacherName as teacherName,courseId as courseId,courseName as courseName"
+				+ ",classScheduleId as classScheduleId,evalState as evalState,teachTypeName as teachTypeName"
+				+ "   FROM TRAIN_V_CLASSCOURSEEVAL where  classId=''{0}'' ";
 		sql = MessageFormat.format(sql, classId);
 		if (StringUtils.isNotEmpty(orderSql)) {
 			sql += orderSql;

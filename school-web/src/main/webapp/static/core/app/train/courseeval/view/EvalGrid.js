@@ -264,6 +264,26 @@ Ext.define('core.train.courseeval.view.EvalGrid', {
             style:{
                 fontSize:'14px'
             }
+        },{
+            xtype: 'button',
+            ref: 'btnPreviewCourse',
+            text: '预览课程评价',
+            padding: '5',
+            margin:'0 5',
+            hidden:true,
+            style:{
+                fontSize:'14px'
+            }
+        },{
+            xtype: 'button',
+            ref: 'btnOpenClassEvalCourse',
+            text: '课程评价地址',
+            padding: '5',
+            margin:'0 5',
+            hidden:true,
+            style:{
+                fontSize:'14px'
+            }
         }]
         //html:'合计：'
     }]

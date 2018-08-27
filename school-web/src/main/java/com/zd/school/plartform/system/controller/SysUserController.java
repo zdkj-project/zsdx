@@ -692,12 +692,17 @@ public class SysUserController extends FrameWorkController<SysUser> implements C
 					+ " on A.CardID=B.CardID and A.EmployeeID=B.EmployeeID "
 					+ " where A.EmployeeID=B.EmployeeID or A.EmployeeID=0"
 					+ " order by A.CardID asc";
-					
+							
+			List<CardUserInfoToUP> upCardUserInfos = thisService.getQuerySqlObject(sql, CardUserInfoToUP.class);				
 			
-			List<CardUserInfoToUP> upCardUserInfos = thisService.getQuerySqlObject(sql, CardUserInfoToUP.class);
-
 			// 3.恢复数据源
 			DBContextHolder.clearDBType();
+			
+			
+			//exec [SyncUpCard_cardUserInfo] 10	//这个脚本没有根据这个业务代码去编写，可能不正确，待修改
+			//exec [SyncUpCard_PtCard] 10
+			//同步到Ptcard表数据，只查询10分钟内修改过的数据进行同步
+			thisService.doExecuteSql("EXEC [dbo].[SyncUpCard_PtCard] '10'");
 
 			int row = 0;
 			if (upCardUserInfos.size() > 0) {
