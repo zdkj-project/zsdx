@@ -93,6 +93,7 @@
 
 	<script src="flexible.js" type="text/javascript" charset="utf-8"></script>
 	<script type="text/javascript" src="jquery-3.2.1.js"></script>
+	<script src="layer/layer.js"></script>
 	<script type="text/javascript">
 		$(function() {
 
@@ -204,20 +205,32 @@
 										console.log(data);
 										if(data.success==true){
 											storage.setItem(uuid,1);
-											alert("评价成功");
+											//alert("评价成功");
+											layer.open({
+						                        title: [
+						                          '评价成功',
+						                          'background-color: #FF4351; color:#fff;'
+						                        ],
+						                        content: '<span style="color:#c61414">感谢您参与此门课程的评价！</span>',
+						                        shadeClose: false,
+						                        btn: ['确定']
+						                    });
 										}else{
-											alert("评价失败！");
+											//alert("评价失败！");
+											layer.msg('评价失败！');
 											storage.setItem(uuid,0);
 										}
 									},
 									error:function(){
-										alert("请求失败，请稍后重试！");		
+										//alert("请求失败，请稍后重试！");	
+										layer.msg('请求失败，请稍后重试！');	
 										storage.setItem(uuid,0);
 									}
 								});
 
 							} else {
-								alert("不能重复评价");
+								//alert("不能重复评价");
+								layer.msg('您已评价，不需重复评价！');
 							}
 
 							//重新绑定事件，恢复点击功能
@@ -232,11 +245,11 @@
 							submitFun();							
 						});
 			        }else{
-			        	alert("请求数据失败，请稍后重试！");
+			        	layer.msg("请求数据失败，请稍后重试！");
 			        }	       
 		        },
 		        error:function(){
-		        	alert("请求数据失败，请稍后重试！");
+		        	layer.msg("请求数据失败，请稍后重试！");
 		        }
         	});
 
