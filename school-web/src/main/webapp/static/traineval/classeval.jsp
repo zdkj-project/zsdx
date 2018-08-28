@@ -203,6 +203,7 @@
 	</body>
 
 	<script type="text/javascript" src="jquery-3.2.1.js"></script>
+	<script src="layer/layer.js"></script>
 	<script type="text/javascript">
 		$(function() {
 
@@ -323,9 +324,18 @@
 										//console.log(data);
 										if(data.success==true){
 											storage.setItem(uuid,1);
-											alert("评价成功");
+											//alert("评价成功");
+											layer.open({
+						                        title: [
+						                          '评价成功',
+						                          'background-color: #FF4351; color:#fff;'
+						                        ],
+						                        content: '<span style="color:#c61414">感谢您参与此班级的评价！</span>',
+						                        shadeClose: false,
+						                        btn: ['确定']
+						                    });
 										}else{
-											alert("评价失败！");
+											layer.msg('评价失败！');
 											storage.setItem(uuid,0);
 										}
 
@@ -337,7 +347,7 @@
 
 									},
 									error:function(){
-										alert("请求失败，请稍后重试！");		
+										layer.msg("请求失败，请稍后重试！");		
 										storage.setItem(uuid,0);
 
 										//重新绑定事件，恢复点击功能
@@ -348,8 +358,9 @@
 									}
 								});
 
-							} else {
-								alert("不能重复评价");
+							} else {							
+								//alert("不能重复评价");
+								layer.msg('您已评价，不需重复评价！');
 								//重新绑定事件，恢复点击功能
 								$("#submit").click(function() {		
 						 			$("#submit").unbind();	//解除事件，防止连续点击	 				
@@ -365,11 +376,11 @@
 							return false;				
 						});
 			        }else{
-			        	alert("请求数据失败，请稍后重试！");
+			        	layer.msg("请求数据失败，请稍后重试！");
 			        }	       
 		        },
 		        error:function(){
-		        	alert("请求数据失败，请稍后重试！");
+		        	layer.msg("请求数据失败，请稍后重试！");
 		        }
         	});
 
