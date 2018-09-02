@@ -105,10 +105,12 @@ public class TrainTraineeController extends FrameWorkController<TrainTrainee> im
                 writeJSON(response, jsonBuilder.returnFailureJson("\"学员的电话号码不能为空！\""));
                 return;
             }
-			if (thisService.IsFieldExist("sfzjh", entity.getSfzjh(), "-1", hql1)) {
+
+            //党校的特殊性 身份证可以为空
+		/*	if (thisService.IsFieldExist("sfzjh", entity.getSfzjh(), "-1", hql1)) {
 				writeJSON(response, jsonBuilder.returnFailureJson("\"学员的身份证件号不能重复！\""));
 				return;
-			}
+			}*/
 
 			//前端处理
             //entity.setMobilePhone(Base64Util.encodeData(entity.getMobilePhone()));

@@ -62,9 +62,6 @@ Ext.define("core.train.trainee.view.DetailForm", {
             maxLengthText: "最多36个字符,汉字占2个字符",
             submitValue :false  
         }, {
-            beforeLabelTextTpl: comm.get("required"),
-            allowBlank: false,
-            blankText: "身份证件号不能为空",
             fieldLabel: "身份证件号",
             columnWidth: 0.5,
             name: "sfzjh",

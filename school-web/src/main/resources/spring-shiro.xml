@@ -119,6 +119,7 @@
         </property>
         <property name="filterChainDefinitions">
 			<value>
+				/hotel/** = anon
 				/SysAppinfo/** = anon
 				/static/** = anon
 				/login.jsp = anon

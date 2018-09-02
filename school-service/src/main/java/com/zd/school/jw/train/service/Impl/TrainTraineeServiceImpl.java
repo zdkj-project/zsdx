@@ -152,13 +152,17 @@ public class TrainTraineeServiceImpl extends BaseServiceImpl<TrainTrainee> imple
 		// <editor-fold desc="循环处理导入的学员名单">
 		for (int i = 0; i < listTrainee.size(); i++) {
 			List<Object> lo = listTrainee.get(i);
-
-			// 查询学员库是否存在此学员，如果存在，则直接修改，不添加
-			trainee = this.getByProerties(new String[] { "sfzjh", "isDelete" }, new Object[] { lo.get(3), 0 });
+			if (!"".equals(lo.get(3))) {
+				// 查询学员库是否存在此学员，如果存在，则直接修改，不添加
+				trainee = this.getByProerties(new String[]{"sfzjh", "isDelete"}, new Object[]{lo.get(3), 0});
+			} else {
+				trainee = this.getByProerties(new String[]{"xm", "mobilePhone", "isDelete"}, new Object[]{lo.get(0), lo.get(2), 0});
+			}
 
 			if (trainee == null) {
 				trainee = new TrainTrainee();
-				trainee.setCreateUser(currentUser.getXm()); // 设置修改人的中文名
+				trainee.setCreateUser(currentUser.getXm());
+				// 设置修改人的中文名
 			}
 			trainee.setXm(String.valueOf(lo.get(0)));
 			trainee.setXbm(mapDicItem.get(lo.get(1) + "XBM"));
