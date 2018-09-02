@@ -38,7 +38,7 @@ public class CreateOrderPerson {
 		this.studentno = studentno;
 	}
 
-	public CreateOrderPerson() {
+	public CreateOrderPerson(String 张三2, String s, String 男, String s1, String s2) {
 
 	}
 
