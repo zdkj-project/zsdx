@@ -1180,8 +1180,11 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 			}
 
 			try {
+				SimpleDateFormat fmtDateTime = new SimpleDateFormat("yyyy-M-d HH:mm");
+		        String currentDate = fmtDateTime.format(new Date());
+		            
 				DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
-				sql = "UPDATE tc_card SET CardStatusIDXF=2,CardStatusIDJS=2 WHERE CARDID =" + cardId;
+				sql = "UPDATE tc_card SET CardStatusIDXF=2,CardStatusIDJS=2,StatusChangeTimeXF='"+currentDate+"' WHERE CARDID =" + cardId;
 				thisService.doExecuteSql(sql);
 
 			} catch (Exception e) {

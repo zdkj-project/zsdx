@@ -515,7 +515,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 
             List<CardUserInfoToUP> upCardUserInfos = this.getQuerySqlObject(sql, CardUserInfoToUP.class);
 
-            SimpleDateFormat fmtDateTime = new SimpleDateFormat("yyyy-M-d h:mm");
+            SimpleDateFormat fmtDateTime = new SimpleDateFormat("yyyy-M-d HH:mm");
             String currentDate = fmtDateTime.format(new Date());
 
             CardUserInfoToUP userInfoToUP = null;
@@ -532,7 +532,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 
                 if (userInfoToUP.getUseState() == 1) {
                     // 解绑：将正常卡状态为4
-                    sqlStr = "UPDATE tc_card SET EMPLOYEEID=0,CardStatusIDXF=4,CardStatusIDJS=4  WHERE CARDID="
+                    sqlStr = "UPDATE tc_card SET EMPLOYEEID=0,CardStatusIDXF=4,StatusChangeTimeXF='"+currentDate+"',CardStatusIDJS=4  WHERE CARDID="
                             + userInfoToUP.getUpCardId() + ";"
                             + " UPDATE tc_employee SET EMPLOYEESTRID='',EmployeeStatusID='26' WHERE userId='"
                             + userInfoToUP.getUserId() + "' ;" + " insert into tc_ChangeCard_log values('" + currentDate
@@ -618,7 +618,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
         // TODO Auto-generated method stub
         try {
 
-            SimpleDateFormat fmtDateTime = new SimpleDateFormat("yyyy-M-d h:mm");
+            SimpleDateFormat fmtDateTime = new SimpleDateFormat("yyyy-M-d HH:mm");
             String currentDate = fmtDateTime.format(new Date());
             StringBuffer sqlSb = new StringBuffer();
             String sqlStr = "";
@@ -636,7 +636,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                                 + map.get("USER_ID") + "'");
                 // 绑定：设置卡状态为1
                 sqlStr = "UPDATE tc_card SET EMPLOYEEID='" + empId
-                        + "',CardStatusIDXF=1,CardStatusIDJS=1  WHERE CARDID=" + map.get("UP_CARD_ID") + ";"
+                        + "',CardStatusIDXF=1,CardStatusIDJS=1,StatusChangeTimeXF='"+currentDate+"'  WHERE CARDID=" + map.get("UP_CARD_ID") + ";"
                         + "	UPDATE tc_employee SET EMPLOYEESTRID='" + map.get("CARD_PRINT_ID")
                         + "',EmployeeStatusID='24',CARDID=" + map.get("UP_CARD_ID") + " WHERE EMPLOYEEID='" + empId
                         + "';" + " insert into tc_ChangeCard_log values('" + currentDate + "','" + xm + "',"
