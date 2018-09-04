@@ -34,6 +34,8 @@ school-dao/target/
 school-web/target/
 school-web/src/main/webapp/static/core/build
 school-web/src/main/resources/sqlserver.properties
+school-web/src/main/resources/opu.properties
+school-web/src/main/resources/log4j.properties
 .settings/
 school-web/src/main/webapp/static/core/bootstrap.json
 school-web/src/main/webapp/static/core/bootstrap.jsonp

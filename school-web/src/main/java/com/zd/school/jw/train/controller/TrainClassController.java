@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.zd.school.opu.JsonRootBean;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -436,17 +437,16 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				}	
 			}
 			// 5. 创建酒店预订单
-			CreateOrderResponse orderResult = thisService.createOrder(trainClass);
+			JsonRootBean orderResult = thisService.createOrder(trainClass);
 			
 			// 5.切换数据源
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);
 
-			// 6.执行同步代码
 			result = thisService.syncTraineeClassInfoToAllUP(departmentId, trainClass, userInfos);
 
 			if (result != -1 && orderResult.getRspCode() == 0) {
 				writeJSON(response,
-						jsonBuilder.returnSuccessJson("\"提交班级信息成功！酒店预订单号是:" + orderResult.getR_ydh() + "\""));
+						jsonBuilder.returnSuccessJson("\"提交班级信息成功！酒店预订单号是:" + orderResult.getOrderid() + "\""));
 			} else {
 				// 若执行到这里，表明没有同步成功；所以，要把启用状态再设置为0；
 				// thisService.updateByProperties("uuid", classId,"isuse",0);

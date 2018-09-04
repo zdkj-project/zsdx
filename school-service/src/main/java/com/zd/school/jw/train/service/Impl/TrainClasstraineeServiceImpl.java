@@ -327,10 +327,10 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                 doResult = "导入成功"; // 默认是成功
                 // isError = false;
                 TrainClasstrainee trainee;
-                if (!"".equals(lo.get(3))) {
+                if (!"".equals(lo.get(12))) {
                     // 查询学员库是否存在此学生（2018-1-22改）
-                    trainTrainee = trainTraineeServie.getByProerties(new String[]{"sfzjh", "isDelete"}, new Object[]{lo.get(3), 0});
-                    trainee = this.getByProerties(new String[]{"sfzjh", "classId"}, new Object[]{lo.get(3), classId});
+                    trainTrainee = trainTraineeServie.getByProerties(new String[]{"sfzjh", "isDelete"}, new Object[]{lo.get(12), 0});
+                    trainee = this.getByProerties(new String[]{"sfzjh", "classId"}, new Object[]{lo.get(12), classId});
                 } else {
                     trainTrainee = trainTraineeServie.getByProerties(new String[]{"xm", "mobilePhone", "isDelete"}, new Object[]{lo.get(0), lo.get(2), 0});
                     trainee = this.getByProerties(new String[]{"xm", "mobilePhone", "classId"}, new Object[]{lo.get(0), lo.get(2), classId});
@@ -349,31 +349,36 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                 //trainee.setMobilePhone(String.valueOf(lo.get(2)));
                 //trainee.setSfzjh(String.valueOf(lo.get(3)));
                 trainee.setMobilePhone(Base64Util.encodeData(String.valueOf(lo.get(2))));
-                trainee.setSfzjh(Base64Util.encodeData(String.valueOf(lo.get(3))));
+                trainee.setSfzjh(Base64Util.encodeData(String.valueOf(lo.get(12))));
 
-                trainee.setWorkUnit(String.valueOf(lo.get(4)));
-                trainee.setPosition(String.valueOf(lo.get(5)));
-                trainee.setHeadshipLevel(mapHeadshipLevel.get(lo.get(6)));
-                trainee.setClassGroup(mapClassGroup.get(lo.get(8)));
-                trainee.setTraineeNumber(String.valueOf(lo.get(9)));    //学号
-                trainee.setIsDelete(isDelete); // 设置isdelte值
-
-                if (needSync.equals("1")) { // 同步到学员库
+                trainee.setWorkUnit(String.valueOf(lo.get(3)));
+                trainee.setPosition(String.valueOf(lo.get(4)));
+                trainee.setHeadshipLevel(mapHeadshipLevel.get(lo.get(5)));
+                trainee.setClassGroup(mapClassGroup.get(lo.get(7)));
+                //学号
+                trainee.setTraineeNumber(String.valueOf(lo.get(8)));
+                trainee.setIfaccommodation(String.valueOf(lo.get(9)));
+                trainee.setCheckinDate((String) lo.get(10));
+                trainee.setCheckoutDate((String) lo.get(11));
+                // 设置isdelte值
+                trainee.setIsDelete(isDelete);
+                // 同步到学员库
+                if (needSync.equals("1")) {
                     if (trainTrainee == null) {
                         trainTrainee = new TrainTrainee();
 
                         // 当学员库没有此学员的时候，暂时加入这些数据（已存在的学员暂时不处理）
-                        trainTrainee.setMzm(mapMzm.get(lo.get(10)));
-                        trainTrainee.setZzmmm(mapZzmm.get(lo.get(11)));
-                        trainTrainee.setXlm(mapXlm.get(lo.get(12)));
-                        trainTrainee.setXwm(mapXwm.get(lo.get(13)));
+                        trainTrainee.setMzm(mapMzm.get(lo.get(13)));
+                        trainTrainee.setZzmmm(mapZzmm.get(lo.get(14)));
+                        trainTrainee.setXlm(mapXlm.get(lo.get(15)));
+                        trainTrainee.setXwm(mapXwm.get(lo.get(16)));
 
-                        trainTrainee.setZym(String.valueOf(lo.get(14)));
-                        trainTrainee.setGraduateSchool(String.valueOf(lo.get(15)));
-                        trainTrainee.setDzxx(String.valueOf(lo.get(16)));
-                        trainTrainee.setAddress(String.valueOf(lo.get(17)));
-                        trainTrainee.setPartySchoolNumb(String.valueOf(lo.get(18)));
-                        trainTrainee.setNationalSchoolNumb(String.valueOf(lo.get(19)));
+                        trainTrainee.setZym(String.valueOf(lo.get(17)));
+                        trainTrainee.setGraduateSchool(String.valueOf(lo.get(18)));
+                        trainTrainee.setDzxx(String.valueOf(lo.get(19)));
+                        trainTrainee.setAddress(String.valueOf(lo.get(20)));
+                        trainTrainee.setPartySchoolNumb(String.valueOf(lo.get(21)));
+                        trainTrainee.setNationalSchoolNumb(String.valueOf(lo.get(22)));
 
                         // trainTrainee.setZp(String.valueOf(lo.get(19)));
                         // 照片使用身份证号码.jpg
@@ -381,7 +386,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 
                     }
 
-                    trainTrainee.setTraineeCategory(mapTraineeCategory.get(lo.get(7)));
+                    trainTrainee.setTraineeCategory(mapTraineeCategory.get(lo.get(6)));
                     trainTrainee.setXm(trainee.getXm());
                     trainTrainee.setXbm(trainee.getXbm());
                     trainTrainee.setMobilePhone(trainee.getMobilePhone());
@@ -532,7 +537,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 
                 if (userInfoToUP.getUseState() == 1) {
                     // 解绑：将正常卡状态为4
-                    sqlStr = "UPDATE tc_card SET EMPLOYEEID=0,CardStatusIDXF=4,StatusChangeTimeXF='"+currentDate+"',CardStatusIDJS=4  WHERE CARDID="
+                    sqlStr = "UPDATE tc_card SET EMPLOYEEID=0,CardStatusIDXF=4,StatusChangeTimeXF='" + currentDate + "',CardStatusIDJS=4  WHERE CARDID="
                             + userInfoToUP.getUpCardId() + ";"
                             + " UPDATE tc_employee SET EMPLOYEESTRID='',EmployeeStatusID='26' WHERE userId='"
                             + userInfoToUP.getUserId() + "' ;" + " insert into tc_ChangeCard_log values('" + currentDate
@@ -636,7 +641,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                                 + map.get("USER_ID") + "'");
                 // 绑定：设置卡状态为1
                 sqlStr = "UPDATE tc_card SET EMPLOYEEID='" + empId
-                        + "',CardStatusIDXF=1,CardStatusIDJS=1,StatusChangeTimeXF='"+currentDate+"'  WHERE CARDID=" + map.get("UP_CARD_ID") + ";"
+                        + "',CardStatusIDXF=1,CardStatusIDJS=1,StatusChangeTimeXF='" + currentDate + "'  WHERE CARDID=" + map.get("UP_CARD_ID") + ";"
                         + "	UPDATE tc_employee SET EMPLOYEESTRID='" + map.get("CARD_PRINT_ID")
                         + "',EmployeeStatusID='24',CARDID=" + map.get("UP_CARD_ID") + " WHERE EMPLOYEEID='" + empId
                         + "';" + " insert into tc_ChangeCard_log values('" + currentDate + "','" + xm + "',"

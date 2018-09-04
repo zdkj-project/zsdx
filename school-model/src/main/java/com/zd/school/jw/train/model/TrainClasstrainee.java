@@ -604,6 +604,8 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         this.workUnit=workUnit;
         this.setIsDelete(isDelete);
     }
+
+
     public TrainClasstrainee(String uuid, String traineeNumber,String xm, String xbm, Integer siesta, Integer sleep, String roomId, String roomName,String workUnit,Integer isDelete) {
         super(uuid);       
         this.xm = xm;
@@ -616,6 +618,21 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         this.workUnit=workUnit;
         this.setIsDelete(isDelete);
     }
-    
+
+    public TrainClasstrainee(String uuid, String traineeNumber,String xm, String xbm, Integer siesta, Integer sleep, String roomId, String roomName,String workUnit,Integer isDelete,String ifaccommodation,String checkinDate,String checkoutDate) {
+        super(uuid);
+        this.xm = xm;
+        this.traineeNumber=traineeNumber;
+        this.xbm = xbm;
+        this.siesta = siesta;
+        this.sleep = sleep;
+        this.roomId = roomId;
+        this.roomName = roomName;
+        this.workUnit=workUnit;
+        this.setIsDelete(isDelete);
+        this.setCheckoutDate(checkoutDate);
+        this.setCheckinDate(checkinDate);
+        this.setIfaccommodation(ifaccommodation);
+    }
 
 }

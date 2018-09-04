@@ -2,69 +2,35 @@ package com.zd.school.opu;
 
 public class CreateOrderPerson {
 
+	// 身份证号码
+	private String idCode;
 	// 姓名
 	private String name;
-	// 身份证号码
-	private String usercardNo;
 	// 性别 男 女
-	private String sex;
-	// 入住日期 2018-03-15
-	private String checkinDate;
-	// 离店日期 2018-04-08
-	private String checkoutDate;
-	// 是否住宿 0住宿 1不住宿
-	private int isCheckin;	
-	
+	private String phone;
+	//主随客，0：主客    1：随客
+	private int isOther;
+	//是否住宿 0住宿 1不住宿
+	private int isCheckin;
+	// 学号
 	private String studentno;
-	
-	// 房类
-	private String roomtype;	
 
-	
-	
-	public String getRoomtype() {
-		return roomtype;
-	}
-
-	public void setRoomtype(String roomtype) {
-		this.roomtype = roomtype;
-	}
-
-	public String getStudentno() {
-		return studentno;
-	}
-
-	public void setStudentno(String studentno) {
-		this.studentno = studentno;
-	}
-
-	public CreateOrderPerson(String 张三2, String s, String 男, String s1, String s2) {
-
-	}
-
-	public CreateOrderPerson(String name, String usercardNo, String sex, String checkinDate, String checkoutDate,
-			int isCheckin,String studentno) {
-		super();
+	public CreateOrderPerson(){}
+	public CreateOrderPerson(String idCode, String name, String phone, int isOther, int isCheckin, String studentno) {
+		this.idCode = idCode;
 		this.name = name;
-		this.usercardNo = usercardNo;
-		this.sex = sex;
-		this.checkinDate = checkinDate;
-		this.checkoutDate = checkoutDate;
+		this.phone = phone;
+		this.isOther = isOther;
 		this.isCheckin = isCheckin;
 		this.studentno = studentno;
-
 	}
-	public CreateOrderPerson(String name, String usercardNo, String sex, String checkinDate, String checkoutDate,
-			int isCheckin,String studentno,String roomtype) {
-		super();
-		this.name = name;
-		this.usercardNo = usercardNo;
-		this.sex = sex;
-		this.checkinDate = checkinDate;
-		this.checkoutDate = checkoutDate;
-		this.isCheckin = isCheckin;
-		this.studentno = studentno;
-		this.roomtype=roomtype;
+
+	public String getIdCode() {
+		return idCode;
+	}
+
+	public void setIdCode(String idCode) {
+		this.idCode = idCode;
 	}
 
 	public String getName() {
@@ -75,36 +41,20 @@ public class CreateOrderPerson {
 		this.name = name;
 	}
 
-	public String getUsercardNo() {
-		return usercardNo;
+	public String getPhone() {
+		return phone;
 	}
 
-	public void setUsercardNo(String usercardNo) {
-		this.usercardNo = usercardNo;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
-	public String getSex() {
-		return sex;
+	public int getIsOther() {
+		return isOther;
 	}
 
-	public void setSex(String sex) {
-		this.sex = sex;
-	}
-
-	public String getCheckinDate() {
-		return checkinDate;
-	}
-
-	public void setCheckinDate(String checkinDate) {
-		this.checkinDate = checkinDate;
-	}
-
-	public String getCheckoutDate() {
-		return checkoutDate;
-	}
-
-	public void setCheckoutDate(String checkoutDate) {
-		this.checkoutDate = checkoutDate;
+	public void setIsOther(int isOther) {
+		this.isOther = isOther;
 	}
 
 	public int getIsCheckin() {
@@ -115,4 +65,11 @@ public class CreateOrderPerson {
 		this.isCheckin = isCheckin;
 	}
 
+	public String getStudentno() {
+		return studentno;
+	}
+
+	public void setStudentno(String studentno) {
+		this.studentno = studentno;
+	}
 }

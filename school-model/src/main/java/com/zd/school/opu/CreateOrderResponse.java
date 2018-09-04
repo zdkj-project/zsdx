@@ -4,6 +4,8 @@ import com.zd.core.util.JsonBuilder;
 
 public class CreateOrderResponse {
 
+	private int OrderID;
+
 	// 0表示成功，1表示失败
 	private int rspCode;
 	// 调用信息说明
@@ -150,4 +152,11 @@ public class CreateOrderResponse {
 		this.r_msg = r_msg;
 	}
 
+	public int getOrderID() {
+		return OrderID;
+	}
+
+	public void setOrderID(int orderID) {
+		OrderID = orderID;
+	}
 }

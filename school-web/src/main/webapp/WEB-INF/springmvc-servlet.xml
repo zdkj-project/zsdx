@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:context="http://www.springframework.org/schema/context"
@@ -46,6 +46,7 @@
 	<mvc:annotation-driven />
 	<!-- 配置静态文件访问 -->
 	<mvc:resources location="/static/" mapping="/static/**" />
+	<mvc:resources location="/qeWebapi/" mapping="/qeWebapi/**" />
 
 	<mvc:resources mapping="/ueditor/**" location="/ueditor/" />
 

@@ -227,7 +227,6 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		try {
 
 			SysUser currentUser = getCurrentSysUser();
-
 			String classId = request.getParameter("classId");
 			String needSync = request.getParameter("needSync");
 
@@ -364,7 +363,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 
 			// g.isDelete=0 or g.isDelete=1 and
 			// new: 不查询状态为1的
-			String hql = "select new TrainClasstrainee(g.uuid,g.traineeNumber,g.xm,g.xbm,g.siesta,g.sleep,g.roomId,g.roomName,g.workUnit,g.isDelete) from TrainClasstrainee g "
+			String hql = "select new TrainClasstrainee(g.uuid,g.traineeNumber,g.xm,g.xbm,g.siesta,g.sleep,g.roomId,g.roomName,g.workUnit,g.isDelete,g.ifaccommodation,g.checkinDate,g.checkoutDate) from TrainClasstrainee g "
 					+ " where g.classId='" + classId + "'";
 			if (isDelete != null) {
 				hql += " and g.isDelete!=1 ";

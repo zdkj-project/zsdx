@@ -4,18 +4,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
 
+import com.zd.school.opu.*;
 import org.apache.log4j.Logger;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Service;
 
 import com.zd.core.util.WebServiceUtil;
-import com.zd.school.opu.CancelOrderResponse;
-import com.zd.school.opu.CreateOrderResponse;
-import com.zd.school.opu.GetGuestInfoResponse;
-import com.zd.school.opu.MemberInfoResponse;
-import com.zd.school.opu.OpuResult;
-import com.zd.school.opu.OpuService;
-import com.zd.school.opu.QueryOrdersResponse;
 
 @Service
 public class OpuServiceImpl implements OpuService {
@@ -340,11 +334,35 @@ public class OpuServiceImpl implements OpuService {
 		}
 	}
 
+    /**
+     * @return com.zd.school.opu.CreateOrderResponse
+     * @description
+     * @author yz
+     * @date 2018/9/3 22:32
+     * @method createOrder
+     */
+    @Override
+    public JsonRootBean new_CreateOrder(String json) {
+        String method = Thread.currentThread().getStackTrace()[1].getMethodName();
+        method = method.substring(0, 1).toUpperCase() + method.substring(1);
+        WebServiceUtil ws = new WebServiceUtil(prop, method, method + "Response");
+        try {
+            HashMap<String, String> inMsg = new HashMap<String, String>();
+            inMsg.put("json", json);
+            String jsonStr = ws.sendMessage(inMsg);
+			JsonRootBean result = JsonRootBean.fromJson(jsonStr);
+            return result;
+        } catch (Exception e) {
+            logger.error(e);
+            return null;
+        }
+    }
+
 	/**
 	 * 根据订单号向订单追加入住人信息
 	 */
 	@Override
-	public CreateOrderResponse addPersonsByOrder(String orderId, int roomNumber, int personNumber, String personsJson) {
+	public JsonRootBean addPersonsByOrder(String orderId, int roomNumber, int personNumber, String personsJson) {
 		String method = Thread.currentThread().getStackTrace()[1].getMethodName();
 		method = method.substring(0, 1).toUpperCase() + method.substring(1);
 		WebServiceUtil ws = new WebServiceUtil(prop, method, method + "Response");
@@ -356,7 +374,7 @@ public class OpuServiceImpl implements OpuService {
 		inMsg.put("personsJson", personsJson);
 		try {
 			String jsonStr = ws.sendMessage(inMsg);
-			CreateOrderResponse result = CreateOrderResponse.fromJson(jsonStr);
+			JsonRootBean result = JsonRootBean.fromJson(jsonStr);
 			return result;
 		} catch (Exception e) {
 			logger.error(e);
