@@ -323,8 +323,10 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                     continue;
                 }
                 TrainClasstrainee traineeModel ;
+                String trainName;
                 //12个必填字段
                 for (int k = 0; k < 12; k++) {
+                    trainName = (String) lo.get(0);
                     if ("".equals(lo.get(k))) {
                         notExits = new ImportNotInfo();
                         notExits.setErrorLevel("警告");
@@ -337,7 +339,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                         if (null != traineeModel) {
                             notExits = new ImportNotInfo();
                             notExits.setErrorLevel("警告");
-                            notExits.setErrorInfo("导入失败；异常信息：学号重复");
+                            notExits.setErrorInfo("导入失败；异常信息："+trainName+":学号重复");
                             listNotExit.add(notExits);
                             return listNotExit;
                         }
