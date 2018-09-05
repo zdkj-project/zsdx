@@ -21,7 +21,7 @@
 <!--         <property name="dialect">org.hibernate.dialect.OracleDialect</property>  -->
 
         <!-- 执行操作时是否在控制台打印sql -->
-        <property name="show_sql">false</property>
+        <property name="show_sql">true</property>
 
         <!-- 是否对SQL进行格式化 -->
         <property name="format_sql">true</property>
