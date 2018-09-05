@@ -4,7 +4,7 @@ import com.zd.core.util.JsonBuilder;
 
 public class CreateOrderResponse {
 
-	private int OrderID;
+	private int orderid;
 
 	// 0表示成功，1表示失败
 	private int rspCode;
@@ -152,11 +152,11 @@ public class CreateOrderResponse {
 		this.r_msg = r_msg;
 	}
 
-	public int getOrderID() {
-		return OrderID;
+	public int getOrderid() {
+		return orderid;
 	}
 
-	public void setOrderID(int orderID) {
-		OrderID = orderID;
+	public void setOrderid(int orderid) {
+		this.orderid = orderid;
 	}
 }

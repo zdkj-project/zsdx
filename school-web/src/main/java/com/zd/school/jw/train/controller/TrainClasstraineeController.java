@@ -241,9 +241,11 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 
 				listReturn = thisService.doImportTrainee(listObject, classId, needSync, currentUser);
 
-				if (listReturn.size() == 0)
+				if (listReturn.size() == 0) {
 					writeJSON(response, jsonBuilder.returnSuccessJson("\"文件导入成功！\""));
-				else {
+				}else if("警告".equals(listReturn.get(0).getErrorLevel())){
+					writeJSON(response, jsonBuilder.returnFailureJson("\""+listReturn.get(0).getErrorInfo()+"\""));
+				}else {
 					String strData = jsonBuilder.buildList(listReturn, "");
 					request.getSession().setAttribute("TrainClassTraineeImportError", strData);
 					writeJSON(response, jsonBuilder.returnSuccessJson("-1")); // 返回前端-1，表示存在错误数据

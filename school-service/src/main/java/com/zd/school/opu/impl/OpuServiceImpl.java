@@ -342,7 +342,7 @@ public class OpuServiceImpl implements OpuService {
      * @method createOrder
      */
     @Override
-    public JsonRootBean new_CreateOrder(String json) {
+    public CreateOrderResponse new_CreateOrder(String json) {
         String method = Thread.currentThread().getStackTrace()[1].getMethodName();
         method = method.substring(0, 1).toUpperCase() + method.substring(1);
         WebServiceUtil ws = new WebServiceUtil(prop, method, method + "Response");
@@ -350,7 +350,7 @@ public class OpuServiceImpl implements OpuService {
             HashMap<String, String> inMsg = new HashMap<String, String>();
             inMsg.put("json", json);
             String jsonStr = ws.sendMessage(inMsg);
-			JsonRootBean result = JsonRootBean.fromJson(jsonStr);
+			CreateOrderResponse result = CreateOrderResponse.fromJson(jsonStr);
             return result;
         } catch (Exception e) {
             logger.error(e);
@@ -362,7 +362,7 @@ public class OpuServiceImpl implements OpuService {
 	 * 根据订单号向订单追加入住人信息
 	 */
 	@Override
-	public JsonRootBean addPersonsByOrder(String orderId, int roomNumber, int personNumber, String personsJson) {
+	public CreateOrderResponse addPersonsByOrder(String orderId, int roomNumber, int personNumber, String personsJson) {
 		String method = Thread.currentThread().getStackTrace()[1].getMethodName();
 		method = method.substring(0, 1).toUpperCase() + method.substring(1);
 		WebServiceUtil ws = new WebServiceUtil(prop, method, method + "Response");
@@ -374,7 +374,7 @@ public class OpuServiceImpl implements OpuService {
 		inMsg.put("personsJson", personsJson);
 		try {
 			String jsonStr = ws.sendMessage(inMsg);
-			JsonRootBean result = JsonRootBean.fromJson(jsonStr);
+			CreateOrderResponse result = CreateOrderResponse.fromJson(jsonStr);
 			return result;
 		} catch (Exception e) {
 			logger.error(e);

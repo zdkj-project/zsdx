@@ -315,12 +315,33 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
         TrainTrainee trainTrainee = null;
         for (int i = 0; i < listObject.size(); i++) {
             try {
+                //学号不能为空
 
                 List<Object> lo = listObject.get(i);
-
                 // 导入的表格会错误的读取空行的内容，所以，当判断第一列为空，就跳过此行。
                 if (!StringUtils.isNotEmpty((String) lo.get(0))) {
                     continue;
+                }
+                TrainClasstrainee traineeModel ;
+                //12个必填字段
+                for (int k = 0; k < 12; k++) {
+                    if ("".equals(lo.get(k))) {
+                        notExits = new ImportNotInfo();
+                        notExits.setErrorLevel("警告");
+                        notExits.setErrorInfo("导入失败；异常信息：必填字段不能为空");
+                        listNotExit.add(notExits);
+                        return listNotExit;
+                        //k==8 是学号
+                    } else if (k == 8) {
+                        traineeModel = this.getByProerties(new String[]{"traineeNumber", "isDelete"}, new Object[]{lo.get(k), 0});
+                        if (null != traineeModel) {
+                            notExits = new ImportNotInfo();
+                            notExits.setErrorLevel("警告");
+                            notExits.setErrorInfo("导入失败；异常信息：学号重复");
+                            listNotExit.add(notExits);
+                            return listNotExit;
+                        }
+                    }
                 }
 
                 title = String.valueOf(lo.get(0));
@@ -328,17 +349,17 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                 // isError = false;
                 TrainClasstrainee trainee;
                 if (!"".equals(lo.get(12))) {
+                    String sfzjh = Base64Util.encodeData((String) lo.get(12));
                     // 查询学员库是否存在此学生（2018-1-22改）
                     trainTrainee = trainTraineeServie.getByProerties(new String[]{"sfzjh", "isDelete"}, new Object[]{lo.get(12), 0});
-                    trainee = this.getByProerties(new String[]{"sfzjh", "classId"}, new Object[]{lo.get(12), classId});
+                    trainee = this.getByProerties(new String[]{"sfzjh", "classId", "isDelete"}, new Object[]{sfzjh, classId, 0});
                 } else {
+                    String mobilePhone = Base64Util.encodeData((String) lo.get(2));
                     trainTrainee = trainTraineeServie.getByProerties(new String[]{"xm", "mobilePhone", "isDelete"}, new Object[]{lo.get(0), lo.get(2), 0});
-                    trainee = this.getByProerties(new String[]{"xm", "mobilePhone", "classId"}, new Object[]{lo.get(0), lo.get(2), classId});
+                    trainee = this.getByProerties(new String[]{"xm", "mobilePhone", "classId", "isDelete"}, new Object[]{lo.get(0), mobilePhone, classId, 0});
                 }
 
                 // 查询此班级，是否已经存在此学员,则取出来进行数据更新操作 //只要存在即可，isdelete为1的会被转为2
-
-
                 if (trainee == null) {
                     trainee = new TrainClasstrainee();
                 }

@@ -11,7 +11,8 @@ import com.zd.school.jw.train.dao.TrainClassDao;
 import com.zd.school.jw.train.model.*;
 import com.zd.school.jw.train.model.vo.TrainClassEval;
 import com.zd.school.jw.train.service.*;
-import com.zd.school.opu.JsonRootBean;
+import com.zd.school.opu.CreateOrderPerson;
+import com.zd.school.opu.CreateOrderResponse;
 import com.zd.school.opu.OpuService;
 import com.zd.school.plartform.baseset.model.BaseOrgToUP;
 import com.zd.school.plartform.baseset.service.BaseOrgService;
@@ -984,7 +985,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
     }
 
     @Override
-    public synchronized JsonRootBean createOrder(TrainClass trainClass) {
+    public synchronized CreateOrderResponse createOrder(TrainClass trainClass) {
         String classId = trainClass.getUuid();
         // 查询这个班级预定信息
         List<Map<String, Object>> isOrder = trainClasstraineeService.insAdvanceOrders(classId);
@@ -1000,13 +1001,15 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 
         // 已经创建了订单 且 本次没有需要提交的学员 直接返回预定号
         if (!isCreatedOrder && list.isEmpty()) {
-            JsonRootBean ydInfo = new JsonRootBean();
+            CreateOrderResponse ydInfo = new CreateOrderResponse();
             ydInfo.setOrderid(Integer.valueOf(isOrder.get(0).get("reservationid").toString()));
             return ydInfo;
         }
 
         // 创建订单人员JSON数据
         List<Map<String, Object>> persons = new ArrayList<>();
+        // 追加入住人员使用
+        List<CreateOrderPerson> AddPersons = new ArrayList<CreateOrderPerson>();
         int totalCheckin = 0;
         for (TrainClasstrainee trainee : list) {
             int isCheckin = 0;
@@ -1016,17 +1019,24 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
             } else {
                 isCheckin = 1;
             }
+            String mobilePhone = Base64Util.decodeData(trainee.getMobilePhone());
+            String idCode = Base64Util.decodeData(trainee.getSfzjh());
             Map<String, Object> person = new HashMap<>();
-            person.put("idCode", "");
+            person.put("idCode", idCode);
             person.put("name", trainee.getXm());
-            person.put("phone", trainee.getMobilePhone());
+            person.put("phone", mobilePhone);
             person.put("isOther", 0);
             person.put("isCheckin", isCheckin);
             person.put("studentno", trainee.getTraineeNumber());
-          /*  CreateOrderPerson person = new CreateOrderPerson(trainee.getSfzjh(), trainee.getXm(), trainee.getMobilePhone(),
-                    0, isCheckin, trainee.getTraineeNumber());*/
             persons.add(person);
             trainee.setIsDoClassUse("0");
+
+
+            //追加入住人员使用
+            CreateOrderPerson addPerson = new CreateOrderPerson(trainee.getXm(),Base64Util.decodeData(trainee.getSfzjh()) ,"2".equals(trainee.getXbm())?"女":"男",
+                    trainee.getCheckinDate(), trainee.getCheckoutDate(), isCheckin, trainee.getTraineeNumber(),"DRF");
+            AddPersons.add(addPerson);
+
             trainClasstraineeService.doMerge(trainee);
         }
 
@@ -1044,57 +1054,66 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
         }
 
         List<Map<String, Object>> roomsList = new ArrayList<>();
-        String personsJson = JsonBuilder.getInstance().toJson(persons);
         Map<String, Object> personListMap = new HashMap<>();
-        personListMap.put("personList", persons);
-        personListMap.put("roomNum", "");
-        roomsList.add(personListMap);
+        List<Map<String, Object>> personList = new ArrayList<>();
+        for (int i =0;i<persons.size();i++) {
+            personListMap.clear();
+            personList.clear();
+            personList.add(persons.get(i));
 
-        List<Map<String,Object>> roomTypeListMapList = new ArrayList<>();
+            personListMap.put("personList", personList);
+            //房号(如不住宿可填空)
+            personListMap.put("roomNum", "");
+            roomsList.add(personListMap);
+        }
+        List<Map<String, Object>> roomTypeListMapList = new ArrayList<>();
         Map<String, Object> roomTypeListMap = new HashMap<>();
         roomTypeListMap.put("checkinTime", minCheckinDate);
         roomTypeListMap.put("rooms", roomsList);
         roomTypeListMap.put("roomTypeCode", "DRF");
         roomTypeListMap.put("price", 0);
+        //该房型预定房间数(如不住宿可填零)
         roomTypeListMap.put("roomTypeNum", totalCheckin);
         roomTypeListMap.put("checkoutTime", maxCheckDate);
-
         roomTypeListMapList.add(roomTypeListMap);
 
 
-        Map<String,Object> listMap = new HashMap();
-        listMap.put("bookNum",totalCheckin);
-        listMap.put("teamName",  trainClass.getClassName());
+        Map<String, Object> listMap = new HashMap();
+        //总房间数
+        listMap.put("bookNum", totalCheckin);
+        listMap.put("teamName", trainClass.getClassName());
         listMap.put("roomTypeList", roomTypeListMapList);
         listMap.put("phone", "");
-        listMap.put("startTime", maxCheckDate);
-        listMap.put("endTime", minCheckinDate);
+        listMap.put("startTime", minCheckinDate);
+        listMap.put("endTime", maxCheckDate);
 
         String roomTypeList = JSONUtils.toJSONString(listMap);
 
 
-        JsonRootBean jsonRootBean = null;
+        CreateOrderResponse createOrderResponse ;
         // 确定是追加还是创建
         if (!isCreatedOrder) {
             // 获取预定号 追加预订单
             String res = isOrder.get(0).get("reservationid").toString();
-            jsonRootBean = opuService.addPersonsByOrder(res, totalCheckin, totalCheckin, personsJson);
-            if (jsonRootBean.getRspCode() != 0) {
-                logger.error("追加酒店订单发生异常:" + jsonRootBean.getRspMsg());
+            //解析json
+            String personsJson = JsonBuilder.getInstance().toJson(AddPersons);
+            createOrderResponse = opuService.addPersonsByOrder(res, totalCheckin, totalCheckin, personsJson);
+            if (createOrderResponse.getRspCode() != 0) {
+                logger.error("追加酒店订单发生异常:" + createOrderResponse.getRspMsg());
             }
-            return jsonRootBean;
+            return createOrderResponse;
         } else {
             // 创建预订单
-            jsonRootBean = opuService.new_CreateOrder(roomTypeList);
-            if ( null == jsonRootBean && jsonRootBean.getRspCode() != 0) {
-                logger.error("创建酒店订单发生异常:" + jsonRootBean.getRspMsg());
+            createOrderResponse = opuService.new_CreateOrder(roomTypeList);
+            if (null == createOrderResponse && createOrderResponse.getRspCode() != 0) {
+                logger.error("创建酒店订单发生异常:" + createOrderResponse.getRspMsg());
             } else {
                 ClassReservationNumber classReservationNumber = new ClassReservationNumber();
                 classReservationNumber.setClassid(classId);
-                classReservationNumber.setReservationid(jsonRootBean.getOrderid() + "");
+                classReservationNumber.setReservationid(createOrderResponse.getOrderid() + "");
                 classReservationNumberService.doMerge(classReservationNumber);
             }
-            return jsonRootBean;
+            return createOrderResponse;
         }
     }
 

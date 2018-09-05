@@ -1,40 +1,9 @@
 package com.zd.school.jw.train.controller;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.zd.school.opu.JsonRootBean;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.zd.core.constant.Constant;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
-import com.zd.core.util.Base64Util;
-import com.zd.core.util.DBContextHolder;
-import com.zd.core.util.ImportExcelUtil;
-import com.zd.core.util.ModelUtil;
-import com.zd.core.util.PoiExportExcel;
-import com.zd.core.util.StringUtils;
-import com.zd.core.util.exportMeetingInfo;
+import com.zd.core.util.*;
 import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClassschedule;
 import com.zd.school.jw.train.model.TrainClasstrainee;
@@ -48,6 +17,22 @@ import com.zd.school.plartform.baseset.model.BaseDicitem;
 import com.zd.school.plartform.baseset.service.BaseDicitemService;
 import com.zd.school.plartform.system.model.SysUser;
 import com.zd.school.plartform.system.model.SysUserToUP;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 
@@ -437,7 +422,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				}	
 			}
 			// 5. 创建酒店预订单
-			JsonRootBean orderResult = thisService.createOrder(trainClass);
+			CreateOrderResponse orderResult = thisService.createOrder(trainClass);
 			
 			// 5.切换数据源
 			DBContextHolder.setDBType(DBContextHolder.DATA_SOURCE_UP6);

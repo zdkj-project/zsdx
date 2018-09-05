@@ -175,7 +175,7 @@ public interface OpuService {
 	public CreateOrderResponse createOrder(String teamName, int roomNumber, int personNumber, String checkinDate,
 			String checkoutDate, String name, String phone, String personsJson);
 
-    public JsonRootBean new_CreateOrder(String json) ;
+    public CreateOrderResponse new_CreateOrder(String json) ;
 	/**
 	 * 为下了预订单的客人办理入住，系统会根据取卡码查询到预订单并改变预定状态
 	 * 
@@ -225,7 +225,7 @@ public interface OpuService {
 	 *            "checkinDate":"2018-03-15", "checkoutDate":"2018-04-08" }]
 	 * @return { "rspMsg":"成功", "rspCode":0 }
 	 */
-	public JsonRootBean addPersonsByOrder(String orderId, int roomNumber, int personNumber, String personsJson);
+	public CreateOrderResponse addPersonsByOrder(String orderId, int roomNumber, int personNumber, String personsJson);
 
 	/**
 	 * 根据证件号取消预订信息
