@@ -262,7 +262,8 @@ Ext.define("core.train.class.view.DetailForm", {
                     width: 1200,
                     height: 650,
                     fieldInfo: "checkruleId~checkruleName,uuid~ruleName",
-                    whereSql: "and isDelete=0 and startUsing=1 ",
+                    //whereSql: "and isDelete=0 and startUsing=1", //tomcat异常访问不到地址
+                    filter: '[{"type":"short","comparison":"=","value":"1","field":"startUsing"}]',
                     orderSql: " order by createTime DESC ",
                     muiltSelect: false //是否多选
                 },
@@ -288,8 +289,9 @@ Ext.define("core.train.class.view.DetailForm", {
                     width: 1200,
                     height: 650,
                     fieldInfo: "creditsruleId~creditsruleName,uuid~ruleName",
-                    whereSql: "and isDelete=0 and startUsing=1 ",
-                    orderSql: " order by createTime DESC ",
+                    //whereSql: "and isDelete=0 and startUsing=1",
+                    filter: '[{"type":"short","comparison":"=","value":"1","field":"startUsing"}]',
+                    orderSql: "order by createTime DESC ",
                     muiltSelect: false //是否多选   
                 },
                 fieldLabel: "学分规则",

@@ -94,14 +94,14 @@ Ext.define("core.base.view.form.BaseFuncField", {
         if (flag != false) {
             whereSql = configInfo.whereSql;
             filter = configInfo.filter;
+            var bf, rec;//表格和表单，如果是表格的化则更新表格的字段值，如果是表单则更新表单
+            if (self.ownerCt.xtype == 'editor') {
+                var grid = self.ownerCt.floatParent;
+                rec = grid.getSelectionModel().getSelection()[0];
+            } else {
+                bf = self.up('form').getForm();
+            }
             if (whereSql) {
-                var bf, rec;//表格和表单，如果是表格的化则更新表格的字段值，如果是表单则更新表单
-                if (self.ownerCt.xtype == 'editor') {
-                    var grid = self.ownerCt.floatParent;
-                    rec = grid.getSelectionModel().getSelection()[0];
-                } else {
-                    bf = self.up('form').getForm();
-                }
                 whereSql = self.parseWhereSql(whereSql, bf, rec);
             }
             //加载控制器
@@ -191,6 +191,7 @@ Ext.define("core.base.view.form.BaseFuncField", {
 
                         if (!Ext.isEmpty(filter)) {
                             baseProxy.extraParams.filter = filter;
+                            baseGrid.extParams.filter = filter;
                         }
                         //baseGrid.getStore().load();
 

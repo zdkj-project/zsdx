@@ -64,7 +64,7 @@ Ext.define("core.train.class.view.SelectUserGrid", {
                 selectStore = grid.getStore();
                 selectStore.removeAt(index);
 
-                var basePanel = grid.up("panel[xtype=selectuser.selectuserlayout]");
+                var basePanel = grid.up("panel[xtype=selectuser.selectuserlayout]");    
                 var isSelectGrid;
                 if(basePanel){
                     isSelectGrid = basePanel.down("panel[xtype=selectuser.isselectusergrid]");
@@ -79,8 +79,8 @@ Ext.define("core.train.class.view.SelectUserGrid", {
 
     /** 排序字段定义 */
     defSort: [{
-        property: "createTime", //字段名
-        direction: "DESC" //升降序
+        property: "deptOrderIndex", //字段名
+        direction: "ASC" //升降序
     }],
     /** 扩展参数 */
     extParams: {

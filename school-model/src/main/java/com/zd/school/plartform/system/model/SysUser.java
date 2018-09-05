@@ -391,7 +391,19 @@ public class SysUser extends BaseEntity implements Serializable {
         this.deptName = deptName;
     }
 
-    @FieldInfo(name = "主岗位ID")
+    @FieldInfo(name = "主部门排序")
+    @Formula("(SELECT ISNULL((SELECT a.order_index  FROM dbo.BASE_T_ORG a WHERE a.DEPT_ID=(SELECT top 1 b.DEPT_ID FROM BASE_T_USERDEPTJOB b WHERE b.MASTER_DEPT=1 AND  b.USER_ID=USER_ID AND b.ISDELETE=0)),'999'))")
+    private String deptOrderIndex;
+    
+    public String getDeptOrderIndex() {
+		return deptOrderIndex;
+	}
+
+	public void setDeptOrderIndex(String deptOrderIndex) {
+		this.deptOrderIndex = deptOrderIndex;
+	}
+
+	@FieldInfo(name = "主岗位ID")
     @Formula("(SELECT top 1 ISNULL(a.JOB_ID,'') FROM dbo.BASE_T_USERDEPTJOB a WHERE a.MASTER_DEPT=1 AND a.ISDELETE=0 AND a.USER_ID=USER_ID)")
     private String jobId;
 
