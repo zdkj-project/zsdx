@@ -1363,7 +1363,7 @@ Ext.define("core.train.arrange.controller.MainController", {
             baseGrid = btn.up("basegrid");
         } else {
             baseGrid = grid;
-            recordData = record.data;
+            recordData = record.getData();
         }
 
         //得到组件
@@ -1398,7 +1398,7 @@ Ext.define("core.train.arrange.controller.MainController", {
                 self.msgbox("请选择1条数据！");
                 return;
             }
-            recordData = rescords[0].data;
+            recordData = rescords[0].getData();
         }
 
         var sendInfo="";
