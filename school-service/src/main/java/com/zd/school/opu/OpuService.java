@@ -176,6 +176,8 @@ public interface OpuService {
 			String checkoutDate, String name, String phone, String personsJson);
 
     public CreateOrderResponse new_CreateOrder(String json) ;
+
+	public CreateOrderResponse CreateOrder_Not_Row_Room (String json) ;
 	/**
 	 * 为下了预订单的客人办理入住，系统会根据取卡码查询到预订单并改变预定状态
 	 * 

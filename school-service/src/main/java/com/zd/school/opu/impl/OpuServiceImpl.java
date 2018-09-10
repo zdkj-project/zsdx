@@ -358,6 +358,32 @@ public class OpuServiceImpl implements OpuService {
         }
     }
 
+    /**
+     * @description  酒店预订单
+     * @author yz
+     * @date 2018/9/10 11:59
+     * @method  CreateOrder_Not_Row_Room
+     * @param json json字符串
+     * @return com.zd.school.opu.CreateOrderResponse
+     */
+	@Override
+	public CreateOrderResponse CreateOrder_Not_Row_Room(String json) {
+		String method = Thread.currentThread().getStackTrace()[1].getMethodName();
+		method = method.substring(0, 1).toUpperCase() + method.substring(1);
+		WebServiceUtil ws = new WebServiceUtil(prop, method, method + "Response");
+		try {
+			HashMap<String, String> inMsg = new HashMap<>();
+			inMsg.put("json", json);
+			String jsonStr = ws.sendMessage(inMsg);
+			CreateOrderResponse result = CreateOrderResponse.fromJson(jsonStr);
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+			return null;
+		}
+	}
+
 	/**
 	 * 根据订单号向订单追加入住人信息
 	 */

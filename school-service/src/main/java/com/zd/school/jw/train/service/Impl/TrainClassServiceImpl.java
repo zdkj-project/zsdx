@@ -1,6 +1,8 @@
 
 package com.zd.school.jw.train.service.Impl;
 
+import java.util.Date;
+
 import com.alibaba.druid.support.json.JSONUtils;
 import com.zd.core.constant.InfoPushWay;
 import com.zd.core.model.extjs.QueryResult;
@@ -26,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
+import java.io.FileReader;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
@@ -1019,78 +1022,16 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
             } else {
                 isCheckin = 1;
             }
-            String mobilePhone = Base64Util.decodeData(trainee.getMobilePhone());
-            String idCode = Base64Util.decodeData(trainee.getSfzjh());
-            Map<String, Object> person = new HashMap<>();
-            person.put("idCode", idCode);
-            person.put("name", trainee.getXm());
-            person.put("phone", mobilePhone);
-            person.put("isOther", 0);
-            person.put("isCheckin", isCheckin);
-            person.put("studentno", trainee.getTraineeNumber());
-            persons.add(person);
-            trainee.setIsDoClassUse("0");
-
-
             //追加入住人员使用
-            CreateOrderPerson addPerson = new CreateOrderPerson(trainee.getXm(),Base64Util.decodeData(trainee.getSfzjh()) ,"2".equals(trainee.getXbm())?"女":"男",
-                    trainee.getCheckinDate(), trainee.getCheckoutDate(), isCheckin, trainee.getTraineeNumber(),"DRF");
+            CreateOrderPerson addPerson = new CreateOrderPerson(trainee.getXm(), Base64Util.decodeData(trainee.getSfzjh()), "2".equals(trainee.getXbm()) ? "女" : "男",
+                    trainee.getCheckinDate(), trainee.getCheckoutDate(), isCheckin, trainee.getTraineeNumber(), "DRF");
             AddPersons.add(addPerson);
 
             trainClasstraineeService.doMerge(trainee);
         }
 
-
-        // 人员转换为接口需要格式
-
-        Map<String, Object> dateMap = this.getMinAndMaxCheckinDate(trainClass.getUuid());
-        String minCheckinDate = dateMap.get("CHECKIN_DATE").toString();
-        if (minCheckinDate.equals("")) {
-            minCheckinDate = DateUtil.formatDate(trainClass.getBeginDate());
-        }
-        String maxCheckDate = dateMap.get("CHECKOUT_DATE").toString();
-        if (maxCheckDate.equals("")) {
-            maxCheckDate = DateUtil.formatDate(trainClass.getEndDate());
-        }
-
-        List<Map<String, Object>> roomsList = new ArrayList<>();
-        Map<String, Object> personListMap = new HashMap<>();
-        List<Map<String, Object>> personList = new ArrayList<>();
-        for (int i =0;i<persons.size();i++) {
-            personListMap.clear();
-            personList.clear();
-            personList.add(persons.get(i));
-
-            personListMap.put("personList", personList);
-            //房号(如不住宿可填空)
-            personListMap.put("roomNum", "");
-            roomsList.add(personListMap);
-        }
-        List<Map<String, Object>> roomTypeListMapList = new ArrayList<>();
-        Map<String, Object> roomTypeListMap = new HashMap<>();
-        roomTypeListMap.put("checkinTime", minCheckinDate);
-        roomTypeListMap.put("rooms", roomsList);
-        roomTypeListMap.put("roomTypeCode", "DRF");
-        roomTypeListMap.put("price", 0);
-        //该房型预定房间数(如不住宿可填零)
-        roomTypeListMap.put("roomTypeNum", totalCheckin);
-        roomTypeListMap.put("checkoutTime", maxCheckDate);
-        roomTypeListMapList.add(roomTypeListMap);
-
-
-        Map<String, Object> listMap = new HashMap();
-        //总房间数
-        listMap.put("bookNum", totalCheckin);
-        listMap.put("teamName", trainClass.getClassName());
-        listMap.put("roomTypeList", roomTypeListMapList);
-        listMap.put("phone", "");
-        listMap.put("startTime", minCheckinDate);
-        listMap.put("endTime", maxCheckDate);
-
-        String roomTypeList = JSONUtils.toJSONString(listMap);
-
-
-        CreateOrderResponse createOrderResponse ;
+        String roomTypeList = this.jsonBean(list, trainClass);
+        CreateOrderResponse createOrderResponse;
         // 确定是追加还是创建
         if (!isCreatedOrder) {
             // 获取预定号 追加预订单
@@ -1104,8 +1045,13 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
             return createOrderResponse;
         } else {
             // 创建预订单
-            createOrderResponse = opuService.new_CreateOrder(roomTypeList);
-            if (null == createOrderResponse && createOrderResponse.getRspCode() != 0) {
+            createOrderResponse = opuService.CreateOrder_Not_Row_Room(roomTypeList);
+            if (null == createOrderResponse ){
+                logger.error("追加酒店订单发生异常: 无法连接该接口");
+                createOrderResponse = new CreateOrderResponse();
+                createOrderResponse.setRspCode(1);
+                createOrderResponse.setRspMsg("追加酒店订单发生异常: 无法连接该接口");
+            }else if (createOrderResponse.getRspCode() != 0) {
                 logger.error("创建酒店订单发生异常:" + createOrderResponse.getRspMsg());
             } else {
                 ClassReservationNumber classReservationNumber = new ClassReservationNumber();
@@ -1115,6 +1061,60 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
             }
             return createOrderResponse;
         }
+    }
+
+    public String jsonBean(List<TrainClasstrainee> list, TrainClass trainClass) {
+        // 人员转换为接口需要格式
+        try {
+            Map<String, Object> dateMap = this.getMinAndMaxCheckinDate(trainClass.getUuid());
+            String minCheckinDate = dateMap.get("CHECKIN_DATE").toString();
+            if (minCheckinDate.equals("")) {
+                minCheckinDate = DateUtil.formatDate(trainClass.getBeginDate());
+            }
+            String maxCheckDate = dateMap.get("CHECKOUT_DATE").toString();
+            if (maxCheckDate.equals("")) {
+                maxCheckDate = DateUtil.formatDate(trainClass.getEndDate());
+            }
+            String hql = "select count(1),a.ROOM_CODE,a.ROOM_PRICE,b.COHABIT_NUMBER from TRAIN_T_CLASSTRAINEE A " +
+                    "  inner join ROOM_TYPELIST b on b.ROOM_CODE = a.ROOM_CODE WHERE A.ISDELETE =0 AND A.CLASS_ID = '" + trainClass.getUuid() + "' group by a.ROOM_CODE,a.ROOM_PRICE,b.COHABIT_NUMBER";
+            List<Object[]> listSql = this.ObjectQuerySql(hql);
+            List<Map<String, Object>> lists = new ArrayList<>();
+            Map<String, Object> map ;
+            //该房型预定房间数
+            int roomTypeNum;
+            //总房间数
+            int bookNum = 0;
+            //可住人数
+            int cohabitNumber;
+            //实际人数
+            int actualNumber;
+            for (Object[] l : listSql) {
+                map = new HashMap<>();
+                map.put("roomTypeCode", l[1]);
+                map.put("price", l[2]);
+                cohabitNumber  =Integer.parseInt((String) l[3]) ;
+                actualNumber=(Integer) l[0] ;
+                roomTypeNum = actualNumber % cohabitNumber == 0 ? actualNumber / cohabitNumber : (actualNumber / cohabitNumber) + 1;
+                map.put("roomTypeNum", roomTypeNum);
+                map.put("personNum", actualNumber);
+                lists.add(map);
+                bookNum += roomTypeNum;
+            }
+
+            Map<String, Object> mapJosn = new HashMap<>();
+            mapJosn.put("teamName", trainClass.getClassName());
+            mapJosn.put("roomTypeList", lists);
+            mapJosn.put("phone", "");
+            mapJosn.put("bookNum", bookNum);
+            mapJosn.put("startTime", minCheckinDate);
+            mapJosn.put("endTime", maxCheckDate);
+            String json = JSONUtils.toJSONString(mapJosn);
+            return json;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
     }
 
     @Override

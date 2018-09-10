@@ -367,8 +367,26 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
     public void setTraineeNumber(String traineeNumber) {
         this.traineeNumber = traineeNumber;
     }
-    
-    
+
+    /**
+     * 新加入房间类型
+     */
+    @FieldInfo(name = "房间类型")
+    @Column(name = "ROOM_TYPE", length = 20, nullable = true)
+    private String roomType;
+
+    @FieldInfo(name = "房型代码")
+    @Column(name = "ROOM_CODE", length = 10, nullable = true)
+    private String roomCode;
+
+    @FieldInfo(name = "可住人数")
+    @Column(name = "COHABIT_NUMBER", length = 10, nullable = true)
+    private String cohabitNumber;
+
+    @FieldInfo(name = "房间单价")
+    @Column(name = "ROOM_PRICE", length = 15, nullable = true)
+    private String roomPrice;
+
     public TrainClasstrainee() {
         super();
         // TODO Auto-generated constructor stub
@@ -635,4 +653,35 @@ public class TrainClasstrainee extends BaseEntity implements Serializable {
         this.setIfaccommodation(ifaccommodation);
     }
 
+    public String getRoomType() {
+        return roomType;
+    }
+
+    public void setRoomType(String roomType) {
+        this.roomType = roomType;
+    }
+
+    public String getRoomCode() {
+        return roomCode;
+    }
+
+    public void setRoomCode(String roomCode) {
+        this.roomCode = roomCode;
+    }
+
+    public String getCohabitNumber() {
+        return cohabitNumber;
+    }
+
+    public void setCohabitNumber(String cohabitNumber) {
+        this.cohabitNumber = cohabitNumber;
+    }
+
+    public String getRoomPrice() {
+        return roomPrice;
+    }
+
+    public void setRoomPrice(String roomPrice) {
+        this.roomPrice = roomPrice;
+    }
 }

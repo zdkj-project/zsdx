@@ -1,21 +1,5 @@
 package com.zd.school.jw.train.service.Impl;
 
-import java.lang.reflect.InvocationTargetException;
-import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.interceptor.TransactionAspectSupport;
-
 import com.zd.core.model.ImportNotInfo;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseServiceImpl;
@@ -25,10 +9,12 @@ import com.zd.core.util.StringUtils;
 import com.zd.school.build.define.model.BuildRoominfo;
 import com.zd.school.build.define.service.BuildRoominfoService;
 import com.zd.school.jw.train.dao.TrainClasstraineeDao;
+import com.zd.school.jw.train.model.RoomTypeList;
 import com.zd.school.jw.train.model.TrainClass;
 import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.jw.train.model.TrainTrainee;
 import com.zd.school.jw.train.model.vo.VoTrainClassCheck;
+import com.zd.school.jw.train.service.RoomTypeListService;
 import com.zd.school.jw.train.service.TrainClassService;
 import com.zd.school.jw.train.service.TrainClasstraineeService;
 import com.zd.school.jw.train.service.TrainTraineeService;
@@ -36,6 +22,16 @@ import com.zd.school.plartform.baseset.model.BaseDicitem;
 import com.zd.school.plartform.baseset.service.BaseDicitemService;
 import com.zd.school.plartform.system.model.CardUserInfoToUP;
 import com.zd.school.plartform.system.model.SysUser;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
+
+import javax.annotation.Resource;
+import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * ClassName: TrainClasstraineeServiceImpl Function: ADD FUNCTION. Reason: ADD
@@ -51,7 +47,9 @@ import com.zd.school.plartform.system.model.SysUser;
 public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrainee>
         implements TrainClasstraineeService {
 
-    private static Object syncObject = new Object();// 同步锁
+    // 同步锁
+    private static Object syncObject = new Object();
+
 
     @Resource
     public void setTrainClasstraineeDao(TrainClasstraineeDao dao) {
@@ -69,6 +67,9 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
 
     @Resource
     BuildRoominfoService roominfoService;
+
+    @Resource
+    RoomTypeListService roomTypeListService;
 
     private static Logger logger = Logger.getLogger(TrainClasstraineeServiceImpl.class);
 
@@ -287,6 +288,8 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                     case "MZM":
                         mapMzm.put(baseDicitem.getItemName(), baseDicitem.getItemCode());
                         break;
+                    default:
+                        break;
                 }
             }
         }
@@ -303,11 +306,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
             // trainClassService.update(trainClass);
         }
 
-        /**
-         * 姓名 性别 移动电话 身份证件号 所在单位 职务 行政级别 学员类型 民族 政治面貌 学历 学位 专业 毕业学校 电子邮件 通讯地址
-         * 党校培训证书号 行院培训证书号 照片
-         *
-         */
+
         String doResult = "";
         String title = "";
         String errorLevel = "";
@@ -322,7 +321,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                 if (!StringUtils.isNotEmpty((String) lo.get(0))) {
                     continue;
                 }
-                TrainClasstrainee traineeModel ;
+                TrainClasstrainee traineeModel;
                 String trainName;
                 //12个必填字段
                 for (int k = 0; k < 12; k++) {
@@ -339,7 +338,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                         if (null != traineeModel) {
                             notExits = new ImportNotInfo();
                             notExits.setErrorLevel("警告");
-                            notExits.setErrorInfo("导入失败；异常信息："+trainName+":学号重复");
+                            notExits.setErrorInfo("导入失败；异常信息：" + trainName + ":学号重复");
                             listNotExit.add(notExits);
                             return listNotExit;
                         }
@@ -385,11 +384,20 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                 trainee.setCheckoutDate((String) lo.get(11));
                 // 设置isdelte值
                 trainee.setIsDelete(isDelete);
+
+                //根据房间编码查询房间类型
+                RoomTypeList roomTypeList = roomTypeListService.getByProerties(new String[]{"roomCode", "isDelete"}, new Object[]{"".equals(lo.get(23)) ? "SRF" : lo.get(23), 0});
+                if (null != roomTypeList) {
+                    trainee.setRoomCode(roomTypeList.getRoomCode().trim());
+                    trainee.setRoomType(roomTypeList.getRoomType().trim());
+                    trainee.setRoomPrice(roomTypeList.getRoomPrice().trim());
+                    trainee.setCohabitNumber(roomTypeList.getCohabitNumber().trim());
+                }
+
                 // 同步到学员库
                 if (needSync.equals("1")) {
                     if (trainTrainee == null) {
                         trainTrainee = new TrainTrainee();
-
                         // 当学员库没有此学员的时候，暂时加入这些数据（已存在的学员暂时不处理）
                         trainTrainee.setMzm(mapMzm.get(lo.get(13)));
                         trainTrainee.setZzmmm(mapZzmm.get(lo.get(14)));
@@ -402,7 +410,6 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                         trainTrainee.setAddress(String.valueOf(lo.get(20)));
                         trainTrainee.setPartySchoolNumb(String.valueOf(lo.get(21)));
                         trainTrainee.setNationalSchoolNumb(String.valueOf(lo.get(22)));
-
                         // trainTrainee.setZp(String.valueOf(lo.get(19)));
                         // 照片使用身份证号码.jpg
                         trainTrainee.setZp("/static/upload/traineePhoto/" + trainee.getSfzjh() + ".jpg");
@@ -457,6 +464,8 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
         return listNotExit;
 
     }
+
+
 
     @Override
     public void doSyncClassTrainee(String classId, SysUser currentUser) {
