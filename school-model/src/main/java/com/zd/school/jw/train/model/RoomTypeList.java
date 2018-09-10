@@ -26,19 +26,19 @@ public class RoomTypeList extends BaseEntity  implements Serializable {
      * 新加入房间类型
      */
     @FieldInfo(name = "房间类型")
-    @Column(name = "ROOM_TYPE", length = 10, nullable = true)
+    @Column(name = "ROOM_TYPE", length = 20, nullable = true)
     private String roomType;
 
     @FieldInfo(name = "房型代码")
-    @Column(name = "ROOM_CODE", length = 10, nullable = true)
+    @Column(name = "ROOM_CODE", length = 20, nullable = true)
     private String roomCode;
 
     @FieldInfo(name = "可住人数")
-    @Column(name = "COHABIT_NUMBER", length = 10, nullable = true)
+    @Column(name = "COHABIT_NUMBER", length = 20, nullable = true)
     private String cohabitNumber;
 
     @FieldInfo(name = "房间单价")
-    @Column(name = "ROOM_PRICE", length = 10, nullable = true)
+    @Column(name = "ROOM_PRICE", length = 20, nullable = true)
     private String roomPrice;
 
     public String getRoomType() {

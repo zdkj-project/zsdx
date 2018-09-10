@@ -1076,7 +1076,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
                 maxCheckDate = DateUtil.formatDate(trainClass.getEndDate());
             }
             String hql = "select count(1),a.ROOM_CODE,a.ROOM_PRICE,b.COHABIT_NUMBER from TRAIN_T_CLASSTRAINEE A " +
-                    "  inner join ROOM_TYPELIST b on b.ROOM_CODE = a.ROOM_CODE WHERE A.ISDELETE =0 AND A.CLASS_ID = '" + trainClass.getUuid() + "' group by a.ROOM_CODE,a.ROOM_PRICE,b.COHABIT_NUMBER";
+                    "  inner join ROOM_TYPELIST b on b.ROOM_CODE = a.ROOM_CODE WHERE A.ISDELETE =0 OR A.ISDELETE =2 AND A.CLASS_ID = '" + trainClass.getUuid() + "' group by a.ROOM_CODE,a.ROOM_PRICE,b.COHABIT_NUMBER";
             List<Object[]> listSql = this.ObjectQuerySql(hql);
             List<Map<String, Object>> lists = new ArrayList<>();
             Map<String, Object> map ;

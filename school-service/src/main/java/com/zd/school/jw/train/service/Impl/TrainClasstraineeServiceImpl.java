@@ -386,7 +386,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                 trainee.setIsDelete(isDelete);
 
                 //根据房间编码查询房间类型
-                RoomTypeList roomTypeList = roomTypeListService.getByProerties(new String[]{"roomCode", "isDelete"}, new Object[]{"".equals(lo.get(23)) ? "SRF" : lo.get(23), 0});
+                RoomTypeList roomTypeList = roomTypeListService.getByProerties(new String[]{"roomCode"}, new Object[]{"".equals(lo.get(23)) ? "SRF" : lo.get(23)});
                 if (null != roomTypeList) {
                     trainee.setRoomCode(roomTypeList.getRoomCode().trim());
                     trainee.setRoomType(roomTypeList.getRoomType().trim());
