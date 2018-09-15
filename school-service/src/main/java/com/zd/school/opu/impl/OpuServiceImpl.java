@@ -450,4 +450,30 @@ public class OpuServiceImpl implements OpuService {
 		}
 	}
 
+	/**
+	 * @description 取消预订单
+	 * @author yz
+	 * @date 2018/9/12 11:46
+	 * @method  Order_Cancel
+	 * @param orderID
+	 * @return com.zd.school.opu.CreateOrderResponse
+	 */
+	@Override
+	public CreateOrderResponse Order_Cancel(String orderID) {
+		String method = Thread.currentThread().getStackTrace()[1].getMethodName();
+		method = method.substring(0, 1).toUpperCase() + method.substring(1);
+		WebServiceUtil ws = new WebServiceUtil(prop, method, method + "Response");
+		HashMap<String, String> inMsg = new HashMap<String, String>();
+		inMsg.put("orderID", orderID);
+		try {
+			String jsonStr = ws.sendMessage(inMsg);
+			CreateOrderResponse result = CreateOrderResponse.fromJson(jsonStr);
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+			return null;
+		}
+	}
+
 }

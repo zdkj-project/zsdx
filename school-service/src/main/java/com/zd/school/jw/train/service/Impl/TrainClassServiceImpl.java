@@ -1011,8 +1011,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
 
         // 创建订单人员JSON数据
         List<Map<String, Object>> persons = new ArrayList<>();
-        // 追加入住人员使用
-        List<CreateOrderPerson> AddPersons = new ArrayList<CreateOrderPerson>();
+
         int totalCheckin = 0;
         for (TrainClasstrainee trainee : list) {
             int isCheckin = 0;
@@ -1022,10 +1021,6 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
             } else {
                 isCheckin = 1;
             }
-            //追加入住人员使用
-            CreateOrderPerson addPerson = new CreateOrderPerson(trainee.getXm(), Base64Util.decodeData(trainee.getSfzjh()), "2".equals(trainee.getXbm()) ? "女" : "男",
-                    trainee.getCheckinDate(), trainee.getCheckoutDate(), isCheckin, trainee.getTraineeNumber(), "DRF");
-            AddPersons.add(addPerson);
 
             trainClasstraineeService.doMerge(trainee);
         }
@@ -1036,21 +1031,37 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
         if (!isCreatedOrder) {
             // 获取预定号 追加预订单
             String res = isOrder.get(0).get("reservationid").toString();
-            //解析json
-            String personsJson = JsonBuilder.getInstance().toJson(AddPersons);
-            createOrderResponse = opuService.addPersonsByOrder(res, totalCheckin, totalCheckin, personsJson);
-            if (createOrderResponse.getRspCode() != 0) {
+            //删除旧订单
+            createOrderResponse = opuService.Order_Cancel(res);
+            if (null==createOrderResponse){
+                logger.error("追加酒店订单发生异常: 无法连接到该接口");
+                createOrderResponse = new CreateOrderResponse();
+                createOrderResponse.setRspCode(1);
+                createOrderResponse.setRspMsg("追加酒店订单发生异常: 无法连接到该接口");
+            } else  if (createOrderResponse.getRspCode() != 0) {
                 logger.error("追加酒店订单发生异常:" + createOrderResponse.getRspMsg());
             }
+            classReservationNumberService.deleteByPK(isOrder.get(0).get("numid").toString());
+            // 创建预订单
+            createOrderResponse = opuService.CreateOrder_Not_Row_Room(roomTypeList);
+
+            /**
+             * 绑定关系
+             */
+            ClassReservationNumber classReservationNumber = new ClassReservationNumber();
+            classReservationNumber.setClassid(classId);
+            classReservationNumber.setReservationid(createOrderResponse.getOrderid() + "");
+            classReservationNumberService.doMerge(classReservationNumber);
+
             return createOrderResponse;
         } else {
             // 创建预订单
             createOrderResponse = opuService.CreateOrder_Not_Row_Room(roomTypeList);
             if (null == createOrderResponse ){
-                logger.error("追加酒店订单发生异常: 无法连接该接口");
+                logger.error("创建酒店订单发生异常: 无法连接到该接口");
                 createOrderResponse = new CreateOrderResponse();
                 createOrderResponse.setRspCode(1);
-                createOrderResponse.setRspMsg("追加酒店订单发生异常: 无法连接该接口");
+                createOrderResponse.setRspMsg("创建酒店订单发生异常: 无法连接到该接口");
             }else if (createOrderResponse.getRspCode() != 0) {
                 logger.error("创建酒店订单发生异常:" + createOrderResponse.getRspMsg());
             } else {
@@ -1076,7 +1087,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
                 maxCheckDate = DateUtil.formatDate(trainClass.getEndDate());
             }
             String hql = "select count(1),a.ROOM_CODE,a.ROOM_PRICE,b.COHABIT_NUMBER from TRAIN_T_CLASSTRAINEE A " +
-                    "  inner join ROOM_TYPELIST b on b.ROOM_CODE = a.ROOM_CODE WHERE A.ISDELETE =0 OR A.ISDELETE =2 AND A.CLASS_ID = '" + trainClass.getUuid() + "' group by a.ROOM_CODE,a.ROOM_PRICE,b.COHABIT_NUMBER";
+                    "  inner join ROOM_TYPELIST b on b.ROOM_CODE = a.ROOM_CODE WHERE (A.ISDELETE =0 OR A.ISDELETE =2) AND A.CLASS_ID = '" + trainClass.getUuid() + "' group by a.ROOM_CODE,a.ROOM_PRICE,b.COHABIT_NUMBER";
             List<Object[]> listSql = this.ObjectQuerySql(hql);
             List<Map<String, Object>> lists = new ArrayList<>();
             Map<String, Object> map ;

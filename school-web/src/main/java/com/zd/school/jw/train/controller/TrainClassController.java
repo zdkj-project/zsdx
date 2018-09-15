@@ -419,7 +419,7 @@ public class TrainClassController extends FrameWorkController<TrainClass> implem
 				if (Base64Util.isBase64(userInfos.get(i).getEmployeeStrId())) {
 					userInfos.get(i)
 							.setEmployeeStrId(Base64Util.decodeData(userInfos.get(i).getEmployeeStrId()));
-				}	
+				}
 			}
 			// 5. 创建酒店预订单
 			CreateOrderResponse orderResult = thisService.createOrder(trainClass);

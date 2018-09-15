@@ -321,7 +321,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                 if (!StringUtils.isNotEmpty((String) lo.get(0))) {
                     continue;
                 }
-                TrainClasstrainee traineeModel;
+                List<TrainClasstrainee> traineeModel;
                 String trainName;
                 //12个必填字段
                 for (int k = 0; k < 12; k++) {
@@ -334,19 +334,23 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
                         return listNotExit;
                         //k==8 是学号
                     } else if (k == 8) {
-                        traineeModel = this.getByProerties(new String[]{"traineeNumber", "isDelete"}, new Object[]{lo.get(k), 0});
-                        if (null != traineeModel) {
+                        String hql = "from TrainClasstrainee where traineeNumber = '"+lo.get(k)+"' and (isDelete =0 or isDelete =2)";
+                        traineeModel = this.queryByHql(hql);
+                        if (null != traineeModel && 0!=traineeModel.size()) {
                             notExits = new ImportNotInfo();
                             notExits.setErrorLevel("警告");
                             notExits.setErrorInfo("导入失败；异常信息：" + trainName + ":学号重复");
                             listNotExit.add(notExits);
+                            //回滚
+                            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
                             return listNotExit;
                         }
                     }
                 }
 
                 title = String.valueOf(lo.get(0));
-                doResult = "导入成功"; // 默认是成功
+                // 默认是成功
+                doResult = "导入成功";
                 // isError = false;
                 TrainClasstrainee trainee;
                 if (!"".equals(lo.get(12))) {
@@ -732,7 +736,7 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
     @Override
     public List<Map<String, Object>> insAdvanceOrders(String classId) {
 
-        String sql = "select * from CLASS_RESERVATION_NUMBER where classid='" + classId + "'";
+        String sql = "select * from CLASS_RESERVATION_NUMBER where classid='" + classId + "' and isDelete = 0 ";
         List<Map<String, Object>> list = this.queryMapBySql(sql);
         return list;
     }
