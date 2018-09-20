@@ -23,6 +23,7 @@ import com.zd.school.plartform.system.model.SysUserToUP;
 import com.zd.school.plartform.system.service.SysUserService;
 import com.zd.school.push.service.PushInfoService;
 import org.apache.log4j.Logger;
+import org.hibernate.service.spi.ServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -988,7 +989,7 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
     }
 
     @Override
-    public synchronized CreateOrderResponse createOrder(TrainClass trainClass) {
+    public synchronized CreateOrderResponse createOrder(TrainClass trainClass,String sendUserName,String phone) {
         String classId = trainClass.getUuid();
         // 查询这个班级预定信息
         List<Map<String, Object>> isOrder = trainClasstraineeService.insAdvanceOrders(classId);
@@ -1009,23 +1010,23 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
             return ydInfo;
         }
 
-        // 创建订单人员JSON数据
-        List<Map<String, Object>> persons = new ArrayList<>();
-
         int totalCheckin = 0;
         for (TrainClasstrainee trainee : list) {
-            int isCheckin = 0;
-            if (trainee.getIfaccommodation() != null && trainee.getIfaccommodation().equals("住宿")) {
+            /*int isCheckin = 0;
+            if (trainee.
+
+            () != null && trainee.getIfaccommodation().equals("住宿")) {
                 isCheckin = 0;
                 totalCheckin++;
             } else {
                 isCheckin = 1;
-            }
+            }*/
 
             trainClasstraineeService.doMerge(trainee);
         }
 
-        String roomTypeList = this.jsonBean(list, trainClass);
+        String roomTypeList = this.jsonBean(list, trainClass,sendUserName,phone);
+        logger.info(roomTypeList);
         CreateOrderResponse createOrderResponse;
         // 确定是追加还是创建
         if (!isCreatedOrder) {
@@ -1053,6 +1054,10 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
             classReservationNumber.setReservationid(createOrderResponse.getOrderid() + "");
             classReservationNumberService.doMerge(classReservationNumber);
 
+            //提交错误 回滚
+            if (1==createOrderResponse.getRspCode()){
+                throw new ServiceException(createOrderResponse.getRspMsg());
+            }
             return createOrderResponse;
         } else {
             // 创建预订单
@@ -1070,11 +1075,15 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
                 classReservationNumber.setReservationid(createOrderResponse.getOrderid() + "");
                 classReservationNumberService.doMerge(classReservationNumber);
             }
+            //提交错误 回滚
+            if (1==createOrderResponse.getRspCode()){
+               throw new ServiceException(createOrderResponse.getRspMsg());
+            }
             return createOrderResponse;
         }
     }
-
-    public String jsonBean(List<TrainClasstrainee> list, TrainClass trainClass) {
+    @Override
+    public String jsonBean(List<TrainClasstrainee> list, TrainClass trainClass,String sendUserName,String phone) {
         // 人员转换为接口需要格式
         try {
             Map<String, Object> dateMap = this.getMinAndMaxCheckinDate(trainClass.getUuid());
@@ -1115,7 +1124,8 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
             Map<String, Object> mapJosn = new HashMap<>();
             mapJosn.put("teamName", trainClass.getClassName());
             mapJosn.put("roomTypeList", lists);
-            mapJosn.put("phone", "");
+            mapJosn.put("phone", phone);
+            mapJosn.put("sendUserName", sendUserName);
             mapJosn.put("bookNum", bookNum);
             mapJosn.put("startTime", minCheckinDate);
             mapJosn.put("endTime", maxCheckDate);
