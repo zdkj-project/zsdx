@@ -15,6 +15,7 @@ import com.zd.core.util.CustomDateEditor;
 import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.ModelUtil;
 import com.zd.core.util.StringUtils;
+import net.sf.json.JSONArray;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 
@@ -23,6 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ClassName:BaseController Function: TODO ADD FUNCTION. Reason: TODO ADD
@@ -156,4 +159,31 @@ public abstract class BaseController<E extends BaseEntity> {
         } else
             return "";
     }
+
+	protected void writeJSON(HttpServletResponse response, int code, String contents) throws IOException {
+		if (ModelUtil.isNotNull(response)) {
+			response.setContentType("text/html;charset=UTF-8;");
+			Writer writer = null;
+			try {
+				response.setCharacterEncoding("UTF-8");
+				writer = response.getWriter();
+				Map<String, Object> map = new HashMap<>(2);
+				map.put("code", code);
+				map.put("text", contents);
+				writer.write(JSONArray.fromObject(map).toString());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				try {
+					writer.flush();
+					writer.close();
+					response.flushBuffer();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 }

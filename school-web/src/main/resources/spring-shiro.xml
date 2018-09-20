@@ -119,6 +119,7 @@
         </property>
         <property name="filterChainDefinitions">
 			<value>
+				/app/** = anon
 				/teQeCode/** = anon
 				/SysAppinfo/** = anon
 				/static/** = anon

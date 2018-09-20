@@ -1,11 +1,8 @@
-package com.zd.schol.te;
+package com.zd.school.te;
 
 import com.alibaba.fastjson.JSON;
 import com.zd.school.control.device.model.PtTerm;
 import com.zd.school.control.device.service.PtTermService;
-import com.zd.school.te.TeQrCode;
-import com.zd.school.te.TeQrCodeForApp;
-import com.zd.school.te.TeQrCodeService;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -90,16 +87,5 @@ public class TeQrCodeController {
         }
     }
 
-    /**
-     * @param data
-     * @return java.lang.String
-     * @description 下发权限
-     * @author yz
-     * @date 2018/9/14 19:23
-     * @method downloadPrivileges
-     */
-    @RequestMapping(value = "/TaskApi/DownloadPrivileges", produces = "application/json; charset=utf-8")
-    public String downloadPrivileges(@RequestBody String data) {
-        return null;
-    }
+
 }
