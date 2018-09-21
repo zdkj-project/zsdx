@@ -1,7 +1,6 @@
 package com.zd.school.jw.train.controller;
 
 import com.zd.core.constant.Constant;
-import com.zd.core.constant.InfoPushWay;
 import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.util.*;
@@ -21,7 +20,6 @@ import com.zd.school.plartform.system.model.SysUserToUP;
 import com.zd.school.plartform.system.service.SysUserService;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;

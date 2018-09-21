@@ -119,7 +119,8 @@
         </property>
         <property name="filterChainDefinitions">
 			<value>
-				/app/** = anon
+				/app/**=anon
+				/autoInterface/**  = anon
 				/teQeCode/** = anon
 				/SysAppinfo/** = anon
 				/static/** = anon
@@ -129,7 +130,6 @@
 				/login/ssoIndex = anon 
 				/verifycode/image = anon
 				/verifycode/check=anon
-				/app/**=anon
 				/login/logout = logout
 				/login/webLogout = webLogout
 				/login/getOnlineCount=anon
