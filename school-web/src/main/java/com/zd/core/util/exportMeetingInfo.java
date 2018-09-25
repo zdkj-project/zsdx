@@ -405,7 +405,7 @@ public class exportMeetingInfo {
 	                        }else if(j%4==0){
 	                        	cell.setCellValue("上课时长");
 	                        }else{
-	                        	cell.setCellValue("考情结果");
+	                        	cell.setCellValue("考勤结果");
 	                        }
 	                        sheet.setColumnWidth(j, columnWidth * 256);
 	                    }

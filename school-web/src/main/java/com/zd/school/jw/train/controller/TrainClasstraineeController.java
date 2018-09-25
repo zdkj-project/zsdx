@@ -708,13 +708,6 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 		String xm = request.getParameter("xm");
 		String classId = request.getParameter("classId");
 		String classScheduleId = request.getParameter("classScheduleId");
-		/*
-		 * if(StringUtils.isEmpty(classId) &&
-		 * StringUtils.isEmpty(classScheduleId)){ //writeJSON(response,
-		 * jsonBuilder.returnFailureJson("\"没有传入查询考勤的参数：班级或课程\"")); strData =
-		 * jsonBuilder.buildObjListToJson((long)0, new ArrayList<>(), true);
-		 * writeJSON(response, strData);// 返回数据 return; }
-		 */
 		QueryResult<VoTrainClassCheck> qResult = thisService.getCheckList(start, limit, classId, classScheduleId, xm);
 		
 		for (int i = 0; i < qResult.getResultList().size(); i++) {

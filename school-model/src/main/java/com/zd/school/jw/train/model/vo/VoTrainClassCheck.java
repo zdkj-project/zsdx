@@ -7,8 +7,6 @@ import com.zd.core.util.DateTimeSerializer;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Column;
-
 /**
  * 班级培训考勤信息
  */

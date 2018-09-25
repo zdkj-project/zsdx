@@ -81,6 +81,7 @@ function remark(orderId) {
                         $.toast(data.text, "cancel");
                     } else {
                         $.toast(data.text, function () {
+                            location.reload();
                         });
                     }
                 }
