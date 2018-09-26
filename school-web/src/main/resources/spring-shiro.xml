@@ -121,6 +121,7 @@
 			<value>
 				/app/**=anon
 				/autoInterface/**  = anon
+				/checkClass/** = anon
 				/teQeCode/** = anon
 				/SysAppinfo/** = anon
 				/static/** = anon

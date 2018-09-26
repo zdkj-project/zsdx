@@ -57,7 +57,7 @@ public class AutoInterfaceController {
         TeQrCodeForApp result = new TeQrCodeForApp();
         try {
             Map<String, Object> maps = JSON.parseObject(json);
-            String sql = " SELECT  TRAIN_T_CLASSTRAINEE.* ,(SELECT a.CLASS_NAME FROM TRAIN_T_CLASS a where a.CLASS_ID=TRAIN_T_CLASSTRAINEE.CLASS_ID) as class_Name FROM TRAIN_T_CLASSTRAINEE WHERE  (CREATE_TIME BETWEEN '" + maps.get("stratTime") + "' AND '" + maps.get("endTime") + "'  OR UPDATE_TIME BETWEEN '" + maps.get("stratTime") + "'  AND '" + maps.get("endTime") + "' ) AND ISDELETE <> 1 " +
+            String sql = " SELECT  TRAIN_T_CLASSTRAINEE.* ,(SELECT a.CLASS_NAME FROM TRAIN_T_CLASS a where a.CLASS_ID=TRAIN_T_CLASSTRAINEE.CLASS_ID) as class_Name FROM TRAIN_T_CLASSTRAINEE WHERE  CREATE_TIME BETWEEN '" + maps.get("stratTime") + "' AND '" + maps.get("endTime") + "'   AND ISDELETE <> 1 " +
                     "AND CLASS_TRAINEE_ID = (SELECT TOP 1 A.USER_ID FROM CARD_T_USEINFO A WHERE A.UP_CARD_ID='" + maps.get("cardNo") + "' AND ISDELETE = 0 ORDER BY A.CREATE_TIME DESC )";
             List<Map<String, Object>> mapList = classtraineeService.getForValuesToSql(sql);
             if (mapList.isEmpty()) {
@@ -97,7 +97,7 @@ public class AutoInterfaceController {
     /**
      * @param json
      * @return java.lang.String
-     * @description 通过流水号查询考勤信息
+     * @description 通过流水号查询课程信息
      * @author yz
      * @date 2018/9/21 15:55
      * @method findcartNoRoomName
@@ -109,7 +109,7 @@ public class AutoInterfaceController {
             Map<String, Object> maps = JSON.parseObject(json);
             String sql = "   SELECT  TRAIN_T_CLASSSCHEDULE.*,(SELECT a.CLASS_NAME FROM TRAIN_T_CLASS a where a.CLASS_ID=TRAIN_T_CLASSSCHEDULE.CLASS_ID) as class_Name," +
                     "(SELECT a.ITEM_NAME FROM dbo.BASE_T_DICITEM a WHERE a.isDelete=0 and a.DIC_ID=(SELECT b.DIC_ID FROM BASE_T_DIC b WHERE b.DIC_CODE='TEACHTYPE') AND a.ITEM_CODE=(select top 1 c.TEACH_TYPE from TRAIN_T_COURSEINFO c where c.COURSE_ID=TRAIN_T_CLASSSCHEDULE.COURSE_ID)) as teachTypeName" +
-                    " FROM TRAIN_T_CLASSSCHEDULE WHERE  (CREATE_TIME BETWEEN  '" + maps.get("stratTime") + "' AND  '" + maps.get("endTime") + "'  OR UPDATE_TIME BETWEEN  '" + maps.get("stratTime") + "'  AND  '" + maps.get("endTime") + "' ) AND ISDELETE <> 1" +
+                    " FROM TRAIN_T_CLASSSCHEDULE WHERE  CREATE_TIME BETWEEN  '" + maps.get("stratTime") + "' AND  '" + maps.get("endTime") + "'   AND ISDELETE <> 1" +
                     " AND CLASS_ID in (SELECT CLASS_ID FROM TRAIN_T_CLASSTRAINEE where class_trainee_id =" +
                     "  ( SELECT TOP 1 A.USER_ID FROM CARD_T_USEINFO A WHERE A.UP_CARD_ID='" + maps.get("cardNo") + "' AND ISDELETE = 0 ORDER BY A.CREATE_TIME DESC))";
             List<Map<String, Object>> mapList = classtraineeService.getForValuesToSql(sql);
@@ -161,7 +161,7 @@ public class AutoInterfaceController {
         TeQrCodeForApp result = new TeQrCodeForApp();
         try {
             Map<String, Object> maps = JSON.parseObject(json);
-            String sql = " SELECT  TRAIN_T_CLASSTRAINEE.* ,(SELECT a.CLASS_NAME FROM TRAIN_T_CLASS a where a.CLASS_ID=TRAIN_T_CLASSTRAINEE.CLASS_ID) as class_Name FROM TRAIN_T_CLASSTRAINEE WHERE  (CREATE_TIME BETWEEN '" + maps.get("stratTime") + "' AND '" + maps.get("endTime") + "'  OR UPDATE_TIME BETWEEN '" + maps.get("stratTime") + "'  AND '" + maps.get("endTime") + "' ) AND ISDELETE <> 1 " +
+            String sql = " SELECT  TRAIN_T_CLASSTRAINEE.* ,(SELECT a.CLASS_NAME FROM TRAIN_T_CLASS a where a.CLASS_ID=TRAIN_T_CLASSTRAINEE.CLASS_ID) as class_Name FROM TRAIN_T_CLASSTRAINEE WHERE  CREATE_TIME BETWEEN '" + maps.get("stratTime") + "' AND '" + maps.get("endTime") + "' AND ISDELETE <> 1 " +
                     "AND CLASS_TRAINEE_ID = (SELECT TOP 1 A.USER_ID FROM CARD_T_USEINFO A WHERE A.UP_CARD_ID='" + maps.get("cardNo") + "' AND ISDELETE = 0 ORDER BY A.CREATE_TIME DESC )";
             List<Map<String, Object>> mapList = classtraineeService.getForValuesToSql(sql);
             if (mapList.isEmpty()) {
@@ -198,6 +198,14 @@ public class AutoInterfaceController {
         }
     }
 
+    /**
+     * @description 自助查询考勤信息
+     * @author yz
+     * @date 2018/9/25 16:11
+     * @method  findcartNoCheck
+     * @param json
+     * @return java.lang.String
+     */
     @RequestMapping(value = "/findcartNoCheck", produces = "application/json; charset=utf-8")
     public String findcartNoCheck(@RequestBody String json) {
         TeQrCodeForApp result = new TeQrCodeForApp();
@@ -208,7 +216,7 @@ public class AutoInterfaceController {
                     "  ( SELECT TOP 1 A.USER_ID FROM CARD_T_USEINFO A WHERE A.UP_CARD_ID='" + maps.get("cardNo") + "' AND ISDELETE = 0 ORDER BY A.CREATE_TIME DESC))";
             List<Map<String, Object>> mapList = classtraineeService.getForValuesToSql(sql);
 
-            String findCheckSql = "select * from TRAIN_V_CHECKRESULT where classScheduleId = '";
+            String findCheckSql = "select * from TRAIN_V_CHECKRESULT where  incardTime BETWEEN '" + maps.get("stratTime") + "' AND '" + maps.get("endTime") + "' and classScheduleId = ' and traineeId = (SELECT TOP 1 A.USER_ID FROM CARD_T_USEINFO A WHERE A.UP_CARD_ID='" + maps.get("cardNo") + "' AND ISDELETE = 0 ORDER BY A.CREATE_TIME DESC)";
 
             if (mapList.isEmpty()) {
                 return jsonStr();
