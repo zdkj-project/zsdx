@@ -216,7 +216,7 @@ public class AutoInterfaceController {
                     "  ( SELECT TOP 1 A.USER_ID FROM CARD_T_USEINFO A WHERE A.UP_CARD_ID='" + maps.get("cardNo") + "' AND ISDELETE = 0 ORDER BY A.CREATE_TIME DESC))";
             List<Map<String, Object>> mapList = classtraineeService.getForValuesToSql(sql);
 
-            String findCheckSql = "select * from TRAIN_V_CHECKRESULT where  incardTime BETWEEN '" + maps.get("stratTime") + "' AND '" + maps.get("endTime") + "' and classScheduleId = ' and traineeId = (SELECT TOP 1 A.USER_ID FROM CARD_T_USEINFO A WHERE A.UP_CARD_ID='" + maps.get("cardNo") + "' AND ISDELETE = 0 ORDER BY A.CREATE_TIME DESC)";
+            String findCheckSql = "select * from TRAIN_V_CHECKRESULT where  incardTime BETWEEN '" + maps.get("stratTime") + "' AND '" + maps.get("endTime") + "' and traineeId = (SELECT TOP 1 A.USER_ID FROM CARD_T_USEINFO A WHERE A.UP_CARD_ID='" + maps.get("cardNo") + "' AND ISDELETE = 0 ORDER BY A.CREATE_TIME DESC) and classScheduleId = '";
 
             if (mapList.isEmpty()) {
                 return jsonStr();
