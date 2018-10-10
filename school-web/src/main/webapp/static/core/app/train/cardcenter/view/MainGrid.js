@@ -45,6 +45,13 @@ Ext.define("core.train.cardcenter.view.MainGrid", {
             funCode:'girdFuntionBtn',
             disabled:false,
             iconCls: 'x-fa fa-file'
+        },{
+            xtype: 'button',
+            text: '门禁权限下载',
+            ref: 'downloadAuthority',
+            funCode:'girdFuntionBtn',
+            disabled:false,
+            iconCls: 'x-fa fa-file'
         },'->',{
             xtype: 'tbtext', 
             html:'快速搜索：'

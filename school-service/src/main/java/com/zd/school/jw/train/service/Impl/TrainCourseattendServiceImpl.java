@@ -130,81 +130,105 @@ public class TrainCourseattendServiceImpl extends BaseServiceImpl<TrainCourseatt
     }
 
     @Override
-    public void installTrainCourseattend(List<Map<String, Object>> list, String classId, String userId, String attendResult, Short needCheckout,Date date) {
+    public void installTrainCourseattend(List<Map<String, Object>> list, String classId, String userId, String attendResult, Short needCheckout, Date date) throws Exception {
         Map<String, Object> map;
         TrainCourseattend trainCourseattend;
         SimpleDateFormat se = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            for (int i = 0; i < list.size(); i++) {
-                map = list.get(i);
-                //正常签到
-                trainCourseattend = new TrainCourseattend();
-                trainCourseattend.setClassId(classId);
-                trainCourseattend.setTraineeId(userId);
-                trainCourseattend.setIncardTime(date);
-                trainCourseattend.setBeginTime(se.parse(map.get("BEGIN_TIME").toString()));
-                trainCourseattend.setEndTime(se.parse(map.get("END_TIME").toString()));
-                trainCourseattend.setClassScheduleId(map.get("CLASS_SCHEDULE_ID").toString());
-                trainCourseattend.setCreateUser("后台程序创建");
+        for (int i = 0; i < list.size(); i++) {
+            map = list.get(i);
+            //正常签到
+            trainCourseattend = new TrainCourseattend();
+            trainCourseattend.setClassId(classId);
+            trainCourseattend.setTraineeId(userId);
+            trainCourseattend.setIncardTime(date);
+            trainCourseattend.setBeginTime(se.parse(map.get("BEGIN_TIME").toString()));
+            trainCourseattend.setEndTime(se.parse(map.get("END_TIME").toString()));
+            trainCourseattend.setClassScheduleId(map.get("CLASS_SCHEDULE_ID").toString());
+            trainCourseattend.setCreateUser("后台程序创建");
 
-                //不需要签退
-                if (0 == needCheckout) {
-                    if (date.before(se.parse(map.get("END_TIME").toString()))) {
-                        trainCourseattend.setOutcardTime(se.parse(map.get("END_TIME").toString()));
-                    } else {
-                        trainCourseattend.setOutcardTime(se.parse(list.get(list.size() - 1).get("END_TIME").toString()));
-                    }
-                    trainCourseattend.setAttendResult(attendResult);
-
-                    trainCourseattend.setAttendResult(attendResult);
+            //不需要签退
+            if (0 == needCheckout) {
+                if (date.before(se.parse(map.get("END_TIME").toString()))) {
+                    trainCourseattend.setOutcardTime(se.parse(map.get("END_TIME").toString()));
                 } else {
-                    //将现阶段考勤结果存入备用字段
-                    trainCourseattend.setExtField04(attendResult);
+                    trainCourseattend.setOutcardTime(se.parse(list.get(list.size() - 1).get("END_TIME").toString()));
                 }
-                this.doMerge(trainCourseattend);
+                trainCourseattend.setAttendResult(attendResult);
+
+                trainCourseattend.setAttendResult(attendResult);
+            } else {
+                //将现阶段考勤结果存入备用字段
+                trainCourseattend.setExtField04(attendResult);
             }
-        } catch (Exception e) {
-            logger.error(e.getMessage());
+            this.doMerge(trainCourseattend);
         }
     }
 
     @Override
-    public void installTrainCourseattends(List<TrainClassschedule> list, String classId, String userId, String attendResult, Short needCheckout,Date date) {
+    public void installTrainCourseattends(List<TrainClassschedule> list, String classId, String userId, String attendResult, Short needCheckout, Date date) throws Exception {
         TrainCourseattend trainCourseattend;
         SimpleDateFormat se = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        try {
-            for (TrainClassschedule l : list) {
-                //正常签到
-                trainCourseattend = new TrainCourseattend();
-                trainCourseattend.setClassId(classId);
-                trainCourseattend.setTraineeId(userId);
-                trainCourseattend.setIncardTime(date);
-                trainCourseattend.setBeginTime(se.parse(l.getBeginTime().toString()));
-                trainCourseattend.setEndTime(se.parse(l.getEndTime().toString()));
-                trainCourseattend.setClassScheduleId(l.getUuid());
-                trainCourseattend.setCreateUser("后台程序创建");
 
-                //不需要签退
-                if (0 == needCheckout) {
-                    if (date.before(se.parse(l.getEndTime().toString()))) {
-                        trainCourseattend.setOutcardTime(se.parse(l.getEndTime().toString()));
-                    } else {
-                        trainCourseattend.setOutcardTime(se.parse(list.get(list.size() - 1).getEndTime().toString()));
-                    }
-                    trainCourseattend.setAttendResult(attendResult);
+        for (TrainClassschedule l : list) {
+            //正常签到
+            trainCourseattend = new TrainCourseattend();
+            trainCourseattend.setClassId(classId);
+            trainCourseattend.setTraineeId(userId);
+            trainCourseattend.setIncardTime(date);
+            trainCourseattend.setBeginTime(se.parse(l.getBeginTime().toString()));
+            trainCourseattend.setEndTime(se.parse(l.getEndTime().toString()));
+            trainCourseattend.setClassScheduleId(l.getUuid());
+            trainCourseattend.setCreateUser("后台程序创建");
+
+            //不需要签退
+            if (0 == needCheckout) {
+                if (date.before(se.parse(l.getEndTime().toString()))) {
+                    trainCourseattend.setOutcardTime(se.parse(l.getEndTime().toString()));
                 } else {
-                    //将现阶段考勤结果存入备用字段
-                    trainCourseattend.setExtField04(attendResult);
+                    trainCourseattend.setOutcardTime(se.parse(list.get(list.size() - 1).getEndTime().toString()));
                 }
-                this.doMerge(trainCourseattend);
+                trainCourseattend.setAttendResult(attendResult);
+            } else {
+                //将现阶段考勤结果存入备用字段
+                trainCourseattend.setExtField04(attendResult);
             }
-        } catch (Exception e) {
-            logger.error(e.getMessage());
+            this.doMerge(trainCourseattend);
         }
     }
 
     @Override
-    public void updateTrainCourseattend(List<Map<String, Object>> list, String classId, String userId,Date date) {
+    public void installTrainCourseattend(Map<String, Object> map, String classId, String userId, String attendResult, Short needCheckout, Date date) throws Exception {
+        TrainCourseattend trainCourseattend;
+        SimpleDateFormat se = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        //正常签到
+        trainCourseattend = new TrainCourseattend();
+        trainCourseattend.setClassId(classId);
+        trainCourseattend.setTraineeId(userId);
+        trainCourseattend.setIncardTime(date);
+        trainCourseattend.setBeginTime(se.parse(map.get("BEGIN_TIME").toString()));
+        trainCourseattend.setEndTime(se.parse(map.get("END_TIME").toString()));
+        trainCourseattend.setClassScheduleId(map.get("CLASS_SCHEDULE_ID").toString());
+        trainCourseattend.setCreateUser("后台程序创建");
+        //不需要签退
+        if (0 == needCheckout) {
+            if (date.before(se.parse(map.get("END_TIME").toString()))) {
+                trainCourseattend.setOutcardTime(se.parse(map.get("END_TIME").toString()));
+            } else {
+                trainCourseattend.setOutcardTime(se.parse(map.get("END_TIME").toString()));
+            }
+            trainCourseattend.setAttendResult(attendResult);
+
+            trainCourseattend.setAttendResult(attendResult);
+        } else {
+            //将现阶段考勤结果存入备用字段
+            trainCourseattend.setExtField04(attendResult);
+        }
+        this.doMerge(trainCourseattend);
+    }
+
+
+    @Override
+    public void updateTrainCourseattend(List<Map<String, Object>> list, String classId, String userId, Date date) {
         Map<String, Object> map;
         TrainCourseattend trainCourseattend;
         for (int i = 0; i < list.size(); i++) {
@@ -220,7 +244,7 @@ public class TrainCourseattendServiceImpl extends BaseServiceImpl<TrainCourseatt
     }
 
     @Override
-    public void updateTrainCourseattends(List<TrainClassschedule> list, String classId, String userId,Date date) {
+    public void updateTrainCourseattends(List<TrainClassschedule> list, String classId, String userId, Date date) {
         TrainCourseattend trainCourseattend;
         for (TrainClassschedule l : list) {
             trainCourseattend = trainCourseattendService.getByProerties(new String[]{"classId", "classScheduleId", "traineeId", "isDelete"}, new Object[]{classId, l.getUuid(), userId, 0});
@@ -230,5 +254,16 @@ public class TrainCourseattendServiceImpl extends BaseServiceImpl<TrainCourseatt
             trainCourseattend.setAttendResult(trainCourseattend.getExtField04());
             this.doMerge(trainCourseattend);
         }
+    }
+
+    @Override
+    public void updateTrainCourseattend(Map<String, Object> map, String classId, String userId, Date date) {
+        TrainCourseattend trainCourseattend;
+        trainCourseattend = trainCourseattendService.getByProerties(new String[]{"classId", "classScheduleId", "traineeId", "isDelete"}, new Object[]{classId, map.get("CLASS_SCHEDULE_ID"), userId, 0});
+        trainCourseattend.setUpdateTime(date);
+        trainCourseattend.setUpdateUser("后台程序创建");
+        trainCourseattend.setOutcardTime(date);
+        trainCourseattend.setAttendResult(trainCourseattend.getExtField04());
+        this.doMerge(trainCourseattend);
     }
 }

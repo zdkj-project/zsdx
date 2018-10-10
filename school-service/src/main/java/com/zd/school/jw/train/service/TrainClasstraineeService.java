@@ -3,6 +3,8 @@ package com.zd.school.jw.train.service;
 import com.zd.core.model.ImportNotInfo;
 import com.zd.core.model.extjs.QueryResult;
 import com.zd.core.service.BaseService;
+import com.zd.school.control.device.model.PtTerm;
+import com.zd.school.jw.model.app.ForApp;
 import com.zd.school.jw.train.model.TrainClasstrainee;
 import com.zd.school.jw.train.model.vo.VoTrainClassCheck;
 import com.zd.school.plartform.system.model.SysUser;
@@ -103,4 +105,6 @@ public interface TrainClasstraineeService extends BaseService<TrainClasstrainee>
 
 	public void doRestoreCardBind(List<Map<String, Object>> cardInfoToUp);
 	public List<Map<String, Object>> insAdvanceOrders(String classId);
+
+	public ForApp downloadPrivileges(String userId , PtTerm ptTerm);
 }

@@ -66,7 +66,7 @@ public class CheckClassController {
     @RequestMapping(value = "/signIn/{classId}/{userId}", produces = "application/json; charset=utf-8")
     public String signIn(@PathVariable String userId, @PathVariable String classId) {
         TeQrCodeForApp result = new TeQrCodeForApp();
-        String message = "签到成功";
+        String message = "签到失败";
         try {
             String hql = "from TrainClasstrainee where classId = ? and uuid = ? and isDelete <> 1";
             List<TrainClasstrainee> traineeList = classtraineeService.getForValues(hql, classId, userId);
@@ -112,6 +112,7 @@ public class CheckClassController {
                     if (null == trainCourseattend) {
                         //当前时间大于改课程结束时间不予签到
                         if (date.after(se.parse(listChedule.get(i).get("END_TIME").toString()))) {
+                            message = "签到失败--改课程已结束";
                             continue;
                         } else {
                             long diff = se.parse(listChedule.get(0).get("BEGIN_TIME").toString()).getTime() - System.currentTimeMillis();
@@ -119,22 +120,25 @@ public class CheckClassController {
                             if (days < 0) {
                                 //迟到签到  //考勤结果 1-正常 2-迟到 3-早退 4-缺勤5-迟到早退
                                 if (Math.abs(days) > trainCheckrule.getBeLate() && Math.abs(days) < trainCheckrule.getAbsenteeism()) {
+                                    trainCourseattendService.installTrainCourseattend(listChedule.get(i), classId, userId, "2", trainCheckrule.getNeedCheckout(), date);
                                     message = "签到成功--迟到";
-                                    trainCourseattendService.installTrainCourseattend(listChedule, classId, userId, "2", trainCheckrule.getNeedCheckout(), date);
+                                    break;
                                 } else if (Math.abs(days) > trainCheckrule.getAbsenteeism()) {
+                                    trainCourseattendService.installTrainCourseattend(listChedule.get(i), classId, userId, "4", trainCheckrule.getNeedCheckout(), date);
                                     message = "签到成功--缺勤";
-                                    trainCourseattendService.installTrainCourseattend(listChedule, classId, userId, "4", trainCheckrule.getNeedCheckout(), date);
+                                    break;
                                 }
                             } else if (days > trainCheckrule.getInBefore()) {
                                 return jsonStr("当前时间不能签到!还差" + days + "分钟");
                             } else {
                                 //正常签到
-                                trainCourseattendService.installTrainCourseattend(listChedule, classId, userId, "1", trainCheckrule.getNeedCheckout(), date);
+                                trainCourseattendService.installTrainCourseattend(listChedule.get(i), classId, userId, "1", trainCheckrule.getNeedCheckout(), date);
+                                break;
                             }
                         }
                     } else {
-                        //当前时间大于改课程结束时间不予签到
-                        if (date.after(se.parse(listChedule.get(i).get("END_TIME").toString()))) {
+                        //当前时间大于下一门课程开始时间 不予退签
+                        if (date.after(se.parse(listChedule.get((i + 1 >= listChedule.size() ? i : i + 1)).get("END_TIME").toString()))) {
                             continue;
                         } else {
                             //不需要签退
@@ -145,8 +149,9 @@ public class CheckClassController {
                                 if (days > trainCheckrule.getOutBefore()) {
                                     return jsonStr("当前时间不能签退!还差" + days + "分钟");
                                 } else {
-                                    trainCourseattendService.updateTrainCourseattend(listChedule, classId, userId, date);
+                                    trainCourseattendService.updateTrainCourseattend(listChedule.get(i), classId, userId, date);
                                     message = "签退成功";
+                                    break;
                                 }
                             } else {
                                 return jsonStr("你已经签到,该课程不需要签退!");

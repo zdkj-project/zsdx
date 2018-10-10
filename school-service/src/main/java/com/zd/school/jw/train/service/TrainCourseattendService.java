@@ -76,10 +76,11 @@ public interface TrainCourseattendService extends BaseService<TrainCourseattend>
      * @date 2018/9/26 9:47
      * @method installTrainCourseattend
      */
-    public void installTrainCourseattend(List<Map<String, Object>> list, String classId, String userId, String attendResult, Short needCheckout, Date date);
+    public void installTrainCourseattend(List<Map<String, Object>> list, String classId, String userId, String attendResult, Short needCheckout, Date date) throws Exception;
 
-    public void installTrainCourseattends(List<TrainClassschedule> list, String classId, String userId, String attendResult, Short needCheckout, Date date);
+    public void installTrainCourseattends(List<TrainClassschedule> list, String classId, String userId, String attendResult, Short needCheckout, Date date) throws Exception;
 
+    public void installTrainCourseattend(Map<String, Object> map, String classId, String userId, String attendResult, Short needCheckout, Date date) throws Exception;
 
     /**
      * @param list    班级课程日历
@@ -94,5 +95,7 @@ public interface TrainCourseattendService extends BaseService<TrainCourseattend>
     public void updateTrainCourseattend(List<Map<String, Object>> list, String classId, String userId, Date date);
 
     public void updateTrainCourseattends(List<TrainClassschedule> list, String classId, String userId, Date date);
+
+    public void updateTrainCourseattend(Map<String, Object> list, String classId, String userId, Date date);
 
 }

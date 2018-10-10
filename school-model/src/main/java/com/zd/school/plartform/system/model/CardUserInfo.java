@@ -111,5 +111,16 @@ public class CardUserInfo extends BaseEntity implements Serializable {
     public void setTraineeName(String traineeName) {
         this.traineeName = traineeName;
     }
-  
+
+    @FieldInfo(name = "学员班级")
+    @Formula("(SELECT a.CLASS_NAME FROM TRAIN_T_CLASS a where a.CLASS_ID=(SELECT top 1 b.CLASS_ID FROM TRAIN_T_CLASSTRAINEE b where b.CLASS_TRAINEE_ID=USER_ID))")
+    private String className;
+
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
 }

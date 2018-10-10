@@ -8,6 +8,8 @@ import com.zd.core.util.BeanUtils;
 import com.zd.core.util.StringUtils;
 import com.zd.school.build.define.model.BuildRoominfo;
 import com.zd.school.build.define.service.BuildRoominfoService;
+import com.zd.school.control.device.model.PtTerm;
+import com.zd.school.jw.model.app.ForApp;
 import com.zd.school.jw.train.dao.TrainClasstraineeDao;
 import com.zd.school.jw.train.model.RoomTypeList;
 import com.zd.school.jw.train.model.TrainClass;
@@ -23,12 +25,18 @@ import com.zd.school.plartform.baseset.service.BaseDicitemService;
 import com.zd.school.plartform.system.model.CardUserInfoToUP;
 import com.zd.school.plartform.system.model.SysUser;
 import org.apache.log4j.Logger;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import javax.annotation.Resource;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -50,6 +58,11 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
     // 同步锁
     private static Object syncObject = new Object();
 
+    private Properties prop;
+
+    public TrainClasstraineeServiceImpl() throws IOException {
+        prop = PropertiesLoaderUtils.loadAllProperties("up.properties");
+    }
 
     @Resource
     public void setTrainClasstraineeDao(TrainClasstraineeDao dao) {
@@ -739,6 +752,57 @@ public class TrainClasstraineeServiceImpl extends BaseServiceImpl<TrainClasstrai
         String sql = "select * from CLASS_RESERVATION_NUMBER where classid='" + classId + "' and isDelete = 0 ";
         List<Map<String, Object>> list = this.queryMapBySql(sql);
         return list;
+    }
+
+    @Override
+    public ForApp downloadPrivileges(String userId, PtTerm ptTerm) {
+        Map<String, Object> map = new HashMap<>();
+        //用户编号
+        map.put("user_id", userId);
+        //设备序列号
+        map.put("sn", ptTerm.getTermSN());
+        //权限方式（0：增量，1：全量）
+        map.put("mode", 1);
+        //设备类型（4：门禁，8：水控）
+        map.put("devType", 4);
+
+        //请求地址
+        String urlSite = "TaskApi/DownloadPrivileges?";
+        ForApp forApp = null;
+        try {
+            // 把字符串转换为URL请求地址
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+                urlSite += entry.getKey() + "=" + entry.getValue() + "&";
+            }
+            urlSite = urlSite.substring(0, urlSite.length() - 1);
+            URL url = new URL(prop.get("url").toString() + urlSite);
+            // 打开连接
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.connect();// 连接会话
+            // 获取输入流
+            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+            String line;
+            StringBuilder sb = new StringBuilder();
+
+            // 循环读取流
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+
+            // 关闭流
+            br.close();
+            // 断开连接
+            connection.disconnect();
+            forApp = ForApp.fromJson(sb.toString());
+            return forApp;
+        } catch (Exception e) {
+            if (null == e.getCause()) {
+                forApp = new ForApp(e.getMessage(), false, null);
+            } else {
+                forApp = new ForApp(e.getCause().toString(), false, null);
+            }
+            return forApp;
+        }
     }
 
 }
