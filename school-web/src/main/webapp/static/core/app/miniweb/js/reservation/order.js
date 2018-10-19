@@ -39,13 +39,13 @@ $(function () {
                     data = JSON.stringify(dt.Format("yyyy年MM月dd日"));
                     data = data.substring(0, data.length - 1);
                     data = data.substring(1, data.length);
-                    //    str += ' <div class="weui-cells__title" style="font-size: 15px;">' + data +"&nbsp;&nbsp;|&nbsp;&nbsp;" +day+'<sapn style="margin-left: 40%;color:#00CCFF;">'+(jsonList.rows[i].dinnerGroup == 0 ?"":"<span >备注</span>&nbsp;&nbsp;|&nbsp;&nbsp;<span >查看备注</span>")+'</sapn></div> ';
-                    str += ' <div class="weui-cells__title" style="font-size: 15px;">' + data + '<sapn style="margin-left: 40%;color:#66CCCC;">' ;
-                    str += (jsonList.rows[i].dinnerGroup == 0 ? "" : "<span data-value='"+jsonList.rows[i].uuid+"' onclick='remark(this)'>备注</span>&nbsp;&nbsp;|&nbsp;&nbsp;<span data-value='"+jsonList.rows[i].remark+"' onclick='lookRemark(this)'>查看备注</span>") + '</sapn></div> ';
+                    str += ' <div class="weui-cells__title" style="font-size: 15px;">' + data+'</div>';
+                    //      str += ' <div class="weui-cells__title" style="font-size: 15px;">' + data + '<sapn style="margin-left: 40%;color:#66CCCC;">' ;
+                //    str += (jsonList.rows[i].dinnerGroup == 0 ? "" : "<span data-value='"+jsonList.rows[i].uuid+"' onclick='remark(this)'>备注</span>&nbsp;&nbsp;|&nbsp;&nbsp;<span data-value='"+jsonList.rows[i].remark+"' onclick='lookRemark(this)'>查看备注</span>") + '</sapn></div> ';
                     str += '  <div class="weui-cells weui-cells_checkbox">';
                     str += '   <label class="weui-cell weui-check__label">';
                     str += '   <div class="weui-cell__hd">';
-                    str += '   <input type="checkbox" class="weui-check"  data-order="' + jsonList.rows[i].uuid + '" name="ischeck" data-date="' + jsonList.rows[i].dinnerDate + '" id="ischeck' + i + '" value="' + jsonList.rows[i].userId + '">';
+                    str += '   <input type="checkbox" class="weui-check"  data-order="' + jsonList.rows[i].uuid + '" name="ischeck" data-date="' + jsonList.rows[i].dinnerDate + '" id="ischeck' + i + '" value="' + jsonList.rows[i].userId + '"'+ (jsonList.rows[i].dinnerGroup == 1?"checked='true'":null)+'/>';
                     str += '   <i class="weui-icon-checked"></i>';
                     str += '   </div>';
                     str += '   <div class="weui-cell__bd"> ';
@@ -104,9 +104,11 @@ function lookRemark(remark) {
 $("input[name=all]").click(function () {
     if (this.checked) {
         $("input[name=ischeck]").prop("checked", true);
+        $("input[name=ischeck]:eq(0)").prop("checked", false);
     } else {
         $("input[name=ischeck]").prop("checked", false);
     }
+
 });
 
 //订餐

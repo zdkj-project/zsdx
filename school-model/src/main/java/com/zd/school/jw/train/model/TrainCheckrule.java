@@ -138,7 +138,19 @@ public class TrainCheckrule extends BaseEntity implements Serializable{
     public Short getStartUsing() {
         return startUsing;
     }
-        
+
+
+    @FieldInfo(name = "考勤图片")
+    @Column(name = "QR_CODE", length = 200, nullable = true)
+    private String qrCode;
+
+    public String getQrCode() {
+        return qrCode;
+    }
+
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode;
+    }
 
     /** 以下为不需要持久化到数据库中的字段,根据项目的需要手工增加 
     *@Transient

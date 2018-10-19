@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.alibaba.druid.sql.visitor.functions.If;
 import com.zd.school.control.device.model.PtTerm;
 import com.zd.school.control.device.service.PtTermService;
 import com.zd.school.jw.model.app.ForApp;
@@ -1217,6 +1218,10 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
             String roomName = "";
             Boolean can = true;
             for (int i = 0; i < userIdArr.length; i++) {
+                if (null == roomCodeArr[i] || "".equals(roomCodeArr[i])) {
+                    logger.info(userId + "没有房间信息!");
+                    continue;
+                }
                 PtTerm ptTerm = ptTermService.getForValue(hql, roomCodeArr[i], roomCodeArr[i]);
                 if (null == ptTerm) {
                     can = false;
@@ -1225,7 +1230,12 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
                     continue;
                 }
                 ForApp forApp = thisService.downloadPrivileges(userIdArr[i], ptTerm);
-                if (!forApp.isResult()) {
+                if (null == forApp) {
+                    can = false;
+                    logger.error(roomCodeArr[i] + "房间权限下载权限失败:无法连接前置接口");
+                    roomName += roomCodeArr[i] + "  ";
+                    continue;
+                } else if (!forApp.isResult()) {
                     can = false;
                     logger.error(roomCodeArr[i] + "房间权限下载权限失败:" + forApp.getMessage());
                     roomName += roomCodeArr[i] + "  ";
@@ -1234,7 +1244,7 @@ public class TrainClasstraineeController extends FrameWorkController<TrainClasst
 
             }
             if (!can) {
-                writeJSON(response, jsonBuilder.returnFailureJson("\"" + roomName + "房间权限下载失败,请手动下载权限! \""));
+                writeJSON(response, jsonBuilder.returnFailureJson("\"" + roomName + "房间权限下载失败,请联系管理员手动下载权限! \""));
             } else {
                 writeJSON(response, jsonBuilder.returnSuccessJson("\"房间权限下载成功！\""));
             }

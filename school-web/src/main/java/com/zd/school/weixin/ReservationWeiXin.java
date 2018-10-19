@@ -1,12 +1,14 @@
 package com.zd.school.weixin;
 
 import com.zd.core.controller.core.BaseController;
+import com.zd.core.controller.core.FrameWorkController;
 import com.zd.core.util.JsonBuilder;
 import com.zd.core.util.StringUtils;
 import com.zd.school.jw.train.model.TrainTeacherOrder;
 import com.zd.school.jw.train.model.TrainTeacherOrderDesc;
 import com.zd.school.jw.train.service.TrainTeacherOrderDescService;
 import com.zd.school.jw.train.service.TrainTeacherOrderService;
+import com.zd.school.plartform.system.model.SysUser;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,7 +36,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/app/Reservation")
-public class ReservationWeiXin extends BaseController<TrainTeacherOrderDesc> {
+public class ReservationWeiXin extends FrameWorkController<TrainTeacherOrderDesc> {
 
     private static Logger logger = Logger.getLogger(ReservationWeiXin.class);
     /**
@@ -71,6 +73,26 @@ public class ReservationWeiXin extends BaseController<TrainTeacherOrderDesc> {
         request.setAttribute("userid", userid);
         return new ModelAndView("static/core/app/miniweb/reservation/food", "", null);
     }
+
+    /**
+     * @param request
+     * @param response
+     * @return org.springframework.web.servlet.ModelAndView
+     * @description EXT进入订餐页面
+     * @author yz
+     * @date 2018/9/18 18:42
+     * @method extFood
+     */
+    @RequestMapping(value = "/extFood", method = {RequestMethod.POST, RequestMethod.GET})
+    public ModelAndView extFood(HttpServletRequest request, HttpServletResponse response) {
+        SysUser sysUser =this.getCurrentSysUser();
+        if (sysUser==null) {
+            return new ModelAndView("static/core/app/miniweb/jsp/hint", "", null);
+        }
+        request.setAttribute("userid", sysUser.getUuid());
+        return new ModelAndView("static/core/app/miniweb/reservation/food", "userid", sysUser.getUuid());
+    }
+
 
     /**
      * @param response
@@ -124,7 +146,6 @@ public class ReservationWeiXin extends BaseController<TrainTeacherOrderDesc> {
         returnlist.addAll(list);
         if (len < 14) {
             TrainTeacherOrder temp = null;
-
             boolean isExist = false;
             int day = 0;
             int day2 = 0;
@@ -334,5 +355,6 @@ public class ReservationWeiXin extends BaseController<TrainTeacherOrderDesc> {
             writeJSON(response, 0, "请求失败，请联系管理员！");
         }
     }
+
 
 }

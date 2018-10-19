@@ -167,6 +167,7 @@ public class AutoInterfaceController {
             if (mapList.isEmpty()) {
                 return jsonStr();
             }
+
             Map<String, Object> map = new HashMap<>();
             map.put("name", mapList.get(0).get("XM"));
             map.put("sex", "1".equals(mapList.get(0).get("XBM")) ? "男" : "女");
@@ -199,12 +200,12 @@ public class AutoInterfaceController {
     }
 
     /**
+     * @param json
+     * @return java.lang.String
      * @description 自助查询考勤信息
      * @author yz
      * @date 2018/9/25 16:11
-     * @method  findcartNoCheck
-     * @param json
-     * @return java.lang.String
+     * @method findcartNoCheck
      */
     @RequestMapping(value = "/findcartNoCheck", produces = "application/json; charset=utf-8")
     public String findcartNoCheck(@RequestBody String json) {
@@ -255,8 +256,8 @@ public class AutoInterfaceController {
                     map4.put("incardTime", map3.get("incardTime"));
                     map4.put("outcardTime", map3.get("outcardTime"));
                     map4.put("attendResult", map3.get("attendResult"));
-                    map4.put("isLeave", null == map3.get("isLeave")? 0 : map3.get("isLeave"));
-                    map4.put("remark",  map3.get("remark"));
+                    map4.put("isLeave", null == map3.get("isLeave") ? 0 : map3.get("isLeave"));
+                    map4.put("remark", map3.get("remark"));
                     map4.put("traineeNumber", map3.get("traineeNumber"));
                     String phone = "";
                     if (Base64Util.isBase64(String.valueOf(mapList.get(0).get("mobilePhone")))) {
@@ -286,7 +287,7 @@ public class AutoInterfaceController {
         TeQrCodeForApp result = new TeQrCodeForApp();
         result.setMessage("该流水号没有查询到绑定卡号");
         result.setData(new ArrayList<>());
-        result.setResult(false);
+        result.setResult(true);
         return JSON.toJSONString(result);
     }
 }

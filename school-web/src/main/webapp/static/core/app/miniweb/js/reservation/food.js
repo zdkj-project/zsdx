@@ -27,7 +27,7 @@ $(function () {
                     str += '</tr><tr>';
                 }
                 if (i == 0) {
-                    str += '<td style=" width: 20%; color: #18b4ed;">' + table[i] + '</td>';
+                    str += '<td style=" width: 23%; color: #18b4ed;">' + table[i] + '</td>';
                 } else if (i == 1) {
                     str += '<td style=" color: #04be02;">' + table[i] + '</td>';
                 } else if (i == 2) {

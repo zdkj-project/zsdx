@@ -419,7 +419,7 @@ Ext.define("core.train.cardcenter.controller.MainController", {
                                     userId: userId.join(","),
                                     roomCode: roomCode.join(",")
                                 },
-                                timeout : 100000,
+                                timeout: 1200000,
                                 //回调代码必须写在里面
                                 success: function (response) {
                                     var data = Ext.decode(Ext.valueFrom(response.responseText, '{}'));
@@ -435,6 +435,11 @@ Ext.define("core.train.cardcenter.controller.MainController", {
                                 failure: function (response) {
                                     Ext.Msg.alert('请求失败', '错误信息：\n' + response.responseText);
                                     loading.hide();
+                                }.bind(this), complete: function (XMLHttpRequest, status) { //当请求完成时调用函数
+                                    if (status == 'timeout') {
+                                        Ext.Msg.alert('请求超时', '请下载少量数据');
+                                        loading.hide();
+                                    }
                                 }
                             })
                         }

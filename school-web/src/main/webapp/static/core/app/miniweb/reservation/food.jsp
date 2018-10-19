@@ -26,10 +26,10 @@
 </header>
 <div class="weui-weixin-content" id="content" style="margin: -10% 4% 0 4%;"><!--内容-->
 </div>
-<table class="weui-table" id="weitable"  style="table-layout:fixed;"    >
+<table class="weui-table" id="weitable"  style="table-layout:fixed;" align="right">
 </table>
 <div style='  margin: 10%;text-align: center'>
-    <a href="/static/core/app/miniweb/reservation/order.jsp?userId=<%=request.getParameter("userid")%>" class="weui_btn  bg-blue weui_btn_inline">点击订餐</a>
+    <a href="/static/core/app/miniweb/reservation/order.jsp?userId=${userid}" class="weui_btn  bg-blue weui_btn_inline">点击订餐</a>
 </div>
 <script type="text/javascript" src="/static/core/app/miniweb/js/reservation/food.js"></script>
 </body>

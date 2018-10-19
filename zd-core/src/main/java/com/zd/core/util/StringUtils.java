@@ -213,9 +213,10 @@ public class StringUtils {
 
     /**
      * 将指定的中文转换成拼音，并返回首字母
-     * @param wenZi 要转换的文字
+     *
+     * @param wenZi       要转换的文字
      * @param convertType 转换的类型 LOWERCASE-全小写 UPPERCASE-全大写 FIRSTUPPER-首字母大写
-     * @param returnType 返回的类型 RETURNFIRST-仅返回首字母 否则返回全部字符
+     * @param returnType  返回的类型 RETURNFIRST-仅返回首字母 否则返回全部字符
      * @return
      */
     public static String ConvertWenziToPingYing(String wenZi, String convertType, String returnType) {
@@ -255,9 +256,9 @@ public class StringUtils {
         return sb.toString();
     }
 
-    public static String HtmlToText(String htmlStr){
-        String text ="";
-        if(isNotEmpty(htmlStr)) {
+    public static String HtmlToText(String htmlStr) {
+        String text = "";
+        if (isNotEmpty(htmlStr)) {
             Document doc = Jsoup.parse(htmlStr);
             text = doc.text();
             // remove extra white space
@@ -274,5 +275,18 @@ public class StringUtils {
         } else
             text = "";
         return text;
+    }
+
+    /**
+     * @param str
+     * @return java.lang.String
+     * @description 字符串删除 /r/n 或者 /r /n
+     * @author yz
+     * @date 2018/10/15 17:38
+     * @method removeRN
+     */
+    public static String removeRN(String str) {
+        String msg = str.replaceAll("(\\\r\\\n|\\\r|\\\n|\\\n\\\r)", "");
+        return msg;
     }
 }

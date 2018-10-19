@@ -1,77 +1,95 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+    <!-- ======================== 调度任务类 ======================== -->
+    <bean id="downloadPrivileges" class="com.zd.openinterface.timing.DownloadPrivileges"/>
+    <!-- ======================== 指定调度任务执行的类和方法 ======================== -->
+    <bean id="downloadPrivilegesUrlJob"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="downloadPrivileges"/>
+        </property>
+        <property name="targetMethod" value="timingDownloadPrivileges"/>  <!-- 要执行的方法名称 -->
+    </bean>
+    <!-- ======================== 调度触发器 ======================== -->
+    <bean id="downloadPrivilegesTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="downloadPrivilegesUrlJob"></property>
+        <property name="cronExpression">
+            <value>0 0/10 * * * ?</value>
+        </property>
+    </bean>
 
 
-	<!-- ======================== 调度任务类 ======================== -->  	
-	<bean id="SyncJobQuartz" class="com.zd.core.security.SyncJobQuartz"/> 
-	<!-- ======================== 指定调度任务执行的类和方法 ======================== -->  
-    <bean id="SyncJobQuartzMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
-	    <property name="targetObject">  
-	        <ref bean="SyncJobQuartz"/>  
-	    </property>  
-	    <property name="targetMethod">  <!-- 要执行的方法名称 -->  
-	        <value>execute</value>  
-	    </property>  
-	</bean>  
-	<!-- ======================== 调度触发器 ======================== -->  
-	<bean id="CronTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
-	    <property name="jobDetail" ref="SyncJobQuartzMethod"></property>  
-	    <property name="cronExpression" value="0 0 2 * * ?"></property>  
-	</bean>  
-	
-	
-	
-	<!-- ======================== 调度任务类 ======================== -->  	
-	<bean id="DinnerJobQuarz" class="com.zd.core.security.DinnerJobQuarz"/> 
-	<!-- ======================== 指定调度任务执行的类和方法 ======================== -->  
-    <bean id="DinnerJobQuarzMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
-	    <property name="targetObject">  
-	        <ref bean="DinnerJobQuarz"/>  
-	    </property>  
-	    <property name="targetMethod">  <!-- 要执行的方法名称 -->  
-	        <value>cardDisable</value>  
-	    </property>  
-	</bean>  
-	<!-- ======================== 指定调度任务执行的类和方法 ======================== -->  
-    <bean id="DinnerJobQuarzMethod2" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">  
-	    <property name="targetObject">  
-	        <ref bean="DinnerJobQuarz"/>  
-	    </property>  
-	    <property name="targetMethod">  <!-- 要执行的方法名称 -->  
-	        <value>cardAble</value>  
-	    </property>  
-	</bean>  
-	
-	<!-- ======================== 调度触发器 ========================
-	<bean id="CronTriggerBean2" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
-	    <property name="jobDetail" ref="DinnerJobQuarzMethod"></property>  
-	    <property name="cronExpression" value="0 0 3 * * ?"></property>  
-	</bean>  
-	-->  
-	
-	<!-- ======================== 调度触发器 ======================== 
-	<bean id="CronTriggerBean3" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
-	    <property name="jobDetail" ref="DinnerJobQuarzMethod2"></property>  
-	    <property name="cronExpression" value="0 10 10 * * ?"></property>  
-	</bean>  
-	-->  
-	
-	
-	<!-- ======================== 调度工厂 ======================== -->  
-	<bean id="SpringJobSchedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
-	    <property name="triggers">  
-	        <list>  
-	            <ref bean="CronTriggerBean"/>  
-	            <!-- 
-	            <ref bean="CronTriggerBean2"/>  
-	            <ref bean="CronTriggerBean3"/>  
-	             -->
-	        </list>  
-	    </property>  
-	</bean>    
-  	 
-  	 
+    <!-- ======================== 调度任务类 ======================== -->
+    <bean id="SyncJobQuartz" class="com.zd.core.security.SyncJobQuartz"/>
+    <!-- ======================== 指定调度任务执行的类和方法 ======================== -->
+    <bean id="SyncJobQuartzMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="SyncJobQuartz"/>
+        </property>
+        <property name="targetMethod">  <!-- 要执行的方法名称 -->
+            <value>execute</value>
+        </property>
+    </bean>
+    <!-- ======================== 调度触发器 ======================== -->
+    <bean id="CronTriggerBean" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="SyncJobQuartzMethod"></property>
+        <property name="cronExpression" value="0 0 2 * * ?"></property>
+    </bean>
+
+
+    <!-- ======================== 调度任务类 ======================== -->
+    <bean id="DinnerJobQuarz" class="com.zd.core.security.DinnerJobQuarz"/>
+    <!-- ======================== 指定调度任务执行的类和方法 ======================== -->
+    <bean id="DinnerJobQuarzMethod" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="DinnerJobQuarz"/>
+        </property>
+        <property name="targetMethod">  <!-- 要执行的方法名称 -->
+            <value>cardDisable</value>
+        </property>
+    </bean>
+    <!-- ======================== 指定调度任务执行的类和方法 ======================== -->
+    <bean id="DinnerJobQuarzMethod2" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="DinnerJobQuarz"/>
+        </property>
+        <property name="targetMethod">  <!-- 要执行的方法名称 -->
+            <value>cardAble</value>
+        </property>
+    </bean>
+
+    <!-- ======================== 调度触发器 ========================
+    <bean id="CronTriggerBean2" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="DinnerJobQuarzMethod"></property>
+        <property name="cronExpression" value="0 0 3 * * ?"></property>
+    </bean>
+    -->
+
+    <!-- ======================== 调度触发器 ========================
+    <bean id="CronTriggerBean3" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="DinnerJobQuarzMethod2"></property>
+        <property name="cronExpression" value="0 10 10 * * ?"></property>
+    </bean>
+    -->
+
+
+    <!-- ======================== 调度工厂 ======================== -->
+    <bean id="SpringJobSchedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="CronTriggerBean"/>
+                <ref bean="downloadPrivilegesTrigger"/>
+                <!--
+                <ref bean="CronTriggerBean2"/>
+                <ref bean="CronTriggerBean3"/>
+                 -->
+            </list>
+        </property>
+    </bean>
+
+
 </beans>
 		

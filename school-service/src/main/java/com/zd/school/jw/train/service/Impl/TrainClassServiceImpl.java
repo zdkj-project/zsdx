@@ -1004,11 +1004,11 @@ public class TrainClassServiceImpl extends BaseServiceImpl<TrainClass> implement
         list = trainClasstraineeService.queryByHql(hql);
 
         // 已经创建了订单 且 本次没有需要提交的学员 直接返回预定号
-        if (!isCreatedOrder && list.isEmpty()) {
+      /*  if (!isCreatedOrder && list.isEmpty()) {
             CreateOrderResponse ydInfo = new CreateOrderResponse();
-            ydInfo.setOrderid(Integer.valueOf(isOrder.get(0).get("reservationid").toString()));
+                ydInfo.setOrderid(Integer.valueOf(isOrder.get(0).get("reservationid").toString()));
             return ydInfo;
-        }
+        }*/
 
         int totalCheckin = 0;
         for (TrainClasstrainee trainee : list) {

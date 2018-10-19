@@ -262,7 +262,7 @@ Ext.define('core.main.controller.MainController', {
                     layout:'fit',    
                     items: [{
                         xtype: 'container',                                                  
-                        html:'<iframe src="http://www.baidu.com" width="100%" height="100%"   frameborder=0  ></iframe>'
+                        html:'<iframe src="'+comm.get("baseUrl")+data.menuTarget+'" width="100%" height="100%"   frameborder=0  ></iframe>'
                     }]
                 });
             }
@@ -379,7 +379,7 @@ Ext.define('core.main.controller.MainController', {
                     layout:'fit',    
                     items: [{
                         xtype: 'container',                                                  
-                        html:'<iframe src="http://www.baidu.com" width="100%" height="100%"   frameborder=0  ></iframe>'
+                        html:'<iframe src="'+comm.get("baseUrl")+data.menuTarget+'" width="100%" height="100%"   frameborder=0  ></iframe>'
                     }]
                 });
             }
@@ -506,7 +506,7 @@ Ext.define('core.main.controller.MainController', {
                     layout:'fit',    
                     items: [{
                         xtype: 'container',                                                  
-                        html:'<iframe src="http://www.baidu.com" width="100%" height="100%"   frameborder=0  ></iframe>'
+                        html:'<iframe src="'+comm.get("baseUrl")+item.menuTarget+'" width="100%" height="100%"   frameborder=0  ></iframe>'
                     }]
                 });
             }
