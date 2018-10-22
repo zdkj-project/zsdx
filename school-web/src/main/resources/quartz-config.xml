@@ -22,6 +22,26 @@
     </bean>
 
 
+
+    <!-- ======================== 调度任务类 ======================== -->
+    <bean id="timingUpdateRoomCost" class="com.zd.openinterface.timing.TimingUpdateRoomCost"/>
+    <!-- ======================== 指定调度任务执行的类和方法 ======================== -->
+    <bean id="timingUpdateRoomCostUrlJob"
+          class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+        <property name="targetObject">
+            <ref bean="timingUpdateRoomCost"/>
+        </property>
+        <property name="targetMethod" value="timingUpdate"/>  <!-- 要执行的方法名称 -->
+    </bean>
+    <!-- ======================== 调度触发器 ======================== -->
+    <bean id="timingUpdateRoomTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail" ref="timingUpdateRoomCostUrlJob"></property>
+        <property name="cronExpression">
+            <value>0 0/1 * * * ?</value>
+        </property>
+    </bean>
+
+
     <!-- ======================== 调度任务类 ======================== -->
     <bean id="SyncJobQuartz" class="com.zd.core.security.SyncJobQuartz"/>
     <!-- ======================== 指定调度任务执行的类和方法 ======================== -->
@@ -82,6 +102,7 @@
             <list>
                 <ref bean="CronTriggerBean"/>
                 <ref bean="downloadPrivilegesTrigger"/>
+                <ref bean="timingUpdateRoomTrigger"/>
                 <!--
                 <ref bean="CronTriggerBean2"/>
                 <ref bean="CronTriggerBean3"/>

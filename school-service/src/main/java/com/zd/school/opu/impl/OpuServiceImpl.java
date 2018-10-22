@@ -476,4 +476,21 @@ public class OpuServiceImpl implements OpuService {
 		}
 	}
 
+	@Override
+	public String GetLiveGuests() {
+		String method = Thread.currentThread().getStackTrace()[1].getMethodName();
+		method = method.substring(0, 1).toUpperCase() + method.substring(1);
+		WebServiceUtil ws = new WebServiceUtil(prop, method, method + "Response");
+		HashMap<String, String> inMsg = new HashMap<>();
+		try {
+			String jsonStr = ws.sendMessage(inMsg);
+			logger.info(jsonStr);
+			return jsonStr;
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+			return null;
+		}
+	}
+
 }

@@ -203,4 +203,14 @@ public interface OpuService {
      * @method Order_Cancel
      */
     public CreateOrderResponse Order_Cancel(String orderID);
+
+    /**
+     * @param
+     * @return java.lang.String
+     * @description 在住学员信息
+     * @author yz
+     * @date 2018/10/22 11:35
+     * @method GetLiveGuests
+     */
+    public String GetLiveGuests();
 }

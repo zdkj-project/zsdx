@@ -74,7 +74,7 @@ public class DownloadPrivileges {
             List<Map<String, Object>> list = cardUserInfoService.getForValuesToSql(sql);
             //切换Q1数据库
             DBContextHolder.clearDBType();
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HHmmss");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             if (null == list || 0 == list.size()) {
                 LOGGER.info("自动更新权限--没有查询到要更新的" + formatter.format(new Date()));
                 return;
